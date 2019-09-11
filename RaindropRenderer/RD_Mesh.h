@@ -9,7 +9,6 @@
 #define RAINDROPRENDERER_API __declspec(dllimport)
 #endif
 
-#include "RaindropRenderer.h"
 #include "RD_ShaderLoader.h"
 #include "RD_Materials.h"
 
@@ -35,9 +34,18 @@ public:
 	void render();
 
 	void addRotation(vec3f rotation);
+	void addTranslation(vec3f translation);
+	void addScale(vec3f scale);
+
+	void SetRotation(vec3f nRotation);
+	void SetPosition(vec3f nPos);
+	void SetScale(vec3f nScale);
+
+	void UpdateMaterial(BD_MatDef*);
 
 	std::vector<float> RAWvertices;
 	std::vector<unsigned int> RAWindices;
+	std::vector<float> RAWnormals;
 	
 private:
 	void Bufferize();
@@ -52,4 +60,4 @@ private:
 	vec3f m_scale;
 };
 
-#endif //_RD_MESH_H__
+#endif

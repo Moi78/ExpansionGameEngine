@@ -28,18 +28,26 @@ public:
 
 	int GetIndiceByIndex(int);
 	vec3d GetVertexByIndex(int);
+	vec3d GetNormalByIndex(int);
+	vec3d GetUVcoordByIndex(int);
 
 	int GetIndicesCount();
 	int GetVerticesCount();
+	int GetNormalCount();
+	int GetUVcoordCount();
 
 	void ClearAll();
 
 private:
 	std::vector<int> mIndices;
 	std::vector<vec3d> mVertices;
+	std::vector<vec3d> mNormal;
+	std::vector<vec3d> mUVcoord;
 
 	int icount;
 	int vcount;
+	int ncount;
+	int uvcount;
 };
 
 #endif // _BD_READER_H__

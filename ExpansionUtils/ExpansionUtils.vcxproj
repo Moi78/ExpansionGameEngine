@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{78C2A131-76B5-457A-A6D3-C1814722FEEF}</ProjectGuid>
+    <ProjectGuid>{D4981B0C-097C-4327-89B7-C27DFB386BFD}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>RaindropRenderer</RootNamespace>
+    <RootNamespace>ExpansionUtils</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -88,21 +88,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;EXPANSIONUTILS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\BulldozerFileManager;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\lib\vs2015\x64\release;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <FxCompile>
-      <ShaderModel>4.0_level_9_3</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;EXPANSIONUTILS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -128,7 +122,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;EXPANSIONUTILS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -148,10 +142,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;EXPANSIONUTILS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\BulldozerFileManager;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,42 +152,22 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\lib\vs2015\x64\release;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <FxCompile>
-      <ShaderModel>4.0_level_9_3</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ComponentUtils.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="RD_Camera.h" />
-    <ClInclude Include="RD_Error.h" />
-    <ClInclude Include="RD_FrameLimiter.h" />
-    <ClInclude Include="RD_Materials.h" />
-    <ClInclude Include="RD_Mesh.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="RaindropRenderer.h" />
-    <ClInclude Include="RD_PointLight.h" />
-    <ClInclude Include="RD_ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentUtils.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="glad.cpp" />
-    <ClCompile Include="RD_Camera.cpp" />
-    <ClCompile Include="RD_Error.cpp" />
-    <ClCompile Include="RD_FrameLimiter.cpp" />
-    <ClCompile Include="RD_Materials.cpp" />
-    <ClCompile Include="RD_Mesh.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RaindropRenderer.cpp" />
-    <ClCompile Include="RD_PointLight.cpp" />
-    <ClCompile Include="RD_ShaderLoader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -95,14 +95,14 @@
       <PreprocessorDefinitions>_DEBUG;BULLDOZERFILEMANAGER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\bin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk.lib;ExpansionMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\bin\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -152,7 +152,7 @@
       <PreprocessorDefinitions>NDEBUG;BULLDOZERFILEMANAGER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\bin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,8 +160,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk.lib;ExpansionMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\bin\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -171,6 +171,7 @@
     <ClInclude Include="BD_Import.h" />
     <ClInclude Include="BD_Reader.h" />
     <ClInclude Include="BD_StructMan.h" />
+    <ClInclude Include="BD_Writer.h" />
     <ClInclude Include="BulldozerFileManager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -178,6 +179,7 @@
   <ItemGroup>
     <ClCompile Include="BD_Import.cpp" />
     <ClCompile Include="BD_Reader.cpp" />
+    <ClCompile Include="BD_Writer.cpp" />
     <ClCompile Include="BulldozerFileManager.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">

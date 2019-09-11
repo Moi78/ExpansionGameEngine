@@ -14,28 +14,47 @@
 int main(int argc, char* argv[]) {
 	RaindropRenderer* rndr = new RaindropRenderer(1280, 720, "Hello World");
 
+	rndr->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
+	rndr->SetAmbientStrength(0.1f);
+
 	BD_MatDef mat = {};
 	mat.Color = vec3f(1.0f, 0.0f, 0.0f);
 
-	RD_Mesh* mesh = new RD_Mesh(rndr->GetShader(), mat, vec3f(0.0f, 5.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
-	mesh->loadMesh("platform.msh");
-
 	BD_MatDef mat2 = {};
-	mat.Color = vec3f(0.0f, 1.0f, 0.0f);
+	mat2.Color = vec3f(0.1f, 1.0f, 0.0f);
 
-	RD_Mesh* mesh2 = new RD_Mesh(rndr->GetShader(), mat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.5f, 0.5f, 0.25f));
-	mesh2->loadMesh("test.msh");
 
-	RD_Camera* cam = new RD_Camera(rndr->GetShader(), rndr, 60.0f, 0.1f, 100.0f, vec3f(-5.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, -0.5f));
+	RD_Mesh* mesh = new RD_Mesh(rndr->GetShader(), mat, vec3f(-3.0f, -3.0f, 1.0f), vec3f(0.0f, 0.0f, 100.0f), vec3f(0.5f, 0.5f, 0.5f));
+	mesh->loadMesh("model.msh");
+
+	RD_Mesh* mesh2 = new RD_Mesh(rndr->GetShader(), mat2, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 180.0f), vec3f(5.0f, 5.0f, 5.0f));
+	mesh2->loadMesh("model2.msh");
+
+	RD_PointLight* pt = new RD_PointLight(vec3f(-4.0f, -3.0f, 2.0f), 0.5f);
+	rndr->AppendLight(pt);
+
+	RD_Camera* cam = new RD_Camera(rndr->GetShader(), rndr, 60.0f, 0.1f, 100.0f, vec3f(-10.0f, 0.0f, 5.0f), vec3f(0.0f, 0.0f, 0.0f));
 	cam->UseCamera();
 
 	while (!rndr->WantToClose()) {
 		rndr->ClearWindow(vec3f(0.0f, 0.0f, 0.0f));
 
+		rndr->RenderDbg();
+
+		mesh2->render();
 		mesh->render();
 
-		mesh2->addRotation(vec3f(0.1f, 0.0f, 0.1f));
-		mesh2->render();
+		glfwSetInputMode(rndr->GetGLFWwindow(), GLFW_STICKY_KEYS, GLFW_TRUE);
+		if (glfwGetKey(rndr->GetGLFWwindow(), GLFW_KEY_W) == GLFW_PRESS) {
+			mat2.Color = vec3f(1.0f, 1.0f, 0.0f);
+
+			mesh2->UpdateMaterial(&mat2);
+		}
+		else if (glfwGetKey(rndr->GetGLFWwindow(), GLFW_KEY_Z) == GLFW_PRESS) {
+			mat2.Color = vec3f(1.0f, 0.0f, 0.5f);
+
+			mesh2->UpdateMaterial(&mat2);
+		}
 
 		rndr->SwapWindow();
 	}

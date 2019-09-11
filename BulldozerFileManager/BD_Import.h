@@ -9,19 +9,18 @@
 #define BULLDOZERFILEMANAGER_API __declspec(dllimport)
 #endif
 
+//Standard
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
 
+//Bulldozer
 #include "BulldozerFileManager.h"
 #include "BD_StructMan.h"
 
+//ExpansionMath
 #include "vec3.h"
-
-#include <fbxsdk.h>
-#include <fbxsdk/fileio/fbxiosettings.h>
-#include <fbxsdk/utils/fbxgeometryconverter.h>
 
 class BULLDOZERFILEMANAGER_API BD_Import
 {
@@ -34,32 +33,25 @@ public:
 
 	int GetIndiceInMemByIndex(int index);
 	vec3d GetVertexInMemByIndex(int index);
+	vec3d GetNormalInMemByIndex(int index);
 
 	int GetVertexInMemCount();
 	int GetIndicesInMemCount();
+	int GetNormalInMemCount();
 
 	void ToBinary(std::string, std::string);
+
+	void AppendIndice(int);
+	void AppendVertex(vec3d);
+	void AppendNormal(vec3d);
 
 private:
 	void ClearAll();
 
-	void InitFBX_SDK();
-
-	void ExtractMeshFromScene(FbxScene* scene);
-	void GetMeshInfo(int index);
-	void ClearNodeArray();
-
-	int GetNodeCount();
-
 	std::string m_filename;
-
-	FbxManager* lSdkManager;
-	FbxIOSettings* ios;
-	FbxImporter* lImporter;
-
-	std::vector<FbxNode*> pNodes;
 
 	std::vector<vec3d> mVerticesInMem;
 	std::vector<int> mIndicesInMem;
+	std::vector<vec3d> mNormalsInMem;
 };
 #endif
