@@ -1,0 +1,2 @@
+#define BULLDOZERFILEMANAGER_API __declspec(dllexport)
+#define BULLDOZERFILEMANAGER_API __declspec(dllimport)
