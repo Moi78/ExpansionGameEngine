@@ -11,56 +11,37 @@
 
 #include <Windows.h>
 
-int main(int argc, char* argv[]) {
-	RaindropRenderer* rndr = new RaindropRenderer(1280, 720, "Hello World");
+int main(int argc, char* argv) {
+	//Expansion Game Engine Side
+	RaindropRenderer* rndr = new RaindropRenderer(500, 500, "Material Editor");
 
 	rndr->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	rndr->SetAmbientStrength(0.1f);
 
-	BD_MatDef mat = {};
-	mat.Color = vec3f(1.0f, 0.0f, 0.0f);
-
-	BD_MatDef mat2 = {};
-	mat2.Color = vec3f(0.1f, 1.0f, 0.0f);
-
-
-	RD_Mesh* mesh = new RD_Mesh(rndr->GetShader(), mat, vec3f(-3.0f, -3.0f, 1.0f), vec3f(0.0f, 0.0f, 100.0f), vec3f(0.5f, 0.5f, 0.5f));
-	mesh->loadMesh("model.msh");
-
-	RD_Mesh* mesh2 = new RD_Mesh(rndr->GetShader(), mat2, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 180.0f), vec3f(5.0f, 5.0f, 5.0f));
-	mesh2->loadMesh("model2.msh");
-
-	RD_PointLight* pt = new RD_PointLight(vec3f(-4.0f, -3.0f, 2.0f), 0.5f);
-	rndr->AppendLight(pt);
-
-	RD_Camera* cam = new RD_Camera(rndr->GetShader(), rndr, 60.0f, 0.1f, 100.0f, vec3f(-10.0f, 0.0f, 5.0f), vec3f(0.0f, 0.0f, 0.0f));
+	RD_Camera* cam = new RD_Camera(rndr->GetShader(), rndr, 60.0f, 0.1f, 100.0f, vec3f(-2.5f, 0.0f, 0.0f), vec3f());
 	cam->UseCamera();
+
+	BD_MatDef mat = {};
+	mat.Color = vec3f(1.0f, 1.0f, 1.0f);
+
+	RD_Mesh* sphere = new RD_Mesh(rndr->GetShader(), mat, vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
+	sphere->loadMesh("sphere.msh");
+
+	RD_PointLight* light = new RD_PointLight(vec3f(-2.0f, 1.0f, 1.0f), 1.5f);
+	rndr->AppendLight(light);
 
 	while (!rndr->WantToClose()) {
 		rndr->ClearWindow(vec3f(0.0f, 0.0f, 0.0f));
 
 		rndr->RenderDbg();
 
-		mesh2->render();
-		mesh->render();
+		sphere->render();
 
-		glfwSetInputMode(rndr->GetGLFWwindow(), GLFW_STICKY_KEYS, GLFW_TRUE);
-		if (glfwGetKey(rndr->GetGLFWwindow(), GLFW_KEY_W) == GLFW_PRESS) {
-			mat2.Color = vec3f(1.0f, 1.0f, 0.0f);
-
-			mesh2->UpdateMaterial(&mat2);
-		}
-		else if (glfwGetKey(rndr->GetGLFWwindow(), GLFW_KEY_Z) == GLFW_PRESS) {
-			mat2.Color = vec3f(1.0f, 0.0f, 0.5f);
-
-			mesh2->UpdateMaterial(&mat2);
-		}
-
+		cam->UpdateCamera();
 		rndr->SwapWindow();
 	}
 
 	delete rndr;
-	delete mesh;
 
 	return 0;
 }

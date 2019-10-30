@@ -46,6 +46,10 @@ public:
 	std::vector<float> RAWvertices;
 	std::vector<unsigned int> RAWindices;
 	std::vector<float> RAWnormals;
+
+	std::vector<float> MixVertNorm;
+
+	int m_nbr_vertices;
 	
 private:
 	void Bufferize();

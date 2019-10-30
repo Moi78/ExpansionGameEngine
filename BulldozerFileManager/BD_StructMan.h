@@ -29,4 +29,8 @@ struct BULLDOZERFILEMANAGER_API BD_MatDef {
 	vec3f Color;
 };
 
+enum RendererFeature {
+	Specular, Lighting, Textures
+};
+
 #endif // _BD_STRUCT_MAN_H__

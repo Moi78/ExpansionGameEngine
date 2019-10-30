@@ -40,7 +40,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 		RAWnormals.push_back(reader->GetNormalByIndex(i).getY());
 		RAWnormals.push_back(reader->GetNormalByIndex(i).getZ());
 	}
-	
+
 	Bufferize();
 
 	delete reader;
@@ -51,6 +51,7 @@ void RD_Mesh::render() {
 	m_mat->BindMaterial();
 
 	glm::mat4 mdl = glm::mat4(1.0f);
+	glm::mat3 norm = glm::mat3(1.0f);
 
 	//Position
 	mdl = glm::translate(mdl, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
@@ -63,7 +64,10 @@ void RD_Mesh::render() {
 	mdl = glm::rotate(mdl, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
 	mdl = glm::rotate(mdl, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
 
+	norm = glm::transpose(glm::inverse(glm::mat3(mdl)));
+
 	m_shader->SetMatrix("model", mdl);
+	m_shader->SetMatrix("normalMat", norm);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, RAWindices.size(), GL_UNSIGNED_INT, 0);
@@ -90,7 +94,7 @@ void RD_Mesh::Bufferize() {
 		i++;
 
 		i -= 3; //Resetting i
-		
+
 		//Normals
 
 		MIXvertNorm.push_back(RAWnormals[i]); //Write

@@ -37,6 +37,7 @@ void RD_Camera::UseCamera() {
 }
 
 void RD_Camera::UpdateCamera() {
+	SetupCamera();
 	m_shader->SetMatrix("projection", projection);
 	m_shader->SetMatrix("view", view);
 }
@@ -60,6 +61,15 @@ void RD_Camera::SetFOV(float FOVinDegrees) {
 	UpdateCamera();
 }
 
-void RD_Camera::RotateCamera(rotator rotation) {
-	
+void RD_Camera::RotateCamera(vec3f rotation) {
+	m_subject = m_subject + vec3f(sin(rotation.getX()), sin(rotation.getX()), sin(rotation.getY()));
+
+	UpdateCamera();
+}
+
+void RD_Camera::TranslateCamera(vec3f translation) {
+	m_pos = m_pos + translation;
+	m_subject = m_subject + translation;
+
+	UpdateCamera();
 }

@@ -2,6 +2,9 @@
 #include "RaindropRenderer.h"
 
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName) : m_height(h), m_width(w) {
+	FillFeaturesStringArray();
+	FillFeatureStateArray();
+
 	initWindow(w, h, windowName);
 
 	RD_FrameLimiter* flmt = new RD_FrameLimiter(60);
@@ -11,6 +14,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName) : m_hei
 	shader->compileShaderFromFile("Engine/Shaders/GameView.vert", "Engine/Shaders/GameView.frag");
 	m_shader = shader;
 	m_shader->useShader();
+
+	EnableAllFeatures();
 
 	RD_ShaderLoader* lshader = new RD_ShaderLoader();
 	lshader->compileShaderFromFile("Engine/Shaders/Lights.vert", "Engine/Shaders/Lights.frag");
@@ -57,7 +62,14 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	initGlad();
 
 	glViewport(0, 0, m_width, m_height);
+
+	glfwSetFramebufferSizeCallback(win, glfwWinCallback);
+
 	glEnable(GL_DEPTH_TEST);
+}
+
+void glfwWinCallback(GLFWwindow* win, int w, int h) {
+	glViewport(0, 0, w, h);
 }
 
 void RaindropRenderer::ClearWindow(vec3f refreshColor) {
@@ -100,11 +112,15 @@ void RaindropRenderer::initGlad() {
 }
 
 int RaindropRenderer::getWindowHeigh() {
-	return m_height;
+	int h;
+	glfwGetWindowSize(win, NULL, &h);
+	return h;
 }
 
 int RaindropRenderer::getWindowWidth() {
-	return m_width;
+	int w;
+	glfwGetWindowSize(win, &w, NULL);
+	return w;
 }
 
 RD_ShaderLoader* RaindropRenderer::GetShader() {
@@ -156,9 +172,53 @@ void RaindropRenderer::RenderDbg() {
 
 void RaindropRenderer::UpdatePointsLighting() {
 	m_shader->SetVec3("LightPos", m_pt_lights[0]->GetPosition());
-	m_shader->SetVec3("LightBrightness", m_pt_lights[0]->GetBrightness());
+	m_shader->SetFloat("LightBrightness", m_pt_lights[0]->GetBrightness());
 }
 
 GLFWwindow* RaindropRenderer::GetGLFWwindow() {
 	return win;
+}
+
+void RaindropRenderer::FillFeaturesStringArray() {
+	m_features_string[0] = "ftr_specular";
+	m_features_string[1] = "ftr_lighting";
+	m_features_string[2] = "ftr_texture";
+}
+
+void RaindropRenderer::FillFeatureStateArray() {
+	m_features_state[0] = false;
+	m_features_state[1] = false;
+	m_features_state[2] = false;
+}
+
+void RaindropRenderer::EnableAllFeatures() {
+	for (int ftr = RendererFeature::Lighting; ftr != RendererFeature::Textures; ftr += 1) {
+		RendererFeature enb_ftr = static_cast<RendererFeature>(ftr);
+		EnableFeature(enb_ftr);
+	}
+}
+
+//Disable or Enable features
+void RaindropRenderer::EnableFeature(RendererFeature ftr) {
+	if (!IsFeatureEnabled(ftr)) {
+		m_shader->SetBool(m_features_string[ftr], true);
+		m_features_state[ftr] = true;
+	}
+	else {
+		std::cerr << "Feature " << m_features_string[ftr] << " already enabled." << std::endl;
+	}
+}
+
+void RaindropRenderer::DisableFeature(RendererFeature ftr) {
+	if (IsFeatureEnabled(ftr)) {
+		m_shader->SetBool(m_features_string[ftr], false);
+		m_features_state[ftr] = false;
+	}
+	else {
+		std::cerr << "Feature " << m_features_string[ftr] << " already disabled." << std::endl;
+	}
+}
+
+bool RaindropRenderer::IsFeatureEnabled(RendererFeature ftr) {
+	return m_features_state[ftr];
 }

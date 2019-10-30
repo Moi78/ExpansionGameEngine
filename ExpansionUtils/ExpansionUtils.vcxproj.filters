@@ -21,7 +21,7 @@
     <ClInclude Include="pch.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentUtils.h">
+    <ClInclude Include="..\Testing\ExpString.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentUtils.cpp">
+    <ClCompile Include="ExpString.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

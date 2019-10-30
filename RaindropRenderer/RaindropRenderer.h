@@ -54,9 +54,20 @@ public:
 	void SwitchShader(RD_ShaderLoader*);
 
 	void RenderDbg();
+
+	void EnableFeature(RendererFeature ftr);
+	void DisableFeature(RendererFeature ftr);
+	bool IsFeatureEnabled(RendererFeature ftr);
+
+	void UpdatePointsLighting();
 private:
 	void UpdateAmbientLighting();
-	void UpdatePointsLighting();
+
+	void FillFeaturesStringArray();
+	void FillFeatureStateArray();
+	void EnableAllFeatures();
+
+	//void glfwWinCallback(GLFWwindow* win, int w, int h);
 
 	GLFWwindow* win;
 
@@ -65,6 +76,9 @@ private:
 
 	RD_ShaderLoader* m_shader;
 	RD_ShaderLoader* m_LightShader;
+
+	std::string m_features_string[3];
+	bool m_features_state[3];
 
 	float ambientStrength;
 	vec3f ambientColor;
@@ -75,5 +89,7 @@ private:
 
 	RD_Mesh* m_DBG_light_mdl;
 };
+
+void glfwWinCallback(GLFWwindow* win, int w, int h);
 
 #endif // !_RAINDROP_RENDERER_H__

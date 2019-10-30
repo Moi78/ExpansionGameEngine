@@ -31,11 +31,14 @@ public:
 	void SetPosition(vec3f position);
 	void SetSubject(vec3f lookingAt);
 	void SetFOV(float FOVinDegrees);
-
-	void RotateCamera(rotator);
+	
+	void UpdateCamera();
+	
+	void RotateCamera(vec3f);
+	void TranslateCamera(vec3f translation);
 private:
 	void SetupCamera();
-	void UpdateCamera();
+	
 
 	glm::mat4 projection;
 	glm::mat4 view;
