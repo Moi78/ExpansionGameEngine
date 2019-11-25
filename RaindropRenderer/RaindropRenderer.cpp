@@ -173,6 +173,7 @@ void RaindropRenderer::RenderDbg() {
 void RaindropRenderer::UpdatePointsLighting() {
 	m_shader->SetVec3("LightPos", m_pt_lights[0]->GetPosition());
 	m_shader->SetFloat("LightBrightness", m_pt_lights[0]->GetBrightness());
+	m_shader->SetVec3("LightColor", m_pt_lights[0]->GetColor());
 }
 
 GLFWwindow* RaindropRenderer::GetGLFWwindow() {

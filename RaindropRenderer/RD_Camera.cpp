@@ -29,17 +29,20 @@ void RD_Camera::SetupCamera() {
 
 	m_shader->SetMatrix("projection", projection);
 	m_shader->SetMatrix("view", view);
+	m_shader->SetVec3("CamPos", m_pos);
 }
 
 void RD_Camera::UseCamera() {
 	m_shader->SetMatrix("projection", projection);
 	m_shader->SetMatrix("view", view);
+	m_shader->SetVec3("CamPos", m_pos);
 }
 
 void RD_Camera::UpdateCamera() {
 	SetupCamera();
 	m_shader->SetMatrix("projection", projection);
 	m_shader->SetMatrix("view", view);
+	m_shader->SetVec3("CamPos", m_pos);
 }
 
 void RD_Camera::SetPosition(vec3f position) {
