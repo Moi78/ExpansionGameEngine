@@ -27,6 +27,8 @@ struct BULLDOZERFILEMANAGER_API BD_MeshDef {
 
 struct BULLDOZERFILEMANAGER_API BD_MatDef {
 	vec3f Color;
+	vec3f SpecularColor;
+	float SpecularExp;
 };
 
 enum RendererFeature {

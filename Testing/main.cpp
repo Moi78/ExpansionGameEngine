@@ -18,22 +18,30 @@ int main(int argc, char* argv) {
 	rndr->EnableFeature(RendererFeature::Specular);
 
 	rndr->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
-	rndr->SetAmbientStrength(0.2f);
+	rndr->SetAmbientStrength(0.1f);
 
 	RD_Camera* cam = new RD_Camera(rndr->GetShader(), rndr, 60.0f, 0.1f, 100.0f, vec3f(-5.5f, -5.5f, 4.0f), vec3f(0.0f, 0.0f, 0.0f));
 	cam->UseCamera();
 
 	BD_MatDef mat = {};
 	mat.Color = vec3f(0.70f, 0.50f, 0.30f);
+	mat.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	mat.SpecularExp = 16.0f;
 
 	BD_MatDef mat_island = {};
 	mat_island.Color = vec3f(1.0f, 1.0f, 0.0f);
+	mat_island.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	mat_island.SpecularExp = 256.0f;
 
 	BD_MatDef mat_sea = {};
 	mat_sea.Color = vec3f(0.0f, 0.1f, 1.0f);
+	mat_sea.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	mat_sea.SpecularExp = 512.0f;
 
 	BD_MatDef mat_leaves = {};
 	mat_leaves.Color = vec3f(0.0f, 0.5f, 0.0f);
+	mat_leaves.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	mat_leaves.SpecularExp = 32.0f;
 
 	RD_Mesh* sphere = new RD_Mesh(rndr->GetShader(), mat, vec3f(0.5f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 45.0f), vec3f(0.3f, 0.3f, 0.5f));
 	sphere->loadMesh("trunk.msh");
@@ -47,8 +55,18 @@ int main(int argc, char* argv) {
 	RD_Mesh* leaves = new RD_Mesh(rndr->GetShader(), mat_leaves, vec3f(-0.2f, 1.2f, 4.0f), vec3f(), vec3f(0.3f, 1.0f, 0.15f));
 	leaves->loadMesh("leaves.msh");
 
-	RD_PointLight* light = new RD_PointLight(vec3f(-2.0f, -2.0f, 4.0f), vec3f(1.0f, 1.0f, 1.0f), 2.5f);
+	RD_PointLight* light = new RD_PointLight(vec3f(-2.0f, -2.0f, 4.0f), vec3f(1.0f, 1.0f, 1.0f), 10.0f);
 	rndr->AppendLight(light);
+
+	//Test
+
+	BD_MatDef mat_cube = {};
+	mat_cube.Color = vec3f(1.0f, 0.0f, 0.0f);
+	mat_cube.SpecularColor = vec3f(1.0f, 0.3f, 0.0f);
+	mat_cube.SpecularExp = 32;
+
+	RD_Mesh* cube = new RD_Mesh(rndr->GetShader(), mat_cube, vec3f(-3.0f, 3.0f, 3.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
+	cube->loadMesh("cube.msh");
 
 	while (!rndr->WantToClose()) {
 		rndr->ClearWindow(vec3f(0.0f, 0.3f, 0.4f));
@@ -75,6 +93,8 @@ int main(int argc, char* argv) {
 		sphere->render();
 		sea->render();
 		leaves->render();
+
+		cube->render();
 
 		cam->UpdateCamera();
 		rndr->SwapWindow();

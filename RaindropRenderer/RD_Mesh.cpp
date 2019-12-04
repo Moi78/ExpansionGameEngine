@@ -6,7 +6,7 @@ RD_Mesh::RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, ve
 	EBO = 0;
 	VBO = 0;
 
-	m_mat = new RD_SimpleMaterial(shader, vec3f(material.Color.getX(), material.Color.getY(), material.Color.getZ()));
+	m_mat = new RD_SimpleMaterial(shader, material.Color, material.SpecularColor, material.SpecularExp);
 
 	m_shader = shader;
 
@@ -51,23 +51,25 @@ void RD_Mesh::render() {
 	m_mat->BindMaterial();
 
 	glm::mat4 mdl = glm::mat4(1.0f);
-	glm::mat3 norm = glm::mat3(1.0f);
+
+	glm::mat4 translate = glm::mat4(1.0f);
+	glm::mat4 scale = glm::mat4(1.0f);
+	glm::mat4 rotation = glm::mat4(1.0f);
 
 	//Position
-	mdl = glm::translate(mdl, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
+	translate = glm::translate(translate, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
 
 	//Scale
-	mdl = glm::scale(mdl, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
 
 	//Rotation
-	mdl = glm::rotate(mdl, glm::radians(m_rotation.getX()), glm::vec3(1.0f, 0.0f, 0.0f));
-	mdl = glm::rotate(mdl, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
-	mdl = glm::rotate(mdl, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
+	rotation = glm::rotate(rotation, glm::radians(m_rotation.getX()), glm::vec3(1.0f, 0.0f, 0.0f));
+	rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
+	rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
 
-	norm = glm::transpose(glm::inverse(glm::mat3(mdl)));
+	mdl = translate * rotation * scale;
 
 	m_shader->SetMatrix("model", mdl);
-	m_shader->SetMatrix("normalMat", norm);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, RAWindices.size(), GL_UNSIGNED_INT, 0);
