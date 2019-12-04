@@ -33,5 +33,5 @@ void RD_SimpleMaterial::UpdateColor() {
 
 void RD_SimpleMaterial::UpdateSpecular() {
 	m_shader->SetVec3("specularColor", m_SpecularColor);
-	m_shader->SetFloat("specularExp", m_SpecularExp);
+	m_shader->SetFloat("specularStrength", m_SpecularExp);
 }

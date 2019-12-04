@@ -166,14 +166,31 @@ void RaindropRenderer::RenderDbg() {
 	//SwitchShader(m_LightShader);
 	for (int i = 0; i < m_pt_lights.size(); i++) {
 		m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
-		m_DBG_light_mdl->render();
+		m_DBG_light_mdl->render(RenderMode::Wireframe);
 	}
 }
 
 void RaindropRenderer::UpdatePointsLighting() {
-	m_shader->SetVec3("LightPos", m_pt_lights[0]->GetPosition());
-	m_shader->SetFloat("LightBrightness", m_pt_lights[0]->GetBrightness());
-	m_shader->SetVec3("LightColor", m_pt_lights[0]->GetColor());
+	for (int i = 0; i < m_pt_lights.size(); i++) {
+		FillPtLightIndice(i);
+	}
+
+	m_shader->SetInt("nbrPointLight", m_pt_lights.size());
+}
+
+void RaindropRenderer::FillPtLightIndice(int index) {
+	if (m_pt_lights.size() < index) {
+		std::cerr << "Can't add point light : Index out of range." << std::endl;
+	}
+	else if (index > 500) {
+		std::cerr << "Can't add point light : No more than 500 lights are supported." << std::endl;
+	}
+
+	std::string indexSTR = std::to_string(index);
+
+	m_shader->SetVec3("LightPos["+ indexSTR +"]", m_pt_lights[index]->GetPosition());
+	m_shader->SetFloat("LightBrightness[" + indexSTR + "]", m_pt_lights[index]->GetBrightness());
+	m_shader->SetVec3("LightColor[" + indexSTR + "]", m_pt_lights[index]->GetColor());
 }
 
 GLFWwindow* RaindropRenderer::GetGLFWwindow() {

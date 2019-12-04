@@ -31,7 +31,7 @@ public:
 	~RD_Mesh();
 
 	void loadMesh(std::string);
-	void render();
+	void render(RenderMode rndrMode = RenderMode::Filled);
 
 	void addRotation(vec3f rotation);
 	void addTranslation(vec3f translation);

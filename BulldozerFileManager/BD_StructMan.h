@@ -31,8 +31,12 @@ struct BULLDOZERFILEMANAGER_API BD_MatDef {
 	float SpecularExp;
 };
 
-enum RendererFeature {
+enum BULLDOZERFILEMANAGER_API RendererFeature {
 	Specular, Lighting, Textures
+};
+
+enum class BULLDOZERFILEMANAGER_API RenderMode {
+	Wireframe, Filled
 };
 
 #endif // _BD_STRUCT_MAN_H__

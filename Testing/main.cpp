@@ -31,7 +31,7 @@ int main(int argc, char* argv) {
 	BD_MatDef mat_island = {};
 	mat_island.Color = vec3f(1.0f, 1.0f, 0.0f);
 	mat_island.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
-	mat_island.SpecularExp = 256.0f;
+	mat_island.SpecularExp = 16.0f;
 
 	BD_MatDef mat_sea = {};
 	mat_sea.Color = vec3f(0.0f, 0.1f, 1.0f);
@@ -55,17 +55,20 @@ int main(int argc, char* argv) {
 	RD_Mesh* leaves = new RD_Mesh(rndr->GetShader(), mat_leaves, vec3f(-0.2f, 1.2f, 4.0f), vec3f(), vec3f(0.3f, 1.0f, 0.15f));
 	leaves->loadMesh("leaves.msh");
 
-	RD_PointLight* light = new RD_PointLight(vec3f(-2.0f, -2.0f, 4.0f), vec3f(1.0f, 1.0f, 1.0f), 10.0f);
+	RD_PointLight* light = new RD_PointLight(vec3f(-3.0f, -1.0f, 2.0f), vec3f(1.0f, 0.0f, 1.0f), 10.0f);
 	rndr->AppendLight(light);
+
+	RD_PointLight* light2 = new RD_PointLight(vec3f(2.0f, 1.0f, 2.0f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
+	rndr->AppendLight(light2);
 
 	//Test
 
 	BD_MatDef mat_cube = {};
 	mat_cube.Color = vec3f(1.0f, 0.0f, 0.0f);
 	mat_cube.SpecularColor = vec3f(1.0f, 0.3f, 0.0f);
-	mat_cube.SpecularExp = 32;
+	mat_cube.SpecularExp = 32.0f;
 
-	RD_Mesh* cube = new RD_Mesh(rndr->GetShader(), mat_cube, vec3f(-3.0f, 3.0f, 3.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
+	RD_Mesh* cube = new RD_Mesh(rndr->GetShader(), mat_cube, vec3f(-3.0f, 3.0f, 3.0f), vec3f(3.0f, 5.0f, 10.0f), vec3f(1.0f, 1.0f, 1.0f));
 	cube->loadMesh("cube.msh");
 
 	while (!rndr->WantToClose()) {
@@ -87,7 +90,7 @@ int main(int argc, char* argv) {
 			cam->TranslateCamera(vec3f(0.0f, 0.2f, 0.0f));
 		}
 
-		//rndr->RenderDbg();
+		rndr->RenderDbg();
 
 		island->render();
 		sphere->render();

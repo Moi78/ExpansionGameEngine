@@ -63,6 +63,8 @@ public:
 private:
 	void UpdateAmbientLighting();
 
+	void FillPtLightIndice(int index);
+
 	void FillFeaturesStringArray();
 	void FillFeatureStateArray();
 	void EnableAllFeatures();

@@ -46,7 +46,14 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	delete reader;
 }
 
-void RD_Mesh::render() {
+void RD_Mesh::render(RenderMode rndrMode) {
+	if (rndrMode == RenderMode::Filled) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
 	//m_shader->useShader();
 	m_mat->BindMaterial();
 
