@@ -11,8 +11,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testing", "Testing\Testing.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RaindropRenderer", "RaindropRenderer\RaindropRenderer.vcxproj", "{78C2A131-76B5-457A-A6D3-C1814722FEEF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testing - GL", "Testing - GL\Testing - GL.vcxproj", "{535446E4-7CAC-45AF-8BBB-E7856ACD1335}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulldozerFileManager", "BulldozerFileManager\BulldozerFileManager.vcxproj", "{66C22720-4D4E-421F-A19D-8FD3CC0E7038}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulldoPy", "BulldoPy\BulldoPy.vcxproj", "{539EC771-0D96-46C3-A571-5A193C85C423}"
@@ -59,14 +57,6 @@ Global
 		{78C2A131-76B5-457A-A6D3-C1814722FEEF}.Release|x64.Build.0 = Release|x64
 		{78C2A131-76B5-457A-A6D3-C1814722FEEF}.Release|x86.ActiveCfg = Release|Win32
 		{78C2A131-76B5-457A-A6D3-C1814722FEEF}.Release|x86.Build.0 = Release|Win32
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Debug|x64.ActiveCfg = Debug|x64
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Debug|x64.Build.0 = Debug|x64
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Debug|x86.ActiveCfg = Debug|Win32
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Debug|x86.Build.0 = Debug|Win32
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Release|x64.ActiveCfg = Release|x64
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Release|x64.Build.0 = Release|x64
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Release|x86.ActiveCfg = Release|Win32
-		{535446E4-7CAC-45AF-8BBB-E7856ACD1335}.Release|x86.Build.0 = Release|Win32
 		{66C22720-4D4E-421F-A19D-8FD3CC0E7038}.Debug|x64.ActiveCfg = Debug|x64
 		{66C22720-4D4E-421F-A19D-8FD3CC0E7038}.Debug|x64.Build.0 = Debug|x64
 		{66C22720-4D4E-421F-A19D-8FD3CC0E7038}.Debug|x86.ActiveCfg = Debug|Win32
