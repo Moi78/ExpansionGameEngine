@@ -18,7 +18,7 @@ int main(int argc, char* argv) {
 	rndr->EnableFeature(RendererFeature::Specular);
 
 	rndr->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
-	rndr->SetAmbientStrength(0.1f);
+	rndr->SetAmbientStrength(0.2f);
 
 	RD_Camera* cam = new RD_Camera(rndr->GetShader(), rndr, 60.0f, 0.1f, 100.0f, vec3f(-5.5f, -5.5f, 4.0f), vec3f(0.0f, 0.0f, 0.0f));
 	cam->UseCamera();
@@ -49,7 +49,7 @@ int main(int argc, char* argv) {
 	RD_Mesh* island = new RD_Mesh(rndr->GetShader(), mat_island, vec3f(), vec3f(), vec3f(2.0f, 2.0f, 0.5f));
 	island->loadMesh("island.msh");
 
-	RD_Mesh* sea = new RD_Mesh(rndr->GetShader(), mat_sea, vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
+	RD_Mesh* sea = new RD_Mesh(rndr->GetShader(), mat_sea, vec3f(-1.0, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
 	sea->loadMesh("sea.msh");
 
 	RD_Mesh* leaves = new RD_Mesh(rndr->GetShader(), mat_leaves, vec3f(-0.2f, 1.2f, 4.0f), vec3f(), vec3f(0.3f, 1.0f, 0.15f));
@@ -60,6 +60,9 @@ int main(int argc, char* argv) {
 
 	RD_PointLight* light2 = new RD_PointLight(vec3f(2.0f, 1.0f, 2.0f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
 	rndr->AppendLight(light2);
+
+	RD_DirLight* dirlight = new RD_DirLight(vec3f(4.0f, 0.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
+	rndr->AppendDirLight(dirlight);
 
 	//Test
 
@@ -72,7 +75,7 @@ int main(int argc, char* argv) {
 	cube->loadMesh("cube.msh");
 
 	while (!rndr->WantToClose()) {
-		rndr->ClearWindow(vec3f(0.0f, 0.3f, 0.4f));
+		rndr->ClearWindow(vec3f(0.2f, 0.7f, 0.9f));
 
 		if (glfwGetKey(rndr->GetGLFWwindow(), GLFW_KEY_UP) == GLFW_PRESS) {
 			cam->TranslateCamera(vec3f(0.1f, 0.0f, 0.0f));

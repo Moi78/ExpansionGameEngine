@@ -13,6 +13,7 @@
 #include "RD_FrameLimiter.h"
 #include "RD_Mesh.h"
 #include "RD_PointLight.h"
+#include "RD_DirLight.h"
 
 #include <BD_StructMan.h>
 
@@ -46,15 +47,21 @@ public:
 	RD_ShaderLoader* GetShader();
 	RD_ShaderLoader* GetLightShader();
 
+	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(vec3f nColor);
 
 	int AppendLight(RD_PointLight* ptLight);
+	int AppendDirLight(RD_DirLight* dirLight);
 
+	//Misc
 	void SwitchShader(RD_ShaderLoader*);
 
+	//Debug
 	void RenderDbg();
+	float GetFramerate();
 
+	//Renderer Feature
 	void EnableFeature(RendererFeature ftr);
 	void DisableFeature(RendererFeature ftr);
 	bool IsFeatureEnabled(RendererFeature ftr);
@@ -62,8 +69,10 @@ public:
 	void UpdatePointsLighting();
 private:
 	void UpdateAmbientLighting();
+	void UpdateDirLighting();
 
 	void FillPtLightIndice(int index);
+	void FillDirLightIndice(int index);
 
 	void FillFeaturesStringArray();
 	void FillFeatureStateArray();
@@ -88,6 +97,7 @@ private:
 	RD_FrameLimiter* m_frmLmt;
 
 	std::vector<RD_PointLight*> m_pt_lights;
+	std::vector<RD_DirLight*> m_DirLights;
 
 	RD_Mesh* m_DBG_light_mdl;
 };

@@ -90,9 +90,6 @@ void RaindropRenderer::SwapWindow() {
 			m_frmLmt->stop();
 		}
 	}
-
-	double fps = 1 / m_frmLmt->GetElapsedTime();
-	//std::cout << "FPS : " << fps << std::endl;
 }
 
 bool RaindropRenderer::WantToClose() {
@@ -156,6 +153,39 @@ int RaindropRenderer::AppendLight(RD_PointLight* ptLight) {
 	UpdatePointsLighting();
 
 	return lightIndex;
+}
+
+int RaindropRenderer::AppendDirLight(RD_DirLight* dirLight) {
+	m_DirLights.push_back(dirLight);
+
+	UpdateDirLighting();
+
+	return 1;
+}
+
+void RaindropRenderer::UpdateDirLighting() {
+	for (int i = 0; i < m_DirLights.size(); i++) {
+		FillDirLightIndice(i);
+	}
+
+	m_shader->SetInt("nbrDirLight", m_DirLights.size());
+}
+
+void RaindropRenderer::FillDirLightIndice(int index) {
+	if (index > m_DirLights.size()) {
+		std::cerr << "Can't add this directionnal light : Index out of range." << std::endl;
+		return;
+	}
+	else if (index > 10) {
+		std::cerr << "No more than 10 Directional Lights are supported." << std::endl;
+		return;
+	}
+
+	std::string indexSTR = std::to_string(index);
+
+	m_shader->SetVec3("DirLightDir[" + indexSTR + "]", m_DirLights[index]->GetLightDir());
+	m_shader->SetVec3("DirLightColor[" + indexSTR + "]", m_DirLights[index]->GetLightColor());
+	m_shader->SetFloat("DirLightBrightness[" + indexSTR + "]", m_DirLights[index]->GetBrightness());
 }
 
 void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
@@ -239,4 +269,8 @@ void RaindropRenderer::DisableFeature(RendererFeature ftr) {
 
 bool RaindropRenderer::IsFeatureEnabled(RendererFeature ftr) {
 	return m_features_state[ftr];
+}
+
+float RaindropRenderer::GetFramerate() {
+	return 1 / m_frmLmt->GetElapsedTime();;
 }
