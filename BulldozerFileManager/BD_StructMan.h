@@ -10,6 +10,7 @@
 #endif
 
 #include <vector>
+#include <string>
 
 #include <vec3.h>
 
@@ -25,10 +26,20 @@ struct BULLDOZERFILEMANAGER_API BD_MeshDef {
 	std::vector<int> indices;
 };
 
+struct BULLDOZERFILEMANAGER_API BD_Resolution {
+	int x;
+	int y;
+};
+
 struct BULLDOZERFILEMANAGER_API BD_MatDef {
 	vec3f Color;
 	vec3f SpecularColor;
 	float SpecularExp;
+};
+
+struct BULLDOZERFILEMANAGER_API BD_GameInfo {
+	std::string RootGameContentFolder;
+	std::string RootEngineContentFolder;
 };
 
 enum BULLDOZERFILEMANAGER_API RendererFeature {

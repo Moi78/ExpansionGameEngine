@@ -133,11 +133,11 @@ void RD_Mesh::Bufferize() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, RAWindices.size() * sizeof(unsigned int), &RAWindices[0], GL_STATIC_DRAW);
 
 	//Vertices
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 6 * sizeof(double), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//Normals
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_DOUBLE, GL_FALSE, 6 * sizeof(double), (void*)(3 * sizeof(double)));
 	glEnableVertexAttribArray(1);
 }
 

@@ -15,7 +15,6 @@
 #include <glm/glm.hpp>
 
 #include <string>
-#include <iostream>
 #include <vector>
 
 #include <BD_Reader.h>
@@ -43,11 +42,11 @@ public:
 
 	void UpdateMaterial(BD_MatDef*);
 
-	std::vector<float> RAWvertices;
+	std::vector<double> RAWvertices;
 	std::vector<unsigned int> RAWindices;
-	std::vector<float> RAWnormals;
+	std::vector<double> RAWnormals;
 
-	std::vector<float> MixVertNorm;
+	std::vector<double> MixVertNorm;
 
 	int m_nbr_vertices;
 	

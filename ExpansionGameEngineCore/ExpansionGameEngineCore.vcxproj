@@ -91,11 +91,14 @@
       <PreprocessorDefinitions>_DEBUG;EXPANSIONGAMEENGINECORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\RaindropRenderer;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\PhysicaSound;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\BulldozerFileManager;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\AL\libs\Win64;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -145,6 +148,7 @@
       <PreprocessorDefinitions>NDEBUG;EXPANSIONGAMEENGINECORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\RaindropRenderer;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\PhysicaSound;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\BulldozerFileManager;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,14 +156,20 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\AL\libs\Win64;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="EXP_Component.h" />
+    <ClInclude Include="EXP_Game.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="EXP_Component.cpp" />
+    <ClCompile Include="EXP_Game.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
