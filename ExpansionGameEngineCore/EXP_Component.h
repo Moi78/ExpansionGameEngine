@@ -13,11 +13,19 @@
 
 #include <vec3.h>
 
-class EXP_Component
+class EXPGE_API EXP_Component
 {
 public:
 	EXP_Component(vec3f pos, vec3f rot, vec3f scale);
 	~EXP_Component();
+
+	vec3f GetPosition();
+	vec3f GetRotation();
+	vec3f GetScale();
+
+	void SetPosition(vec3f nPos);
+	void SetRotation(vec3f nRot);
+	void SetScale(vec3f nScale);
 
 private:
 	vec3f m_pos;

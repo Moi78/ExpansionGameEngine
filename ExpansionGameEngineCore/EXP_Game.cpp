@@ -29,3 +29,7 @@ void EXP_Game::LaunchMainLoop() {
 BD_GameInfo EXP_Game::GetGameInfo() {
 	return m_gameinfo;
 }
+
+RaindropRenderer* EXP_Game::GetRenderer() {
+	return m_rndr;
+}

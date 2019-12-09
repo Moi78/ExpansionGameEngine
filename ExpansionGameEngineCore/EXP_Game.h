@@ -11,8 +11,11 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <RaindropRenderer.h>
+#include <RD_Mesh.h>
+#include <RD_PointLight.h>
 
 #include <BD_StructMan.h>
 
@@ -27,6 +30,11 @@ public:
 	void LaunchMainLoop();
 	
 	BD_GameInfo GetGameInfo();
+
+	//For internal usage only
+	void RegisterMesh(RD_Mesh*);
+	void RegisterPointLight(RD_PointLight*);
+	RaindropRenderer* GetRenderer();
 private:
 	void InitGame(BD_Resolution winRes, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo);
 
@@ -37,6 +45,10 @@ private:
 
 	vec3f m_refreshColor;
 	std::string m_gameName;
+
+	//Renderables
+	std::vector<RD_Mesh*> m_staticMeshes;
+	std::vector<RD_PointLight*> m_points_light;
 };
 
 #endif //_EXP_GAME_H__
