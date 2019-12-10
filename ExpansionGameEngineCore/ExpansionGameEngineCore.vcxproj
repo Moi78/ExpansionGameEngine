@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="EXP_Camera.h" />
     <ClInclude Include="EXP_Component.h" />
     <ClInclude Include="EXP_Game.h" />
     <ClInclude Include="EXP_StaticMesh.h" />
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="EXP_Camera.cpp" />
     <ClCompile Include="EXP_Component.cpp" />
     <ClCompile Include="EXP_Game.cpp" />
     <ClCompile Include="EXP_StaticMesh.cpp" />

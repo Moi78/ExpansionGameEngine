@@ -21,6 +21,8 @@ void EXP_StaticMesh::LoadMesh(std::string MeshRef) {
 	if (MeshRefExists(MeshRef)) {
 		m_RawMesh = new RD_Mesh(m_gameinstance->GetRenderer()->GetShader(), m_material, GetPosition(), GetRotation(), GetScale());
 		m_RawMesh->loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef);
+
+		m_gameinstance->RegisterMesh(m_RawMesh);
 	}
 	else {
 		std::cerr << "Can't load mesh " << MeshRef << ". Mesh Reference not found." << std::endl;

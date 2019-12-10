@@ -22,6 +22,10 @@ void EXP_Game::LaunchMainLoop() {
 	while (!m_rndr->WantToClose()) {
 		m_rndr->ClearWindow(m_refreshColor);
 
+		for (int i = 0; i < m_staticMeshes.size(); i++) {
+			m_staticMeshes[i]->render();
+		}
+
 		m_rndr->SwapWindow();
 	}
 }
@@ -32,4 +36,12 @@ BD_GameInfo EXP_Game::GetGameInfo() {
 
 RaindropRenderer* EXP_Game::GetRenderer() {
 	return m_rndr;
+}
+
+void EXP_Game::RegisterMesh(RD_Mesh* mesh) {
+	m_staticMeshes.push_back(mesh);
+}
+
+void EXP_Game::RegisterPointLight(RD_PointLight* ptlight) {
+	m_points_light.push_back(ptlight);
 }

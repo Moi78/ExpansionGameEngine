@@ -16,6 +16,7 @@
 #include <RaindropRenderer.h>
 #include <RD_Mesh.h>
 #include <RD_PointLight.h>
+#include <RD_Camera.h>
 
 #include <BD_StructMan.h>
 
@@ -34,7 +35,10 @@ public:
 	//For internal usage only
 	void RegisterMesh(RD_Mesh*);
 	void RegisterPointLight(RD_PointLight*);
+	void SetCamera(RD_Camera*);
+
 	RaindropRenderer* GetRenderer();
+
 private:
 	void InitGame(BD_Resolution winRes, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo);
 
@@ -49,6 +53,9 @@ private:
 	//Renderables
 	std::vector<RD_Mesh*> m_staticMeshes;
 	std::vector<RD_PointLight*> m_points_light;
+
+	//Render utils
+	RD_Camera* m_ViewCamera;
 };
 
 #endif //_EXP_GAME_H__
