@@ -34,8 +34,8 @@ uniform float specularStrength = 256.0;
 uniform vec3 specularColor = vec3(1.0, 1.0, 1.0);
 
 //Features define
-uniform bool ftr_lighting = false;
-uniform bool ftr_specular = false;
+uniform bool ftr_lighting = true;
+uniform bool ftr_specular = true;
 uniform bool ftr_texture = false;
 uniform bool ftr_ambient = true;
 
@@ -55,7 +55,7 @@ vec3 CalcPointLighting(int lightIndex) {
 	//Specular
 	vec3 specular = vec3(1.0, 1.0, 1.0);
 
-	if(ftr_specular) {
+	if(true) {
 		vec3 reflectDir = reflect(-LightDir, norm);
 
 		float spec = pow(max(0.0, dot(viewDir, reflectDir)), specularStrength);

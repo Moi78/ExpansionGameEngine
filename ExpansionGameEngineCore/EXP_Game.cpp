@@ -26,6 +26,11 @@ void EXP_Game::LaunchMainLoop() {
 			m_staticMeshes[i]->render();
 		}
 
+		if (RENDER_DBG) {
+			m_rndr->RenderDbg();
+		}
+
+		m_rndr->UpdatePointsLighting();
 		m_rndr->SwapWindow();
 	}
 }
@@ -44,4 +49,5 @@ void EXP_Game::RegisterMesh(RD_Mesh* mesh) {
 
 void EXP_Game::RegisterPointLight(RD_PointLight* ptlight) {
 	m_points_light.push_back(ptlight);
+	m_rndr->AppendLight(ptlight);
 }

@@ -16,10 +16,10 @@
 
 #include <vec3.h>
 
-class EXPGE_API EXP_Camera : public EXP_Component, RD_Camera
+class EXPGE_API EXP_Camera : public EXP_Component, public RD_Camera
 {
 public:
-	EXP_Camera();
+	EXP_Camera(EXP_Game* gameinstance, vec3f pos, vec3f rot, vec3f scale, vec3f dir, float FOV, float Near = 0.1f, float Far = 100.0f);
 	~EXP_Camera();
 };
 

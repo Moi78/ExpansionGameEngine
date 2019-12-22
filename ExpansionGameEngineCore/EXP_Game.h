@@ -9,6 +9,12 @@
 #define EXPGE_API __declspec(dllimport)
 #endif
 
+#ifdef _DEBUG
+#define RENDER_DBG true
+#else
+#define RENDER_DBG false
+#endif
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -35,7 +41,6 @@ public:
 	//For internal usage only
 	void RegisterMesh(RD_Mesh*);
 	void RegisterPointLight(RD_PointLight*);
-	void SetCamera(RD_Camera*);
 
 	RaindropRenderer* GetRenderer();
 
@@ -53,9 +58,6 @@ private:
 	//Renderables
 	std::vector<RD_Mesh*> m_staticMeshes;
 	std::vector<RD_PointLight*> m_points_light;
-
-	//Render utils
-	RD_Camera* m_ViewCamera;
 };
 
 #endif //_EXP_GAME_H__

@@ -84,7 +84,7 @@ void RD_Mesh::render(RenderMode rndrMode) {
 }
 
 void RD_Mesh::Bufferize() {
-	std::vector<float> MIXvertNorm;
+	std::vector<double> MIXvertNorm;
 
 	int i = 0;
 	while (i < RAWvertices.size()) {
@@ -127,7 +127,7 @@ void RD_Mesh::Bufferize() {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glBufferData(GL_ARRAY_BUFFER, MIXvertNorm.size() * sizeof(float), &MIXvertNorm[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, MIXvertNorm.size() * sizeof(double), &MIXvertNorm[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, RAWindices.size() * sizeof(unsigned int), &RAWindices[0], GL_STATIC_DRAW);

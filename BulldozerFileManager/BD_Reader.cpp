@@ -28,9 +28,9 @@ void BD_Reader::ReadMSHFile(std::string file) {
 		std::cout << "Error while create filestream to the file \"" << file << "\"." << std::endl;
 	}
 
-	int vSize;
-	int iSize;
-	int nSize;
+	int vSize = 0;
+	int iSize = 0;
+	int nSize = 0;
 
 	//Reading vertices
 	bFile.read(reinterpret_cast<char*>(&vSize), sizeof(int)); //Reading Size

@@ -161,7 +161,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\bin\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ExpansionMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
