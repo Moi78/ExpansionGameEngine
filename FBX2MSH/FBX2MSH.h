@@ -31,12 +31,12 @@ public slots:
 	void Export();
 
 private:
-	void SetupFBXSDK();
-	void QueryIOSettings();
 	void ImportScene();
-	void ExtractDataFromScene();
+	void ExtractDataFromScene(const aiScene*);
 
 	bool CheckSelectedOptions();
+
+	vec3d ToVec3d(aiVector3D);
 
 	Ui::FBX2MSHClass ui;
 };

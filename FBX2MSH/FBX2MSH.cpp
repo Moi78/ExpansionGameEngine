@@ -4,15 +4,6 @@ FBX2MSH::FBX2MSH(QWidget *parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
-	SetupFBXSDK();
-}
-
-void FBX2MSH::SetupFBXSDK() {
-
-}
-
-void FBX2MSH::QueryIOSettings() {
-
 }
 
 void FBX2MSH::ImportScene() {
@@ -21,7 +12,17 @@ void FBX2MSH::ImportScene() {
 	bool file_exists = std::filesystem::exists(std::filesystem::path(filepath));
 
 	if (file_exists) {
-		
+		Assimp::Importer importer;
+
+		const aiScene* scene = importer.ReadFile(filepath, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+
+		if (!scene) {
+			QMessageBox::critical(this, "ERROR", "Cannot import scene. See console for details.");
+			std::cerr << importer.GetErrorString() << std::endl;
+		}
+		else {
+			ExtractDataFromScene(scene);
+		}
 	}
 	else {
 		QMessageBox::critical(this, "ERROR", "File \"" + ui.filepath->text() + "\" not found.");
@@ -68,6 +69,45 @@ bool FBX2MSH::CheckSelectedOptions() {
 	return true;
 }
 
-void FBX2MSH::ExtractDataFromScene() {
-	
+void FBX2MSH::ExtractDataFromScene(const aiScene* scene) {
+	if (!scene->HasMeshes()) {
+		QMessageBox::critical(this, "ERROR", "This scene doesn't have any mesh, can't convert it to msh.");
+		return;
+	}
+
+	BD_Writer* writer = new BD_Writer();
+
+	for (int i = 0; i < scene->mNumMeshes; i++) {
+		if (!scene->mMeshes[i]->HasNormals() && !scene->mMeshes[i]->HasFaces()) {
+			QMessageBox::critical(this, "ERROR", "This mesh has no normals or no faces, it is unusable with Expansion Game Engine");
+			return;
+		}
+
+		//Vertices
+		for (int v = 0; v < scene->mMeshes[i]->mNumVertices; v++) {
+			writer->AppendVertex(vec3d(ToVec3d(scene->mMeshes[i]->mVertices[v])));
+		}
+
+		//Indices
+		for (int ind = 0; ind < scene->mMeshes[i]->mNumFaces; ind++) {
+			writer->AppendIndices(scene->mMeshes[i]->mFaces[ind].mIndices[0]);
+			writer->AppendIndices(scene->mMeshes[i]->mFaces[ind].mIndices[1]);
+			writer->AppendIndices(scene->mMeshes[i]->mFaces[ind].mIndices[2]);
+		}
+
+		//Normals
+		for (int n = 0; n < scene->mMeshes[i]->mNumVertices; n++) {
+			writer->AppendNormal(vec3d(ToVec3d(scene->mMeshes[i]->mNormals[n])));
+		}
+
+		std::string outpath = ui.outpath->text().toUtf8().constData() + std::string("/");
+		std::string base_filename = ui.filname->text().toUtf8().constData();
+		std::string filename = base_filename + "_" + scene->mMeshes[i]->mName.C_Str();
+
+		writer->ToBinary(outpath, filename);
+	}
+}
+
+vec3d FBX2MSH::ToVec3d(aiVector3D vec) {
+	return vec3d(vec.x, vec.y, vec.z);
 }

@@ -74,7 +74,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;assimp-vc142-mt.lib;IrrXML.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -91,7 +91,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\ASSIMP\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;assimp-vc142-mt.lib;IrrXML.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
