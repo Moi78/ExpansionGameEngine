@@ -28,9 +28,9 @@ int main(int argc, char* argv[]) {
 	mat_cadeauRuban.SpecularExp = 32.0f;
 
 	//EXP_StaticMesh* cadeauBase = new EXP_StaticMesh(game, "/Cadeau/CadeauBase.msh", mat_cadeauBase, vec3f(), vec3f(0.0f, 0.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
-	EXP_StaticMesh* cadeauRuban = new EXP_StaticMesh(game, "/cylinder.msh", mat_cadeauRuban, vec3f(), vec3f(), vec3f(0.5f, 0.5f, 0.5f));
+	EXP_StaticMesh* cadeauRuban = new EXP_StaticMesh(game, "/Cadeau/CadeauBase.msh", mat_cadeauRuban, vec3f(), vec3f(), vec3f(0.5f, 0.5f, 0.5f));
 
-	EXP_PointLight* testLight = new EXP_PointLight(game, vec3f(-1.0f, 0.0f, 3.5f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 15.0f);
+	EXP_PointLight* testLight = new EXP_PointLight(game, vec3f(-1.0f, 0.0f, 2.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 15.0f);
 
 	EXP_Camera* cam = new EXP_Camera(game, vec3f(-4.0f, 0.0f, 2.0f), vec3f(), vec3f(), vec3f(), 60.0f);
 	cam->UseCamera();

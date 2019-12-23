@@ -24,7 +24,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName) : m_hei
 	BD_MatDef mdef = {};
 	mdef.Color = vec3f(1.0f, 1.0f, 1.0f);
 
-	RD_Mesh* lmsh = new RD_Mesh(m_shader, mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
+	RD_Mesh* lmsh = new RD_Mesh(m_LightShader, mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
 	lmsh->loadMesh("Engine/Meshes/Light.msh");
 
 	m_DBG_light_mdl = lmsh;
@@ -33,6 +33,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName) : m_hei
 	ambientColor = vec3f(1.0f, 1.0f, 1.0f);
 
 	UpdateAmbientLighting();
+
+	m_gview_shader_in_use = true;
+	m_CurrentShader = shader;
 }
 
 RaindropRenderer::~RaindropRenderer() {
@@ -146,6 +149,8 @@ void RaindropRenderer::UpdateAmbientLighting() {
 }
 
 int RaindropRenderer::AppendLight(RD_PointLight* ptLight) {
+	std::cout << "Registering light color : " << ptLight->GetColor().getX() << " " << ptLight->GetColor().getY() << " " << ptLight->GetColor().getZ() << " brightness : " << ptLight->GetBrightness() << std::endl;
+
 	m_pt_lights.push_back(ptLight);
 
 	int lightIndex = std::size(m_pt_lights);
@@ -189,15 +194,20 @@ void RaindropRenderer::FillDirLightIndice(int index) {
 }
 
 void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
-	shader->useShader();
+	m_CurrentShader = shader;
 }
 
 void RaindropRenderer::RenderDbg() {
-	//SwitchShader(m_LightShader);
+	SwitchShader(m_LightShader);
+
 	for (int i = 0; i < m_pt_lights.size(); i++) {
 		m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
 		m_DBG_light_mdl->render(RenderMode::Wireframe);
+
+		DBG_GetLightShader()->SetVec3("lightColor" ,m_pt_lights[i]->GetColor());
 	}
+
+	SwitchShader(m_shader);
 }
 
 void RaindropRenderer::UpdatePointsLighting() {
@@ -273,4 +283,16 @@ bool RaindropRenderer::IsFeatureEnabled(RendererFeature ftr) {
 
 float RaindropRenderer::GetFramerate() {
 	return 1 / m_frmLmt->GetElapsedTime();;
+}
+
+RD_ShaderLoader* RaindropRenderer::DBG_GetGameViewShader() {
+	return m_shader;
+}
+
+RD_ShaderLoader* RaindropRenderer::DBG_GetLightShader() {
+	return m_LightShader;
+}
+
+RD_ShaderLoader* RaindropRenderer::GetCurrentShader() {
+	return m_CurrentShader;
 }

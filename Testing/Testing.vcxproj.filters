@@ -22,5 +22,7 @@
   <ItemGroup>
     <None Include="Engine\Shaders\GameView.frag" />
     <None Include="Engine\Shaders\GameView.vert" />
+    <None Include="Engine\Shaders\Lights.frag" />
+    <None Include="Engine\Shaders\Lights.vert" />
   </ItemGroup>
 </Project>

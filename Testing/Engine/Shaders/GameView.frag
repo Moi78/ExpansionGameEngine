@@ -113,4 +113,5 @@ void main()
 	vec3 result = BaseColor * (diffSpec + ambient);
 
     FragColor = vec4(result, 1.0);
+	//FragColor = vec4(Normal, 1.0);
 }

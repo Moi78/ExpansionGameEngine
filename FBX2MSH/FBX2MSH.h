@@ -10,9 +10,9 @@
 #include <filesystem>
 #include <vector>
 
-#include <fbxsdk.h>
-#include <fbxsdk/fileio/fbxiosettings.h>
-#include <fbxsdk/fbxsdk_version.h>
+#include <assimp/scene.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 
 #include <vec3.h>
 #include <BulldozerFileManager.h>
@@ -34,16 +34,9 @@ private:
 	void SetupFBXSDK();
 	void QueryIOSettings();
 	void ImportScene();
-	void ExtractDataFromScene(FbxScene*);
-
-	vec3d ToVec3(FbxVector4*);
+	void ExtractDataFromScene();
 
 	bool CheckSelectedOptions();
-
-	//FBX SDK
-	FbxManager* m_fbxmanager;
-	FbxIOSettings* m_iosettings;
-	FbxImporter* m_importer;
 
 	Ui::FBX2MSHClass ui;
 };

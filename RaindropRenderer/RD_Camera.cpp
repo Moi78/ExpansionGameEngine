@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "RD_Camera.h"
 
-RD_Camera::RD_Camera(RD_ShaderLoader* shader, RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f lookingAt) {
-	m_shader = shader; //Define shader in use
+RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f lookingAt) {
 	m_rndr = rndr; //Attach to renderer;
 
 	m_pos = position; //Camera position
@@ -28,22 +27,22 @@ void RD_Camera::SetupCamera() {
 
 	view = glm::lookAt(glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()), glm::vec3(m_subject.getX(), m_subject.getY(), m_subject.getZ()), glm::vec3(0.0f, 0.0f, 1.0f)); //View matrix
 
-	m_shader->SetMatrix("projection", projection);
-	m_shader->SetMatrix("view", view);
-	m_shader->SetVec3("CamPos", m_pos);
+	m_rndr->GetCurrentShader()->SetMatrix("projection", projection);
+	m_rndr->GetCurrentShader()->SetMatrix("view", view);
+	m_rndr->GetCurrentShader()->SetVec3("CamPos", m_pos);
 }
 
 void RD_Camera::UseCamera() {
-	m_shader->SetMatrix("projection", projection);
-	m_shader->SetMatrix("view", view);
-	m_shader->SetVec3("CamPos", m_pos);
+	m_rndr->GetCurrentShader()->SetMatrix("projection", projection);
+	m_rndr->GetCurrentShader()->SetMatrix("view", view);
+	m_rndr->GetCurrentShader()->SetVec3("CamPos", m_pos);
 }
 
 void RD_Camera::UpdateCamera() {
 	SetupCamera();
-	m_shader->SetMatrix("projection", projection);
-	m_shader->SetMatrix("view", view);
-	m_shader->SetVec3("CamPos", m_pos);
+	m_rndr->GetCurrentShader()->SetMatrix("projection", projection);
+	m_rndr->GetCurrentShader()->SetMatrix("view", view);
+	m_rndr->GetCurrentShader()->SetVec3("CamPos", m_pos);
 }
 
 void RD_Camera::SetPosition(vec3f position) {

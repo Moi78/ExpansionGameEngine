@@ -54,8 +54,11 @@ public:
 	int AppendLight(RD_PointLight* ptLight);
 	int AppendDirLight(RD_DirLight* dirLight);
 
-	//Misc
+	//Shading
 	void SwitchShader(RD_ShaderLoader*);
+	RD_ShaderLoader* DBG_GetLightShader();
+	RD_ShaderLoader* DBG_GetGameViewShader();
+	RD_ShaderLoader* GetCurrentShader();
 
 	//Debug
 	void RenderDbg();
@@ -87,6 +90,9 @@ private:
 
 	RD_ShaderLoader* m_shader;
 	RD_ShaderLoader* m_LightShader;
+
+	RD_ShaderLoader* m_CurrentShader;
+	bool m_gview_shader_in_use;
 
 	std::string m_features_string[3];
 	bool m_features_state[3];

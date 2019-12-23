@@ -23,7 +23,7 @@
 class RAINDROPRENDERER_API RD_Camera
 {
 public:
-	RD_Camera(RD_ShaderLoader* shader, RaindropRenderer* rndr , float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f lookingAt);
+	RD_Camera(RaindropRenderer* rndr , float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f lookingAt);
 	~RD_Camera();
 
 	void UseCamera();
@@ -43,7 +43,6 @@ private:
 	glm::mat4 projection;
 	glm::mat4 view;
 
-	RD_ShaderLoader* m_shader;
 	RaindropRenderer* m_rndr;
 
 	float FOV;

@@ -93,6 +93,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\RaindropRenderer;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\PhysicaSound;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\BulldozerFileManager;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

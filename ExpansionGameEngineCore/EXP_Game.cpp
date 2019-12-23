@@ -22,15 +22,14 @@ void EXP_Game::LaunchMainLoop() {
 	while (!m_rndr->WantToClose()) {
 		m_rndr->ClearWindow(m_refreshColor);
 
-		for (int i = 0; i < m_staticMeshes.size(); i++) {
-			m_staticMeshes[i]->render();
+		for (auto mesh : m_staticMeshes) {
+			mesh->render();
 		}
 
 		if (RENDER_DBG) {
 			m_rndr->RenderDbg();
 		}
 
-		m_rndr->UpdatePointsLighting();
 		m_rndr->SwapWindow();
 	}
 }
@@ -50,4 +49,12 @@ void EXP_Game::RegisterMesh(RD_Mesh* mesh) {
 void EXP_Game::RegisterPointLight(RD_PointLight* ptlight) {
 	m_points_light.push_back(ptlight);
 	m_rndr->AppendLight(ptlight);
+}
+
+vec3f EXP_Game::GetRefreshColor() {
+	return m_refreshColor;
+}
+
+std::vector<RD_Mesh*> EXP_Game::GetStaticMeshes() {
+	return m_staticMeshes;
 }
