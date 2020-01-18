@@ -49,11 +49,10 @@ public:
 	vec3f GetRefreshColor();
 	std::vector<RD_Mesh*> GetStaticMeshes();
 
+	void MainLoop();
+
 private:
 	void InitGame(BD_Resolution winRes, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo);
-
-	//Pipeline
-	static void RenderImage(EXP_Game* game);
 
 	RaindropRenderer* m_rndr;
 

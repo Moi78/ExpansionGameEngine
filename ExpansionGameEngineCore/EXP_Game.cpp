@@ -18,20 +18,18 @@ void EXP_Game::InitGame(BD_Resolution res, vec3f refreshColor, std::string gameN
 	m_rndr = new RaindropRenderer(res.x, res.y, gameName);
 }
 
-void EXP_Game::LaunchMainLoop() {
-	while (!m_rndr->WantToClose()) {
-		m_rndr->ClearWindow(m_refreshColor);
+void EXP_Game::MainLoop() {
+	m_rndr->ClearWindow(m_refreshColor);
 
-		for (auto mesh : m_staticMeshes) {
-			mesh->render();
-		}
-
-		if (RENDER_DBG) {
-			m_rndr->RenderDbg();
-		}
-
-		m_rndr->SwapWindow();
+	for (auto mesh : m_staticMeshes) {
+		mesh->render();
 	}
+
+	if (RENDER_DBG) {
+		m_rndr->RenderDbg();
+	}
+
+	m_rndr->SwapWindow();
 }
 
 BD_GameInfo EXP_Game::GetGameInfo() {

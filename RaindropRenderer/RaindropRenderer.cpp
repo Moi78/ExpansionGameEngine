@@ -23,8 +23,10 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName) : m_hei
 
 	BD_MatDef mdef = {};
 	mdef.Color = vec3f(1.0f, 1.0f, 1.0f);
+	mdef.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	mdef.SpecularExp = 2.0f;
 
-	RD_Mesh* lmsh = new RD_Mesh(m_LightShader, mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
+	RD_Mesh* lmsh = new RD_Mesh(m_shader, mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.2f, 0.2f, 0.2f));
 	lmsh->loadMesh("Engine/Meshes/Light.msh");
 
 	m_DBG_light_mdl = lmsh;
@@ -195,19 +197,24 @@ void RaindropRenderer::FillDirLightIndice(int index) {
 
 void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
 	m_CurrentShader = shader;
+	m_CurrentShader->useShader();
 }
 
 void RaindropRenderer::RenderDbg() {
-	SwitchShader(m_LightShader);
+	DisableFeature(RendererFeature::Lighting);
+
+	BD_MatDef mdef = {};
+	mdef.Color = vec3f();
 
 	for (int i = 0; i < m_pt_lights.size(); i++) {
-		m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
-		m_DBG_light_mdl->render(RenderMode::Wireframe);
+		mdef.Color = m_pt_lights[i]->GetColor();
 
-		DBG_GetLightShader()->SetVec3("lightColor" ,m_pt_lights[i]->GetColor());
+		m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
+		m_DBG_light_mdl->UpdateMaterial(&mdef);
+		m_DBG_light_mdl->render(RenderMode::Wireframe);
 	}
 
-	SwitchShader(m_shader);
+	EnableFeature(RendererFeature::Lighting);
 }
 
 void RaindropRenderer::UpdatePointsLighting() {
