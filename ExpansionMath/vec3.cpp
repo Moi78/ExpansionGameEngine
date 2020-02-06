@@ -247,3 +247,12 @@ float vec3d::dotProduct(vec3d a)
     
     return result;
 }
+
+std::string vec3f::ConvertToParserFormat(std::string prefix) {
+    std::string str;
+    str += "x_" + prefix + ":" + std::to_string(m_x) + ";";
+    str += "y_" + prefix + ":" + std::to_string(m_y) + ";";
+    str += "z_" + prefix + ":" + std::to_string(m_z) + ";";
+
+    return str;
+}

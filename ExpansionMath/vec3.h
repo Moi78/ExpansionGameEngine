@@ -10,6 +10,7 @@
 #endif
 
 #include <valarray>
+#include <string>
 
 class EXPANSIONMATH_API vec3f {
 public:
@@ -28,12 +29,14 @@ public:
     
     float dotProduct(vec3f a);
     
+    std::string ConvertToParserFormat(std::string prefix);
+    
     bool operator==(vec3f const& a);
     bool operator!=(vec3f const& a);
     
     vec3f operator+(vec3f const& a);
     vec3f operator-(vec3f const& a);
-    
+
 private:
     float m_x;
     float m_y;

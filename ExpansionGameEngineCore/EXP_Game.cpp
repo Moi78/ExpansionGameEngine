@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "EXP_Game.h"
 
+#include "EXP_Actor.h"
+
 EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, std::string gameName) {
 	InitGame(res, refreshColor, gameName, gameinfo);
 }

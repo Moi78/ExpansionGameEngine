@@ -50,4 +50,25 @@ enum class BULLDOZERFILEMANAGER_API RenderMode {
 	Wireframe, Filled
 };
 
+enum class BULLDOZERFILEMANAGER_API BD_ComponentType {
+	POINTLIGHT,
+	STATIC_MESH,
+	CAMERA
+};
+
+struct BULLDOZERFILEMANAGER_API BD_ComponentReference {
+	BD_ComponentType type;
+	std::string label;
+
+	unsigned int actor_component_index;
+
+	vec3f loc_pos;
+	vec3f loc_rot;
+	vec3f loc_scale;
+
+	std::string args;
+
+	bool isRoot;
+};
+
 #endif // _BD_STRUCT_MAN_H__

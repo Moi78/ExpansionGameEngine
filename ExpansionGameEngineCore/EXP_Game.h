@@ -31,6 +31,8 @@
 
 #include <vec3.h>
 
+class EXP_Actor;
+
 class EXPGE_API EXP_Game
 {
 public:

@@ -8,6 +8,8 @@
 #include <vec3.h>
 #include <BD_StructMan.h>
 
+#include <BD_ActorRW.h>
+
 int main(int argc, char* argv[]) {
 	BD_GameInfo gi = {};
 	gi.RootEngineContentFolder = "Engine";
@@ -45,7 +47,7 @@ int main(int argc, char* argv[]) {
 	EXP_StaticMesh* canon = new EXP_StaticMesh(game, "/canon.msh", mat_canon, vec3f(-0.5f, -0.5f, 0.7f), vec3f(-190.0f, 30.0f, 0.0f), vec3f(0.2f, 0.2f, 0.2f));
 
 	EXP_PointLight* testLight = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 2.0f), vec3f(), vec3f(), vec3f(1.0f, 0.0f, 1.0f), 1.0f);
-	EXP_PointLight* testLight2 = new EXP_PointLight(game, vec3f(-2.5f, 0.0f, 2.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 1.0f), 1.5f);
+	EXP_PointLight* testLight2 = new EXP_PointLight(game, vec3f(-2.0f, 0.0f, 0.5f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 1.0f), 3.5f);
 	EXP_PointLight* testLight3 = new EXP_PointLight(game, vec3f(2.5f, 0.0f, 0.5f), vec3f(), vec3f(), vec3f(1.0f, 0.0f, 0.0f), 1.5f);
 
 	EXP_PointLight* testLight4 = new EXP_PointLight(game, vec3f(0.0f, 2.5f, 2.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 0.0f), 1.5f);
@@ -53,8 +55,6 @@ int main(int argc, char* argv[]) {
 
 	EXP_Camera* cam = new EXP_Camera(game, vec3f(-4.0f, 0.0f, 2.0f), vec3f(), vec3f(), vec3f(), 60.0f);
 	cam->UseCamera();
-
-
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->MainLoop();

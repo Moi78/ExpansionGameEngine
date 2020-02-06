@@ -39,7 +39,7 @@
     <ClInclude Include="BD_Writer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="BD_GenericBinRW.h">
+    <ClInclude Include="BD_ActorRW.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,7 +62,7 @@
     <ClCompile Include="BD_Writer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="BD_GenericBinRW.cpp">
+    <ClCompile Include="BD_ActorRW.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
