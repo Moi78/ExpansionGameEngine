@@ -14,10 +14,17 @@
 #include "EXP_StaticMesh.h"
 
 #include "BD_StructMan.h"
+#include "BD_ActorRW.h"
+
+#ifdef EXPANSIONGAMEENGINECORE_EXPORTS
+#define EXPGE_API __declspec(dllexport)
+#else
+#define EXPGE_API __declspec(dllimport)
+#endif
 
 class EXP_Game;
 
-class EXP_Actor
+class EXPGE_API EXP_Actor
 {
 public:
 	EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::string actordef_path);
@@ -28,6 +35,8 @@ public:
 	vec3f GetWorldScale();
 private:
 	EXP_Game* m_game;
+
+	void LoadDef(std::string actordef);
 
 	vec3f m_pos;
 	vec3f m_rot;

@@ -96,6 +96,12 @@ BD_ActorReader::~BD_ActorReader() {
 }
 
 void BD_ActorReader::ReadActorDefinitionFile(std::string filepath) {
+	if (!std::filesystem::exists(std::filesystem::path(filepath))) {
+		std::cerr << "The file " << filepath << " does not exist." << std::endl;
+		dispErrorMessageBox(TEXT("One file doesn't exists. See console for details."));
+		return;
+	}
+
 	std::ifstream file;
 	file.open(filepath.c_str());
 

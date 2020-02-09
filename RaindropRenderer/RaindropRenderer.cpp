@@ -73,6 +73,14 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glEnable(GL_DEPTH_TEST);
 }
 
+void RaindropRenderer::MinInit() {
+	initGlad();
+
+	glViewport(0, 0, m_width, m_height);
+
+	glEnable(GL_DEPTH_TEST);
+}
+
 void glfwWinCallback(GLFWwindow* win, int w, int h) {
 	glViewport(0, 0, w, h);
 }

@@ -176,6 +176,10 @@ vec3f vec3f::operator-(const vec3f& a)
     return vec3f(m_x - a.m_x, m_y - a.m_y, m_z + a.m_z);
 }
 
+vec3f vec3f::operator*(vec3f const& a) {
+    return vec3f(m_x * a.m_x, m_y * a.m_y, m_x * a.m_z);
+}
+
 //Int
 bool vec3i::operator==(const vec3i& a)
 {

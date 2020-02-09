@@ -96,6 +96,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\PA112RSER\inc;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,6 +154,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\PA112RSER\inc;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -170,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="BD_ActorRW.h" />
     <ClInclude Include="BD_Import.h" />
+    <ClInclude Include="BD_MatRW.h" />
     <ClInclude Include="BD_Reader.h" />
     <ClInclude Include="BD_StructMan.h" />
     <ClInclude Include="BD_Writer.h" />
@@ -180,6 +183,7 @@
   <ItemGroup>
     <ClCompile Include="BD_ActorRW.cpp" />
     <ClCompile Include="BD_Import.cpp" />
+    <ClCompile Include="BD_MatRW.cpp" />
     <ClCompile Include="BD_Reader.cpp" />
     <ClCompile Include="BD_Writer.cpp" />
     <ClCompile Include="BulldozerFileManager.cpp" />

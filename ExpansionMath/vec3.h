@@ -37,6 +37,8 @@ public:
     vec3f operator+(vec3f const& a);
     vec3f operator-(vec3f const& a);
 
+    vec3f operator*(vec3f const& a);
+
 private:
     float m_x;
     float m_y;

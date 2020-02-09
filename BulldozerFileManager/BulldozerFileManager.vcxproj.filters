@@ -42,6 +42,9 @@
     <ClInclude Include="BD_ActorRW.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="BD_MatRW.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BulldozerFileManager.cpp">
@@ -63,6 +66,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="BD_ActorRW.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="BD_MatRW.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

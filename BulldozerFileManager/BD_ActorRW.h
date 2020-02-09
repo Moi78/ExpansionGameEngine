@@ -13,6 +13,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <filesystem>
 
 #include "BD_StructMan.h"
 #include "BulldozerFileManager.h"

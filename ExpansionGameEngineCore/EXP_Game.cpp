@@ -5,6 +5,11 @@
 
 EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, std::string gameName) {
 	InitGame(res, refreshColor, gameName, gameinfo);
+
+	m_def_mat = {};
+	m_def_mat.Color = vec3f(1.0f, 1.0f, 1.0f);
+	m_def_mat.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	m_def_mat.SpecularExp = 16.0f;
 }
 
 EXP_Game::~EXP_Game() {
@@ -57,4 +62,8 @@ vec3f EXP_Game::GetRefreshColor() {
 
 std::vector<RD_Mesh*> EXP_Game::GetStaticMeshes() {
 	return m_staticMeshes;
+}
+
+BD_MatDef EXP_Game::GetDefaultMaterial() {
+	return m_def_mat;
 }

@@ -38,8 +38,6 @@ class EXPGE_API EXP_Game
 public:
 	EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, std::string gameName);
 	~EXP_Game();
-
-	void LaunchMainLoop();
 	
 	BD_GameInfo GetGameInfo();
 
@@ -50,6 +48,8 @@ public:
 	RaindropRenderer* GetRenderer();
 	vec3f GetRefreshColor();
 	std::vector<RD_Mesh*> GetStaticMeshes();
+
+	BD_MatDef GetDefaultMaterial();
 
 	void MainLoop();
 
@@ -63,6 +63,8 @@ private:
 
 	vec3f m_refreshColor;
 	std::string m_gameName;
+
+	BD_MatDef m_def_mat;
 
 	//Renderables
 	std::vector<RD_Mesh*> m_staticMeshes;

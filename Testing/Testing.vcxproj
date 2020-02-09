@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CubeLight.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +143,9 @@
     <None Include="Engine\Shaders\GameView.vert" />
     <None Include="Engine\Shaders\Lights.frag" />
     <None Include="Engine\Shaders\Lights.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CubeLight.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

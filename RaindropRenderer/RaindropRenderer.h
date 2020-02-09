@@ -34,6 +34,7 @@ public:
 	~RaindropRenderer();
 
 	void initGlad();
+	void MinInit();
 
 	void initWindow(int w, int h, std::string name);
 	void ClearWindow(vec3f refreshColor);
