@@ -59,5 +59,9 @@ int main(int argc, char* argv[]) {
 
 	CubeLight* cl = new CubeLight(game, vec3f(0.0f, 0.0f, 1.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
 
+	while (!game->GetRenderer()->WantToClose()) {
+		game->MainLoop();
+	}
+
 	return 0;
 }
