@@ -67,3 +67,14 @@ std::vector<RD_Mesh*> EXP_Game::GetStaticMeshes() {
 BD_MatDef EXP_Game::GetDefaultMaterial() {
 	return m_def_mat;
 }
+
+BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
+	std::string fullpath = m_gameinfo.RootGameContentFolder + ref + ".exmtl";
+
+	BD_MatRead* mr = new BD_MatRead();
+	BD_MatDef mat = mr->ReadMaterialFromFile(fullpath);
+
+	delete mr;
+
+	return mat;
+}

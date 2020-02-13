@@ -64,7 +64,7 @@ void MaterialEditor::SaveMaterial() {
 	mdef.SpecularColor = vec3f(ui.sred->value(), ui.sgreen->value(), ui.sblue->value());
 	mdef.SpecularExp = ui.sexp->value();
 
-	QString saveloc = QFileDialog::getSaveFileName(this, "Select save destination", NULL, "*.exmdl");
+	QString saveloc = QFileDialog::getSaveFileName(this, "Select save destination", NULL, "*.exmtl");
 
 	if (saveloc == "") {
 		delete mw;

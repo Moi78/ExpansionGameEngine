@@ -222,6 +222,10 @@ vec3d vec3d::operator-(const vec3d& a)
     return vec3d(m_x - a.m_x, m_y - a.m_y, m_z + a.m_z);
 }
 
+vec3d vec3d::operator*(vec3d const& a) {
+    return vec3d(m_x * a.m_x, m_y * a.m_y, m_x * a.m_z);
+}
+
 float vec3f::dotProduct(vec3f a)
 {
     std::valarray<float> fa = {m_x, m_y, m_z};

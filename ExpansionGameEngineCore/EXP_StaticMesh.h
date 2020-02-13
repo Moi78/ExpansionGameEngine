@@ -32,6 +32,8 @@ public:
 	bool MeshRefExists(std::string MeshRef);
 	void LoadMesh(std::string MeshRef);
 
+	void Update();
+
 private:
 	RD_Mesh* m_RawMesh;
 	BD_MatDef m_material;

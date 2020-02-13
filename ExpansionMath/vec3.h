@@ -94,6 +94,8 @@ public:
     
     vec3d operator+(vec3d const& a);
     vec3d operator-(vec3d const& a);
+
+    vec3d operator*(vec3d const& a);
     
 private:
     double m_x, m_y, m_z;

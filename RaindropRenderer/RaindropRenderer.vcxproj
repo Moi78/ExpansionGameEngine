@@ -91,15 +91,15 @@
       <PreprocessorDefinitions>_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\BulldozerFileManager;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\lib\vs2015\x64\release;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
@@ -152,7 +152,7 @@
       <PreprocessorDefinitions>NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\BulldozerFileManager;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\include;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
@@ -161,8 +161,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\FBX SDK\2019.0\lib\vs2015\x64\release;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\libs\GL\lib;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>

@@ -100,7 +100,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\libs\Win64;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rser.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rserd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

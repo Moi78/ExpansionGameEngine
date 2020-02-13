@@ -52,7 +52,13 @@ void EXP_Actor::LoadDef(std::string def) {
 				return;
 			}
 
-			EXP_StaticMesh* msh = new EXP_StaticMesh(m_game, mshref, m_game->GetDefaultMaterial(), buffer.loc_pos + GetWorldPos(), buffer.loc_rot + GetWorldRot(), buffer.loc_scale * GetWorldScale());
+			BD_MatDef mat = m_game->GetDefaultMaterial();
+
+			if (args_r->GetFromKey("mat_ref") != "") {
+				mat = m_game->FetchMaterialFromFile(args_r->GetFromKey("mat_ref"));
+			}
+
+			EXP_StaticMesh* msh = new EXP_StaticMesh(m_game, mshref, mat, buffer.loc_pos + GetWorldPos(), buffer.loc_rot + GetWorldRot(), buffer.loc_scale * GetWorldScale());
 
 			buffer.actor_component_index = m_comp_meshes.size();
 

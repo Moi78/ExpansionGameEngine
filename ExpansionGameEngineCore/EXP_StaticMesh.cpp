@@ -14,17 +14,23 @@ RD_Mesh* EXP_StaticMesh::GetRawMeshData() {
 }
 
 bool EXP_StaticMesh::MeshRefExists(std::string MeshRef) {
-	return std::filesystem::exists(std::filesystem::path(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef));
+	return std::filesystem::exists(std::filesystem::path(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh"));
 }
 
 void EXP_StaticMesh::LoadMesh(std::string MeshRef) {
 	if (MeshRefExists(MeshRef)) {
 		m_RawMesh = new RD_Mesh(m_gameinstance->GetRenderer()->GetShader(), m_material, GetPosition(), GetRotation(), GetScale());
-		m_RawMesh->loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef);
+		m_RawMesh->loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh");
 
 		m_gameinstance->RegisterMesh(m_RawMesh);
 	}
 	else {
 		std::cerr << "Can't load mesh " << MeshRef << ". Mesh Reference not found." << std::endl;
 	}
+}
+
+void EXP_StaticMesh::Update() {
+	m_RawMesh->SetPosition(GetPosition());
+	m_RawMesh->SetRotation(GetRotation());
+	m_RawMesh->SetScale(GetScale());
 }

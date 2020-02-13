@@ -28,6 +28,7 @@
 #include <RD_Camera.h>
 
 #include <BD_StructMan.h>
+#include <BD_MatRW.h>
 
 #include <vec3.h>
 
@@ -52,6 +53,8 @@ public:
 	BD_MatDef GetDefaultMaterial();
 
 	void MainLoop();
+
+	BD_MatDef FetchMaterialFromFile(std::string fileref);
 
 private:
 	void InitGame(BD_Resolution winRes, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo);
