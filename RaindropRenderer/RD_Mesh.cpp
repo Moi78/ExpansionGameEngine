@@ -57,7 +57,7 @@ void RD_Mesh::render(RenderMode rndrMode) {
 	//m_shader->useShader();
 	m_mat->BindMaterial();
 
-	glm::mat4 mdl = glm::mat4(1.0f);
+	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
 
 	glm::mat4 translate = glm::mat4(1.0f);
 	glm::mat4 scale = glm::mat4(1.0f);

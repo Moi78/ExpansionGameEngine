@@ -6,8 +6,9 @@
 #include <EXP_PointLight.h>
 
 #include <vec3.h>
+
 #include <BD_StructMan.h>
-#include <BD_MatRW.h>
+#include <BD_ActorRW.h>
 
 int main(int argc, char* argv[]) {
 	BD_GameInfo gi = {};
@@ -18,24 +19,14 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.2f);
 
-	EXP_StaticMesh* lame = new EXP_StaticMesh(game, "/epee/epee_lame", game->FetchMaterialFromFile("/epee/lame"), vec3f(0.0f, 0.0f, 1.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.15f, 0.5f, 1.5f));
+	EXP_PointLight* light = new EXP_PointLight(game, vec3f(-2.0f, 0.0f, 0.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 8.0f);
 
-	EXP_StaticMesh* manche = new EXP_StaticMesh(game, "/epee/epee_manche", game->FetchMaterialFromFile("/epee/manche"), vec3f(0.0f, 0.0f, -0.5f), vec3f(90.0f, 0.0f, 0.0f), vec3f(0.003f, 0.0015f, 0.003f));
-
-	EXP_PointLight* light = new EXP_PointLight(game, vec3f(-3.0f, 0.0f, 0.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 4.0f);
-
-	EXP_Camera* cam = new EXP_Camera(game, vec3f(-6.0f, 0.0f, 2.0f), vec3f(), vec3f(), vec3f(), 60.0f);
+	EXP_Camera* cam = new EXP_Camera(game, vec3f(-8.0f, 0.0f, 3.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
 	cam->UseCamera();
 
 	while (!game->GetRenderer()->WantToClose()) {
 		cam->UpdateCamera();
 		game->MainLoop();
-
-		lame->SetRotation(lame->GetRotation() + vec3f(0.0f, 0.0f, 2.0f));
-		lame->Update();
-
-		manche->SetRotation(manche->GetRotation() + vec3f(0.0f, 2.0f, 0.0f));
-		manche->Update();
 	}
 
 	return 0;

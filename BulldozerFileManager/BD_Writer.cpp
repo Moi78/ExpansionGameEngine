@@ -69,3 +69,10 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 
 	bFile.close();
 }
+
+void BD_Writer::ClearWriter() {
+	m_indices.clear();
+	m_vertices.clear();
+	m_normals.clear();
+	m_uv_coord.clear();
+}

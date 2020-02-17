@@ -105,6 +105,7 @@ void FBX2MSH::ExtractDataFromScene(const aiScene* scene) {
 		std::string filename = base_filename + "_" + scene->mMeshes[i]->mName.C_Str();
 
 		writer->ToBinary(outpath, filename);
+		writer->ClearWriter();
 	}
 }
 

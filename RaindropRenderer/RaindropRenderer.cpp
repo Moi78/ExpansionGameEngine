@@ -71,7 +71,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glfwSetFramebufferSizeCallback(win, glfwWinCallback);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_ARB_gpu_shader_fp64);
+	glEnable(GL_ARB_debug_output);
 }
 
 void RaindropRenderer::MinInit() {

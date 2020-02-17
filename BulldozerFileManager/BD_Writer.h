@@ -31,6 +31,8 @@ public:
 
 	void ToBinary(std::string filepath, std::string filename);
 
+	void ClearWriter();
+
 private:
 	std::vector<vec3d> m_vertices;
 	std::vector<int> m_indices;
