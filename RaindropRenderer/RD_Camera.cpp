@@ -45,7 +45,7 @@ void RD_Camera::UpdateCamera() {
 	m_rndr->GetCurrentShader()->SetVec3("CamPos", m_pos);
 }
 
-void RD_Camera::SetPosition(vec3f position) {
+void RD_Camera::SetLocation(vec3f position) {
 	view = glm::lookAt(glm::vec3(position.getX(), position.getY(), position.getZ()), glm::vec3(m_subject.getX(), m_subject.getY(), m_subject.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	UpdateCamera();
@@ -75,4 +75,12 @@ void RD_Camera::TranslateCamera(vec3f translation) {
 	m_subject = m_subject + translation;
 
 	UpdateCamera();
+}
+
+vec3f RD_Camera::GetSubject() {
+	return m_subject;
+}
+
+vec3f RD_Camera::GetLocation() {
+	return m_pos;
 }

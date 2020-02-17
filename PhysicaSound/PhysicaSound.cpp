@@ -6,7 +6,7 @@
 
 PSound::PSound()
 {
-    
+    Devices = {};
 }
 
 PSound::~PSound()
@@ -40,7 +40,7 @@ bool PSound::initAL()
 }
 
 
-bool PSound::playSimpleSound(std::string wavFile)
+bool PSound::playSimpleSound(std::string wavFile, float gain)
 {
     if(!initialized)
         return false;
@@ -85,12 +85,15 @@ bool PSound::playSimpleSound(std::string wavFile)
     alGenSources(1, &source);
     
     alSourcei(source, AL_BUFFER, Buffer);
+    alSourcef(source, AL_GAIN, gain);
     
     alSourcePlay(source);
     //ALint status;
     ALint state;
     do {
         alGetSourcei(source, AL_SOURCE_STATE, &state);
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     } while (state == AL_PLAYING);
     
     alDeleteBuffers(1, &Buffer);
@@ -176,7 +179,7 @@ void PSound::RegisterVolume(PS_SoundVolume* volume)
     m_volumes.push_back(volume);
 }
 
-bool PSound::playSound3D(std::string wavFile, vec3f position)
+bool PSound::playSound3D(std::string wavFile, vec3f position, float gain)
 {
     if(!initialized)
         return false;
@@ -222,16 +225,18 @@ bool PSound::playSound3D(std::string wavFile, vec3f position)
     std::cout << "Source : " << source << " " << position.getX() << " " << position.getY() << " " << position.getZ() << std::endl;
     
     alSource3f(source, AL_VELOCITY, 0.0, 0.0, 0.0);
-    alSourcef(source, AL_GAIN, 12);
+    alSourcef(source, AL_GAIN, gain);
     alSourcef(source, AL_PITCH, 2);
 
     alSourcei(source, AL_BUFFER, Buffer);
-    
+
     alSourcePlay(source);
     //ALint status;
     ALint state;
     do {
         alGetSourcei(source, AL_SOURCE_STATE, &state);
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     } while (state == AL_PLAYING);
     
     alDeleteBuffers(1, &Buffer);

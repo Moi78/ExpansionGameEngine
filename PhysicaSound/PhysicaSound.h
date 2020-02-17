@@ -17,6 +17,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <thread>
 
 #include "PS_Listener.h"
 #include "PS_Emitter.h"
@@ -27,8 +28,8 @@ public:
     PSound();
     ~PSound();
     
-    bool playSimpleSound(std::string wavFile);
-    bool playSound3D(std::string wavFile, vec3f position);
+    bool playSimpleSound(std::string wavFile, float gain);
+    bool playSound3D(std::string wavFile, vec3f position, float gain);
     
     bool initAL();
     void GetDevice();

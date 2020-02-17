@@ -2,8 +2,13 @@
 #include "EXP_Game.h"
 
 #include "EXP_Actor.h"
+#include "EXP_Camera.h"
+#include "EXP_SoundEmitter.h"
 
 EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, std::string gameName) {
+	m_currentCamera = nullptr;
+	
+	InitPhysicaSound();
 	InitGame(res, refreshColor, gameName, gameinfo);
 
 	m_def_mat = {};
@@ -13,6 +18,9 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, 
 }
 
 EXP_Game::~EXP_Game() {
+	m_soundEngine->shutdownAL();
+
+	delete m_soundEngine;
 	delete m_rndr;
 }
 
@@ -25,6 +33,32 @@ void EXP_Game::InitGame(BD_Resolution res, vec3f refreshColor, std::string gameN
 	m_rndr = new RaindropRenderer(res.x, res.y, gameName);
 }
 
+void EXP_Game::InitPhysicaSound() {
+	m_soundEngine = new PSound();
+
+	m_soundEngine->GetDevice();
+	
+	if (!m_soundEngine->initAL()) {
+		std::cerr << "Cannot init OpenAL" << std::endl;
+
+		return;
+	}
+
+	if (m_currentCamera != nullptr) {
+		m_listener = new PS_Listener(m_currentCamera->GetPosition());
+		m_soundEngine->RegisterListener(m_listener);
+	}
+	else {
+		m_listener = new PS_Listener(vec3f());
+		m_soundEngine->RegisterListener(m_listener);
+	}
+}
+
+void EXP_Game::UpdateSound() {
+	m_listener->setPosition(m_currentCamera->GetPosition());
+	m_soundEngine->mainLoop();
+}
+
 void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
 
@@ -35,6 +69,12 @@ void EXP_Game::MainLoop() {
 	if (RENDER_DBG) {
 		m_rndr->RenderDbg();
 	}
+
+	if (m_currentCamera != nullptr) {
+		m_currentCamera->UpdateCamera();
+	}
+
+	UpdateSound();
 
 	m_rndr->SwapWindow();
 }
@@ -77,4 +117,40 @@ BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
 	delete mr;
 
 	return mat;
+}
+
+PSound* EXP_Game::GetSoundEngine() {
+	return m_soundEngine;
+}
+
+void EXP_Game::PlaySimpleSound(std::string ref, float gain) {
+	std::string fullref = m_gameinfo.RootGameContentFolder + ref;
+
+	std::thread t([](PSound* engine, std::string file, float gain) {
+		engine->playSimpleSound(file, gain);
+	}, m_soundEngine, fullref, gain);
+
+	t.detach();
+}
+
+void EXP_Game::PlaySound3D(std::string ref, vec3f pos, float gain) {
+	std::string fullref = m_gameinfo.RootGameContentFolder + ref;
+
+	vec3f* cpos = &m_currentCamera->GetPosition();
+	vec3f* cdir = &m_currentCamera->GetSubject();
+
+	std::thread t([](PSound* engine, std::string file, vec3f pos, float gain) {
+		engine->playSound3D(file, pos, gain);
+	}, m_soundEngine, fullref, pos, gain);
+
+	t.detach();
+}
+
+void EXP_Game::RegisterCamera(EXP_Camera* cam) {
+	m_currentCamera = cam;
+	m_listener->setPosition(cam->GetPosition());
+}
+
+void EXP_Game::RegisterSoundEmitter(EXP_SoundEmitter* sm) {
+	m_soundEngine->RegisterEmitter(sm, false);
 }

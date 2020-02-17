@@ -28,14 +28,18 @@ public:
 
 	void UseCamera();
 
-	void SetPosition(vec3f position);
+	void SetLocation(vec3f position);
 	void SetSubject(vec3f lookingAt);
 	void SetFOV(float FOVinDegrees);
+
+	vec3f GetSubject();
 	
 	void UpdateCamera();
 	
 	void RotateCamera(vec3f);
 	void TranslateCamera(vec3f translation);
+
+	vec3f GetLocation();
 private:
 	void SetupCamera();
 	
