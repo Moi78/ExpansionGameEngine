@@ -30,10 +30,10 @@
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
-	RaindropRenderer(int w, int h, std::string windowName);
+	RaindropRenderer(int w, int h, std::string windowName, bool minInit = false);
 	~RaindropRenderer();
 
-	void initGlad();
+	void initGlad(bool minInit = false);
 	void MinInit();
 
 	void initWindow(int w, int h, std::string name);

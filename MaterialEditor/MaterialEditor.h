@@ -14,7 +14,8 @@
 
 #include <string>
 
-class MaterialEditor : public QMainWindow
+class MaterialEditor : 
+	public QMainWindow
 {
 	Q_OBJECT
 

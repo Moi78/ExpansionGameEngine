@@ -1,11 +1,16 @@
 #include "pch.h"
 #include "RaindropRenderer.h"
 
-RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName) : m_height(h), m_width(w) {
+RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool minInit) : m_height(h), m_width(w) {
 	FillFeaturesStringArray();
 	FillFeatureStateArray();
 
-	initWindow(w, h, windowName);
+	if (!minInit) {
+		initWindow(w, h, windowName);
+	}
+	else {
+		this->MinInit();
+	}
 
 	RD_FrameLimiter* flmt = new RD_FrameLimiter(60);
 	m_frmLmt = flmt;
@@ -16,10 +21,6 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName) : m_hei
 	m_shader->useShader();
 
 	EnableAllFeatures();
-
-	RD_ShaderLoader* lshader = new RD_ShaderLoader();
-	lshader->compileShaderFromFile("Engine/Shaders/Lights.vert", "Engine/Shaders/Lights.frag");
-	m_LightShader = lshader;
 
 	BD_MatDef mdef = {};
 	mdef.Color = vec3f(1.0f, 1.0f, 1.0f);
@@ -75,7 +76,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 }
 
 void RaindropRenderer::MinInit() {
-	initGlad();
+	initGlad(true);
 
 	glViewport(0, 0, m_width, m_height);
 
@@ -115,10 +116,18 @@ bool RaindropRenderer::WantToClose() {
 	}
 }
 
-void RaindropRenderer::initGlad() {
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		dispErrorMessageBox(TEXT("Cannot init GLAD."));
-		exit(-1);
+void RaindropRenderer::initGlad(bool minInit) {
+	if (!minInit) {
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+			dispErrorMessageBox(TEXT("Cannot init GLAD."));
+			exit(-1);
+		}
+	}
+	else {
+		if (gladLoadGL() != 1) {
+			dispErrorMessageBox(TEXT("Cannot init GLAD"));
+			exit(-1);
+		}
 	}
 }
 
