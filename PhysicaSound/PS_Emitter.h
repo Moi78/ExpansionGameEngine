@@ -39,6 +39,7 @@ public:
     
     float getVolume();
     vec3f getVelocity();
+    vec3f getLocation();
     float getPitch();
     ALint getEmitterState();
     void refreshEmitterState();

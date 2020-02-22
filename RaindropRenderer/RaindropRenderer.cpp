@@ -12,12 +12,10 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool mi
 		this->MinInit();
 	}
 
-	RD_FrameLimiter* flmt = new RD_FrameLimiter(60);
-	m_frmLmt = flmt;
+	m_frmLmt = new RD_FrameLimiter(60);
 	
-	RD_ShaderLoader* shader = new RD_ShaderLoader();
-	shader->compileShaderFromFile("Engine/Shaders/GameView.vert", "Engine/Shaders/GameView.frag");
-	m_shader = shader;
+	m_shader = new RD_ShaderLoader();
+	m_shader->compileShaderFromFile("Engine/Shaders/GameView.vert", "Engine/Shaders/GameView.frag");
 	m_shader->useShader();
 
 	EnableAllFeatures();
@@ -27,10 +25,13 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool mi
 	mdef.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
 	mdef.SpecularExp = 2.0f;
 
-	RD_Mesh* lmsh = new RD_Mesh(m_shader, mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.2f, 0.2f, 0.2f));
-	lmsh->loadMesh("Engine/Meshes/Light.msh");
+	if (RENDER_DEBUG_ENABLED) {
+		m_DBG_light_mdl = new RD_Mesh(m_shader, mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
+		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
 
-	m_DBG_light_mdl = lmsh;
+		m_DBG_sound_emitter_mdl = new RD_Mesh(m_shader, mdef, vec3f(), vec3f(), vec3f(0.2f, 0.2f, 0.2f));
+		m_DBG_sound_emitter_mdl->loadMesh("Engine/Meshes/snd_emitter.msh");
+	}
 
 	ambientStrength = 1.0f;
 	ambientColor = vec3f(1.0f, 1.0f, 1.0f);
@@ -38,7 +39,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool mi
 	UpdateAmbientLighting();
 
 	m_gview_shader_in_use = true;
-	m_CurrentShader = shader;
+	m_CurrentShader = m_shader;
+
+	InitGUI();
 }
 
 RaindropRenderer::~RaindropRenderer() {
@@ -50,7 +53,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 		dispErrorMessageBox(TEXT("Cannot init GLFW"));
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -88,6 +91,8 @@ void glfwWinCallback(GLFWwindow* win, int w, int h) {
 }
 
 void RaindropRenderer::ClearWindow(vec3f refreshColor) {
+	glfwPollEvents();
+
 	m_frmLmt->start();
 	glClearColor(refreshColor.getX(), refreshColor.getY(), refreshColor.getZ(), 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -95,7 +100,6 @@ void RaindropRenderer::ClearWindow(vec3f refreshColor) {
 
 void RaindropRenderer::SwapWindow() {
 	glfwSwapBuffers(win);
-	glfwPollEvents();
 
 	m_frmLmt->stop();
 
@@ -219,20 +223,27 @@ void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
 }
 
 void RaindropRenderer::RenderDbg() {
-	DisableFeature(RendererFeature::Lighting);
+	if (RENDER_DEBUG_ENABLED) {
+		DisableFeature(RendererFeature::Lighting);
 
-	BD_MatDef mdef = {};
-	mdef.Color = vec3f();
+		BD_MatDef mdef = {};
+		mdef.Color = vec3f();
 
-	for (int i = 0; i < m_pt_lights.size(); i++) {
-		mdef.Color = m_pt_lights[i]->GetColor();
+		for (int i = 0; i < m_pt_lights.size(); i++) {
+			mdef.Color = m_pt_lights[i]->GetColor();
 
-		m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
-		m_DBG_light_mdl->UpdateMaterial(&mdef);
-		m_DBG_light_mdl->render(RenderMode::Wireframe);
+			m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
+			m_DBG_light_mdl->UpdateMaterial(&mdef);
+			m_DBG_light_mdl->render(RenderMode::Wireframe);
+		}
+
+		for (int i = 0; i < m_sound_emitters.size(); i++) {
+			m_DBG_sound_emitter_mdl->SetPosition(m_sound_emitters[i]->getLocation());
+			m_DBG_sound_emitter_mdl->render(RenderMode::Wireframe);
+		}
+
+		EnableFeature(RendererFeature::Lighting);
 	}
-
-	EnableFeature(RendererFeature::Lighting);
 }
 
 void RaindropRenderer::UpdatePointsLighting() {
@@ -320,4 +331,40 @@ RD_ShaderLoader* RaindropRenderer::DBG_GetLightShader() {
 
 RD_ShaderLoader* RaindropRenderer::GetCurrentShader() {
 	return m_CurrentShader;
+}
+
+void RaindropRenderer::RegisterSoundEmitter(PS_Emitter* emitter) {
+	m_sound_emitters.push_back(emitter);
+}
+
+void RaindropRenderer::InitGUI() {
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+
+	ImGui_ImplGlfw_InitForOpenGL(win, true);
+	ImGui_ImplOpenGL3_Init("#version 150");
+
+	ImGui::StyleColorsDark();
+
+	std::cout << "ImGui initialized" << std::endl;
+}
+
+void RaindropRenderer::PrepareGUI() {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+}
+
+void RaindropRenderer::RenderGUI() {
+	for (auto gui : m_guis) {
+		gui->RenderTime();
+	}
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void RaindropRenderer::RegisterGUI(RD_GUI* gui) {
+	m_guis.push_back(gui);
 }

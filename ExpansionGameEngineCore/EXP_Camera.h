@@ -22,7 +22,7 @@ public:
 	EXP_Camera(EXP_Game* gameinstance, vec3f pos, vec3f rot, vec3f scale, vec3f dir, float FOV, float Near = 0.1f, float Far = 100.0f);
 	~EXP_Camera();
 
-	void Translate(vec3f translation);
+	void Translate(vec3f translation, bool changeSubject = false);
 
 	void Use();
 

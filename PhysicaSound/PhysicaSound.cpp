@@ -144,6 +144,9 @@ bool PSound::mainLoop()
     
     ALfloat listener_pos[3] = {m_listener->getPosition().getX(), m_listener->getPosition().getY(), m_listener->getPosition().getZ()};
     alListenerfv(AL_POSITION, listener_pos);
+
+    ALfloat list_ori[3] = { m_listener->getOrientation().getX() * -1, m_listener->getOrientation().getY() * -1, m_listener->getOrientation().getZ() };
+    alListenerfv(AL_ORIENTATION, list_ori);
     
     for(int i = 0; i < m_emitters.size(); i++) {
         m_emitters[i]->refreshEmitterState();

@@ -186,3 +186,7 @@ ALuint PS_Emitter::getSource()
 {
     return m_source;
 }
+
+vec3f PS_Emitter::getLocation() {
+    return m_position;
+}

@@ -45,22 +45,25 @@ void EXP_Game::InitPhysicaSound() {
 	}
 
 	if (m_currentCamera != nullptr) {
-		m_listener = new PS_Listener(m_currentCamera->GetPosition());
+		m_listener = new PS_Listener(m_currentCamera->GetPosition(), m_currentCamera->GetSubject());
 		m_soundEngine->RegisterListener(m_listener);
 	}
 	else {
-		m_listener = new PS_Listener(vec3f());
+		m_listener = new PS_Listener(vec3f(), vec3f());
 		m_soundEngine->RegisterListener(m_listener);
 	}
 }
 
 void EXP_Game::UpdateSound() {
 	m_listener->setPosition(m_currentCamera->GetPosition());
+	m_listener->setOrientation(m_currentCamera->GetSubject());
 	m_soundEngine->mainLoop();
 }
 
 void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
+
+	m_rndr->PrepareGUI();
 
 	for (auto mesh : m_staticMeshes) {
 		mesh->render();
@@ -73,6 +76,8 @@ void EXP_Game::MainLoop() {
 	if (m_currentCamera != nullptr) {
 		m_currentCamera->UpdateCamera();
 	}
+
+	m_rndr->RenderGUI();
 
 	UpdateSound();
 
@@ -149,8 +154,10 @@ void EXP_Game::PlaySound3D(std::string ref, vec3f pos, float gain) {
 void EXP_Game::RegisterCamera(EXP_Camera* cam) {
 	m_currentCamera = cam;
 	m_listener->setPosition(cam->GetPosition());
+	m_listener->setOrientation(cam->GetSubject());
 }
 
 void EXP_Game::RegisterSoundEmitter(EXP_SoundEmitter* sm) {
 	m_soundEngine->RegisterEmitter(sm, false);
+	m_rndr->RegisterSoundEmitter(sm);
 }

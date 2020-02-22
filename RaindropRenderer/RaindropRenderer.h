@@ -9,13 +9,24 @@
 #define RAINDROPRENDERER_API __declspec(dllimport)
 #endif
 
+#ifdef _DEBUG
+	#define RENDER_DEBUG_ENABLED true
+#else
+	#define RENDER_DEBUG_ENABLED false
+#endif //_DEBUG
+
 #include "RD_ShaderLoader.h"
 #include "RD_FrameLimiter.h"
 #include "RD_Mesh.h"
 #include "RD_PointLight.h"
 #include "RD_DirLight.h"
+#include "RD_GUI.h"
 
 #include <BD_StructMan.h>
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include <glad/glad.h>
 #include <glfw3.h>
@@ -27,6 +38,8 @@
 #include <vec3.h>
 
 #include <Windows.h>
+
+#include <PS_Emitter.h>
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
@@ -64,6 +77,7 @@ public:
 	//Debug
 	void RenderDbg();
 	float GetFramerate();
+	void RegisterSoundEmitter(PS_Emitter*);
 
 	//Renderer Feature
 	void EnableFeature(RendererFeature ftr);
@@ -71,6 +85,12 @@ public:
 	bool IsFeatureEnabled(RendererFeature ftr);
 
 	void UpdatePointsLighting();
+
+	//GUI
+	void PrepareGUI();
+	void RenderGUI();
+	void InitGUI();
+	void RegisterGUI(RD_GUI*);
 private:
 	void UpdateAmbientLighting();
 	void UpdateDirLighting();
@@ -105,8 +125,11 @@ private:
 
 	std::vector<RD_PointLight*> m_pt_lights;
 	std::vector<RD_DirLight*> m_DirLights;
+	std::vector<PS_Emitter*> m_sound_emitters;
+	std::vector<RD_GUI*> m_guis;
 
 	RD_Mesh* m_DBG_light_mdl;
+	RD_Mesh* m_DBG_sound_emitter_mdl;
 };
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);

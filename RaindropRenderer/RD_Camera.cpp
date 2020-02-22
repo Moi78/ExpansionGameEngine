@@ -70,9 +70,12 @@ void RD_Camera::RotateCamera(vec3f rotation) {
 	UpdateCamera();
 }
 
-void RD_Camera::TranslateCamera(vec3f translation) {
+void RD_Camera::TranslateCamera(vec3f translation, bool changeSub) {
 	m_pos = m_pos + translation;
-	m_subject = m_subject + translation;
+
+	if (changeSub) {
+		m_subject = m_subject + translation;
+	}
 
 	UpdateCamera();
 }

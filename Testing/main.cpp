@@ -6,6 +6,8 @@
 #include <EXP_PointLight.h>
 #include <EXP_SoundEmitter.h>
 
+#include <RD_GUI.h>
+
 #include <PhysicaSound.h>
 
 #include <vec3.h>
@@ -24,16 +26,18 @@ int main(int argc, char* argv[]) {
 
 	EXP_PointLight* light = new EXP_PointLight(game, vec3f(-2.0f, 0.0f, 0.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 8.0f);
 
-	EXP_Camera* cam = new EXP_Camera(game, vec3f(-8.0f, 4.0f, 0.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
+	EXP_Camera* cam = new EXP_Camera(game, vec3f(-8.0f, 0.0f, 0.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
 	cam->Use();
 
-	EXP_SoundEmitter* sound = new EXP_SoundEmitter(game, vec3f(), vec3f(), 1.0f, 2.0f, false, "/song2.wav");
+	EXP_SoundEmitter* sound = new EXP_SoundEmitter(game, vec3f(0.0f, 5.0f), vec3f(), 1.0f, 2.0f, false, "/song2.wav");
+
+	RD_GUI* gui = new RD_GUI("WOAW");
+	gui->AddButton("Hello");
+	gui->AddButton("World");
 
 	sound->Play();
 
 	while (!game->GetRenderer()->WantToClose()) {
-		cam->Translate(vec3f(0.0f, -0.01f));
-
 		game->MainLoop();
 	}
 

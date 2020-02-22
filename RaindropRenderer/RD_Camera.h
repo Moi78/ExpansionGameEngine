@@ -37,7 +37,7 @@ public:
 	void UpdateCamera();
 	
 	void RotateCamera(vec3f);
-	void TranslateCamera(vec3f translation);
+	void TranslateCamera(vec3f translation, bool changeSub = false);
 
 	vec3f GetLocation();
 private:

@@ -264,3 +264,7 @@ std::string vec3f::ConvertToParserFormat(std::string prefix) {
 
     return str;
 }
+
+void vec3f::DBGPrint() {
+    std::cout << "X : " << std::to_string(m_x) << " Y : " << std::to_string(m_y) << " Z : " << std::to_string(m_z) << std::endl;
+}

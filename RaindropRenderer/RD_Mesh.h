@@ -42,6 +42,11 @@ public:
 
 	void UpdateMaterial(BD_MatDef*);
 
+	vec3f GetLocation();
+
+	void ApplyActorMatrix(glm::mat4);
+	void SetActorMode(bool mode);
+
 	std::vector<double> RAWvertices;
 	std::vector<unsigned int> RAWindices;
 	std::vector<double> RAWnormals;
@@ -49,6 +54,9 @@ public:
 	std::vector<double> MixVertNorm;
 
 	int m_nbr_vertices;
+
+	glm::mat4 m_actor_mat;
+	bool inActor;
 	
 private:
 	void Bufferize();

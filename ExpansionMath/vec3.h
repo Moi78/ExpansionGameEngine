@@ -11,6 +11,7 @@
 
 #include <valarray>
 #include <string>
+#include <iostream>
 
 class EXPANSIONMATH_API vec3f {
 public:
@@ -38,6 +39,8 @@ public:
     vec3f operator-(vec3f const& a);
 
     vec3f operator*(vec3f const& a);
+
+    void DBGPrint();
 
 private:
     float m_x;

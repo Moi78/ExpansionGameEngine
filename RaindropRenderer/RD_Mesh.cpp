@@ -2,6 +2,9 @@
 #include "RD_Mesh.h"
 
 RD_Mesh::RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, vec3f rotation, vec3f scale) {
+	inActor = false;
+	m_actor_mat = glm::mat4(1.0f);
+
 	VAO = 0;
 	EBO = 0;
 	VBO = 0;
@@ -74,7 +77,13 @@ void RD_Mesh::render(RenderMode rndrMode) {
 	rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
 	rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
 
-	mdl = translate * rotation * scale;
+	if (!inActor) {
+		mdl = translate * rotation * scale;
+		mdl *= m_actor_mat;
+	}
+	else {
+		mdl = translate * rotation * scale;
+	}
 
 	m_shader->SetMatrix("model", mdl);
 
@@ -167,4 +176,16 @@ void RD_Mesh::SetScale(vec3f nScale) {
 
 void RD_Mesh::UpdateMaterial(BD_MatDef* mat) {
 	m_mat->SetBaseColor(mat->Color);
+}
+
+vec3f RD_Mesh::GetLocation() {
+	return m_position;
+}
+
+void RD_Mesh::ApplyActorMatrix(glm::mat4 mat) {
+	m_actor_mat = mat;
+}
+
+void RD_Mesh::SetActorMode(bool mode) {
+	inActor = mode;
 }

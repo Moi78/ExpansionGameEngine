@@ -71,4 +71,14 @@ struct BULLDOZERFILEMANAGER_API BD_ComponentReference {
 	bool isRoot;
 };
 
+enum BULLDOZERFILEMANAGER_API BD_GUI_ElementType {
+	BUTTON
+};
+
+
+struct BULLDOZERFILEMANAGER_API BD_GUI_Element {
+	BD_GUI_ElementType elem;
+	int argIndex;
+};
+
 #endif // _BD_STRUCT_MAN_H__

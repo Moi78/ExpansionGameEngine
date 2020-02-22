@@ -91,15 +91,15 @@
       <PreprocessorDefinitions>_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\libs\Win64;..\libs\GL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;OpenAL32.lib;libsndfile-1.lib;PhysicaSound.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
@@ -170,10 +170,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_impl_glfw.h" />
+    <ClInclude Include="imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="RD_Callback.h" />
     <ClInclude Include="RD_Camera.h" />
     <ClInclude Include="RD_DirLight.h" />
     <ClInclude Include="RD_Error.h" />
     <ClInclude Include="RD_FrameLimiter.h" />
+    <ClInclude Include="RD_GUI.h" />
     <ClInclude Include="RD_Materials.h" />
     <ClInclude Include="RD_Mesh.h" />
     <ClInclude Include="pch.h" />
@@ -184,10 +194,18 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="glad.cpp" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="RD_Callback.cpp" />
     <ClCompile Include="RD_Camera.cpp" />
     <ClCompile Include="RD_DirLight.cpp" />
     <ClCompile Include="RD_Error.cpp" />
     <ClCompile Include="RD_FrameLimiter.cpp" />
+    <ClCompile Include="RD_GUI.cpp" />
     <ClCompile Include="RD_Materials.cpp" />
     <ClCompile Include="RD_Mesh.cpp" />
     <ClCompile Include="pch.cpp">

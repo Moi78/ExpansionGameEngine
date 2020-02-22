@@ -8,6 +8,8 @@
 
 #include <vec3.h>
 
+#include <glm/glm.hpp>
+
 #include "EXP_Game.h"
 #include "EXP_Camera.h"
 #include "EXP_PointLight.h"
@@ -33,6 +35,9 @@ public:
 	vec3f GetWorldPos();
 	vec3f GetWorldRot();
 	vec3f GetWorldScale();
+
+	glm::mat4 CalculateActorMatrix();
+	
 private:
 	EXP_Game* m_game;
 

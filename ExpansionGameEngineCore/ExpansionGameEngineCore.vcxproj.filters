@@ -42,6 +42,9 @@
     <ClInclude Include="EXP_SoundEmitter.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="EXP_GuiManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -69,6 +72,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="EXP_SoundEmitter.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="EXP_GuiManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

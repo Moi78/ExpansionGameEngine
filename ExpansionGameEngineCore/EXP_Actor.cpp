@@ -43,6 +43,10 @@ void EXP_Actor::LoadDef(std::string def) {
 
 		std::cout << "Args : " << buffer.args << std::endl;
 
+
+		//MESH
+
+
 		if (buffer.type == BD_ComponentType::STATIC_MESH) {
 			args_r->parse(buffer.args);
 
@@ -58,18 +62,24 @@ void EXP_Actor::LoadDef(std::string def) {
 				mat = m_game->FetchMaterialFromFile(args_r->GetFromKey("mat_ref"));
 			}
 
-			EXP_StaticMesh* msh = new EXP_StaticMesh(m_game, mshref, mat, buffer.loc_pos + GetWorldPos(), buffer.loc_rot + GetWorldRot(), buffer.loc_scale * GetWorldScale());
+			EXP_StaticMesh* msh = new EXP_StaticMesh(m_game, mshref, mat, buffer.loc_pos, buffer.loc_rot, buffer.loc_scale);
+
+			msh->GetRawMeshData()->ApplyActorMatrix(CalculateActorMatrix());
+			msh->GetRawMeshData()->SetActorMode(true);
 
 			buffer.actor_component_index = m_comp_meshes.size();
 
 			m_comp_meshes.push_back(msh);
 		}
+
+		//POINTLIGHT
+
 		else if (buffer.type == BD_ComponentType::POINTLIGHT) {
 			args_r->parse(buffer.args);
 
 			vec3f color(std::stof(args_r->GetFromKey("r")), std::stof(args_r->GetFromKey("g")), std::stof(args_r->GetFromKey("b")));
 
-			EXP_PointLight* ptlight = new EXP_PointLight(m_game, buffer.loc_pos + GetWorldPos(), buffer.loc_rot + GetWorldRot(), buffer.loc_scale * GetWorldScale(), color, std::stoi(args_r->GetFromKey("intensity")));
+			EXP_PointLight* ptlight = new EXP_PointLight(m_game, buffer.loc_pos + GetWorldPos(), buffer.loc_rot, buffer.loc_scale, color, std::stoi(args_r->GetFromKey("intensity")));
 
 			buffer.actor_component_index = m_compt_pt_light.size();
 
@@ -81,4 +91,21 @@ void EXP_Actor::LoadDef(std::string def) {
 
 		m_refs.push_back(buffer);
 	}
+}
+
+glm::mat4 EXP_Actor::CalculateActorMatrix() {
+	glm::mat4 mat = glm::mat4(1.0f);
+
+	//Position
+	mat = glm::translate(mat, glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()));
+
+	//Scale
+	mat = glm::scale(mat, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+
+	//Rotation
+	mat = glm::rotate(mat, m_rot.getX(), glm::vec3(1.0f, 0.0f, 0.0f));
+	mat = glm::rotate(mat, m_rot.getY(), glm::vec3(0.0f, 1.0f, 0.0f));
+	mat = glm::rotate(mat, m_rot.getZ(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	return mat;
 }
