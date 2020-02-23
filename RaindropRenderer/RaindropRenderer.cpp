@@ -338,31 +338,7 @@ void RaindropRenderer::RegisterSoundEmitter(PS_Emitter* emitter) {
 }
 
 void RaindropRenderer::InitGUI() {
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
 
-	ImGui_ImplGlfw_InitForOpenGL(win, true);
-	ImGui_ImplOpenGL3_Init("#version 150");
-
-	ImGui::StyleColorsDark();
-
-	std::cout << "ImGui initialized" << std::endl;
-}
-
-void RaindropRenderer::PrepareGUI() {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-}
-
-void RaindropRenderer::RenderGUI() {
-	for (auto gui : m_guis) {
-		gui->RenderTime();
-	}
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void RaindropRenderer::RegisterGUI(RD_GUI* gui) {

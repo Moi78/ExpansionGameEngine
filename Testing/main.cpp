@@ -4,9 +4,12 @@
 #include <EXP_StaticMesh.h>
 #include <EXP_Camera.h>
 #include <EXP_PointLight.h>
-#include <EXP_SoundEmitter.h>
+#include <EXP_SoundEmitter.h>-
 
 #include <RD_GUI.h>
+#include <RD_Callback.h>
+
+#include <imgui.h>
 
 #include <PhysicaSound.h>
 
@@ -31,9 +34,14 @@ int main(int argc, char* argv[]) {
 
 	EXP_SoundEmitter* sound = new EXP_SoundEmitter(game, vec3f(0.0f, 5.0f), vec3f(), 1.0f, 2.0f, false, "/song2.wav");
 
-	RD_GUI* gui = new RD_GUI("WOAW");
-	gui->AddButton("Hello");
-	gui->AddButton("World");
+	RD_GUI* gui = new RD_GUI(new RD_Callback([]() {
+		ImGui::Begin("Hello world");
+
+		ImGui::Button("Push !");
+
+		ImGui::End();
+	}));
+	game->GetRenderer()->RegisterGUI(gui);
 
 	sound->Play();
 

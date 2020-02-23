@@ -70,6 +70,7 @@ public:
 private:
 	void InitGame(BD_Resolution winRes, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo);
 	void InitPhysicaSound();
+	void InitGui();
 
 	RaindropRenderer* m_rndr;
 

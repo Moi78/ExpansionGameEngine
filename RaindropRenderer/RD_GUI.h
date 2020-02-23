@@ -14,22 +14,18 @@
 #include <string>
 #include <vector>
 
-#include "imgui.h"
+#include "RD_Callback.h"
 
 class RAINDROPRENDERER_API RD_GUI
 {
 public:
-	RD_GUI(std::string WindowName);
+	RD_GUI(RD_Callback*);
 	~RD_GUI();
 
 	void RenderTime();
 
 private:
-	std::vector<BD_GUI_Element> m_gui;
-
-	std::vector<std::string> m_buttonProperties;
-
-	std::string m_windowName;
+	RD_Callback* m_gui_cbck;
 };
 
 #endif //_RD_GUI_H__

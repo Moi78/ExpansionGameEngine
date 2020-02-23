@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\ExpansionGameEngineCore;..\libs\FBX SDK\2019.0\include;..\BulldozerFileManager;..\libs\GL\include;C:\VulkanSDK\1.1.106.0\Include;..\libs\VULKAN\include;..\RaindropRenderer;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include;..\PhysicaSound;..\libs\PA112RSER\inc;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ExpansionGameEngineCore;..\libs\FBX SDK\2019.0\include;..\BulldozerFileManager;..\libs\GL\include;C:\VulkanSDK\1.1.106.0\Include;..\libs\VULKAN\include;..\RaindropRenderer;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include;..\PhysicaSound;..\libs\PA112RSER\inc;..\ExpansionMath;..\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

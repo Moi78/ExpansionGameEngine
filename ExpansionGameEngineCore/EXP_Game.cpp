@@ -11,6 +11,8 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, 
 	InitPhysicaSound();
 	InitGame(res, refreshColor, gameName, gameinfo);
 
+	InitGui();
+
 	m_def_mat = {};
 	m_def_mat.Color = vec3f(1.0f, 1.0f, 1.0f);
 	m_def_mat.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
@@ -60,10 +62,12 @@ void EXP_Game::UpdateSound() {
 	m_soundEngine->mainLoop();
 }
 
+void EXP_Game::InitGui() {
+
+}
+
 void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
-
-	m_rndr->PrepareGUI();
 
 	for (auto mesh : m_staticMeshes) {
 		mesh->render();
@@ -76,8 +80,6 @@ void EXP_Game::MainLoop() {
 	if (m_currentCamera != nullptr) {
 		m_currentCamera->UpdateCamera();
 	}
-
-	m_rndr->RenderGUI();
 
 	UpdateSound();
 
