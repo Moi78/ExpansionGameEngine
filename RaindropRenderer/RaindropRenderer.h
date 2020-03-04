@@ -57,6 +57,8 @@ public:
 	RD_ShaderLoader* GetShader();
 	RD_ShaderLoader* GetLightShader();
 
+	double GetLastDeltaTime();
+
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(vec3f nColor);
@@ -85,6 +87,8 @@ public:
 	//GUI
 	void InitGUI();
 	void RegisterGUI(RD_GUI*);
+
+	int GetFrameLimit();
 private:
 	void UpdateAmbientLighting();
 	void UpdateDirLighting();

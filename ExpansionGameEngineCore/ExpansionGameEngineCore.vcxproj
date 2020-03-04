@@ -91,16 +91,17 @@
       <PreprocessorDefinitions>_DEBUG;EXPANSIONGAMEENGINECORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\BULLET\bullet3-2.89\include\;C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <OpenMPSupport>false</OpenMPSupport>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\libs\Win64;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rserd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\BULLET\bullet3-2.89\lib\Debug;C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\libs\Win64;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rserd.lib;LinearMath_Debug.lib;Bullet3Common_Debug.lib;Bullet3Collision_Debug.lib;Bullet3Dynamics_Debug.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,7 +151,7 @@
       <PreprocessorDefinitions>NDEBUG;EXPANSIONGAMEENGINECORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\BULLET\bullet3-2.89\include\;C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -159,8 +160,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\libs\Win64;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rser.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\libs\Win64;..\x64\Release;..\libs\BULLET\bullet3-2.89\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rser.lib;LinearMath.lib;Bullet3Common.lib;Bullet3Collision.lib;Bullet3Dynamics.lib;BulletCollision.lib;BulletDynamics.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -174,6 +175,7 @@
     <ClInclude Include="EXP_StaticMesh.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="EXP_RigidBody.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -192,6 +194,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EXP_RigidBody.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

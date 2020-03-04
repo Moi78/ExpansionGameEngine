@@ -32,11 +32,15 @@ public:
 	double GetElapsedTime();
 
 	void WaitAll(double dur);
+
+	double GetLastDeltaTime();
 private:
 	int m_frameLimit;
 
 	high_resolution_clock::time_point m_start;
 	high_resolution_clock::time_point m_stop;
+
+	double m_last_delta;
 };
 
 #endif

@@ -32,8 +32,13 @@
 #include <PhysicaSound.h>
 #include <PS_Listener.h>
 
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+
 #include <vec3.h>
 
+//Forward Declaration
+class EXP_RigidBody;
 class EXP_Actor;
 class EXP_Camera;
 class EXP_SoundEmitter;
@@ -51,26 +56,32 @@ public:
 	void RegisterPointLight(RD_PointLight*);
 	void RegisterCamera(EXP_Camera*);
 
+	//Rendering
 	RaindropRenderer* GetRenderer();
 	vec3f GetRefreshColor();
 	std::vector<RD_Mesh*> GetStaticMeshes();
-
 	BD_MatDef GetDefaultMaterial();
-
-	void MainLoop();
-
 	BD_MatDef FetchMaterialFromFile(std::string fileref);
 
+	void MainLoop();
+	
+	//Sounds
 	void UpdateSound();
 	PSound* GetSoundEngine();
 	void RegisterSoundEmitter(EXP_SoundEmitter*);
 	void PlaySimpleSound(std::string ref, float gain);
 	void PlaySound3D(std::string ref, vec3f pos, float gain);
 
+	//Bullet
+	void UpdatePhysics();
+	void SetGravity(vec3f nGravity);
+	void RegisterRigidBody(EXP_RigidBody* rb);
+
 private:
 	void InitGame(BD_Resolution winRes, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo);
 	void InitPhysicaSound();
 	void InitGui();
+	void InitBullet();
 
 	RaindropRenderer* m_rndr;
 
@@ -87,9 +98,15 @@ private:
 	EXP_Camera* m_currentCamera;
 	PS_Listener* m_listener;
 
+	btDiscreteDynamicsWorld* m_dWorld;
+
 	//Renderables
 	std::vector<RD_Mesh*> m_staticMeshes;
 	std::vector<RD_PointLight*> m_points_light;
+
+
+	btAlignedObjectArray<btCollisionShape*> m_collision_shapes;
+	std::vector<EXP_RigidBody*> m_rigidBodies;
 };
 
 #endif //_EXP_GAME_H__

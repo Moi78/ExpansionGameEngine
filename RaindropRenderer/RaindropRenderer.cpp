@@ -344,3 +344,11 @@ void RaindropRenderer::InitGUI() {
 void RaindropRenderer::RegisterGUI(RD_GUI* gui) {
 	m_guis.push_back(gui);
 }
+
+double RaindropRenderer::GetLastDeltaTime() {
+	return m_frmLmt->GetLastDeltaTime();
+}
+
+int RaindropRenderer::GetFrameLimit() {
+	return m_frmLmt->GetFrameLimit();
+}

@@ -2,6 +2,7 @@
 #include "RD_FrameLimiter.h"
 
 RD_FrameLimiter::RD_FrameLimiter(int frameLimit) : m_frameLimit(frameLimit) {
+	m_last_delta = 0.0f;
 }
 
 RD_FrameLimiter::~RD_FrameLimiter() {
@@ -22,6 +23,8 @@ void RD_FrameLimiter::start() {
 
 void RD_FrameLimiter::stop() {
 	m_stop = high_resolution_clock::now();
+
+	m_last_delta = duration<double>(m_stop - m_start).count();
 }
 
 double RD_FrameLimiter::GetElapsedTime() {
@@ -32,4 +35,8 @@ double RD_FrameLimiter::GetElapsedTime() {
 
 void RD_FrameLimiter::WaitAll(double dur) {
 	
+}
+
+double RD_FrameLimiter::GetLastDeltaTime() {
+	return m_last_delta;
 }

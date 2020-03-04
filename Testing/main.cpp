@@ -4,12 +4,10 @@
 #include <EXP_StaticMesh.h>
 #include <EXP_Camera.h>
 #include <EXP_PointLight.h>
-#include <EXP_SoundEmitter.h>-
+#include <EXP_SoundEmitter.h>
 
 #include <RD_GUI.h>
 #include <RD_Callback.h>
-
-#include <imgui.h>
 
 #include <PhysicaSound.h>
 
@@ -27,23 +25,12 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.2f);
 
-	EXP_PointLight* light = new EXP_PointLight(game, vec3f(-2.0f, 0.0f, 0.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 8.0f);
+	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/cube", game->GetDefaultMaterial(), vec3f(0.0f, 0.0f, -4.0f), vec3f(), vec3f(10.5f, 10.5f, 0.5f));
 
-	EXP_Camera* cam = new EXP_Camera(game, vec3f(-8.0f, 0.0f, 0.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
+	EXP_PointLight* light = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 4.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 0.5f);
+
+	EXP_Camera* cam = new EXP_Camera(game, vec3f(-8.0f, 3.0f, 4.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
 	cam->Use();
-
-	EXP_SoundEmitter* sound = new EXP_SoundEmitter(game, vec3f(0.0f, 5.0f), vec3f(), 1.0f, 2.0f, false, "/song2.wav");
-
-	RD_GUI* gui = new RD_GUI(new RD_Callback([]() {
-		ImGui::Begin("Hello world");
-
-		ImGui::Button("Push !");
-
-		ImGui::End();
-	}));
-	game->GetRenderer()->RegisterGUI(gui);
-
-	sound->Play();
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->MainLoop();
