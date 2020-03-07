@@ -191,5 +191,8 @@ void EXP_Game::SetGravity(vec3f nGravity) {
 }
 
 void EXP_Game::RegisterRigidBody(EXP_RigidBody* rb) {
+	std::cout << "Registered new Rigid Body." << std::endl;
+
 	m_rigidBodies.push_back(rb);
+	rb->LoadInWorld(m_dWorld);
 }

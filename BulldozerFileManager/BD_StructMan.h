@@ -71,14 +71,22 @@ struct BULLDOZERFILEMANAGER_API BD_ComponentReference {
 	bool isRoot;
 };
 
-enum BULLDOZERFILEMANAGER_API BD_GUI_ElementType {
-	BUTTON
+enum BULLDOZERFILEMANAGER_API BD_RBodyShapeType {
+	CUBE,
+	CYLINDER,
+	CAPSULE
 };
 
+struct BULLDOZERFILEMANAGER_API BD_RBodyShape {
+	BD_RBodyShapeType type;
+	
+	vec3f pos;
+	vec3f rot;
+	vec3f scale;
 
-struct BULLDOZERFILEMANAGER_API BD_GUI_Element {
-	BD_GUI_ElementType elem;
-	int argIndex;
+	//For Cylinders, Capsules and Spheres
+	float radius = 1.0f;
+	float height = 1.0f;
 };
 
 #endif // _BD_STRUCT_MAN_H__

@@ -83,8 +83,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>..\libs\GL\lib;C:\VulkanSDK\1.1.106.0\Lib;..\libs\VULKAN\lib;C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\libs\Win64;C:\Users\mathi\Desktop\Expansion-Game-Engine\Expansion-Game-Engine\x64\Debug;%(AdditionalLibraryDirectories);..\libs\PA112RSER\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;PhysicaSound.lib;libsndfile-1.lib;ExpansionGameEngineCore.lib;OpenAL32.lib;RaindropRenderer.lib;Vulkan-1.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;pa112rserd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\GL\lib;C:\VulkanSDK\1.1.106.0\Lib;..\libs\VULKAN\lib;C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\libs\Win64;..\x64\Debug;%(AdditionalLibraryDirectories);..\libs\PA112RSER\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;PhysicaSound.lib;libsndfile-1.lib;ExpansionGameEngineCore.lib;OpenAL32.lib;RaindropRenderer.lib;glfw3.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;pa112rserd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

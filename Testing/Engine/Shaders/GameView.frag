@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 
 out vec4 FragColor;
 
@@ -22,9 +22,9 @@ uniform vec3 DirLightColor[10];
 uniform float DirLightBrightness[10];
 
 //Point Lighting
-uniform vec3 LightPos[500];
-uniform vec3 LightColor[500];
-uniform float LightBrightness[500];
+uniform vec3 LightPos[327];
+uniform vec3 LightColor[327];
+uniform float LightBrightness[327];
 
 //Camera
 uniform vec3 CamPos;

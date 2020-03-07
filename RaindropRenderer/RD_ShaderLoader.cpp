@@ -70,6 +70,7 @@ void RD_ShaderLoader::compileShaderFromFile(std::string vertexShaderFile, std::s
 	if (!success) {
 		glGetProgramInfoLog(m_program_id, 512, NULL, infoLog);
 		dispErrorMessageBox(TEXT("Error while linking program, see console."));
+		std::cerr << "GLSL Linking Error : " << infoLog << std::endl;
 	}
 
 	//Delete shaders

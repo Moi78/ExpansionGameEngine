@@ -5,6 +5,7 @@
 #include <EXP_Camera.h>
 #include <EXP_PointLight.h>
 #include <EXP_SoundEmitter.h>
+#include <EXP_RigidBody.h>
 
 #include <RD_GUI.h>
 #include <RD_Callback.h>
@@ -25,7 +26,16 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.2f);
 
-	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/cube", game->GetDefaultMaterial(), vec3f(0.0f, 0.0f, -4.0f), vec3f(), vec3f(10.5f, 10.5f, 0.5f));
+	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/floor", game->GetDefaultMaterial(), vec3f(0.0f, 0.0f, -4.0f), vec3f(), vec3f(10.0f, 10.0f, 10.0f));
+
+	BD_RBodyShape sdef = {};
+	sdef.pos = vec3f(0.0f, 0.0f, 8.0f);
+	sdef.rot = vec3f();
+	sdef.scale = vec3f(2.0f, 2.0f, 2.0f);
+	sdef.type = BD_RBodyShapeType::CUBE;
+	
+
+	EXP_RigidBody* rbody = new EXP_RigidBody(game, sdef, 1.0f);
 
 	EXP_PointLight* light = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 4.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 0.5f);
 
@@ -34,6 +44,8 @@ int main(int argc, char* argv[]) {
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->MainLoop();
+
+		rbody->GetActualTransformMatrix();
 	}
 
 	delete game;
