@@ -100,6 +100,17 @@ void FBX2MSH::ExtractDataFromScene(const aiScene* scene) {
 			writer->AppendNormal(vec3d(ToVec3d(scene->mMeshes[i]->mNormals[n])));
 		}
 
+
+		//UV Coords
+		if (scene->mMeshes[i]->HasTextureCoords(0) == true) {
+			for (int uv = 0; uv < scene->mMeshes[i]->mNumVertices; uv++) {
+				writer->AppendUVcoord(vec2d(scene->mMeshes[i]->mTextureCoords[0][uv].x, scene->mMeshes[i]->mTextureCoords[0][uv].y));
+			}
+		}
+		else {
+			std::cout << "No UV coords on this mesh" << std::endl;
+		}
+
 		std::string outpath = ui.outpath->text().toUtf8().constData() + std::string("/");
 		std::string base_filename = ui.filname->text().toUtf8().constData();
 		std::string filename = base_filename + "_" + scene->mMeshes[i]->mName.C_Str();

@@ -21,7 +21,7 @@ void BD_Writer::AppendNormal(vec3d normal) {
 	m_normals.push_back(normal);
 }
 
-void BD_Writer::AppendUVcoord(vec3d uv) {
+void BD_Writer::AppendUVcoord(vec2d uv) {
 	m_uv_coord.push_back(uv);
 }
 
@@ -64,7 +64,7 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 	bFile.write(reinterpret_cast<const char*>(&nbrUVcoord), sizeof(int));
 
 	for (int i = 0; i < nbrUVcoord; i++) {
-		bFile.write(reinterpret_cast<const char*>(&m_uv_coord[i]), sizeof(vec3d));
+		bFile.write(reinterpret_cast<const char*>(&m_uv_coord[i]), sizeof(vec2d));
 	}
 
 	bFile.close();

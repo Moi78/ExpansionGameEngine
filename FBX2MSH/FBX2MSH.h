@@ -15,6 +15,8 @@
 #include <assimp/postprocess.h>
 
 #include <vec3.h>
+#include <vec2.h>
+
 #include <BulldozerFileManager.h>
 #include <BD_Writer.h>
 

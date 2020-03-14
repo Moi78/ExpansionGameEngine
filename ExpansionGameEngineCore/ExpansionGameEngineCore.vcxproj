@@ -94,7 +94,7 @@
       <AdditionalIncludeDirectories>..\libs\BULLET\bullet3-2.89\include\;C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <OpenMPSupport>false</OpenMPSupport>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,6 +153,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\libs\BULLET\bullet3-2.89\include\;C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

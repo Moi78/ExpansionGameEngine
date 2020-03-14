@@ -12,6 +12,7 @@
 #include "BulldozerFileManager.h"
 
 #include <vec3.h>
+#include <vec2.h>
 
 #include <iostream>
 #include <string>
@@ -29,7 +30,7 @@ public:
 	int GetIndiceByIndex(int);
 	vec3d GetVertexByIndex(int);
 	vec3d GetNormalByIndex(int);
-	vec3d GetUVcoordByIndex(int);
+	vec2d GetUVcoordByIndex(int);
 
 	int GetIndicesCount();
 	int GetVerticesCount();
@@ -42,7 +43,7 @@ private:
 	std::vector<int> mIndices;
 	std::vector<vec3d> mVertices;
 	std::vector<vec3d> mNormal;
-	std::vector<vec3d> mUVcoord;
+	std::vector<vec2d> mUVcoord;
 
 	int icount;
 	int vcount;

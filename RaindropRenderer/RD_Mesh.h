@@ -50,6 +50,7 @@ public:
 	std::vector<double> RAWvertices;
 	std::vector<unsigned int> RAWindices;
 	std::vector<double> RAWnormals;
+	std::vector<double> RAWuv;
 
 	std::vector<double> MixVertNorm;
 

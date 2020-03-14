@@ -36,4 +36,29 @@ private:
     float m_y;
 };
 
+class EXPANSIONMATH_API vec2d {
+public:
+    vec2d(double x, double y);
+    ~vec2d();
+
+    double getX();
+    void setX(double x);
+
+    double getY();
+    void setY(double y);
+
+    void setAll(double x, double y);
+
+    float dotProduct(vec2d const& a);
+
+    bool operator==(vec2d const& a);
+    bool operator!=(vec2d const& a);
+    vec2d operator+(vec2d const& a);
+    vec2d operator-(vec2d const& a);
+
+private:
+    float m_x;
+    float m_y;
+};
+
 #endif

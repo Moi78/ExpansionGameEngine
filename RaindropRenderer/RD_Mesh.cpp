@@ -44,6 +44,11 @@ void RD_Mesh::loadMesh(std::string filepath) {
 		RAWnormals.push_back(reader->GetNormalByIndex(i).getZ());
 	}
 
+	std::cout << "Number of uv coord : " << reader->GetUVcoordCount() << std::endl;
+	for (int i = 0; i < reader->GetUVcoordCount(); i++) {
+		std::cout << "X : " << reader->GetUVcoordByIndex(i).getX() << " Y : " << reader->GetUVcoordByIndex(i).getY() << std::endl;
+	}
+
 	Bufferize();
 
 	delete reader;

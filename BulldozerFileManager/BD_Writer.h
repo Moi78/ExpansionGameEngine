@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <vec3.h>
+#include <vec2.h>
 
 #include "BulldozerFileManager.h"
 
@@ -27,7 +28,7 @@ public:
 	void AppendVertex(vec3d vertex);
 	void AppendNormal(vec3d normal);
 	void AppendIndices(int indice);
-	void AppendUVcoord(vec3d uv);
+	void AppendUVcoord(vec2d uv);
 
 	void ToBinary(std::string filepath, std::string filename);
 
@@ -37,7 +38,7 @@ private:
 	std::vector<vec3d> m_vertices;
 	std::vector<int> m_indices;
 	std::vector<vec3d> m_normals;
-	std::vector<vec3d> m_uv_coord;
+	std::vector<vec2d> m_uv_coord;
 };
 
 #endif
