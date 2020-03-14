@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.2f);
 
-	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/floor", game->GetDefaultMaterial(), vec3f(0.0f, 0.0f, -4.0f), vec3f(), vec3f(10.0f, 10.0f, 10.0f));
+	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/cube", game->GetDefaultMaterial(), vec3f(0.0f, 0.0f, -4.0f), vec3f(), vec3f(10.0f, 10.0f, 10.0f));
 
 	BD_RBodyShape sdef = {};
 	sdef.pos = vec3f(0.0f, 0.0f, 8.0f);
