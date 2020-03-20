@@ -3,10 +3,10 @@
 
 //RD_SimpleMaterial
 
-RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, vec3f Color, vec3f SpecularColor, float SpecularExp) {
+RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, unsigned int BaseColor, vec3f SpecularColor, float SpecularExp) {
 	m_shader = shader;
 
-	BaseColor = Color;
+	m_BaseColor = BaseColor;
 
 	m_SpecularColor = SpecularColor;
 	m_SpecularExp = SpecularExp;
@@ -16,8 +16,8 @@ RD_SimpleMaterial::~RD_SimpleMaterial() {
 	delete m_shader;
 }
 
-void RD_SimpleMaterial::SetBaseColor(vec3f nColor) {
-	BaseColor = nColor;
+void RD_SimpleMaterial::SetBaseColor(unsigned int nColor) {
+	m_BaseColor = nColor;
 
 	UpdateColor();
 }
@@ -28,7 +28,11 @@ void RD_SimpleMaterial::BindMaterial() {
 }
 
 void RD_SimpleMaterial::UpdateColor() {
-	m_shader->SetVec3("BaseColor", BaseColor);
+	//glActiveTexture(GL_TEXTURE0);
+
+	glBindTexture(GL_TEXTURE_2D, m_BaseColor);
+
+	//m_shader->SetInt("BaseColor", m_BaseColor);
 }
 
 void RD_SimpleMaterial::UpdateSpecular() {

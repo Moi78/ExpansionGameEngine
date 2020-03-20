@@ -1,0 +1,35 @@
+#pragma once
+
+#ifndef _RD_TEXTURE_H__
+#define _RD_TEXTURE_H__
+
+#ifdef RAINDROPRENDERER_EXPORTS
+#define RAINDROPRENDERER_API __declspec(dllexport)
+#else
+#define RAINDROPRENDERER_API __declspec(dllimport)
+#endif
+
+#include <glad/glad.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include <vec3.h>
+
+class RAINDROPRENDERER_API RD_Texture
+{
+public:
+	RD_Texture();
+	~RD_Texture();
+
+	void LoadTexture(std::string filepath);
+	void GenerateColorTex(vec3f color);
+
+	unsigned int GetTextureID();
+
+private:
+	unsigned int m_texture;
+};
+
+#endif //_RD_TEXTURE_H__

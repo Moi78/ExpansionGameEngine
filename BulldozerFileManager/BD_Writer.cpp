@@ -43,24 +43,28 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 	int nbrNormal = m_normals.size();
 	int nbrUVcoord = m_uv_coord.size();
 
+	//Vertices
 	bFile.write(reinterpret_cast<const char*>(&nbrVertices), sizeof(int));
 
 	for (int i = 0; i < nbrVertices; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_vertices[i]), sizeof(vec3d));
 	}
 
+	//Indices
 	bFile.write(reinterpret_cast<const char*>(&nbrIndice), sizeof(int));
 
 	for (int i = 0; i < nbrIndice; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_indices[i]), sizeof(int));
 	}
 
+	//Normals
 	bFile.write(reinterpret_cast<const char*>(&nbrNormal), sizeof(int));
 
 	for (int i = 0; i < nbrNormal; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_normals[i]), sizeof(vec3d));
 	}
 
+	//UV Coords
 	bFile.write(reinterpret_cast<const char*>(&nbrUVcoord), sizeof(int));
 
 	for (int i = 0; i < nbrUVcoord; i++) {

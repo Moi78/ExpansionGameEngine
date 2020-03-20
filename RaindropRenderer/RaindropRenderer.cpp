@@ -20,16 +20,19 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool mi
 
 	EnableAllFeatures();
 
-	BD_MatDef mdef = {};
-	mdef.Color = vec3f(1.0f, 1.0f, 1.0f);
-	mdef.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
-	mdef.SpecularExp = 2.0f;
+	m_defTex = new RD_Texture();
+	m_defTex->LoadTexture("Engine/Textures/defTex.png");
+
+	m_mdef = {};
+	m_mdef.BaseColor = m_defTex->GetTextureID();
+	m_mdef.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	m_mdef.SpecularExp = 2.0f;
 
 	if (RENDER_DEBUG_ENABLED) {
-		m_DBG_light_mdl = new RD_Mesh(m_shader, mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
+		m_DBG_light_mdl = new RD_Mesh(m_shader, m_mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
 		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
 
-		m_DBG_sound_emitter_mdl = new RD_Mesh(m_shader, mdef, vec3f(), vec3f(), vec3f(0.2f, 0.2f, 0.2f));
+		m_DBG_sound_emitter_mdl = new RD_Mesh(m_shader, m_mdef, vec3f(), vec3f(), vec3f(0.2f, 0.2f, 0.2f));
 		m_DBG_sound_emitter_mdl->loadMesh("Engine/Meshes/snd_emitter.msh");
 	}
 
@@ -75,7 +78,6 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glfwSetFramebufferSizeCallback(win, glfwWinCallback);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_ARB_debug_output);
 }
 
 void RaindropRenderer::MinInit() {
@@ -226,14 +228,11 @@ void RaindropRenderer::RenderDbg() {
 	if (RENDER_DEBUG_ENABLED) {
 		DisableFeature(RendererFeature::Lighting);
 
-		BD_MatDef mdef = {};
-		mdef.Color = vec3f();
-
 		for (int i = 0; i < m_pt_lights.size(); i++) {
-			mdef.Color = m_pt_lights[i]->GetColor();
+			//mdef.Color = m_pt_lights[i]->GetColor();
 
 			m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
-			m_DBG_light_mdl->UpdateMaterial(&mdef);
+			//m_DBG_light_mdl->UpdateMaterial(&mdef);
 			m_DBG_light_mdl->render(RenderMode::Wireframe);
 		}
 

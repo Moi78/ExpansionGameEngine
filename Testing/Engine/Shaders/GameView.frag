@@ -5,8 +5,9 @@ out vec4 FragColor;
 //Input vertex data
 in vec3 Normal;
 in vec3 FragPos;
+in vec2 UVcoord;
 
-uniform vec3 BaseColor;
+uniform sampler2D BaseColor;
 
 //Amnient Lighting
 uniform float AmbientStrength;
@@ -110,8 +111,9 @@ void main()
 		diffSpec = vec3(1.0, 1.0, 1.0);
 	}
 
-	vec3 result = BaseColor * (diffSpec + ambient);
+	vec3 result = (diffSpec + ambient);
 
-    FragColor = vec4(result, 1.0);
-	//FragColor = vec4(Normal, 1.0);
+    FragColor = texture(BaseColor, UVcoord)  * vec4(result, 1.0);
+	//FragColor = texture(BaseColor, UVcoord);
+	//FragColor = vec4(UVcoord, 0.0, 1.0);
 }

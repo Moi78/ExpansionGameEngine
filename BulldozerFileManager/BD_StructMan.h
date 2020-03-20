@@ -32,7 +32,7 @@ struct BULLDOZERFILEMANAGER_API BD_Resolution {
 };
 
 struct BULLDOZERFILEMANAGER_API BD_MatDef {
-	vec3f Color;
+	unsigned int BaseColor;
 	vec3f SpecularColor;
 	float SpecularExp;
 };
@@ -69,24 +69,6 @@ struct BULLDOZERFILEMANAGER_API BD_ComponentReference {
 	std::string args;
 
 	bool isRoot;
-};
-
-enum BULLDOZERFILEMANAGER_API BD_RBodyShapeType {
-	CUBE,
-	CYLINDER,
-	CAPSULE
-};
-
-struct BULLDOZERFILEMANAGER_API BD_RBodyShape {
-	BD_RBodyShapeType type;
-	
-	vec3f pos;
-	vec3f rot;
-	vec3f scale;
-
-	//For Cylinders, Capsules and Spheres
-	float radius = 1.0f;
-	float height = 1.0f;
 };
 
 #endif // _BD_STRUCT_MAN_H__

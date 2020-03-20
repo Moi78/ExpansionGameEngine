@@ -4,12 +4,13 @@
 RD_Mesh::RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, vec3f rotation, vec3f scale) {
 	inActor = false;
 	m_actor_mat = glm::mat4(1.0f);
+	m_nbr_indices = 0;
 
 	VAO = 0;
 	EBO = 0;
 	VBO = 0;
 
-	m_mat = new RD_SimpleMaterial(shader, material.Color, material.SpecularColor, material.SpecularExp);
+	m_mat = new RD_SimpleMaterial(shader, material.BaseColor, material.SpecularColor, material.SpecularExp);
 
 	m_shader = shader;
 
@@ -29,28 +30,31 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	reader->ReadMSHFile(filepath);
 
 	for (int i = 0; i < reader->GetVerticesCount(); i++) {
-		RAWvertices.push_back(reader->GetVertexByIndex(i).getX());
-		RAWvertices.push_back(reader->GetVertexByIndex(i).getY());
-		RAWvertices.push_back(reader->GetVertexByIndex(i).getZ());
+		m_vertices.push_back(reader->GetVertexByIndex(i));
 	}
 
 	for (int i = 0; i < reader->GetIndicesCount(); i++) {
-		RAWindices.push_back(reader->GetIndiceByIndex(i));
+		m_indices.push_back(reader->GetIndiceByIndex(i));
 	}
 
 	for (int i = 0; i < reader->GetNormalCount(); i++) {
-		RAWnormals.push_back(reader->GetNormalByIndex(i).getX());
-		RAWnormals.push_back(reader->GetNormalByIndex(i).getY());
-		RAWnormals.push_back(reader->GetNormalByIndex(i).getZ());
+		m_normals.push_back(reader->GetNormalByIndex(i));
 	}
 
-	std::cout << "Number of uv coord : " << reader->GetUVcoordCount() << std::endl;
 	for (int i = 0; i < reader->GetUVcoordCount(); i++) {
-		std::cout << "X : " << reader->GetUVcoordByIndex(i).getX() << " Y : " << reader->GetUVcoordByIndex(i).getY() << std::endl;
+		m_uv.push_back(reader->GetUVcoordByIndex(i));
 	}
 
 	Bufferize();
 
+	m_nbr_indices = m_indices.size();
+
+	m_vertices.clear();
+	m_indices.clear();
+	m_normals.clear();
+	m_uv.clear();
+
+	reader->ClearAll();
 	delete reader;
 }
 
@@ -63,7 +67,6 @@ void RD_Mesh::render(RenderMode rndrMode) {
 	}
 
 	//m_shader->useShader();
-	m_mat->BindMaterial();
 
 	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
 
@@ -82,7 +85,7 @@ void RD_Mesh::render(RenderMode rndrMode) {
 	rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
 	rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
 
-	if (!inActor) {
+	if (inActor) {
 		mdl = translate * rotation * scale;
 		mdl *= m_actor_mat;
 	}
@@ -92,45 +95,31 @@ void RD_Mesh::render(RenderMode rndrMode) {
 
 	m_shader->SetMatrix("model", mdl);
 
+	m_mat->BindMaterial();
+
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, RAWindices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 
 void RD_Mesh::Bufferize() {
-	std::vector<double> MIXvertNorm;
 
-	int i = 0;
-	while (i < RAWvertices.size()) {
+	for (int i = 0; i < m_vertices.size(); i++) {
 		//Vertices
 
-		MIXvertNorm.push_back(RAWvertices[i]); //Write
-
-		i++; //Increment
-
-		MIXvertNorm.push_back(RAWvertices[i]); //Same Pattern
-
-		i++;
-
-		MIXvertNorm.push_back(RAWvertices[i]); //Same Pattern
-
-		i++;
-
-		i -= 3; //Resetting i
+		MixVertNormUV.push_back(m_vertices[i].getX());
+		MixVertNormUV.push_back(m_vertices[i].getY());
+		MixVertNormUV.push_back(m_vertices[i].getZ());
 
 		//Normals
 
-		MIXvertNorm.push_back(RAWnormals[i]); //Write
+		MixVertNormUV.push_back(m_normals[i].getX()); //Write
+		MixVertNormUV.push_back(m_normals[i].getY()); //Write
+		MixVertNormUV.push_back(m_normals[i].getZ()); //Write
 
-		i++; //Increment
-
-		MIXvertNorm.push_back(RAWnormals[i]); //Same Pattern
-
-		i++;
-
-		MIXvertNorm.push_back(RAWnormals[i]); //Same Pattern
-
-		i++;
+		//UVs
+		MixVertNormUV.push_back(m_uv[i].getX());
+		MixVertNormUV.push_back(m_uv[i].getY());
 	}
 
 	glGenVertexArrays(1, &VAO);
@@ -141,18 +130,22 @@ void RD_Mesh::Bufferize() {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glBufferData(GL_ARRAY_BUFFER, MIXvertNorm.size() * sizeof(double), &MIXvertNorm[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, MixVertNormUV.size() * sizeof(double), &MixVertNormUV[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, RAWindices.size() * sizeof(unsigned int), &RAWindices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), &m_indices[0], GL_STATIC_DRAW);
 
 	//Vertices
-	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 6 * sizeof(double), (void*)0);
+	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 8 * sizeof(double), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//Normals
-	glVertexAttribPointer(1, 3, GL_DOUBLE, GL_FALSE, 6 * sizeof(double), (void*)(3 * sizeof(double)));
+	glVertexAttribPointer(1, 3, GL_DOUBLE, GL_FALSE, 8 * sizeof(double), (void*)(3 * sizeof(double)));
 	glEnableVertexAttribArray(1);
+
+	//UV Coords
+	glVertexAttribPointer(2, 2, GL_DOUBLE, GL_FALSE, 8 * sizeof(double), (void*)(6 * sizeof(double)));
+	glEnableVertexAttribArray(2);
 }
 
 void RD_Mesh::addRotation(vec3f rotation) {
@@ -180,7 +173,7 @@ void RD_Mesh::SetScale(vec3f nScale) {
 }
 
 void RD_Mesh::UpdateMaterial(BD_MatDef* mat) {
-	m_mat->SetBaseColor(mat->Color);
+	m_mat->SetBaseColor(mat->BaseColor);
 }
 
 vec3f RD_Mesh::GetLocation() {

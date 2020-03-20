@@ -15,17 +15,17 @@
 class RAINDROPRENDERER_API RD_SimpleMaterial
 {
 public:
-	RD_SimpleMaterial(RD_ShaderLoader* shader, vec3f Color = vec3f(1.0f, 0.0f, 0.0f), vec3f SpecularColor = vec3f(1.0f, 0.0f, 0.0f), float SpecularExp = 16.0f);
+	RD_SimpleMaterial(RD_ShaderLoader* shader, unsigned int BaseColor, vec3f SpecularColor = vec3f(1.0f, 0.0f, 0.0f), float SpecularExp = 16.0f);
 	~RD_SimpleMaterial();
 
-	void SetBaseColor(vec3f);
+	void SetBaseColor(unsigned int);
 
 	void BindMaterial();
 private:
 	void UpdateColor();
 	void UpdateSpecular();
 
-	vec3f BaseColor;
+	unsigned int m_BaseColor;
 
 	vec3f m_SpecularColor;
 	float m_SpecularExp;

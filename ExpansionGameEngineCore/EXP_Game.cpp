@@ -4,7 +4,7 @@
 #include "EXP_Actor.h"
 #include "EXP_Camera.h"
 #include "EXP_SoundEmitter.h"
-#include "EXP_RigidBody.h"
+//#include "EXP_RigidBody.h"
 
 EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, std::string gameName) {
 	m_currentCamera = nullptr;
@@ -12,10 +12,12 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, 
 	InitPhysicaSound();
 	InitGame(res, refreshColor, gameName, gameinfo);
 	InitGui();
-	InitBullet();
+
+	RD_Texture* defTex = new RD_Texture();
+	defTex->LoadTexture(gameinfo.RootEngineContentFolder + "/Textures/defTex.png");
 
 	m_def_mat = {};
-	m_def_mat.Color = vec3f(1.0f, 1.0f, 1.0f);
+	m_def_mat.BaseColor = defTex->GetTextureID();
 	m_def_mat.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
 	m_def_mat.SpecularExp = 1.0f;
 }
@@ -81,8 +83,6 @@ void EXP_Game::MainLoop() {
 	if (m_currentCamera != nullptr) {
 		m_currentCamera->UpdateCamera();
 	}
-
-	UpdatePhysics();
 
 	UpdateSound();
 
@@ -167,32 +167,6 @@ void EXP_Game::RegisterSoundEmitter(EXP_SoundEmitter* sm) {
 	m_rndr->RegisterSoundEmitter(sm);
 }
 
-void EXP_Game::InitBullet() {
-	btDefaultCollisionConfiguration* CollConf = new btDefaultCollisionConfiguration();
-	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(CollConf);
-
-	btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
-
-	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
-
-	m_dWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, CollConf);
-
-	m_dWorld->setGravity(btVector3(0.0f, -9.81f, 0.0f));
-}
-
-void EXP_Game::UpdatePhysics() {
-	float frmLimit = m_rndr->GetFrameLimit();
-
-	m_dWorld->stepSimulation(1.0 / frmLimit, 10);
-}
-
-void EXP_Game::SetGravity(vec3f nGravity) {
-	m_dWorld->setGravity(btVector3(nGravity.getX(), nGravity.getY(), nGravity.getZ()));
-}
-
-void EXP_Game::RegisterRigidBody(EXP_RigidBody* rb) {
-	std::cout << "Registered new Rigid Body." << std::endl;
-
-	m_rigidBodies.push_back(rb);
-	rb->LoadInWorld(m_dWorld);
+std::string EXP_Game::GetFilePathByRef(std::string ref) {
+	return m_gameinfo.RootGameContentFolder + ref;
 }

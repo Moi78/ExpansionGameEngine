@@ -21,6 +21,7 @@
 #include "RD_PointLight.h"
 #include "RD_DirLight.h"
 #include "RD_GUI.h"
+#include "RD_Texture.h"
 
 #include <BD_StructMan.h>
 
@@ -128,6 +129,9 @@ private:
 
 	RD_Mesh* m_DBG_light_mdl;
 	RD_Mesh* m_DBG_sound_emitter_mdl;
+	BD_MatDef m_mdef;
+
+	RD_Texture* m_defTex;
 };
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);

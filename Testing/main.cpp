@@ -24,28 +24,23 @@ int main(int argc, char* argv[]) {
 
 	EXP_Game* game = new EXP_Game({ 1280, 720 }, gi, vec3f(0.0f, 0.41f, 0.54f), "Demo Scene");
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
-	game->GetRenderer()->SetAmbientStrength(0.2f);
-
-	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/cube", game->GetDefaultMaterial(), vec3f(0.0f, 0.0f, -4.0f), vec3f(), vec3f(10.0f, 10.0f, 10.0f));
-
-	BD_RBodyShape sdef = {};
-	sdef.pos = vec3f(0.0f, 0.0f, 8.0f);
-	sdef.rot = vec3f();
-	sdef.scale = vec3f(2.0f, 2.0f, 2.0f);
-	sdef.type = BD_RBodyShapeType::CUBE;
-	
-
-	EXP_RigidBody* rbody = new EXP_RigidBody(game, sdef, 1.0f);
-
-	EXP_PointLight* light = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 4.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 0.5f);
+	game->GetRenderer()->SetAmbientStrength(0.1f);
 
 	EXP_Camera* cam = new EXP_Camera(game, vec3f(-8.0f, 3.0f, 4.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
 	cam->Use();
 
 	while (!game->GetRenderer()->WantToClose()) {
-		game->MainLoop();
+		if (glfwGetKey(game->GetRenderer()->GetGLFWwindow(), GLFW_KEY_UP) == GLFW_PRESS) {
+			cam->Translate(vec3f(0.1f), true);
+			cam->UpdateCamera();
+		}
 
-		rbody->GetActualTransformMatrix();
+		if (glfwGetKey(game->GetRenderer()->GetGLFWwindow(), GLFW_KEY_DOWN) == GLFW_PRESS) {
+			cam->Translate(vec3f(-0.1f), true);
+			cam->UpdateCamera();
+		}
+
+		game->MainLoop();
 	}
 
 	delete game;

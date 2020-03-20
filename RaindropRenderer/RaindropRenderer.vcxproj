@@ -91,8 +91,9 @@
       <PreprocessorDefinitions>_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>stb\;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,8 +153,9 @@
       <PreprocessorDefinitions>NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;stb\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,6 +184,7 @@
     <ClInclude Include="RaindropRenderer.h" />
     <ClInclude Include="RD_PointLight.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
+    <ClInclude Include="RD_Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -203,6 +206,7 @@
     <ClCompile Include="RaindropRenderer.cpp" />
     <ClCompile Include="RD_PointLight.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />
+    <ClCompile Include="RD_Texture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

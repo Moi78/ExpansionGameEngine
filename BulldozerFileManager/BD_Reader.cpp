@@ -67,9 +67,7 @@ void BD_Reader::ReadMSHFile(std::string file) {
 	//Reading UV
 	bFile.read(reinterpret_cast<char*>(&uvSize), sizeof(int)); //Same pattern
 
-	temp = vec3d(0.0f, 0.0f, 0.0f);
-
-	for (int i = 0; i < uvcount; i++) {
+	for (int i = 0; i < uvSize; i++) {
 		bFile.read(reinterpret_cast<char*>(&tempUV), sizeof(vec2d));
 		mUVcoord.push_back(tempUV);
 	}

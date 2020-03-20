@@ -47,15 +47,6 @@ public:
 	void ApplyActorMatrix(glm::mat4);
 	void SetActorMode(bool mode);
 
-	std::vector<double> RAWvertices;
-	std::vector<unsigned int> RAWindices;
-	std::vector<double> RAWnormals;
-	std::vector<double> RAWuv;
-
-	std::vector<double> MixVertNorm;
-
-	int m_nbr_vertices;
-
 	glm::mat4 m_actor_mat;
 	bool inActor;
 	
@@ -63,6 +54,16 @@ private:
 	void Bufferize();
 
 	unsigned int VAO, VBO, EBO;
+
+	std::vector<vec3d> m_vertices;
+	std::vector<unsigned int> m_indices;
+	std::vector<vec3d> m_normals;
+	std::vector<vec2d> m_uv;
+
+	int m_nbr_indices;
+	int m_nbr_vertices;
+
+	std::vector<double> MixVertNormUV;
 
 	RD_SimpleMaterial* m_mat;
 	RD_ShaderLoader* m_shader;
