@@ -7,6 +7,7 @@ TODO List :
  - Check compatibility with linux (and make it compatible)
  - Fix OpenAL crash when using Release mode at compile time
  - Make ReactPhysics impl.
+ - Reduce RAM usage
  
  Dependencies :
   - OpenAL Soft (by @Kcat)
