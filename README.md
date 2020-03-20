@@ -9,7 +9,7 @@ TODO List :
  - Make ReactPhysics impl.
  
  Dependencies :
-  - OpenAL
+  - OpenAL Soft (by @Kcat)
   - GLFW3
   - OpenGL
   - ASSIMP (For tools)
