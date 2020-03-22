@@ -13,6 +13,7 @@ TODO List :
   - GLFW3
   - OpenGL
   - ASSIMP (For tools)
+  - Qt (For tools)
   - PA112RSER (Custom lib)
   - PYBIND11 (Legacy)
   - GLAD
