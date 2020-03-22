@@ -38,8 +38,9 @@ struct BULLDOZERFILEMANAGER_API BD_MatDef {
 };
 
 struct BULLDOZERFILEMANAGER_API BD_GameInfo {
-	std::string RootGameContentFolder;
-	std::string RootEngineContentFolder;
+	std::string RootGameContentFolder = "Engine";
+	std::string RootEngineContentFolder = "Content";
+	std::string GameName = "Default Game";
 };
 
 enum BULLDOZERFILEMANAGER_API RendererFeature {

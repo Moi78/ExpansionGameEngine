@@ -44,7 +44,7 @@ class EXP_SoundEmitter;
 class EXPGE_API EXP_Game
 {
 public:
-	EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, std::string gameName);
+	EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor);
 	~EXP_Game();
 	
 	BD_GameInfo GetGameInfo();
@@ -73,7 +73,7 @@ public:
 	std::string GetFilePathByRef(std::string ref);
 
 private:
-	void InitGame(BD_Resolution winRes, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo);
+	void InitGame(BD_Resolution winRes, vec3f refreshColor, BD_GameInfo gameinfo);
 	void InitPhysicaSound();
 	void InitGui();
 

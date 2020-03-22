@@ -6,11 +6,11 @@
 #include "EXP_SoundEmitter.h"
 //#include "EXP_RigidBody.h"
 
-EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor, std::string gameName) {
+EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
 	
 	InitPhysicaSound();
-	InitGame(res, refreshColor, gameName, gameinfo);
+	InitGame(res, refreshColor, gameinfo);
 	InitGui();
 
 	RD_Texture* defTex = new RD_Texture();
@@ -29,13 +29,13 @@ EXP_Game::~EXP_Game() {
 	delete m_rndr;
 }
 
-void EXP_Game::InitGame(BD_Resolution res, vec3f refreshColor, std::string gameName, BD_GameInfo gameinfo) {
+void EXP_Game::InitGame(BD_Resolution res, vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_res = res;
 	m_refreshColor = refreshColor;
-	m_gameName = gameName;
+	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
 
-	m_rndr = new RaindropRenderer(res.x, res.y, gameName);
+	m_rndr = new RaindropRenderer(res.x, res.y, gameinfo.GameName);
 }
 
 void EXP_Game::InitPhysicaSound() {
