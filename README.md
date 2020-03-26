@@ -20,3 +20,4 @@ TODO List :
   - GLEW
   - GLM
   - libsnd
+  - ReactPhysics3D (by @DanielChappuis)
