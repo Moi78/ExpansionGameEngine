@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\GL\include;C:\VulkanSDK\1.1.106.0\Include;..\libs\VULKAN\include;..\RaindropRenderer;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include;..\PhysicaSound;..\libs\PA112RSER\inc;..\ExpansionMath;..\ImGui;%(AdditionalIncludeDirectories);..\libs\BULLET\bullet3-2.89\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\GL\include;..\RaindropRenderer;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include;..\PhysicaSound;..\libs\PA112RSER\inc;..\ExpansionMath;..\ImGui;%(AdditionalIncludeDirectories);..\libs\BULLET\bullet3-2.89\include\;..\libs\BULLET\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -122,7 +122,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\GL\include;C:\VulkanSDK\1.1.106.0\Include;..\libs\VULKAN\include;..\RaindropRenderer;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include;..\PhysicaSound;..\libs\PA112RSER\inc;..\ExpansionMath;%(AdditionalIncludeDirectories);..\libs\BULLET\bullet3-2.89\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\GL\include;..\RaindropRenderer;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include;..\PhysicaSound;..\libs\PA112RSER\inc;..\ExpansionMath;%(AdditionalIncludeDirectories);..\libs\BULLET\bullet3-2.89\include\;..\libs\BULLET\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

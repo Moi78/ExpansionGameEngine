@@ -4,7 +4,7 @@
 #include "EXP_Actor.h"
 #include "EXP_Camera.h"
 #include "EXP_SoundEmitter.h"
-//#include "EXP_RigidBody.h"
+#include "EXP_PhysicsHandler.h"
 
 EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
@@ -12,6 +12,7 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) 
 	InitPhysicaSound();
 	InitGame(res, refreshColor, gameinfo);
 	InitGui();
+	InitPhysics();
 
 	RD_Texture* defTex = new RD_Texture();
 	defTex->LoadTexture(gameinfo.RootEngineContentFolder + "/Textures/defTex.png");
@@ -19,7 +20,8 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) 
 	m_def_mat = {};
 	m_def_mat.BaseColor = defTex->GetTextureID();
 	m_def_mat.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
-	m_def_mat.SpecularExp = 1.0f;
+	m_def_mat.Shininess = 1.0f;
+	m_def_mat.SpecularStrength = 0.5f;
 }
 
 EXP_Game::~EXP_Game() {
@@ -35,7 +37,7 @@ void EXP_Game::InitGame(BD_Resolution res, vec3f refreshColor, BD_GameInfo gamei
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
 
-	m_rndr = new RaindropRenderer(res.x, res.y, gameinfo.GameName);
+	m_rndr = new RaindropRenderer(res.x, res.y, gameinfo.GameName, 60);
 }
 
 void EXP_Game::InitPhysicaSound() {
@@ -57,6 +59,11 @@ void EXP_Game::InitPhysicaSound() {
 		m_listener = new PS_Listener(vec3f(), vec3f());
 		m_soundEngine->RegisterListener(m_listener);
 	}
+}
+
+void EXP_Game::InitPhysics() {
+	m_physicsHandler = new EXP_PhysicsHandler(vec3f(0.0f, 0.0f, -9.82f), GetRenderer()->GetFrameLimit());
+	m_physicsHandler->InitWorld();
 }
 
 void EXP_Game::UpdateSound() {
@@ -85,6 +92,7 @@ void EXP_Game::MainLoop() {
 	}
 
 	UpdateSound();
+	UpdatePhysics();
 
 	m_rndr->SwapWindow();
 }
@@ -169,4 +177,12 @@ void EXP_Game::RegisterSoundEmitter(EXP_SoundEmitter* sm) {
 
 std::string EXP_Game::GetFilePathByRef(std::string ref) {
 	return m_gameinfo.RootGameContentFolder + ref;
+}
+
+void EXP_Game::UpdatePhysics() {
+	m_physicsHandler->UpdateWorld();
+}
+
+EXP_PhysicsHandler* EXP_Game::GetPhysicsHandler() {
+	return m_physicsHandler;
 }

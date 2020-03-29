@@ -34,7 +34,8 @@ struct BULLDOZERFILEMANAGER_API BD_Resolution {
 struct BULLDOZERFILEMANAGER_API BD_MatDef {
 	unsigned int BaseColor;
 	vec3f SpecularColor;
-	float SpecularExp;
+	float SpecularStrength;
+	float Shininess;
 };
 
 struct BULLDOZERFILEMANAGER_API BD_GameInfo {

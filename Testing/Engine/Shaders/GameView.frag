@@ -31,13 +31,13 @@ uniform float LightBrightness[327];
 uniform vec3 CamPos;
 
 //Specular
-uniform float specularStrength = 256.0;
+uniform float specularExp = 256.0;
 uniform vec3 specularColor = vec3(1.0, 1.0, 1.0);
+uniform float specularStrength = 1.0f;
 
 //Features define
 uniform bool ftr_lighting = true;
 uniform bool ftr_specular = true;
-uniform bool ftr_texture = false;
 uniform bool ftr_ambient = true;
 
 vec3 viewDir = normalize(CamPos - FragPos);
@@ -46,27 +46,27 @@ vec3 norm = normalize(Normal);
 vec3 CalcPointLighting(int lightIndex) {
 	//Diffuse
 	vec3 LightDir = normalize(LightPos[lightIndex] - FragPos);
-	float diff = max(0.0, dot(norm, LightDir));
+	float diff = max(dot(norm, LightDir), 0.0);
 		
 	float dist = length(LightPos[lightIndex] - FragPos[lightIndex]);
 	float attenuation = (1.0 / (1.0 + 0.7 * dist + 1.8 * (dist * dist)));
 
-	vec3 diffuse = (diff * LightBrightness[lightIndex] * LightColor[lightIndex]);
+	vec3 diffuse = (diff * LightBrightness[lightIndex] * LightColor[lightIndex]) / dist;
 
 	//Specular
 	vec3 specular = vec3(1.0, 1.0, 1.0);
 
-	if(true) {
+	if(ftr_specular) {
 		vec3 reflectDir = reflect(-LightDir, norm);
 
-		float spec = pow(max(0.0, dot(viewDir, reflectDir)), specularStrength);
+		float spec = pow(max(0.0, dot(viewDir, reflectDir)), specularExp);
 
-		specular = (spec * LightColor[lightIndex] * specularColor) / distance(FragPos, LightPos[lightIndex]);
+		specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * specularColor * specularStrength);
 	} else {
 		specular = vec3(0.0, 0.0, 0.0);
 	}
 
-	return (attenuation * diffuse) + specular;
+	return attenuation * (diffuse + specular);
 }
 
 vec3 CalcDirLight(int index) {
@@ -100,7 +100,7 @@ void main()
 	//Lighting
 	vec3 diffSpec;
 
-	if(ftr_lighting == true) {
+	if(ftr_lighting) {
 		for(int i = 0; i < nbrPointLight; i++) {
 			diffSpec += CalcPointLighting(i);
 		}

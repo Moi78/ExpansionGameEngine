@@ -5,7 +5,7 @@
 #include <stb_image.h>
 
 RD_Texture::RD_Texture() {
-
+	m_texture = 0;
 }
 
 RD_Texture::~RD_Texture() {
@@ -57,7 +57,7 @@ unsigned int RD_Texture::GetTextureID() {
 }
 
 void RD_Texture::GenerateColorTex(vec3f color) {
-	std::vector<unsigned char> image(100 * 100 * 3);
+	std::vector<unsigned char> image(16 * 16 * 3);
 
 	for (int i = 0; i < image.size(); i += 3) {
 		image[i] = 255 * color.getX();
@@ -68,8 +68,6 @@ void RD_Texture::GenerateColorTex(vec3f color) {
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 
-	std::cout << "Tex ID = " << m_texture << std::endl;
-
 	//Wrapping
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -78,10 +76,7 @@ void RD_Texture::GenerateColorTex(vec3f color) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	//MipMaps
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 16, 16, 0, GL_RGB, GL_UNSIGNED_BYTE, &image[0]);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 100, 100, 0, GL_RGB, GL_UNSIGNED_BYTE, &image[0]);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	image.clear();
 }

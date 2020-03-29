@@ -43,9 +43,7 @@ void EXP_Actor::LoadDef(std::string def) {
 
 		std::cout << "Args : " << buffer.args << std::endl;
 
-
 		//MESH
-
 
 		if (buffer.type == BD_ComponentType::STATIC_MESH) {
 			args_r->parse(buffer.args);

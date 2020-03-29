@@ -15,7 +15,7 @@
 class RAINDROPRENDERER_API RD_SimpleMaterial
 {
 public:
-	RD_SimpleMaterial(RD_ShaderLoader* shader, unsigned int BaseColor, vec3f SpecularColor = vec3f(1.0f, 0.0f, 0.0f), float SpecularExp = 16.0f);
+	RD_SimpleMaterial(RD_ShaderLoader* shader, unsigned int BaseColor, vec3f SpecularColor, float Shininess, float SpecularStrength);
 	~RD_SimpleMaterial();
 
 	void SetBaseColor(unsigned int);
@@ -28,7 +28,8 @@ private:
 	unsigned int m_BaseColor;
 
 	vec3f m_SpecularColor;
-	float m_SpecularExp;
+	float m_SpecularStrength;
+	float m_Shininess;
 
 	RD_ShaderLoader* m_shader;
 };

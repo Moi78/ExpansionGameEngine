@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RaindropRenderer.h"
 
-RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool minInit) : m_height(h), m_width(w) {
+RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit) : m_height(h), m_width(w) {
 	FillFeaturesStringArray();
 	FillFeatureStateArray();
 
@@ -12,13 +12,11 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool mi
 		this->MinInit();
 	}
 
-	m_frmLmt = new RD_FrameLimiter(60);
+	m_frmLmt = new RD_FrameLimiter(maxFramerate);
 	
 	m_shader = new RD_ShaderLoader();
 	m_shader->compileShaderFromFile("Engine/Shaders/GameView.vert", "Engine/Shaders/GameView.frag");
 	m_shader->useShader();
-
-	EnableAllFeatures();
 
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
@@ -26,7 +24,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, bool mi
 	m_mdef = {};
 	m_mdef.BaseColor = m_defTex->GetTextureID();
 	m_mdef.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
-	m_mdef.SpecularExp = 2.0f;
+	m_mdef.Shininess = 2.0f;
+	m_mdef.SpecularStrength = 0.5f;
 
 	if (RENDER_DEBUG_ENABLED) {
 		m_DBG_light_mdl = new RD_Mesh(m_shader, m_mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
@@ -107,9 +106,9 @@ void RaindropRenderer::SwapWindow() {
 
 	if (m_frmLmt->GetElapsedTime() < (float)1 / m_frmLmt->GetFrameLimit()) {
 
-		while (m_frmLmt->GetElapsedTime() < (float)1 / m_frmLmt->GetFrameLimit()) {
-			m_frmLmt->stop();
-		}
+		long long delta = (1.0f / m_frmLmt->GetFrameLimit()) * 1000 - m_frmLmt->GetElapsedTime();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(delta));
 	}
 }
 
@@ -226,7 +225,12 @@ void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
 
 void RaindropRenderer::RenderDbg() {
 	if (RENDER_DEBUG_ENABLED) {
-		DisableFeature(RendererFeature::Lighting);
+		bool rEnableLighting = true;
+
+		if(IsFeatureEnabled(RendererFeature::Lighting))
+			DisableFeature(RendererFeature::Lighting);
+		else
+			rEnableLighting = false;
 
 		for (int i = 0; i < m_pt_lights.size(); i++) {
 			//mdef.Color = m_pt_lights[i]->GetColor();
@@ -241,7 +245,8 @@ void RaindropRenderer::RenderDbg() {
 			m_DBG_sound_emitter_mdl->render(RenderMode::Wireframe);
 		}
 
-		EnableFeature(RendererFeature::Lighting);
+		if(rEnableLighting)
+			EnableFeature(RendererFeature::Lighting);
 	}
 }
 
@@ -279,9 +284,9 @@ void RaindropRenderer::FillFeaturesStringArray() {
 }
 
 void RaindropRenderer::FillFeatureStateArray() {
-	m_features_state[0] = false;
-	m_features_state[1] = false;
-	m_features_state[2] = false;
+	m_features_state[0] = true;
+	m_features_state[1] = true;
+	m_features_state[2] = true;
 }
 
 void RaindropRenderer::EnableAllFeatures() {
@@ -293,7 +298,7 @@ void RaindropRenderer::EnableAllFeatures() {
 
 //Disable or Enable features
 void RaindropRenderer::EnableFeature(RendererFeature ftr) {
-	if (!IsFeatureEnabled(ftr)) {
+	if (IsFeatureEnabled(ftr) == false) {
 		m_shader->SetBool(m_features_string[ftr], true);
 		m_features_state[ftr] = true;
 	}
@@ -303,7 +308,7 @@ void RaindropRenderer::EnableFeature(RendererFeature ftr) {
 }
 
 void RaindropRenderer::DisableFeature(RendererFeature ftr) {
-	if (IsFeatureEnabled(ftr)) {
+	if (IsFeatureEnabled(ftr) == true) {
 		m_shader->SetBool(m_features_string[ftr], false);
 		m_features_state[ftr] = false;
 	}

@@ -24,13 +24,13 @@ void RD_FrameLimiter::start() {
 void RD_FrameLimiter::stop() {
 	m_stop = high_resolution_clock::now();
 
-	m_last_delta = duration<double>(m_stop - m_start).count();
+	m_last_delta = std::chrono::duration_cast<std::chrono::milliseconds>(m_stop - m_start).count();
 }
 
 double RD_FrameLimiter::GetElapsedTime() {
-	duration<double> elapsed = m_stop - m_start;
+	double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(m_stop - m_start).count();
 
-	return elapsed.count();
+	return elapsed;
 }
 
 void RD_FrameLimiter::WaitAll(double dur) {

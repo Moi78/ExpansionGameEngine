@@ -40,7 +40,7 @@
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
-	RaindropRenderer(int w, int h, std::string windowName, bool minInit = false);
+	RaindropRenderer(int w, int h, std::string windowName, int maxFramerate = 60, bool minInit = false);
 	~RaindropRenderer();
 
 	void initGlad(bool minInit = false);

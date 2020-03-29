@@ -3,13 +3,15 @@
 
 //RD_SimpleMaterial
 
-RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, unsigned int BaseColor, vec3f SpecularColor, float SpecularExp) {
+RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, unsigned int BaseColor, vec3f SpecularColor, float Shininess, float SpecularStrength) {
 	m_shader = shader;
 
 	m_BaseColor = BaseColor;
 
 	m_SpecularColor = SpecularColor;
-	m_SpecularExp = SpecularExp;
+	m_Shininess = Shininess;
+
+	m_SpecularStrength = SpecularStrength;
 }
 
 RD_SimpleMaterial::~RD_SimpleMaterial() {
@@ -37,5 +39,6 @@ void RD_SimpleMaterial::UpdateColor() {
 
 void RD_SimpleMaterial::UpdateSpecular() {
 	m_shader->SetVec3("specularColor", m_SpecularColor);
-	m_shader->SetFloat("specularStrength", m_SpecularExp);
+	m_shader->SetFloat("specularStrength", m_SpecularStrength);
+	m_shader->SetFloat("specularExp", m_Shininess);
 }

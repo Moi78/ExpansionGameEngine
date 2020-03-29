@@ -36,10 +36,11 @@
 #include <vec3.h>
 
 //Forward Declaration
-//class EXP_RigidBody;
 class EXP_Actor;
 class EXP_Camera;
 class EXP_SoundEmitter;
+class EXP_RigidBody;
+class EXP_PhysicsHandler;
 
 class EXPGE_API EXP_Game
 {
@@ -72,10 +73,15 @@ public:
 
 	std::string GetFilePathByRef(std::string ref);
 
+	//Physics
+	void UpdatePhysics();
+	EXP_PhysicsHandler* GetPhysicsHandler();
+
 private:
 	void InitGame(BD_Resolution winRes, vec3f refreshColor, BD_GameInfo gameinfo);
 	void InitPhysicaSound();
 	void InitGui();
+	void InitPhysics();
 
 	RaindropRenderer* m_rndr;
 
@@ -91,6 +97,9 @@ private:
 
 	EXP_Camera* m_currentCamera;
 	PS_Listener* m_listener;
+
+	//Physics
+	EXP_PhysicsHandler* m_physicsHandler;
 
 	//Renderables
 	std::vector<RD_Mesh*> m_staticMeshes;
