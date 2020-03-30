@@ -41,6 +41,7 @@ class EXP_Camera;
 class EXP_SoundEmitter;
 class EXP_RigidBody;
 class EXP_PhysicsHandler;
+class EXP_KeyboardCallback;
 
 class EXPGE_API EXP_Game
 {
@@ -54,6 +55,8 @@ public:
 	void RegisterMesh(RD_Mesh*);
 	void RegisterPointLight(RD_PointLight*);
 	void RegisterCamera(EXP_Camera*);
+	void RegisterKeyboardCallback(EXP_KeyboardCallback*);
+	void RegisterActor(EXP_Actor*);
 
 	//Rendering
 	RaindropRenderer* GetRenderer();
@@ -82,6 +85,9 @@ private:
 	void InitPhysicaSound();
 	void InitGui();
 	void InitPhysics();
+	void UpdateCallbacks();
+
+	bool m_first_exec;
 
 	RaindropRenderer* m_rndr;
 
@@ -104,6 +110,12 @@ private:
 	//Renderables
 	std::vector<RD_Mesh*> m_staticMeshes;
 	std::vector<RD_PointLight*> m_points_light;
+
+	//Callbacks
+	std::vector<EXP_KeyboardCallback*> m_kb_callbacks;
+
+	//Actors
+	std::vector<EXP_Actor*> m_actors;
 };
 
 #endif //_EXP_GAME_H__

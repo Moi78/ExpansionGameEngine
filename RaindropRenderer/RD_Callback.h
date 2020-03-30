@@ -14,7 +14,7 @@
 #include <functional>
 
 #define VDFUNCPTR(x) std::bind(&x)
-#define CL_VCFUNCPTR(x) std::bind(&x, this)
+#define CL_VDFUNCPTR(x) std::bind(&x, this)
 
 class RAINDROPRENDERER_API RD_Callback
 {

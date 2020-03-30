@@ -5,9 +5,11 @@
 #include "EXP_Camera.h"
 #include "EXP_SoundEmitter.h"
 #include "EXP_PhysicsHandler.h"
+#include "EXP_Callbacks.h"
 
 EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
+	m_first_exec = true;
 	
 	InitPhysicaSound();
 	InitGame(res, refreshColor, gameinfo);
@@ -27,8 +29,15 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) 
 EXP_Game::~EXP_Game() {
 	m_soundEngine->shutdownAL();
 
+	m_points_light.clear();
+	m_staticMeshes.clear();
+	m_actors.clear();
+
 	delete m_soundEngine;
 	delete m_rndr;
+	delete m_physicsHandler;
+	delete m_currentCamera;
+	delete m_listener;
 }
 
 void EXP_Game::InitGame(BD_Resolution res, vec3f refreshColor, BD_GameInfo gameinfo) {
@@ -91,8 +100,17 @@ void EXP_Game::MainLoop() {
 		m_currentCamera->UpdateCamera();
 	}
 
+	if (m_first_exec) {
+		for (auto act : m_actors) {
+			act->CallOnStart();
+		}
+
+		m_first_exec = false;
+	}
+
 	UpdateSound();
 	UpdatePhysics();
+	UpdateCallbacks();
 
 	m_rndr->SwapWindow();
 }
@@ -185,4 +203,22 @@ void EXP_Game::UpdatePhysics() {
 
 EXP_PhysicsHandler* EXP_Game::GetPhysicsHandler() {
 	return m_physicsHandler;
+}
+
+void EXP_Game::RegisterKeyboardCallback(EXP_KeyboardCallback* callback) {
+	m_kb_callbacks.push_back(callback);
+}
+
+void EXP_Game::UpdateCallbacks() {
+	for (auto cllbck : m_kb_callbacks) {
+		cllbck->UpdateCallback();
+	}
+
+	for (auto act : m_actors) {
+		act->CallTick();
+	}
+}
+
+void EXP_Game::RegisterActor(EXP_Actor* act) {
+	m_actors.push_back(act);
 }

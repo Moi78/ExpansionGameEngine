@@ -56,8 +56,6 @@ int main(int argc, char* argv[]) {
 	EXP_RB_Box* rbfloor = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 0.0f), vec3f(), vec3f(10.0f, 10.0f, 0.5f), 0.0f);
 
 	while (!game->GetRenderer()->WantToClose()) {
-		chara->UpdateCharacter();
-
 		game->MainLoop();
 	}
 
