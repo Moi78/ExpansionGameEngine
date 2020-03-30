@@ -13,6 +13,7 @@
 #include "RD_ShaderLoader.h"
 
 #include <glm/glm.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include <iostream>
 #include <string>
@@ -39,8 +40,16 @@ public:
 	void RotateCamera(vec3f);
 	void TranslateCamera(vec3f translation, bool changeSub = false);
 
+	vec3f GetForwardVector();
+	vec3f GetRightVector();
+
 	vec3f GetLocation();
+
+	void AddPitch(float pitch);
+	void AddYaw(float yaw);
+	void AddRoll(float roll);
 private:
+	void ComputeYPR();
 	void SetupCamera();
 	
 
@@ -56,9 +65,7 @@ private:
 	vec3f m_pos;
 	vec3f m_subject;
 
-	float m_pitch;
-	float m_yaw;
-	float m_roll;
+	vec3f m_yawPitchRoll;
 };
 
 #endif //_RD_CAMERA_H__

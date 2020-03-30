@@ -27,7 +27,7 @@ public:
 	void SetRotation(vec3f nRot);
 	void SetScale(vec3f nScale);
 
-private:
+protected:
 	vec3f m_pos;
 	vec3f m_rot;
 	vec3f m_scale;

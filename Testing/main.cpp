@@ -16,7 +16,8 @@
 #include <vec3.h>
 
 #include <BD_StructMan.h>
-#include <BD_ActorRW.h>
+
+#include "MainCharacter.h"
 
 int main(int argc, char* argv[]) {
 	BD_GameInfo gi = {};
@@ -27,6 +28,8 @@ int main(int argc, char* argv[]) {
 	EXP_Game* game = new EXP_Game({ 1280, 720 }, gi, vec3f(0.0f, 0.41f, 0.54f));
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.1f);
+
+	MainCharacter* chara = new MainCharacter(game, vec3f(-5.0f, -5.0f, 0.5f));
 
 	RD_Texture* color = new RD_Texture();
 	color->GenerateColorTex(vec3f(1.0f, 0.0f, 1.0f));
@@ -48,32 +51,14 @@ int main(int argc, char* argv[]) {
 
 	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/floor", mat, vec3f(), vec3f(), vec3f(10.0f, 10.0f, 0.5f));
 
-	EXP_StaticMesh* shape = new EXP_StaticMesh(game, "/shape", matShape, vec3f(0.0f, 0.0f, 12.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
-
-	EXP_Camera* cam = new EXP_Camera(game, vec3f(-8.0f, 3.0f, 4.0f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
-	cam->Use();
-
 	EXP_PointLight* light = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 13.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 600.0f);
-
-	EXP_RB_Box* rb = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 12.0f), vec3f(20.0f, 60.0f, 30.0f), vec3f(1.0f, 1.0f, 1.0f), 40.0f, vec3f(2.0f));
 
 	EXP_RB_Box* rbfloor = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 0.0f), vec3f(), vec3f(10.0f, 10.0f, 0.5f), 0.0f);
 
 	while (!game->GetRenderer()->WantToClose()) {
-		if (glfwGetKey(game->GetRenderer()->GetGLFWwindow(), GLFW_KEY_UP) == GLFW_PRESS) {
-			cam->Translate(vec3f(0.1f), true);
-			cam->UpdateCamera();
-		}
-
-		if (glfwGetKey(game->GetRenderer()->GetGLFWwindow(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-			cam->Translate(vec3f(-0.1f), true);
-			cam->UpdateCamera();
-		}
+		chara->UpdateCharacter();
 
 		game->MainLoop();
-
-		shape->SetPosition(rb->GetWorldPosition());
-		shape->Update();
 	}
 
 	delete game;

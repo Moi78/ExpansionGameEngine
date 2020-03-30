@@ -18,11 +18,19 @@
     <ClCompile Include="main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="MainCharacter.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Shaders\GameView.frag" />
     <None Include="Engine\Shaders\GameView.vert" />
     <None Include="Engine\Shaders\Lights.frag" />
     <None Include="Engine\Shaders\Lights.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainCharacter.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

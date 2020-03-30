@@ -49,7 +49,7 @@ vec3 CalcPointLighting(int lightIndex) {
 	float diff = max(dot(norm, LightDir), 0.0);
 		
 	float dist = length(LightPos[lightIndex] - FragPos[lightIndex]);
-	float attenuation = (1.0 / (1.0 + 0.7 * dist + 1.8 * (dist * dist)));
+	float attenuation = (1.0 / (1.0 + 0.7 * (dist * dist)));
 
 	vec3 diffuse = (diff * LightBrightness[lightIndex] * LightColor[lightIndex]) / dist;
 
@@ -113,7 +113,6 @@ void main()
 
 	vec3 result = (diffSpec + ambient);
 
-    FragColor = texture(BaseColor, UVcoord)  * vec4(result, 1.0);
-	//FragColor = texture(BaseColor, UVcoord);
-	//FragColor = vec4(UVcoord, 0.0, 1.0);
+	vec4 gamma = vec4(1.0 / 2.2);
+    FragColor = pow(texture(BaseColor, UVcoord)  * vec4(result, 1.0), gamma);
 }

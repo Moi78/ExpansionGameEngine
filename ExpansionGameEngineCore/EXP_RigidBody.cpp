@@ -3,10 +3,9 @@
 
 #include "EXP_PhysicsHandler.h"
 
-EXP_RigidBody::EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, vec3f inertia) : m_pos(pos), m_rot(rot), m_scale(scale){
+EXP_RigidBody::EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass) : m_pos(pos), m_rot(rot), m_scale(scale){
 	m_mass = mass;
 	m_game = game;
-	m_inertia = inertia;
 
 	ConstructShape();
 }
@@ -38,7 +37,7 @@ void EXP_RigidBody::ConstructShape() {
 	quat.setEuler(m_rot.getX(), m_rot.getY(), m_rot.getZ());
 	shapePosRot.setRotation(quat);
 
-	btVector3 localInertia(m_inertia.getX(), m_inertia.getY(), m_inertia.getZ());
+	btVector3 localInertia(0, 0, 0);
 
 	if (m_mass > 0) {
 		m_shape->calculateLocalInertia(m_mass, localInertia);
@@ -55,13 +54,13 @@ void EXP_RigidBody::ConstructShape() {
 
 //RB Box
 
-EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, vec3f inertia) : EXP_RigidBody(game, pos, rot, scale, mass, inertia) {
+EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, vec3f inertia) : EXP_RigidBody(game, pos, rot, scale, mass) {
 	ConstructShape();
 }
 
 //RB Sphere
 
-EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, vec3f inertia) : EXP_RigidBody(game, pos, rot, vec3f(), mass, inertia), m_radius(radius) {
+EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, vec3f inertia) : EXP_RigidBody(game, pos, rot, vec3f(), mass), m_radius(radius) {
 	ConstructShape();
 }
 
@@ -76,7 +75,7 @@ void EXP_RB_Sphere::ConstructShape() {
 	quat.setEuler(m_rot.getX(), m_rot.getY(), m_rot.getZ());
 	transPosRot.setRotation(quat);
 
-	btVector3 localInertia(m_inertia.getX(), m_inertia.getY(), m_inertia.getZ());
+	btVector3 localInertia(0, 0, 0);
 
 	if (m_mass > 0) {
 		m_shape->calculateLocalInertia(m_mass, localInertia);

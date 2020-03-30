@@ -23,7 +23,7 @@ class EXP_PhysicsHandler;
 class EXPGE_API EXP_RigidBody
 {
 public:
-	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, vec3f inertia = vec3f());
+	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass);
 	~EXP_RigidBody();
 
 	btRigidBody* GetBody();
@@ -33,7 +33,6 @@ public:
 
 protected:
 	vec3f m_pos, m_rot, m_scale;
-	vec3f m_inertia;
 
 	btCollisionShape* m_shape;
 	btMotionState* m_motionState;
