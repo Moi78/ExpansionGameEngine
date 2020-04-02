@@ -102,6 +102,32 @@ void RD_Mesh::render(RenderMode rndrMode) {
 	glBindVertexArray(0);
 }
 
+void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
+	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
+
+	glm::mat4 translate = glm::mat4(1.0f);
+	glm::mat4 scale = glm::mat4(1.0f);
+	glm::mat4 rotation = glm::mat4(1.0f);
+
+	//Position
+	translate = glm::translate(translate, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
+
+	//Scale
+	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+
+	//Rotation
+	rotation = glm::rotate(rotation, glm::radians(m_rotation.getX()), glm::vec3(1.0f, 0.0f, 0.0f));
+	rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
+	rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	mdl = translate * scale * rotation;
+	shadowShader->SetMatrix("model", mdl);
+
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
 void RD_Mesh::Bufferize() {
 
 	for (int i = 0; i < m_vertices.size(); i++) {

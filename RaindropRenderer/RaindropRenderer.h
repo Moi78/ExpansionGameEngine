@@ -17,9 +17,7 @@
 
 #include "RD_ShaderLoader.h"
 #include "RD_FrameLimiter.h"
-#include "RD_Mesh.h"
 #include "RD_PointLight.h"
-#include "RD_DirLight.h"
 #include "RD_GUI.h"
 #include "RD_Texture.h"
 
@@ -34,9 +32,15 @@
 
 #include <vec3.h>
 
-#include <Windows.h>
+#ifdef _WIN32
+	#include <Windows.h>
+#endif
 
 #include <PS_Emitter.h>
+
+//Frwd Declaration
+class RD_DirLight;
+class RD_Mesh;
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
@@ -56,9 +60,13 @@ public:
 	int getWindowWidth();
 
 	RD_ShaderLoader* GetShader();
-	RD_ShaderLoader* GetLightShader();
 
 	double GetLastDeltaTime();
+
+	void SetAASampling(int nbrSample);
+
+	void RenderMeshes();
+	void RenderShadowMeshes();
 
 	//Lighting
 	void SetAmbientStrength(float strength);
@@ -66,11 +74,14 @@ public:
 
 	int AppendLight(RD_PointLight* ptLight);
 	int AppendDirLight(RD_DirLight* dirLight);
+	void RegisterMesh(RD_Mesh* mesh);
+
+	void RenderLightsDepth();
 
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);
-	RD_ShaderLoader* DBG_GetLightShader();
 	RD_ShaderLoader* DBG_GetGameViewShader();
+	RD_ShaderLoader* GetShadowShader();
 	RD_ShaderLoader* GetCurrentShader();
 
 	//Debug
@@ -109,7 +120,7 @@ private:
 	int m_width;
 
 	RD_ShaderLoader* m_shader;
-	RD_ShaderLoader* m_LightShader;
+	RD_ShaderLoader* m_shadowShader;
 
 	RD_ShaderLoader* m_CurrentShader;
 	bool m_gview_shader_in_use;
@@ -126,12 +137,19 @@ private:
 	std::vector<RD_DirLight*> m_DirLights;
 	std::vector<PS_Emitter*> m_sound_emitters;
 	std::vector<RD_GUI*> m_guis;
+	std::vector<RD_Mesh*> m_meshes;
 
 	RD_Mesh* m_DBG_light_mdl;
 	RD_Mesh* m_DBG_sound_emitter_mdl;
 	BD_MatDef m_mdef;
 
 	RD_Texture* m_defTex;
+
+	unsigned int m_depthMapTEX;
+	unsigned int m_depthMapFBO;
+	unsigned int m_shadowQuality;
+
+	glm::mat4 m_lspace;
 };
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);

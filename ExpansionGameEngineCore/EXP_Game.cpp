@@ -29,8 +29,6 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) 
 EXP_Game::~EXP_Game() {
 	m_soundEngine->shutdownAL();
 
-	m_points_light.clear();
-	m_staticMeshes.clear();
 	m_actors.clear();
 
 	delete m_soundEngine;
@@ -88,9 +86,11 @@ void EXP_Game::InitGui() {
 void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
 
-	for (auto mesh : m_staticMeshes) {
-		mesh->render();
-	}
+	//Process shadows
+	m_rndr->RenderLightsDepth();
+
+	//Normal Render
+	m_rndr->RenderMeshes();
 
 	if (RENDER_DBG) {
 		m_rndr->RenderDbg();
@@ -124,20 +124,15 @@ RaindropRenderer* EXP_Game::GetRenderer() {
 }
 
 void EXP_Game::RegisterMesh(RD_Mesh* mesh) {
-	m_staticMeshes.push_back(mesh);
+	m_rndr->RegisterMesh(mesh);
 }
 
 void EXP_Game::RegisterPointLight(RD_PointLight* ptlight) {
-	m_points_light.push_back(ptlight);
 	m_rndr->AppendLight(ptlight);
 }
 
 vec3f EXP_Game::GetRefreshColor() {
 	return m_refreshColor;
-}
-
-std::vector<RD_Mesh*> EXP_Game::GetStaticMeshes() {
-	return m_staticMeshes;
 }
 
 BD_MatDef EXP_Game::GetDefaultMaterial() {

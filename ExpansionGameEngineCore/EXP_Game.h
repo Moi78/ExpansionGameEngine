@@ -61,7 +61,6 @@ public:
 	//Rendering
 	RaindropRenderer* GetRenderer();
 	vec3f GetRefreshColor();
-	std::vector<RD_Mesh*> GetStaticMeshes();
 	BD_MatDef GetDefaultMaterial();
 	BD_MatDef FetchMaterialFromFile(std::string fileref);
 
@@ -106,10 +105,6 @@ private:
 
 	//Physics
 	EXP_PhysicsHandler* m_physicsHandler;
-
-	//Renderables
-	std::vector<RD_Mesh*> m_staticMeshes;
-	std::vector<RD_PointLight*> m_points_light;
 
 	//Callbacks
 	std::vector<EXP_KeyboardCallback*> m_kb_callbacks;

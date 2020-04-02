@@ -13,6 +13,8 @@
 
 #include <vec3.h>
 
+#include "RaindropRenderer.h"
+
 class RAINDROPRENDERER_API RD_DirLight
 {
 public:
@@ -28,10 +30,19 @@ public:
 	void SetLightBrightness(float nBrightness);
 	float GetBrightness();
 
+	void DepthRender(RaindropRenderer*);
+	void SetUpShadowFB(unsigned int shadowQual);
+
 private:
 	vec3f m_dir;
 	vec3f m_color;
 	float m_brightness;
+
+	unsigned int m_depthMapTEX;
+	unsigned int m_depthMapFBO;
+	unsigned int m_shadowQuality;
+
+	glm::mat4 m_lspace;
 };
 
 #endif //_DIR_LIGHT_H__

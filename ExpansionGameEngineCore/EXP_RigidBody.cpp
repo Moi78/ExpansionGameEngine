@@ -8,6 +8,7 @@ EXP_RigidBody::EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, 
 	m_game = game;
 
 	ConstructShape();
+	m_body->setAngularFactor(btVector3(0.0f, 0.0f, 1.0f));
 }
 
 EXP_RigidBody::~EXP_RigidBody() {
@@ -50,6 +51,16 @@ void EXP_RigidBody::ConstructShape() {
 	m_body = new btRigidBody(constructInfo);
 
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
+}
+
+void EXP_RigidBody::AddMovementInput(vec3f direction, float scale) {
+	m_body->activate();
+	m_body->setAngularFactor(btVector3(0.0f, 0.0f, 1.0f));
+
+	vec3f fMov = direction * scale;
+	btVector3 btMov(fMov.getX(), fMov.getY(), fMov.getZ());
+
+	m_body->setLinearVelocity(btMov);
 }
 
 //RB Box

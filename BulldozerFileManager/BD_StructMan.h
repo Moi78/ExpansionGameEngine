@@ -45,7 +45,7 @@ struct BULLDOZERFILEMANAGER_API BD_GameInfo {
 };
 
 enum BULLDOZERFILEMANAGER_API RendererFeature {
-	Specular, Lighting, Textures
+	Specular, Lighting, Ambient
 };
 
 enum class BULLDOZERFILEMANAGER_API RenderMode {

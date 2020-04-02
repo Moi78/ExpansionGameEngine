@@ -138,16 +138,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Donut.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainCharacter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Shaders\GameView.frag" />
     <None Include="Engine\Shaders\GameView.vert" />
-    <None Include="Engine\Shaders\Lights.frag" />
-    <None Include="Engine\Shaders\Lights.vert" />
+    <None Include="Engine\Shaders\Shadow.frag" />
+    <None Include="Engine\Shaders\Shadow.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Donut.h" />
     <ClInclude Include="MainCharacter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

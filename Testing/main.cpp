@@ -10,6 +10,7 @@
 
 #include <RD_GUI.h>
 #include <RD_Callback.h>
+#include <RD_DirLight.h>
 
 #include <PhysicaSound.h>
 
@@ -18,6 +19,7 @@
 #include <BD_StructMan.h>
 
 #include "MainCharacter.h"
+#include "Donut.h"
 
 int main(int argc, char* argv[]) {
 	BD_GameInfo gi = {};
@@ -29,10 +31,16 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.1f);
 
+	game->GetRenderer()->SetAASampling(8);
+
+	RD_DirLight* dlight = new RD_DirLight(vec3f(-1.0f, 0.0, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
+	game->GetRenderer()->AppendDirLight(dlight);
+
 	MainCharacter* chara = new MainCharacter(game, vec3f(-5.0f, -5.0f, 0.5f));
+	Donut* donut = new Donut(game, vec3f(0.0f, 0.0f, 20.0f));
 
 	RD_Texture* color = new RD_Texture();
-	color->GenerateColorTex(vec3f(1.0f, 0.0f, 1.0f));
+	color->GenerateColorTex(vec3f(1.0f, 0.2f, 0.3f));
 
 	RD_Texture* colorShape = new RD_Texture();
 	colorShape->GenerateColorTex(vec3f(0.8f, 0.8f, 0.8f));
@@ -43,15 +51,9 @@ int main(int argc, char* argv[]) {
 	mat.SpecularStrength = 1.0f;
 	mat.Shininess = 128.0f;
 
-	BD_MatDef matShape = {};
-	matShape.BaseColor = colorShape->GetTextureID();
-	matShape.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
-	matShape.SpecularStrength = 1.0f;
-	matShape.Shininess = 128.0f;
-
 	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/floor", mat, vec3f(), vec3f(), vec3f(10.0f, 10.0f, 0.5f));
 
-	EXP_PointLight* light = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 13.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 600.0f);
+	//EXP_PointLight* light = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 13.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 600.0f);
 
 	EXP_RB_Box* rbfloor = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 0.0f), vec3f(), vec3f(10.0f, 10.0f, 0.5f), 0.0f);
 

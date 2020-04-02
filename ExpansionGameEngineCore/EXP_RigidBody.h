@@ -29,6 +29,8 @@ public:
 	btRigidBody* GetBody();
 	vec3f GetWorldPosition();
 
+	void AddMovementInput(vec3f direction, float scale);
+
 	virtual void ConstructShape();
 
 protected:

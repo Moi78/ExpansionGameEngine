@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "RaindropRenderer.h"
 
+#include "RD_DirLight.h"
+#include "RD_Mesh.h"
+
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit) : m_height(h), m_width(w) {
 	FillFeaturesStringArray();
 	FillFeatureStateArray();
@@ -15,8 +18,11 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_frmLmt = new RD_FrameLimiter(maxFramerate);
 	
 	m_shader = new RD_ShaderLoader();
-	m_shader->compileShaderFromFile("Engine/Shaders/GameView.vert", "Engine/Shaders/GameView.frag");
+	m_shader->compileShaderFromFile("Engine/Shaders/glsl/GameView.vert", "Engine/Shaders/glsl/GameView.frag");
 	m_shader->useShader();
+
+	m_shadowShader = new RD_ShaderLoader();
+	m_shadowShader->compileShaderFromFile("Engine/Shaders/glsl/Shadow.vert", "Engine/Shaders/glsl/Shadow.frag");
 
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
@@ -60,6 +66,8 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+	glfwWindowHint(GLFW_SAMPLES, 1);
+
 	win = glfwCreateWindow(w, h, name.c_str(), NULL, NULL);
 
 	if (win == NULL) {
@@ -77,6 +85,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glfwSetFramebufferSizeCallback(win, glfwWinCallback);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 }
 
 void RaindropRenderer::MinInit() {
@@ -150,10 +159,6 @@ int RaindropRenderer::getWindowWidth() {
 
 RD_ShaderLoader* RaindropRenderer::GetShader() {
 	return m_shader;
-}
-
-RD_ShaderLoader* RaindropRenderer::GetLightShader() {
-	return m_LightShader;
 }
 
 void RaindropRenderer::SetAmbientStrength(float strength) {
@@ -280,7 +285,7 @@ GLFWwindow* RaindropRenderer::GetGLFWwindow() {
 void RaindropRenderer::FillFeaturesStringArray() {
 	m_features_string[0] = "ftr_specular";
 	m_features_string[1] = "ftr_lighting";
-	m_features_string[2] = "ftr_texture";
+	m_features_string[2] = "ftr_ambient";
 }
 
 void RaindropRenderer::FillFeatureStateArray() {
@@ -290,7 +295,7 @@ void RaindropRenderer::FillFeatureStateArray() {
 }
 
 void RaindropRenderer::EnableAllFeatures() {
-	for (int ftr = RendererFeature::Lighting; ftr != RendererFeature::Textures; ftr += 1) {
+	for (int ftr = RendererFeature::Lighting; ftr != RendererFeature::Ambient; ftr += 1) {
 		RendererFeature enb_ftr = static_cast<RendererFeature>(ftr);
 		EnableFeature(enb_ftr);
 	}
@@ -329,10 +334,6 @@ RD_ShaderLoader* RaindropRenderer::DBG_GetGameViewShader() {
 	return m_shader;
 }
 
-RD_ShaderLoader* RaindropRenderer::DBG_GetLightShader() {
-	return m_LightShader;
-}
-
 RD_ShaderLoader* RaindropRenderer::GetCurrentShader() {
 	return m_CurrentShader;
 }
@@ -355,4 +356,34 @@ double RaindropRenderer::GetLastDeltaTime() {
 
 int RaindropRenderer::GetFrameLimit() {
 	return m_frmLmt->GetFrameLimit();
+}
+
+void RaindropRenderer::SetAASampling(int nbs) {
+	glfwWindowHint(GLFW_SAMPLES, nbs);
+}
+
+void RaindropRenderer::RenderLightsDepth() {
+	for (auto light : m_DirLights) {
+		light->DepthRender(this);
+	}
+}
+
+void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
+	m_meshes.push_back(mesh);
+}
+
+void RaindropRenderer::RenderMeshes() {
+	for (auto m : m_meshes) {
+		m->render();
+	}
+}
+
+void RaindropRenderer::RenderShadowMeshes() {
+	for (auto m : m_meshes) {
+		m->renderShadows(m_shadowShader);
+	}
+}
+
+RD_ShaderLoader* RaindropRenderer::GetShadowShader() {
+	return m_shadowShader;
 }

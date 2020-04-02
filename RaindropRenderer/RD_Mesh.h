@@ -11,6 +11,7 @@
 
 #include "RD_ShaderLoader.h"
 #include "RD_Materials.h"
+#include "RaindropRenderer.h"
 
 #include <glm/glm.hpp>
 
@@ -31,6 +32,7 @@ public:
 
 	void loadMesh(std::string);
 	void render(RenderMode rndrMode = RenderMode::Filled);
+	void renderShadows(RD_ShaderLoader* shadowShader);
 
 	void addRotation(vec3f rotation);
 	void addTranslation(vec3f translation);

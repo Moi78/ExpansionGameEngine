@@ -9,6 +9,12 @@ MainCharacter::MainCharacter(EXP_Game* gameinstance, vec3f spawnpoint) : EXP_Act
 	m_camera->Use();
 
 	m_forwd = new EXP_KeyboardCallback(gameinstance, CL_VDFUNCPTR(MainCharacter::MoveForward), GLFW_KEY_W);
+	m_back = new EXP_KeyboardCallback(gameinstance, CL_VDFUNCPTR(MainCharacter::MoveBack), GLFW_KEY_S);
+
+	m_camYM = new EXP_KeyboardCallback(gameinstance, CL_VDFUNCPTR(MainCharacter::CamMYaw), GLFW_KEY_RIGHT);
+	m_camYP = new EXP_KeyboardCallback(gameinstance, CL_VDFUNCPTR(MainCharacter::CamPYaw), GLFW_KEY_LEFT);
+	m_camPM = new EXP_KeyboardCallback(gameinstance, CL_VDFUNCPTR(MainCharacter::CamMPitch), GLFW_KEY_DOWN);
+	m_camPP = new EXP_KeyboardCallback(gameinstance, CL_VDFUNCPTR(MainCharacter::CamPPitch), GLFW_KEY_UP);
 }
 
 MainCharacter::~MainCharacter() {
@@ -21,9 +27,29 @@ void MainCharacter::Tick() {
 }
 
 void MainCharacter::OnLoad() {
-	std::cout << "Load" << std::endl;
+	
 }
 
 void MainCharacter::MoveForward() {
-	std::cout << "Forward" << std::endl;
+	m_bound->AddMovementInput(m_camera->GetSubject(), 3.0f);
+}
+
+void MainCharacter::MoveBack() {
+	m_bound->AddMovementInput(m_camera->GetSubject(), -3.0f);
+}
+
+void MainCharacter::CamMYaw() {
+	m_camera->AddYaw(-1.0f);
+}
+
+void MainCharacter::CamPYaw() {
+	m_camera->AddYaw(1.0f);
+}
+
+void MainCharacter::CamMPitch() {
+	m_camera->AddPitch(-1.0f);
+}
+
+void MainCharacter::CamPPitch() {
+	m_camera->AddPitch(1.0f);
 }

@@ -30,11 +30,10 @@ void RD_SimpleMaterial::BindMaterial() {
 }
 
 void RD_SimpleMaterial::UpdateColor() {
-	//glActiveTexture(GL_TEXTURE0);
-
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_BaseColor);
 
-	//m_shader->SetInt("BaseColor", m_BaseColor);
+	m_shader->SetInt("BaseColor", 0);
 }
 
 void RD_SimpleMaterial::UpdateSpecular() {
