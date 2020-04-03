@@ -3,11 +3,18 @@
 
 #include "pch.h"
 
+#ifdef _WIN32
 #ifdef EXPANSIONMATH_EXPORTS
 #define EXPANSIONMATH_API __declspec(dllexport)
 #else
 #define EXPANSIONMATH_API __declspec(dllimport)
 #endif
+
+#else
+
+#define EXPANSIONMATH_API
+
+#endif //_WIN32
 
 #include <valarray>
 #include <string>

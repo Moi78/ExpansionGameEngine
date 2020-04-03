@@ -10,7 +10,7 @@ RD_Mesh::RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, ve
 	EBO = 0;
 	VBO = 0;
 
-	m_mat = new RD_SimpleMaterial(shader, material.BaseColor, material.SpecularColor, material.Shininess, material.SpecularStrength);
+	m_mat = new RD_SimpleMaterial(shader, material);
 
 	m_shader = shader;
 

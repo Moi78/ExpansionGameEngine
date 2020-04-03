@@ -45,10 +45,12 @@ int main(int argc, char* argv[]) {
 	RD_Texture* colorShape = new RD_Texture();
 	colorShape->GenerateColorTex(vec3f(0.8f, 0.8f, 0.8f));
 
+	RD_Texture* spec = new RD_Texture();
+	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
+
 	BD_MatDef mat = {};
 	mat.BaseColor = color->GetTextureID();
-	mat.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
-	mat.SpecularStrength = 1.0f;
+	mat.Specular = spec->GetTextureID();
 	mat.Shininess = 128.0f;
 
 	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/floor", mat, vec3f(), vec3f(), vec3f(10.0f, 10.0f, 0.5f));

@@ -26,17 +26,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shaders\GameView.frag" />
-    <None Include="Engine\Shaders\GameView.vert" />
-    <None Include="Engine\Shaders\Shadow.frag" />
-    <None Include="Engine\Shaders\Shadow.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="MainCharacter.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Donut.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Shaders\glsl\GameView.frag" />
+    <None Include="Engine\Shaders\glsl\GameView.vert" />
+    <None Include="Engine\Shaders\glsl\Shadow.frag" />
+    <None Include="Engine\Shaders\glsl\Shadow.vert" />
   </ItemGroup>
 </Project>

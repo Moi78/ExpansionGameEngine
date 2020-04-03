@@ -3,15 +3,13 @@
 
 //RD_SimpleMaterial
 
-RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, unsigned int BaseColor, vec3f SpecularColor, float Shininess, float SpecularStrength) {
+RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, BD_MatDef mdef) {
 	m_shader = shader;
 
-	m_BaseColor = BaseColor;
+	m_BaseColor = mdef.BaseColor;
 
-	m_SpecularColor = SpecularColor;
-	m_Shininess = Shininess;
-
-	m_SpecularStrength = SpecularStrength;
+	m_Specular = mdef.Specular;
+	m_Shininess = mdef.Shininess;
 }
 
 RD_SimpleMaterial::~RD_SimpleMaterial() {
@@ -37,7 +35,10 @@ void RD_SimpleMaterial::UpdateColor() {
 }
 
 void RD_SimpleMaterial::UpdateSpecular() {
-	m_shader->SetVec3("specularColor", m_SpecularColor);
-	m_shader->SetFloat("specularStrength", m_SpecularStrength);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_Specular);
+
+	m_shader->SetInt("Specular", 2);
+
 	m_shader->SetFloat("specularExp", m_Shininess);
 }

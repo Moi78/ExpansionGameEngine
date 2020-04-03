@@ -143,14 +143,14 @@
     <ClCompile Include="MainCharacter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shaders\GameView.frag" />
-    <None Include="Engine\Shaders\GameView.vert" />
-    <None Include="Engine\Shaders\Shadow.frag" />
-    <None Include="Engine\Shaders\Shadow.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Donut.h" />
     <ClInclude Include="MainCharacter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Shaders\glsl\GameView.frag" />
+    <None Include="Engine\Shaders\glsl\GameView.vert" />
+    <None Include="Engine\Shaders\glsl\Shadow.frag" />
+    <None Include="Engine\Shaders\glsl\Shadow.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

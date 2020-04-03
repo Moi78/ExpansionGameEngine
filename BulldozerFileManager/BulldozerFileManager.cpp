@@ -2,9 +2,19 @@
 #include "framework.h"
 #include "BulldozerFileManager.h"
 
+#ifdef _WIN32
+
 void dispErrorMessageBox(LPCWSTR Message) {
 	MessageBox(nullptr, Message, TEXT("ERROR !!!"), MB_ICONERROR | MB_OK);
 }
+
+#else
+
+void dispErrorMessageBox(std::string Message) {
+	std::cerr << Message << std::endl;
+}
+
+#endif //_WIN32
 
 std::string getFileData(std::string filePath) {
 	std::string data = "";

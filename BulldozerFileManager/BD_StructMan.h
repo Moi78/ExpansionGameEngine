@@ -3,11 +3,20 @@
 #ifndef _BD_STRUCT_MAN_H__
 #define _BD_STRUCT_MAN_H__
 
+#ifdef _WIN32
 #ifdef BULLDOZERFILEMANAGER_EXPORTS
 #define BULLDOZERFILEMANAGER_API __declspec(dllexport)
 #else
 #define BULLDOZERFILEMANAGER_API __declspec(dllimport)
 #endif
+
+#include <Windows.h>
+
+#else
+
+#define BULLDOZERFILEMANAGER_API
+
+#endif //_WIN32
 
 #include <vector>
 #include <string>
@@ -33,8 +42,7 @@ struct BULLDOZERFILEMANAGER_API BD_Resolution {
 
 struct BULLDOZERFILEMANAGER_API BD_MatDef {
 	unsigned int BaseColor;
-	vec3f SpecularColor;
-	float SpecularStrength;
+	unsigned int Specular;
 	float Shininess;
 };
 

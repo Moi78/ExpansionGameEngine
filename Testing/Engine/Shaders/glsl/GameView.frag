@@ -8,8 +8,12 @@ in vec3 FragPos;
 in vec2 UVcoord;
 in vec4 FragPosLightSpace;
 
-uniform sampler2D ShadowMap;
 uniform sampler2D BaseColor;
+
+uniform sampler2D Specular;
+uniform float specularExp = 256.0;
+
+uniform sampler2D ShadowMap;
 
 //Ambient Lighting
 uniform float AmbientStrength;
@@ -31,11 +35,6 @@ uniform float LightBrightness[327];
 
 //Camera
 uniform vec3 CamPos;
-
-//Specular
-uniform float specularExp = 256.0;
-uniform vec3 specularColor = vec3(1.0, 1.0, 1.0);
-uniform float specularStrength = 1.0f;
 
 //Features define
 uniform bool ftr_lighting = true;
@@ -90,7 +89,7 @@ vec3 CalcPointLighting(int lightIndex) {
 		vec3 hwDir = normalize(LightDir + viewDir);
 		float spec = pow(max(0.0, dot(norm, hwDir)), specularExp);
 
-		specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * specularColor * specularStrength);
+		specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * texture(Specular, UVcoord).rgb);
 	} else {
 		specular = vec3(0.0, 0.0, 0.0);
 	}
@@ -113,7 +112,7 @@ vec3 CalcDirLight(int index) {
 
 		float spec = pow(max(0.0, dot(viewDir, reflectDir)), specularExp);
 
-		d_specular = spec * DirLightColor[index] * specularColor * DirLightBrightness[index] * specularStrength;
+		d_specular = spec * DirLightColor[index] * DirLightBrightness[index] * texture(Specular, UVcoord).rgb;
 	}
 
 	return (diffuse + d_specular);

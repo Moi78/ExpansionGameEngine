@@ -3,11 +3,20 @@
 #ifndef _BD_IMPORT_H__
 #define _BD_IMPORT_H__
 
+#ifdef _WIN32
 #ifdef BULLDOZERFILEMANAGER_EXPORTS
 #define BULLDOZERFILEMANAGER_API __declspec(dllexport)
 #else
 #define BULLDOZERFILEMANAGER_API __declspec(dllimport)
 #endif
+
+#include <Windows.h>
+
+#else
+
+#define BULLDOZERFILEMANAGER_API
+
+#endif //_WIN32
 
 //Standard
 #include <iostream>

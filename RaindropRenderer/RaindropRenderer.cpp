@@ -27,11 +27,15 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
 
+	RD_Texture* spec = new RD_Texture();
+	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
+
 	m_mdef = {};
 	m_mdef.BaseColor = m_defTex->GetTextureID();
-	m_mdef.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	m_mdef.Specular = spec->GetTextureID();
 	m_mdef.Shininess = 2.0f;
-	m_mdef.SpecularStrength = 0.5f;
+
+	delete spec;
 
 	if (RENDER_DEBUG_ENABLED) {
 		m_DBG_light_mdl = new RD_Mesh(m_shader, m_mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));

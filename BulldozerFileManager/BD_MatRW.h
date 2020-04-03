@@ -3,12 +3,20 @@
 #ifndef _BD_MAT_RW_H__
 #define _BD_MAT_RW_H__
 
+#ifdef _WIN32
 #ifdef BULLDOZERFILEMANAGER_EXPORTS
 #define BULLDOZERFILEMANAGER_API __declspec(dllexport)
 #else
 #define BULLDOZERFILEMANAGER_API __declspec(dllimport)
 #endif
 
+#include <Windows.h>
+
+#else
+
+#define BULLDOZERFILEMANAGER_API
+
+#endif //_WIN32
 #include "BulldozerFileManager.h"
 #include "BD_StructMan.h"
 

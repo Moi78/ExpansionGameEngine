@@ -3,10 +3,17 @@
 
 #include "pch.h"
 
+#ifdef _WIN32
 #ifdef PHYSICASOUND_EXPORTS
 #define PHYSICASOUND_API __declspec(dllexport)
 #else
 #define PHYSICASOUND_API __declspec(dllimport)
+#endif
+
+#else
+
+#define PHYSICASOUND_API
+
 #endif
 
 #include <vec3.h>

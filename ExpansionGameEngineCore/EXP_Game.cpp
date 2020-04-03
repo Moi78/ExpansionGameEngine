@@ -19,11 +19,16 @@ EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) 
 	RD_Texture* defTex = new RD_Texture();
 	defTex->LoadTexture(gameinfo.RootEngineContentFolder + "/Textures/defTex.png");
 
+	RD_Texture* spec = new RD_Texture();
+	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
+
 	m_def_mat = {};
 	m_def_mat.BaseColor = defTex->GetTextureID();
-	m_def_mat.SpecularColor = vec3f(1.0f, 1.0f, 1.0f);
+	m_def_mat.Specular = spec->GetTextureID();
 	m_def_mat.Shininess = 1.0f;
-	m_def_mat.SpecularStrength = 0.5f;
+
+	delete spec;
+	delete defTex;
 }
 
 EXP_Game::~EXP_Game() {

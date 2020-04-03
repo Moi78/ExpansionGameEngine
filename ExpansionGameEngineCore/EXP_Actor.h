@@ -13,11 +13,19 @@
 #include "EXP_Game.h"
 #include "EXP_Callbacks.h"
 
+#ifdef _WIN32
+
 #ifdef EXPANSIONGAMEENGINECORE_EXPORTS
 #define EXPGE_API __declspec(dllexport)
 #else
 #define EXPGE_API __declspec(dllimport)
 #endif
+
+#else
+
+#define EXPGE_API
+
+#endif //_WIN32
 
 class EXP_Game;
 

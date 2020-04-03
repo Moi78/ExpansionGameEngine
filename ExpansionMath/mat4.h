@@ -3,11 +3,18 @@
 #ifndef _MAT4_H__
 #define _MAT4_H__
 
+#ifdef _WIN32
 #ifdef EXPANSIONMATH_EXPORTS
 #define EXPANSIONMATH_API __declspec(dllexport)
 #else
 #define EXPANSIONMATH_API __declspec(dllimport)
 #endif
+
+#else
+
+#define EXPANSIONMATH_API
+
+#endif //_WIN32
 
 #include <iostream>
 #include <algorithm>

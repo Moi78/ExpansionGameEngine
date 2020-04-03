@@ -3,11 +3,18 @@
 #ifndef _RD_FRAME_LIMITER_H__
 #define _RD_FRAME_LIMITER_H__
 
+#ifdef _WIN32
 #ifdef RAINDROPRENDERER_EXPORTS
 #define RAINDROPRENDERER_API __declspec(dllexport)
 #else
 #define RAINDROPRENDERER_API __declspec(dllimport)
 #endif
+
+#else
+
+#define RAINDROPRENDERER_API
+
+#endif //_WIN32
 
 #include <ctime>
 #include <chrono>
