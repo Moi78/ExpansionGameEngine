@@ -15,6 +15,7 @@
 #else
 
 #define BULLDOZERFILEMANAGER_API
+#define TEXT(x) std::string(x)
 
 #endif //_WIN32
 

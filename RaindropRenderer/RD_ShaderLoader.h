@@ -10,6 +10,8 @@
 #define RAINDROPRENDERER_API __declspec(dllimport)
 #endif
 
+#include <Windows.h>
+
 #else
 
 #define RAINDROPRENDERER_API
@@ -22,8 +24,6 @@
 #include <cstdlib>
 
 #include <glad/glad.h>
-
-#include <Windows.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
