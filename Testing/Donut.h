@@ -25,7 +25,6 @@ public:
 
 private:
 	EXP_StaticMesh* m_donut;
-	EXP_RB_Box* m_bound;
 };
 
 #endif //_DONUT_H__

@@ -147,6 +147,8 @@
     <ClInclude Include="MainCharacter.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\Shaders\glsl\Gshad.frag" />
+    <None Include="Engine\Shaders\glsl\Gshad.vert" />
     <None Include="Engine\Shaders\glsl\GameView.frag" />
     <None Include="Engine\Shaders\glsl\GameView.vert" />
     <None Include="Engine\Shaders\glsl\Shadow.frag" />

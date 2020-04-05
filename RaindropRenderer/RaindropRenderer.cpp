@@ -24,6 +24,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_shadowShader = new RD_ShaderLoader();
 	m_shadowShader->compileShaderFromFile("Engine/Shaders/glsl/Shadow.vert", "Engine/Shaders/glsl/Shadow.frag");
 
+	m_gbuff_shader = new RD_ShaderLoader();
+	m_gbuff_shader->compileShaderFromFile("Engine/Shaders/glsl/Gshad.vert", "Engine/Shaders/glsl/Gshad.frag");
+
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
 
@@ -49,6 +52,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	ambientColor = vec3f(1.0f, 1.0f, 1.0f);
 
 	UpdateAmbientLighting();
+
+	m_g_buffer = CreateGbuff();
 
 	m_gview_shader_in_use = true;
 	m_CurrentShader = m_shader;
@@ -380,6 +385,8 @@ void RaindropRenderer::RenderMeshes() {
 	for (auto m : m_meshes) {
 		m->render();
 	}
+
+	SwitchShader(m_gbuff_shader);
 }
 
 void RaindropRenderer::RenderShadowMeshes() {
@@ -390,4 +397,63 @@ void RaindropRenderer::RenderShadowMeshes() {
 
 RD_ShaderLoader* RaindropRenderer::GetShadowShader() {
 	return m_shadowShader;
+}
+
+Gbuff RaindropRenderer::CreateGbuff() {
+	Gbuff buffer;
+
+	glGenFramebuffers(1, &buffer.gBuff);
+	glBindFramebuffer(GL_FRAMEBUFFER, buffer.gBuff);
+
+	//Position buff
+	glGenTextures(1, &buffer.gPos);
+	glBindTexture(GL_TEXTURE_2D, buffer.gPos);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_width, m_height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffer.gPos, 0);
+
+	//Normal buff
+	glGenTextures(1, &buffer.gNorm);
+	glBindTexture(GL_TEXTURE_2D, buffer.gNorm);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_width, m_height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, buffer.gNorm, 0);
+
+	//Albedo buff
+	glGenTextures(1, &buffer.gAlbedo);
+	glBindTexture(GL_TEXTURE_2D, buffer.gAlbedo);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, buffer.gAlbedo, 0);
+
+	buffer.gAttachement[0] = GL_COLOR_ATTACHMENT0;
+	buffer.gAttachement[1] = GL_COLOR_ATTACHMENT1;
+	buffer.gAttachement[2] = GL_COLOR_ATTACHMENT2;
+	glDrawBuffers(3, buffer.gAttachement);
+
+	glGenRenderbuffers(1, &buffer.gRBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, buffer.gRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_width, m_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, buffer.gRBO);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cerr << "Incomplete Framebuffer" << std::endl;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	return buffer;
+}
+
+void RaindropRenderer::RenderGbuff() {
+	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	RenderMeshes();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	SwitchShader(m_shader);
 }

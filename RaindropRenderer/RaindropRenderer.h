@@ -75,6 +75,8 @@ public:
 	void RenderMeshes();
 	void RenderShadowMeshes();
 
+	void RenderGbuff();
+
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(vec3f nColor);
@@ -119,6 +121,8 @@ private:
 	void FillFeatureStateArray();
 	void EnableAllFeatures();
 
+	Gbuff CreateGbuff();
+
 	//void glfwWinCallback(GLFWwindow* win, int w, int h);
 
 	GLFWwindow* win;
@@ -128,6 +132,7 @@ private:
 
 	RD_ShaderLoader* m_shader;
 	RD_ShaderLoader* m_shadowShader;
+	RD_ShaderLoader* m_gbuff_shader;
 
 	RD_ShaderLoader* m_CurrentShader;
 	bool m_gview_shader_in_use;
@@ -152,11 +157,8 @@ private:
 
 	RD_Texture* m_defTex;
 
-	unsigned int m_depthMapTEX;
-	unsigned int m_depthMapFBO;
-	unsigned int m_shadowQuality;
-
-	glm::mat4 m_lspace;
+	//Deffered Rendering
+	Gbuff m_g_buffer;
 };
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);

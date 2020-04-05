@@ -172,8 +172,6 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BD_ActorRW.h" />
-    <ClInclude Include="BD_Import.h" />
     <ClInclude Include="BD_MatRW.h" />
     <ClInclude Include="BD_Reader.h" />
     <ClInclude Include="BD_StructMan.h" />
@@ -183,8 +181,6 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BD_ActorRW.cpp" />
-    <ClCompile Include="BD_Import.cpp" />
     <ClCompile Include="BD_MatRW.cpp" />
     <ClCompile Include="BD_Reader.cpp" />
     <ClCompile Include="BD_Writer.cpp" />

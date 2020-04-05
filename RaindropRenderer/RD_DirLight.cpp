@@ -36,7 +36,7 @@ vec3f RD_DirLight::GetLightDir() {
 void RD_DirLight::DepthRender(RaindropRenderer* rndr) {
 	rndr->SwitchShader(rndr->GetShadowShader());
 
-	glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 10.0f);
+	glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 10.0f);
 
 	glm::mat4 lightView = glm::lookAt(
 		glm::vec3(-2.0, -2.0f, 4.0f),

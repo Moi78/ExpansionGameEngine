@@ -23,13 +23,6 @@
 
 #include <vec3.h>
 
-struct BULLDOZERFILEMANAGER_API BD_FBX_ImportOption {
-	bool ImportMaterials;
-	bool ImportTextures;
-	bool ImportAnimations;
-	bool ImportGlobalSettings;
-};
-
 struct BULLDOZERFILEMANAGER_API BD_MeshDef {
 	std::vector<vec3d> vertices;
 	std::vector<int> indices;
@@ -60,25 +53,15 @@ enum class BULLDOZERFILEMANAGER_API RenderMode {
 	Wireframe, Filled
 };
 
-enum class BULLDOZERFILEMANAGER_API BD_ComponentType {
-	POINTLIGHT,
-	STATIC_MESH,
-	CAMERA
-};
+struct BULLDOZERFILEMANAGER_API Gbuff {
+	unsigned int gBuff;
+	unsigned int gRBO;
 
-struct BULLDOZERFILEMANAGER_API BD_ComponentReference {
-	BD_ComponentType type;
-	std::string label;
+	unsigned int gPos;
+	unsigned int gNorm;
+	unsigned int gAlbedo;
 
-	unsigned int actor_component_index;
-
-	vec3f loc_pos;
-	vec3f loc_rot;
-	vec3f loc_scale;
-
-	std::string args;
-
-	bool isRoot;
+	unsigned int gAttachement[3];
 };
 
 #endif // _BD_STRUCT_MAN_H__

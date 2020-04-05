@@ -124,6 +124,10 @@ void RD_ShaderLoader::SetFloat(const std::string& name, float value) {
 }
 
 void RD_ShaderLoader::SetMatrix(const std::string& name, glm::mat4 matrix) {
+	if (m_program_id == 588) {
+		std::cout << "588" << std::endl;
+	}
+
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
 	glUniformMatrix4fv(uniloc, 1, GL_FALSE, glm::value_ptr(matrix));
@@ -133,4 +137,8 @@ void RD_ShaderLoader::SetVec3(const std::string& name, vec3f vec) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
 	glUniform3f(uniloc, vec.getX(), vec.getY(), vec.getZ());
+}
+
+unsigned int RD_ShaderLoader::GetProgID() {
+	return m_program_id;
 }

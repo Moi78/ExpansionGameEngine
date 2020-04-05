@@ -38,5 +38,7 @@
     <None Include="Engine\Shaders\glsl\GameView.vert" />
     <None Include="Engine\Shaders\glsl\Shadow.frag" />
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
+    <None Include="Engine\Shaders\glsl\Gshad.frag" />
+    <None Include="Engine\Shaders\glsl\Gshad.vert" />
   </ItemGroup>
 </Project>

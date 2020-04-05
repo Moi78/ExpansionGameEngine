@@ -97,6 +97,9 @@ void EXP_Game::MainLoop() {
 	//Normal Render
 	m_rndr->RenderMeshes();
 
+	m_currentCamera->UseCamera();
+	m_rndr->RenderGbuff();
+
 	if (RENDER_DBG) {
 		m_rndr->RenderDbg();
 	}

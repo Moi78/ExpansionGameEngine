@@ -51,6 +51,8 @@ public:
 	void SetMatrix(const std::string& name, glm::mat4 matrix);
 	void SetVec3(const std::string& name, vec3f vec);
 
+	unsigned int GetProgID();
+
 private:
 	unsigned int m_program_id;
 };

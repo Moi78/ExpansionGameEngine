@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->AppendDirLight(dlight);
 
 	MainCharacter* chara = new MainCharacter(game, vec3f(-5.0f, -5.0f, 0.5f));
-	Donut* donut = new Donut(game, vec3f(0.0f, 0.0f, 20.0f));
+	Donut* donut = new Donut(game, vec3f(0.0f, 0.0f, 3.0f));
 
 	RD_Texture* color = new RD_Texture();
 	color->GenerateColorTex(vec3f(1.0f, 0.2f, 0.3f));
