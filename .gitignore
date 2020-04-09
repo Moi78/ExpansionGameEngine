@@ -339,6 +339,3 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /libs
-/Testing - GL
-/Testing/Content
-/Testing/Engine/Meshes

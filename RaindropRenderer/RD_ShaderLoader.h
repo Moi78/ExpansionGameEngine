@@ -16,6 +16,8 @@
 
 #define RAINDROPRENDERER_API
 
+#define TEXT(x) std::string(x)
+
 #endif //_WIN32
 
 #include <iostream>

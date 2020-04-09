@@ -4,8 +4,6 @@
 #include <string>
 #include <fstream>
 
-#include <pReader.h>
-
 #include <vec3.h>
 
 #include <glm/glm.hpp>
