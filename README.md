@@ -25,7 +25,6 @@ TODO List :
   - OpenGL
   - ASSIMP (For tools)
   - Qt (For tools)
-  - PA112RSER (Custom lib)
   - PYBIND11 (Legacy)
   - GLAD
   - GLEW
