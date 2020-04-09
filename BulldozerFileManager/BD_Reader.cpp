@@ -83,7 +83,7 @@ void BD_Reader::ReadMSHFile(std::string file) {
 int BD_Reader::GetIndiceByIndex(int index) {
 	//Error check
 	if (index > mIndices.size()) {
-		dispErrorMessageBox(L"Index out of range. See console for details.");
+		dispErrorMessageBox(TEXT("Index out of range. See console for details."));
 		std::cerr << "Index is out of range." << std::endl;
 	}
 
@@ -93,7 +93,7 @@ int BD_Reader::GetIndiceByIndex(int index) {
 vec3d BD_Reader::GetVertexByIndex(int index) {
 	//Error check
 	if (index > mVertices.size()) {
-		dispErrorMessageBox(L"Index out of range. See console for details.");
+		dispErrorMessageBox(TEXT("Index out of range. See console for details."));
 		std::cerr << "Index is out of range." << std::endl;
 	}
 
@@ -103,7 +103,7 @@ vec3d BD_Reader::GetVertexByIndex(int index) {
 vec3d BD_Reader::GetNormalByIndex(int index) {
 	//Error check
 	if (index > mNormal.size()) {
-		dispErrorMessageBox(L"Index out of range. See console for details.");
+		dispErrorMessageBox(TEXT("Index out of range. See console for details."));
 		std::cerr << "Index is out of range." << std::endl;
 	}
 
@@ -113,7 +113,7 @@ vec3d BD_Reader::GetNormalByIndex(int index) {
 vec2d BD_Reader::GetUVcoordByIndex(int index) {
 	//Error check
 	if (index > mUVcoord.size()) {
-		dispErrorMessageBox(L"Index out of range. See console for details.");
+		dispErrorMessageBox(TEXT("Index out of range. See console for details."));
 		std::cerr << "Index is out of range." << std::endl;
 	}
 
