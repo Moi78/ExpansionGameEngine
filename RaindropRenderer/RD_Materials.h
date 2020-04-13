@@ -24,22 +24,18 @@
 class RAINDROPRENDERER_API RD_SimpleMaterial
 {
 public:
-	RD_SimpleMaterial(RD_ShaderLoader* shader, BD_MatDef mat);
+	RD_SimpleMaterial(BD_MatDef mat);
 	~RD_SimpleMaterial();
 
-	void SetBaseColor(unsigned int);
-
-	void BindMaterial();
+	void BindMaterial(RD_ShaderLoader*);
 private:
-	void UpdateColor();
-	void UpdateSpecular();
+	void UpdateColor(RD_ShaderLoader*);
+	void UpdateSpecular(RD_ShaderLoader*);
 
 	unsigned int m_BaseColor;
 
 	unsigned int m_Specular;
 	float m_Shininess;
-
-	RD_ShaderLoader* m_shader;
 };
 
 #endif

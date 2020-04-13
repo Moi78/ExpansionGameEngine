@@ -34,11 +34,12 @@
 class RAINDROPRENDERER_API RD_Mesh
 {
 public:
-	RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, vec3f rotation, vec3f scale);
+	RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale);
 	~RD_Mesh();
 
 	void loadMesh(std::string);
-	void render(RenderMode rndrMode = RenderMode::Filled);
+
+	void render(RD_ShaderLoader* shader, RenderMode rndrMode = RenderMode::Filled);
 	void renderShadows(RD_ShaderLoader* shadowShader);
 
 	void addRotation(vec3f rotation);
@@ -48,8 +49,6 @@ public:
 	void SetRotation(vec3f nRotation);
 	void SetPosition(vec3f nPos);
 	void SetScale(vec3f nScale);
-
-	void UpdateMaterial(BD_MatDef*);
 
 	vec3f GetLocation();
 
@@ -75,7 +74,6 @@ private:
 	std::vector<double> MixVertNormUV;
 
 	RD_SimpleMaterial* m_mat;
-	RD_ShaderLoader* m_shader;
 
 	vec3f m_position;
 	vec3f m_rotation;

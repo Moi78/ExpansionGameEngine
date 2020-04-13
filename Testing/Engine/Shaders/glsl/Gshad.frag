@@ -2,6 +2,7 @@
 layout (location = 0) out vec3 gPos;
 layout (location = 1) out vec3 gNorm;
 layout (location = 2) out vec4 gAlbedo;
+layout (location = 3) out float gSpec;
 
 in vec3 Normal;
 in vec3 FragPos;
@@ -18,4 +19,6 @@ void main() {
 
 	gAlbedo.rgb = texture(BaseColor, UVcoord).rgb;
 	gAlbedo.a = texture(Specular, UVcoord).r;
+
+	gSpec = specularExp;
 }

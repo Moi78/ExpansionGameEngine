@@ -37,6 +37,8 @@ void RD_Camera::UseCamera() {
 	m_rndr->GetCurrentShader()->SetMatrix("projection", projection);
 	m_rndr->GetCurrentShader()->SetMatrix("view", view);
 	m_rndr->GetCurrentShader()->SetVec3("CamPos", m_pos);
+
+	//std::cout << m_rndr->GetCurrentShader()->GetProgID() << std::endl;
 }
 
 void RD_Camera::UpdateCamera() {

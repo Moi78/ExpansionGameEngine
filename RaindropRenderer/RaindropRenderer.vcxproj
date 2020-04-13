@@ -88,7 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);GLM_ENABLE_EXPERIMENTAL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>stb\;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -151,7 +151,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);GLM_ENABLE_EXPERIMENTAL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;stb\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -185,6 +185,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RaindropRenderer.h" />
     <ClInclude Include="RD_PointLight.h" />
+    <ClInclude Include="RD_Quad.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
     <ClInclude Include="RD_Texture.h" />
   </ItemGroup>
@@ -207,6 +208,7 @@
     </ClCompile>
     <ClCompile Include="RaindropRenderer.cpp" />
     <ClCompile Include="RD_PointLight.cpp" />
+    <ClCompile Include="RD_Quad.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />
     <ClCompile Include="RD_Texture.cpp" />
   </ItemGroup>

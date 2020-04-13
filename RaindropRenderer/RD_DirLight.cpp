@@ -40,7 +40,7 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr) {
 
 	glm::mat4 lightView = glm::lookAt(
 		glm::vec3(-2.0, -2.0f, 4.0f),
-		glm::vec3(-1.0f, 0.0f, -0.5f),
+		glm::vec3(m_dir.getX(), m_dir.getY(), m_dir.getZ()),
 		glm::vec3(0.0f, 0.0f, 1.0f)
 		);
 
@@ -64,8 +64,6 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr) {
 
 	glViewport(0, 0, rndr->getWindowWidth(), rndr->getWindowHeigh());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	rndr->SwitchShader(rndr->DBG_GetGameViewShader());
 
 	rndr->GetCurrentShader()->SetMatrix("lspaceMat", m_lspace);
 

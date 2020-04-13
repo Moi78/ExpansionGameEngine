@@ -18,7 +18,6 @@ MainCharacter::MainCharacter(EXP_Game* gameinstance, vec3f spawnpoint) : EXP_Act
 }
 
 MainCharacter::~MainCharacter() {
-	delete m_camera;
 	delete m_bound;
 }
 

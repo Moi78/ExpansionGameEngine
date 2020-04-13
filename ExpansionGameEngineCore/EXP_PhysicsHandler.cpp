@@ -6,19 +6,24 @@ EXP_PhysicsHandler::EXP_PhysicsHandler(vec3f gravity, int maxFramerate) : m_grav
 }
 
 EXP_PhysicsHandler::~EXP_PhysicsHandler() {
-
+	//Memory cleanup
+	delete m_dWorld;
+	delete m_solver;
+	delete m_overlappingPairCache;
+	delete m_dispatcher;
+	delete m_CollisionConfig;
 }
 
 void EXP_PhysicsHandler::InitWorld() {
-	btDefaultCollisionConfiguration* Collisionconfig = new btDefaultCollisionConfiguration();
+	m_CollisionConfig = new btDefaultCollisionConfiguration();
 
-	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(Collisionconfig);
+	m_dispatcher = new btCollisionDispatcher(m_CollisionConfig);
 
-	btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
+	m_overlappingPairCache = new btDbvtBroadphase();
 
-	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+	m_solver = new btSequentialImpulseConstraintSolver;
 
-	m_dWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, Collisionconfig);
+	m_dWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_overlappingPairCache, m_solver, m_CollisionConfig);
 
 	m_dWorld->setGravity(btVector3(m_gravity.getX(), m_gravity.getY(), m_gravity.getZ()));
 }

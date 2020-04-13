@@ -5,10 +5,12 @@
 PS_Emitter::~PS_Emitter()
 {
     alDeleteBuffers(1, &m_buffer);
-    
     alSourcei(m_source, AL_BUFFER, 0);
-    
     alDeleteSources(1, &m_source);
+
+    m_samples.clear();
+
+    delete m_File;
 }
 
 PS_Emitter::PS_Emitter(vec3f position, vec3f velocity, float volume, float pitch, bool looping) : m_volume(volume), m_pitch(pitch), m_position(position), m_velocity(velocity), m_looping(looping) {

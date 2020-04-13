@@ -35,6 +35,7 @@ EXP_Game::~EXP_Game() {
 	m_soundEngine->shutdownAL();
 
 	m_actors.clear();
+	m_kb_callbacks.clear();
 
 	delete m_soundEngine;
 	delete m_rndr;
@@ -94,11 +95,13 @@ void EXP_Game::MainLoop() {
 	//Process shadows
 	m_rndr->RenderLightsDepth();
 
-	//Normal Render
-	m_rndr->RenderMeshes();
-
+	//GBuff
+	m_rndr->SwitchShader(m_rndr->GetGShader());
 	m_currentCamera->UseCamera();
 	m_rndr->RenderGbuff();
+
+	//Light pass
+	m_rndr->RenderLightPass(m_currentCamera->GetLocation());
 
 	if (RENDER_DBG) {
 		m_rndr->RenderDbg();

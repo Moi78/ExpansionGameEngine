@@ -23,11 +23,6 @@
 
 #include <vec3.h>
 
-struct BULLDOZERFILEMANAGER_API BD_MeshDef {
-	std::vector<vec3d> vertices;
-	std::vector<int> indices;
-};
-
 struct BULLDOZERFILEMANAGER_API BD_Resolution {
 	int x;
 	int y;
@@ -60,8 +55,9 @@ struct BULLDOZERFILEMANAGER_API Gbuff {
 	unsigned int gPos;
 	unsigned int gNorm;
 	unsigned int gAlbedo;
+	unsigned int gSpec;
 
-	unsigned int gAttachement[3];
+	unsigned int gAttachement[4];
 };
 
 #endif // _BD_STRUCT_MAN_H__

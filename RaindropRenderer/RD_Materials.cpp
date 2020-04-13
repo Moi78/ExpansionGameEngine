@@ -3,9 +3,7 @@
 
 //RD_SimpleMaterial
 
-RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, BD_MatDef mdef) {
-	m_shader = shader;
-
+RD_SimpleMaterial::RD_SimpleMaterial(BD_MatDef mdef) {
 	m_BaseColor = mdef.BaseColor;
 
 	m_Specular = mdef.Specular;
@@ -13,32 +11,26 @@ RD_SimpleMaterial::RD_SimpleMaterial(RD_ShaderLoader* shader, BD_MatDef mdef) {
 }
 
 RD_SimpleMaterial::~RD_SimpleMaterial() {
-	delete m_shader;
+
 }
 
-void RD_SimpleMaterial::SetBaseColor(unsigned int nColor) {
-	m_BaseColor = nColor;
-
-	UpdateColor();
+void RD_SimpleMaterial::BindMaterial(RD_ShaderLoader* shader) {
+	UpdateColor(shader);
+	UpdateSpecular(shader);
 }
 
-void RD_SimpleMaterial::BindMaterial() {
-	UpdateColor();
-	UpdateSpecular();
-}
-
-void RD_SimpleMaterial::UpdateColor() {
+void RD_SimpleMaterial::UpdateColor(RD_ShaderLoader* shader) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_BaseColor);
 
-	m_shader->SetInt("BaseColor", 0);
+	shader->SetInt("BaseColor", 0);
 }
 
-void RD_SimpleMaterial::UpdateSpecular() {
+void RD_SimpleMaterial::UpdateSpecular(RD_ShaderLoader* shader) {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, m_Specular);
 
-	m_shader->SetInt("Specular", 2);
+	shader->SetInt("Specular", 2);
 
-	m_shader->SetFloat("specularExp", m_Shininess);
+	shader->SetFloat("specularExp", m_Shininess);
 }

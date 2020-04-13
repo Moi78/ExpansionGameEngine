@@ -39,6 +39,11 @@ public:
 private:
 	btDiscreteDynamicsWorld* m_dWorld;
 
+	btCollisionDispatcher* m_dispatcher;
+	btBroadphaseInterface* m_overlappingPairCache;
+	btSequentialImpulseConstraintSolver* m_solver;
+	btDefaultCollisionConfiguration* m_CollisionConfig;
+
 	vec3f m_gravity;
 	
 	int m_maxFramerate;

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_Mesh.h"
 
-RD_Mesh::RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, vec3f rotation, vec3f scale) {
+RD_Mesh::RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale) {
 	inActor = false;
 	m_actor_mat = glm::mat4(1.0f);
 	m_nbr_indices = 0;
@@ -10,9 +10,7 @@ RD_Mesh::RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, ve
 	EBO = 0;
 	VBO = 0;
 
-	m_mat = new RD_SimpleMaterial(shader, material);
-
-	m_shader = shader;
+	m_mat = new RD_SimpleMaterial(material);
 
 	m_position = position;
 	m_rotation = rotation;
@@ -20,7 +18,7 @@ RD_Mesh::RD_Mesh(RD_ShaderLoader* shader, BD_MatDef material, vec3f position, ve
 }
 
 RD_Mesh::~RD_Mesh() {
-
+	delete m_mat;
 }
 
 void RD_Mesh::loadMesh(std::string filepath) {
@@ -47,7 +45,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 
 	Bufferize();
 
-	m_nbr_indices = m_indices.size();
+	m_nbr_indices = (int) m_indices.size();
 
 	m_vertices.clear();
 	m_indices.clear();
@@ -58,7 +56,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	delete reader;
 }
 
-void RD_Mesh::render(RenderMode rndrMode) {
+void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 	if (rndrMode == RenderMode::Filled) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
@@ -66,7 +64,7 @@ void RD_Mesh::render(RenderMode rndrMode) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	//m_shader->useShader();
+	shader->useShader();
 
 	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
 
@@ -93,9 +91,9 @@ void RD_Mesh::render(RenderMode rndrMode) {
 		mdl = translate * rotation * scale;
 	}
 
-	m_shader->SetMatrix("model", mdl);
+	shader->SetMatrix("model", mdl);
 
-	m_mat->BindMaterial();
+	m_mat->BindMaterial(shader);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
@@ -196,10 +194,6 @@ void RD_Mesh::SetPosition(vec3f nPos) {
 
 void RD_Mesh::SetScale(vec3f nScale) {
 	m_scale = nScale;
-}
-
-void RD_Mesh::UpdateMaterial(BD_MatDef* mat) {
-	m_mat->SetBaseColor(mat->BaseColor);
 }
 
 vec3f RD_Mesh::GetLocation() {

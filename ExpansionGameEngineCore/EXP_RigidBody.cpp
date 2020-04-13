@@ -12,7 +12,9 @@ EXP_RigidBody::EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, 
 }
 
 EXP_RigidBody::~EXP_RigidBody() {
-
+	delete m_body;
+	delete m_motionState;
+	delete m_shape;
 }
 
 btRigidBody* EXP_RigidBody::GetBody() {

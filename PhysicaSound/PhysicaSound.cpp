@@ -151,8 +151,8 @@ bool PSound::mainLoop()
     for(int i = 0; i < m_emitters.size(); i++) {
         m_emitters[i]->refreshEmitterState();
         
-        PS_Emitter* emitter_buffer = m_emitters[i];
-        PS_Emitter* emitter_backup_buffer = m_emitters_backup[i];
+        PS_Emitter* emitter_buffer = m_emitters[i].get();
+        PS_Emitter* emitter_backup_buffer = m_emitters_backup[i].get();
         
         for(int o = 0; o < m_volumes.size(); o++) {
             m_volumes[o]->refreshListener(m_listener, emitter_buffer, emitter_backup_buffer);
@@ -169,8 +169,8 @@ void PSound::RegisterListener(PS_Listener* listener)
 
 void PSound::RegisterEmitter(PS_Emitter* emitter, bool directPlay)
 {
-    m_emitters.push_back(emitter);
-    m_emitters_backup.push_back(emitter);
+    m_emitters.push_back(std::make_shared<PS_Emitter>(emitter));
+    m_emitters_backup.push_back(std::make_shared<PS_Emitter>(emitter));
     std::cout << "Registered " << emitter->getFile() << "." << std::endl;
     
     if(directPlay)
@@ -179,7 +179,7 @@ void PSound::RegisterEmitter(PS_Emitter* emitter, bool directPlay)
 
 void PSound::RegisterVolume(PS_SoundVolume* volume)
 {
-    m_volumes.push_back(volume);
+    m_volumes.push_back(std::make_shared<PS_SoundVolume>(volume));
 }
 
 bool PSound::playSound3D(std::string wavFile, vec3f position, float gain)

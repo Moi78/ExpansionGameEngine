@@ -6,7 +6,7 @@ BD_Writer::BD_Writer() {
 }
 
 BD_Writer::~BD_Writer() {
-
+	ClearWriter();
 }
 
 void BD_Writer::AppendVertex(vec3d vertex) {

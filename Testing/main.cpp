@@ -64,6 +64,14 @@ int main(int argc, char* argv[]) {
 	}
 
 	delete game;
+	delete dlight;
+	delete chara;
+	delete donut;
+	delete color;
+	delete colorShape;
+	delete spec;
+	delete floor;
+	delete rbfloor;
 
 	return 0;
 }

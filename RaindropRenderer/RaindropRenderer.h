@@ -36,6 +36,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <vec3.h>
 
@@ -48,6 +49,7 @@
 //Frwd Declaration
 class RD_DirLight;
 class RD_Mesh;
+class RD_Quad;
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
@@ -66,14 +68,13 @@ public:
 	int getWindowHeigh();
 	int getWindowWidth();
 
-	RD_ShaderLoader* GetShader();
-
 	double GetLastDeltaTime();
 
 	void SetAASampling(int nbrSample);
 
 	void RenderMeshes();
 	void RenderShadowMeshes();
+	void RenderLightPass(vec3f camPos);
 
 	void RenderGbuff();
 
@@ -89,8 +90,8 @@ public:
 
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);
-	RD_ShaderLoader* DBG_GetGameViewShader();
 	RD_ShaderLoader* GetShadowShader();
+	RD_ShaderLoader* GetGShader();
 	RD_ShaderLoader* GetCurrentShader();
 
 	//Debug
@@ -121,21 +122,18 @@ private:
 	void FillFeatureStateArray();
 	void EnableAllFeatures();
 
-	Gbuff CreateGbuff();
-
-	//void glfwWinCallback(GLFWwindow* win, int w, int h);
+	void CreateGbuff();
 
 	GLFWwindow* win;
 
 	int m_height;
 	int m_width;
 
-	RD_ShaderLoader* m_shader;
 	RD_ShaderLoader* m_shadowShader;
 	RD_ShaderLoader* m_gbuff_shader;
+	RD_ShaderLoader* m_light_shader;
 
 	RD_ShaderLoader* m_CurrentShader;
-	bool m_gview_shader_in_use;
 
 	std::string m_features_string[3];
 	bool m_features_state[3];
@@ -159,6 +157,7 @@ private:
 
 	//Deffered Rendering
 	Gbuff m_g_buffer;
+	RD_Quad* m_quad;
 };
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);

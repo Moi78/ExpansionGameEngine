@@ -151,6 +151,8 @@
     <None Include="Engine\Shaders\glsl\Gshad.vert" />
     <None Include="Engine\Shaders\glsl\GameView.frag" />
     <None Include="Engine\Shaders\glsl\GameView.vert" />
+    <None Include="Engine\Shaders\glsl\Light.frag" />
+    <None Include="Engine\Shaders\glsl\Light.vert" />
     <None Include="Engine\Shaders\glsl\Shadow.frag" />
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
   </ItemGroup>

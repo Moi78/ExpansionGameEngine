@@ -19,7 +19,7 @@ bool EXP_StaticMesh::MeshRefExists(std::string MeshRef) {
 
 void EXP_StaticMesh::LoadMesh(std::string MeshRef) {
 	if (MeshRefExists(MeshRef)) {
-		m_RawMesh = new RD_Mesh(m_gameinstance->GetRenderer()->GetCurrentShader(), m_material, GetPosition(), GetRotation(), GetScale());
+		m_RawMesh = new RD_Mesh(m_material, GetPosition(), GetRotation(), GetScale());
 		m_RawMesh->loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh");
 
 		m_gameinstance->RegisterMesh(m_RawMesh);

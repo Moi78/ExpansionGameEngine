@@ -8,13 +8,14 @@ BD_Reader::BD_Reader() {
 }
 
 BD_Reader::~BD_Reader() {
-
+	ClearAll();
 }
 
 void BD_Reader::ClearAll() {
 	mIndices.clear();
 	mVertices.clear();
 	mNormal.clear();
+	mUVcoord.clear();
 }
 
 void BD_Reader::ReadMSHFile(std::string file) {
