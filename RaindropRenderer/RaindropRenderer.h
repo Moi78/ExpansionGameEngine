@@ -156,7 +156,6 @@ private:
 	RD_Quad* m_quad;
 
 	RD_ShaderLoader* m_shadowShader;
-	RD_ShaderLoader* m_shadowRender;
 
 	RD_ShaderLoader* m_gbuff_shader;
 	RD_ShaderLoader* m_light_shader;

@@ -30,9 +30,6 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_light_shader = new RD_ShaderLoader();
 	m_light_shader->compileShaderFromFile("Engine/Shaders/glsl/Light.vert", "Engine/Shaders/glsl/Light.frag");
 
-	m_shadowRender = new RD_ShaderLoader();
-	m_shadowRender->compileShaderFromFile("Engine/Shaders/glsl/ShadowRender.vert", "Engine/Shaders/glsl/ShadowRender.frag");
-
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
 

@@ -34,15 +34,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shaders\glsl\GameView.frag" />
-    <None Include="Engine\Shaders\glsl\GameView.vert" />
     <None Include="Engine\Shaders\glsl\Shadow.frag" />
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
     <None Include="Engine\Shaders\glsl\Gshad.frag" />
     <None Include="Engine\Shaders\glsl\Gshad.vert" />
     <None Include="Engine\Shaders\glsl\Light.frag" />
     <None Include="Engine\Shaders\glsl\Light.vert" />
-    <None Include="Engine\Shaders\glsl\ShadowRender.frag" />
-    <None Include="Engine\Shaders\glsl\ShadowRender.vert" />
   </ItemGroup>
 </Project>
