@@ -178,6 +178,7 @@
     <ClInclude Include="RD_Camera.h" />
     <ClInclude Include="RD_DirLight.h" />
     <ClInclude Include="RD_Error.h" />
+    <ClInclude Include="RD_FrameBuffer.h" />
     <ClInclude Include="RD_FrameLimiter.h" />
     <ClInclude Include="RD_GUI.h" />
     <ClInclude Include="RD_Materials.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="RD_Camera.cpp" />
     <ClCompile Include="RD_DirLight.cpp" />
     <ClCompile Include="RD_Error.cpp" />
+    <ClCompile Include="RD_FrameBuffer.cpp" />
     <ClCompile Include="RD_FrameLimiter.cpp" />
     <ClCompile Include="RD_GUI.cpp" />
     <ClCompile Include="RD_Materials.cpp" />

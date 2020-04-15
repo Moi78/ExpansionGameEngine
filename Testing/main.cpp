@@ -33,11 +33,11 @@ int main(int argc, char* argv[]) {
 
 	game->GetRenderer()->SetAASampling(8);
 
-	RD_DirLight* dlight = new RD_DirLight(vec3f(-1.0f, 0.0, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
+	RD_DirLight* dlight = new RD_DirLight(vec3f(1.0f, 0.0, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
 	game->GetRenderer()->AppendDirLight(dlight);
 
 	MainCharacter* chara = new MainCharacter(game, vec3f(-5.0f, -5.0f, 0.5f));
-	Donut* donut = new Donut(game, vec3f(0.0f, 0.0f, 3.0f));
+	Donut* donut = new Donut(game, vec3f(0.0f, 0.0f, 2.5f));
 
 	RD_Texture* color = new RD_Texture();
 	color->GenerateColorTex(vec3f(1.0f, 0.2f, 0.3f));
@@ -55,8 +55,6 @@ int main(int argc, char* argv[]) {
 
 	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/floor", mat, vec3f(), vec3f(), vec3f(10.0f, 10.0f, 0.5f));
 
-	//EXP_PointLight* light = new EXP_PointLight(game, vec3f(0.0f, 0.0f, 13.0f), vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 600.0f);
-
 	EXP_RB_Box* rbfloor = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 0.0f), vec3f(), vec3f(10.0f, 10.0f, 0.5f), 0.0f);
 
 	while (!game->GetRenderer()->WantToClose()) {
@@ -64,7 +62,6 @@ int main(int argc, char* argv[]) {
 	}
 
 	delete game;
-	delete dlight;
 	delete chara;
 	delete donut;
 	delete color;

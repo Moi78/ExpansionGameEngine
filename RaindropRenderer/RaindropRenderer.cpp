@@ -4,6 +4,8 @@
 #include "RD_DirLight.h"
 #include "RD_Mesh.h"
 #include "RD_Quad.h"
+#include "RD_FrameBuffer.h"
+#include "RD_Camera.h"
 
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit) : m_height(h), m_width(w) {
 	FillFeaturesStringArray();
@@ -18,6 +20,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 
 	m_frmLmt = new RD_FrameLimiter(maxFramerate);
 
+	//Shader Compiling
 	m_shadowShader = new RD_ShaderLoader();
 	m_shadowShader->compileShaderFromFile("Engine/Shaders/glsl/Shadow.vert", "Engine/Shaders/glsl/Shadow.frag");
 
@@ -26,6 +29,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 
 	m_light_shader = new RD_ShaderLoader();
 	m_light_shader->compileShaderFromFile("Engine/Shaders/glsl/Light.vert", "Engine/Shaders/glsl/Light.frag");
+
+	m_shadowRender = new RD_ShaderLoader();
+	m_shadowRender->compileShaderFromFile("Engine/Shaders/glsl/ShadowRender.vert", "Engine/Shaders/glsl/ShadowRender.frag");
 
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
@@ -54,6 +60,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	CreateGbuff();
 
 	m_quad = new RD_Quad();
+	m_shadowPass = new RD_FrameBuffer(m_width, m_height, 1);
 
 	m_CurrentShader = m_gbuff_shader;
 
@@ -373,9 +380,9 @@ void RaindropRenderer::SetAASampling(int nbs) {
 	glfwWindowHint(GLFW_SAMPLES, nbs);
 }
 
-void RaindropRenderer::RenderLightsDepth() {
+void RaindropRenderer::RenderLightsDepth(vec3f camPos) {
 	for (auto light : m_DirLights) {
-		light->DepthRender(this);
+		light->DepthRender(this, camPos);
 	}
 }
 
@@ -435,11 +442,20 @@ void RaindropRenderer::CreateGbuff() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_g_buffer.gSpec, 0);
 
+	//Shadow buff
+	glGenTextures(1, &m_g_buffer.gShadows);
+	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_g_buffer.gShadows, 0);
+
 	m_g_buffer.gAttachement[0] = GL_COLOR_ATTACHMENT0;
 	m_g_buffer.gAttachement[1] = GL_COLOR_ATTACHMENT1;
 	m_g_buffer.gAttachement[2] = GL_COLOR_ATTACHMENT2;
 	m_g_buffer.gAttachement[3] = GL_COLOR_ATTACHMENT3;
-	glDrawBuffers(4, m_g_buffer.gAttachement);
+	m_g_buffer.gAttachement[4] = GL_COLOR_ATTACHMENT4;
+	glDrawBuffers(5, m_g_buffer.gAttachement);
 
 	glGenRenderbuffers(1, &m_g_buffer.gRBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_g_buffer.gRBO);
@@ -453,12 +469,28 @@ void RaindropRenderer::CreateGbuff() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RaindropRenderer::RenderGbuff() {
+void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
+	SwitchShader(m_gbuff_shader);
+	cam->UpdateCamera();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glCullFace(GL_BACK);
+
+	glActiveTexture(GL_TEXTURE10);
+	
+	for (auto dlight : m_DirLights) {
+		glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
+
+		m_gbuff_shader->SetInt("ShadowMap", 10);
+		m_gbuff_shader->SetVec3("DirLightDir", dlight->GetLightDir());
+		m_gbuff_shader->SetMatrix("lspaceMat", dlight->GetLightSpace());
+	}
+
 	RenderMeshes();
 
+	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -486,6 +518,10 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gSpec);
 	m_light_shader->SetInt("gSpec", 3);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
+	m_light_shader->SetInt("ShadowPass", 4);
 
 	m_light_shader->SetVec3("CamPos", CamPos);
 

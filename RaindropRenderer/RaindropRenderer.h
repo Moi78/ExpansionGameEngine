@@ -50,6 +50,8 @@
 class RD_DirLight;
 class RD_Mesh;
 class RD_Quad;
+class RD_FrameBuffer;
+class RD_Camera;
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
@@ -74,9 +76,11 @@ public:
 
 	void RenderMeshes();
 	void RenderShadowMeshes();
-	void RenderLightPass(vec3f camPos);
 
-	void RenderGbuff();
+	void RenderLightPass(vec3f camPos);
+	void RenderLightsDepth(vec3f camPos);
+
+	void RenderGbuff(RD_Camera*);
 
 	//Lighting
 	void SetAmbientStrength(float strength);
@@ -85,8 +89,6 @@ public:
 	int AppendLight(RD_PointLight* ptLight);
 	int AppendDirLight(RD_DirLight* dirLight);
 	void RegisterMesh(RD_Mesh* mesh);
-
-	void RenderLightsDepth();
 
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);
@@ -129,12 +131,6 @@ private:
 	int m_height;
 	int m_width;
 
-	RD_ShaderLoader* m_shadowShader;
-	RD_ShaderLoader* m_gbuff_shader;
-	RD_ShaderLoader* m_light_shader;
-
-	RD_ShaderLoader* m_CurrentShader;
-
 	std::string m_features_string[3];
 	bool m_features_state[3];
 
@@ -158,6 +154,17 @@ private:
 	//Deffered Rendering
 	Gbuff m_g_buffer;
 	RD_Quad* m_quad;
+
+	RD_ShaderLoader* m_shadowShader;
+	RD_ShaderLoader* m_shadowRender;
+
+	RD_ShaderLoader* m_gbuff_shader;
+	RD_ShaderLoader* m_light_shader;
+
+	RD_ShaderLoader* m_CurrentShader;
+
+	//Render Passes
+	RD_FrameBuffer* m_shadowPass;
 };
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);

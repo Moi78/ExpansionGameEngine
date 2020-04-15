@@ -93,12 +93,10 @@ void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
 
 	//Process shadows
-	m_rndr->RenderLightsDepth();
+	m_rndr->RenderLightsDepth(m_currentCamera->GetLocation());
 
 	//GBuff
-	m_rndr->SwitchShader(m_rndr->GetGShader());
-	m_currentCamera->UseCamera();
-	m_rndr->RenderGbuff();
+	m_rndr->RenderGbuff(m_currentCamera);
 
 	//Light pass
 	m_rndr->RenderLightPass(m_currentCamera->GetLocation());

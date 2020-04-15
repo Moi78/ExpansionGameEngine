@@ -33,14 +33,14 @@ vec3f RD_DirLight::GetLightDir() {
 	return m_dir;
 }
 
-void RD_DirLight::DepthRender(RaindropRenderer* rndr) {
+void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 	rndr->SwitchShader(rndr->GetShadowShader());
 
-	glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 10.0f);
+	glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 20.0f);
 
 	glm::mat4 lightView = glm::lookAt(
-		glm::vec3(-2.0, -2.0f, 4.0f),
-		glm::vec3(m_dir.getX(), m_dir.getY(), m_dir.getZ()),
+		glm::vec3(-m_dir.getX(), -m_dir.getY(), -m_dir.getZ()),
+		glm::vec3(0),
 		glm::vec3(0.0f, 0.0f, 1.0f)
 		);
 
@@ -94,4 +94,12 @@ void RD_DirLight::SetUpShadowFB(unsigned int shadowQual) {
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+glm::mat4 RD_DirLight::GetLightSpace() {
+	return m_lspace;
+}
+
+unsigned int RD_DirLight::GetDepthTexID() {
+	return m_depthMapTEX;
 }

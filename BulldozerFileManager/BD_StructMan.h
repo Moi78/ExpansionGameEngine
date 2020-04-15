@@ -56,8 +56,9 @@ struct BULLDOZERFILEMANAGER_API Gbuff {
 	unsigned int gNorm;
 	unsigned int gAlbedo;
 	unsigned int gSpec;
+	unsigned int gShadows;
 
-	unsigned int gAttachement[4];
+	unsigned int gAttachement[5];
 };
 
 #endif // _BD_STRUCT_MAN_H__

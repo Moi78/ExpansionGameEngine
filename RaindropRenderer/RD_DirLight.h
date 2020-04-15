@@ -37,8 +37,10 @@ public:
 	void SetLightBrightness(float nBrightness);
 	float GetBrightness();
 
-	void DepthRender(RaindropRenderer*);
+	void DepthRender(RaindropRenderer*, vec3f CamPos);
 	void SetUpShadowFB(unsigned int shadowQual);
+	glm::mat4 GetLightSpace();
+	unsigned int GetDepthTexID();
 
 private:
 	vec3f m_dir;

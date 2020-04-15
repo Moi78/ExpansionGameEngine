@@ -101,7 +101,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\lib;..\x64\Debug;%(AdditionalLibraryDirectories);..\libs\BULLET\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rserd.lib;Bullet3Common_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;Bullet3Common_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -162,7 +162,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\lib;..\x64\Release;%(AdditionalLibraryDirectories);..\libs\BULLET\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;pa112rser.lib;Bullet3Common.lib;BulletDynamics.lib;LinearMath.lib;BulletCollision.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;Bullet3Common.lib;BulletDynamics.lib;LinearMath.lib;BulletCollision.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
