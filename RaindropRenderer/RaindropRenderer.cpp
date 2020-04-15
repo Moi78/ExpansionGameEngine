@@ -57,7 +57,6 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	CreateGbuff();
 
 	m_quad = new RD_Quad();
-	m_shadowPass = new RD_FrameBuffer(m_width, m_height, 1);
 
 	m_CurrentShader = m_gbuff_shader;
 

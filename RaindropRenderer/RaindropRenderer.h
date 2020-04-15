@@ -161,9 +161,6 @@ private:
 	RD_ShaderLoader* m_light_shader;
 
 	RD_ShaderLoader* m_CurrentShader;
-
-	//Render Passes
-	RD_FrameBuffer* m_shadowPass;
 };
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);
