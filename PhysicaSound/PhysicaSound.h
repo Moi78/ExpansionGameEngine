@@ -57,10 +57,10 @@ private:
     std::vector<std::string> Devices;
     
     PS_Listener* m_listener = NULL;
-    std::vector<std::shared_ptr<PS_Emitter>> m_emitters;
-    std::vector<std::shared_ptr<PS_SoundVolume>> m_volumes;
+    std::vector<PS_Emitter*> m_emitters;
+    std::vector<PS_SoundVolume*> m_volumes;
     
-    std::vector<std::shared_ptr<PS_Emitter>> m_emitters_backup;
+    std::vector<PS_Emitter*> m_emitters_backup;
 };
 
 #endif
