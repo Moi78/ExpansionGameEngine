@@ -473,15 +473,21 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glCullFace(GL_BACK);
-
-	glActiveTexture(GL_TEXTURE10);
 	
+	m_gbuff_shader->SetInt("NbrDirLights", m_DirLights.size());
+
+	unsigned int texUnit = GL_TEXTURE10;
+	int i = 0;
+
 	for (auto dlight : m_DirLights) {
+		glActiveTexture(texUnit);
 		glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
 
-		m_gbuff_shader->SetInt("ShadowMap", 10);
-		m_gbuff_shader->SetVec3("DirLightDir", dlight->GetLightDir());
-		m_gbuff_shader->SetMatrix("lspaceMat", dlight->GetLightSpace());
+		m_gbuff_shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
+		m_gbuff_shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
+
+		texUnit++;
+		i++;
 	}
 
 	RenderMeshes();

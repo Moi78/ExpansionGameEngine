@@ -9,36 +9,36 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec2 UVcoord;
 
-in vec4 FragPosLightSpace;
+in vec4 FragPosLightSpace[10];
 
 uniform sampler2D BaseColor;
 uniform sampler2D Specular;
 uniform float specularExp = 256.0;
 
-uniform sampler2D ShadowMap;
-uniform vec3 DirLightDir;
+uniform sampler2D ShadowMap[10];
+uniform int NbrDirLights;
 
 vec3 norm = normalize(Normal);
 
-float ProcessShadows() {
-	vec3 projCoords = FragPosLightSpace.xyz / FragPosLightSpace.w;
+float ProcessShadows(int index) {
+	vec3 projCoords = FragPosLightSpace[index].xyz / FragPosLightSpace[index].w;
 	projCoords = projCoords * 0.5 + 0.5;
 
 	if(projCoords.z > 1.0) {
 		return 0.0;
 	}
 
-	float closestDepth = texture(ShadowMap, projCoords.xy).r;
+	float closestDepth = texture(ShadowMap[index], projCoords.xy).r;
 	float currentDepth = projCoords.z;
 
-	float bias = 0.002;
+	float bias = 0.008;
 
 	float shadow = 0.0;
 
-	vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
+	vec2 texelSize = 1.0 / textureSize(ShadowMap[index], 0);
 	for(int x = -1; x <= 1; x++) {
 		for(int y = -1; y <= 1; y++) {
-			float pcfDepth = texture(ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = texture(ShadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
 			shadow += currentDepth - bias > pcfDepth ? 0.5 : 0.0;
 		}
 	}
@@ -57,5 +57,11 @@ void main() {
 
 	gSpec = specularExp;
 
-	gShadow = 1.0 - ProcessShadows();
+	//Shadows Calculation
+	float shadow = 0.0;
+	for(int i = 0; i < NbrDirLights; i++) {
+		shadow += ProcessShadows(i);
+	}
+
+	gShadow = 1.0 - clamp(shadow, 0.0, 1.0);
 }
