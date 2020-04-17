@@ -31,8 +31,15 @@ public:
 	~EXP_Camera();
 
 	void Translate(vec3f translation, bool changeSubject = false);
-
 	void Use();
+
+	//EXP_Component virtual methods override
+	virtual vec3f GetPosition() override;
+	virtual vec3f GetRotation() override;
+	virtual vec3f GetScale() override;
+
+	virtual void SetPosition(vec3f nPos) override;
+	virtual void SetRotation(vec3f YawPitchRoll) override;
 private:
 	EXP_Game* m_gameinstance;
 };

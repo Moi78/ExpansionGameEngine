@@ -58,6 +58,8 @@ public:
 
     float dotProduct(vec2d const& a);
 
+    vec2f GetFloat();
+
     bool operator==(vec2d const& a);
     bool operator!=(vec2d const& a);
     vec2d operator+(vec2d const& a);

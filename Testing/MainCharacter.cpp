@@ -22,7 +22,7 @@ MainCharacter::~MainCharacter() {
 }
 
 void MainCharacter::Tick() {
-	m_camera->SetLocation(m_bound->GetWorldPosition());
+	m_camera->SetPosition(m_bound->GetWorldPosition());
 }
 
 void MainCharacter::OnLoad() {

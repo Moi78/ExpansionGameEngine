@@ -170,6 +170,7 @@
     <ClInclude Include="EXP_Callbacks.h" />
     <ClInclude Include="EXP_Camera.h" />
     <ClInclude Include="EXP_Component.h" />
+    <ClInclude Include="EXP_DirLight.h" />
     <ClInclude Include="EXP_Game.h" />
     <ClInclude Include="EXP_GuiManager.h" />
     <ClInclude Include="EXP_PhysicsHandler.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="EXP_Callbacks.cpp" />
     <ClCompile Include="EXP_Camera.cpp" />
     <ClCompile Include="EXP_Component.cpp" />
+    <ClCompile Include="EXP_DirLight.cpp" />
     <ClCompile Include="EXP_Game.cpp" />
     <ClCompile Include="EXP_GuiManager.cpp" />
     <ClCompile Include="EXP_PhysicsHandler.cpp" />

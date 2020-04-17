@@ -20,3 +20,26 @@ void EXP_Camera::Translate(vec3f translation, bool changeSubject) {
 	TranslateCamera(translation, changeSubject);
 	SetPosition(GetLocation());
 }
+
+
+//---------------------------------------------------------------------------------
+
+vec3f EXP_Camera::GetPosition() {
+	return RD_Camera::GetLocation();
+}
+
+vec3f EXP_Camera::GetRotation() {
+	return RD_Camera::GetYPR();
+}
+
+vec3f EXP_Camera::GetScale() {
+	return vec3f();
+}
+
+void EXP_Camera::SetPosition(vec3f nPos) {
+	RD_Camera::SetLocation(nPos);
+}
+
+void EXP_Camera::SetRotation(vec3f YPR) {
+	RD_Camera::SetYPR(YPR);
+}

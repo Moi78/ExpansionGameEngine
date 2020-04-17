@@ -21,7 +21,7 @@ void main()
     FragPos = vec3(model * vec4(aPos, 1.0));
     UVcoord = aUV;
 
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < NbrDirLights; i++) {
         FragPosLightSpace[i] = lspaceMat[i] * vec4(FragPos, 1.0);
     }
 

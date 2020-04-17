@@ -268,3 +268,33 @@ std::string vec3f::ConvertToParserFormat(std::string prefix) {
 void vec3f::DBGPrint() {
     std::cout << "X : " << std::to_string(m_x) << " Y : " << std::to_string(m_y) << " Z : " << std::to_string(m_z) << std::endl;
 }
+
+vec3f vec3d::GetFloat() {
+    return vec3f(m_x, m_y, m_z);
+}
+
+//Normalize
+
+void vec3f::NormalizeVector() {
+    float length = (float) abs(sqrt((m_x * m_x) + (m_y * m_y) + (m_z * m_z)));
+
+    m_x /= length;
+    m_y /= length;
+    m_z /= length;
+}
+
+void vec3d::NormalizeVector() {
+    float length = (float)abs(sqrt((m_x * m_x) + (m_y * m_y) + (m_z * m_z)));
+
+    m_x /= length;
+    m_y /= length;
+    m_z /= length;
+}
+
+void vec3i::NormalizeVector() {
+    float length = (float)abs(sqrt((m_x * m_x) + (m_y * m_y) + (m_z * m_z)));
+
+    m_x /= length;
+    m_y /= length;
+    m_z /= length;
+}

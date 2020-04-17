@@ -27,13 +27,13 @@ public:
 	EXP_Component(vec3f pos, vec3f rot, vec3f scale);
 	~EXP_Component();
 
-	vec3f GetPosition();
-	vec3f GetRotation();
-	vec3f GetScale();
+	virtual vec3f GetPosition();
+	virtual vec3f GetRotation();
+	virtual vec3f GetScale();
 
-	void SetPosition(vec3f nPos);
-	void SetRotation(vec3f nRot);
-	void SetScale(vec3f nScale);
+	virtual void SetPosition(vec3f nPos);
+	virtual void SetRotation(vec3f nRot);
+	virtual void SetScale(vec3f nScale);
 
 protected:
 	vec3f m_pos;

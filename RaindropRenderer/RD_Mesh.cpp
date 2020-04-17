@@ -28,7 +28,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	reader->ReadMSHFile(filepath);
 
 	for (int i = 0; i < reader->GetVerticesCount(); i++) {
-		m_vertices.push_back(reader->GetVertexByIndex(i));
+		m_vertices.push_back(reader->GetVertexByIndex(i).GetFloat());
 	}
 
 	for (int i = 0; i < reader->GetIndicesCount(); i++) {
@@ -36,11 +36,11 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	}
 
 	for (int i = 0; i < reader->GetNormalCount(); i++) {
-		m_normals.push_back(reader->GetNormalByIndex(i));
+		m_normals.push_back(reader->GetNormalByIndex(i).GetFloat());
 	}
 
 	for (int i = 0; i < reader->GetUVcoordCount(); i++) {
-		m_uv.push_back(reader->GetUVcoordByIndex(i));
+		m_uv.push_back(reader->GetUVcoordByIndex(i).GetFloat());
 	}
 
 	Bufferize();
@@ -154,21 +154,21 @@ void RD_Mesh::Bufferize() {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glBufferData(GL_ARRAY_BUFFER, MixVertNormUV.size() * sizeof(double), &MixVertNormUV[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, MixVertNormUV.size() * sizeof(float), &MixVertNormUV[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), &m_indices[0], GL_STATIC_DRAW);
 
 	//Vertices
-	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 8 * sizeof(double), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//Normals
-	glVertexAttribPointer(1, 3, GL_DOUBLE, GL_FALSE, 8 * sizeof(double), (void*)(3 * sizeof(double)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	//UV Coords
-	glVertexAttribPointer(2, 2, GL_DOUBLE, GL_FALSE, 8 * sizeof(double), (void*)(6 * sizeof(double)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 }
 

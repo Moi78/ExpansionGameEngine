@@ -63,15 +63,15 @@ private:
 
 	unsigned int VAO, VBO, EBO;
 
-	std::vector<vec3d> m_vertices;
+	std::vector<vec3f> m_vertices;
 	std::vector<unsigned int> m_indices;
-	std::vector<vec3d> m_normals;
-	std::vector<vec2d> m_uv;
+	std::vector<vec3f> m_normals;
+	std::vector<vec2f> m_uv;
 
 	int m_nbr_indices;
 	int m_nbr_vertices;
 
-	std::vector<double> MixVertNormUV;
+	std::vector<float> MixVertNormUV;
 
 	RD_SimpleMaterial* m_mat;
 

@@ -36,6 +36,8 @@ public:
     void setAll(float x, float y, float z);
     
     float dotProduct(vec3f a);
+
+    void NormalizeVector();
     
     std::string ConvertToParserFormat(std::string prefix);
     
@@ -71,6 +73,8 @@ public:
     void setAll(int x, int y, int z);
     
     float dotProduct(vec3i a);
+
+    void NormalizeVector();
     
     bool operator==(vec3i const& a);
     bool operator!=(vec3i const& a);
@@ -98,6 +102,10 @@ public:
     void setAll(double x, double y, double z);
     
     float dotProduct(vec3d a);
+
+    void NormalizeVector();
+
+    vec3f GetFloat();
     
     bool operator==(vec3d const& a);
     bool operator!=(vec3d const& a);

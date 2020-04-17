@@ -126,3 +126,7 @@ vec2d vec2d::operator-(const vec2d& a)
 {
     return vec2d(m_x - a.m_x, m_y - a.m_y);
 }
+
+vec2f vec2d::GetFloat() {
+    return vec2f(m_x, m_y);
+}

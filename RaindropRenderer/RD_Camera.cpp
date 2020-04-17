@@ -137,3 +137,13 @@ void RD_Camera::ComputeYPR() {
 	m_subject.setZ(sin(glm::radians(m_yawPitchRoll.getY())));
 	m_subject.setY(sin(glm::radians(m_yawPitchRoll.getX())) * cos(glm::radians(m_yawPitchRoll.getY())));
 }
+
+vec3f RD_Camera::GetYPR() {
+	return m_yawPitchRoll;
+}
+
+void RD_Camera::SetYPR(vec3f YPR) {
+	m_yawPitchRoll = YPR;
+
+	ComputeYPR();
+}

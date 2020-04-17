@@ -52,10 +52,12 @@ public:
 	vec3f GetRightVector();
 
 	vec3f GetLocation();
+	vec3f GetYPR();
 
 	void AddPitch(float pitch);
 	void AddYaw(float yaw);
 	void AddRoll(float roll);
+	void SetYPR(vec3f YawPitchRoll);
 private:
 	void ComputeYPR();
 	void SetupCamera();

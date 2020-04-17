@@ -7,6 +7,7 @@
 #include <EXP_SoundEmitter.h>
 #include <EXP_RigidBody.h>
 #include <EXP_PhysicsHandler.h>
+#include <EXP_DirLight.h>
 
 #include <RD_GUI.h>
 #include <RD_Callback.h>
@@ -31,16 +32,7 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.1f);
 
-	game->GetRenderer()->SetAASampling(8);
-
-	RD_DirLight* dlight = new RD_DirLight(vec3f(1.0f, 0.0, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
-	game->GetRenderer()->AppendDirLight(dlight);
-	
-	RD_DirLight* dlight2 = new RD_DirLight(vec3f(0.0f, 1.0f, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
-	game->GetRenderer()->AppendDirLight(dlight2);
-
-	RD_DirLight* dlight3 = new RD_DirLight(vec3f(0.0f, -1.0f, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
-	game->GetRenderer()->AppendDirLight(dlight3);
+	EXP_DirLight* dlight = new EXP_DirLight(game, vec3f(1.0, 0.0f, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
 
 	MainCharacter* chara = new MainCharacter(game, vec3f(-5.0f, -5.0f, 0.5f));
 	Donut* donut = new Donut(game, vec3f(0.0f, 0.0f, 2.5f));
