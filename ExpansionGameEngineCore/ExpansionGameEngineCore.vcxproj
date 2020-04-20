@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>_DEBUG;EXPANSIONGAMEENGINECORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;GLM_ENABLE_EXPERIMENTAL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;..\libs\BULLET\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;..\libs\BULLET\include;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <OpenMPSupport>false</OpenMPSupport>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -100,8 +100,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\lib;..\x64\Debug;%(AdditionalLibraryDirectories);..\libs\BULLET\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;Bullet3Common_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\lib;..\x64\Debug;%(AdditionalLibraryDirectories);..\libs\BULLET\lib;..\libs\JSONCPP\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;jsoncpp.lib;Bullet3Common_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -151,7 +151,7 @@
       <PreprocessorDefinitions>NDEBUG;EXPANSIONGAMEENGINECORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;GLM_ENABLE_EXPERIMENTAL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;..\libs\BULLET\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\BulldozerFileManager;..\libs\GL\include;..\libs\PA112RSER\inc;..\libs\AL\include;..\libs\BULLET\include;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
@@ -161,8 +161,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\lib;..\x64\Release;%(AdditionalLibraryDirectories);..\libs\BULLET\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;Bullet3Common.lib;BulletDynamics.lib;LinearMath.lib;BulletCollision.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\GL\lib;..\libs\PA112RSER\lib;..\libs\AL\lib;..\x64\Release;%(AdditionalLibraryDirectories);..\libs\BULLET\lib;..\libs\JSONCPP\lib\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenAL32.lib;opengl32.lib;glew32.lib;glfw3dll.lib;BULLDOZERFILEMANAGER.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;libsndfile-1.lib;jsoncpp.lib;Bullet3Common.lib;BulletDynamics.lib;LinearMath.lib;BulletCollision.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -173,6 +173,7 @@
     <ClInclude Include="EXP_DirLight.h" />
     <ClInclude Include="EXP_Game.h" />
     <ClInclude Include="EXP_GuiManager.h" />
+    <ClInclude Include="EXP_MapLoader.h" />
     <ClInclude Include="EXP_PhysicsHandler.h" />
     <ClInclude Include="EXP_PointLight.h" />
     <ClInclude Include="EXP_RigidBody.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="EXP_DirLight.cpp" />
     <ClCompile Include="EXP_Game.cpp" />
     <ClCompile Include="EXP_GuiManager.cpp" />
+    <ClCompile Include="EXP_MapLoader.cpp" />
     <ClCompile Include="EXP_PhysicsHandler.cpp" />
     <ClCompile Include="EXP_PointLight.cpp" />
     <ClCompile Include="EXP_RigidBody.cpp" />

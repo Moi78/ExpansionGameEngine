@@ -17,6 +17,7 @@ public:
 
 	void Tick();
 	void OnLoad();
+	void OnUnregister();
 
 	void MoveForward();
 	void MoveBack();

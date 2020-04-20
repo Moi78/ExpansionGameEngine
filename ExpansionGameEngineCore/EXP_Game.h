@@ -4,13 +4,11 @@
 #define _EXP_GAME_H__
 
 #ifdef _WIN32
-
-#ifdef EXPANSIONGAMEENGINECORE_EXPORTS
-#define EXPGE_API __declspec(dllexport)
-#else
-#define EXPGE_API __declspec(dllimport)
-#endif
-
+	#ifdef EXPANSIONGAMEENGINECORE_EXPORTS
+		#define EXPGE_API __declspec(dllexport)
+	#else
+		#define EXPGE_API __declspec(dllimport)
+	#endif
 #else
 
 #define EXPGE_API
@@ -65,6 +63,12 @@ public:
 	void RegisterCamera(EXP_Camera*);
 	void RegisterKeyboardCallback(EXP_KeyboardCallback*);
 	void RegisterActor(EXP_Actor*);
+
+	void UnregisterKeyboardCallback(EXP_KeyboardCallback*);
+	void UnregisterActor(EXP_Actor*);
+	void UnregisterMesh(RD_Mesh*);
+	void UnregisterDirLight(RD_DirLight*);
+	void UnregisterPointLight(RD_PointLight*);
 
 	//Rendering
 	RaindropRenderer* GetRenderer();

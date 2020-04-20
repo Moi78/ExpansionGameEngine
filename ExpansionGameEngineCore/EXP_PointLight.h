@@ -24,16 +24,20 @@
 
 #include <RD_PointLight.h>
 
-class EXPGE_API EXP_PointLight : public EXP_Component
+class EXPGE_API EXP_PointLight :
+	public EXP_Component,
+	public RD_PointLight
 {
 public:
-	EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f rot, vec3f scale, vec3f color, float brightness);
+	EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f color, float brightness);
 	~EXP_PointLight();
+
+	virtual void SetPosition(vec3f nPos) override;
+	virtual vec3f GetPosition() override;
 
 private:
 	void RegisterLightToGame();
 
-	RD_PointLight* m_light;
 	EXP_Game* m_gameinstance;
 };
 

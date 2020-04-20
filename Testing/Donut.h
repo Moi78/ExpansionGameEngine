@@ -22,6 +22,7 @@ public:
 
 	void OnStart();
 	void Tick();
+	void OnUnregister();
 
 private:
 	EXP_StaticMesh* m_donut;

@@ -90,6 +90,10 @@ public:
 	int AppendDirLight(RD_DirLight* dirLight);
 	void RegisterMesh(RD_Mesh* mesh);
 
+	void UnregisterMesh(RD_Mesh*);
+	void UnregisterPointLight(RD_PointLight*);
+	void UnregisterDirLight(RD_DirLight*);
+
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);
 	RD_ShaderLoader* GetShadowShader();
@@ -162,6 +166,19 @@ private:
 
 	RD_ShaderLoader* m_CurrentShader;
 };
+
+template<class T>
+int GetElemIndex(std::vector<T> array, T element) {
+	auto it = std::find(array.begin(), array.end(), element);
+
+	if (it != array.end()) {
+		return std::distance(array.begin(), it);
+	}
+	else {
+		std::cerr << "ERROR: Element cannot be found !" << std::endl;
+		return -1;
+	}
+}
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);
 

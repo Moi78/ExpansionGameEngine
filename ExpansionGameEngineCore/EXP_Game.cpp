@@ -226,3 +226,38 @@ void EXP_Game::UpdateCallbacks() {
 void EXP_Game::RegisterActor(EXP_Actor* act) {
 	m_actors.push_back(act);
 }
+
+void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck) {
+	int index = GetElemIndex<EXP_KeyboardCallback*>(m_kb_callbacks, kbcllbck);
+
+	if (index != -1) {
+		m_kb_callbacks.erase(m_kb_callbacks.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}
+
+void EXP_Game::UnregisterMesh(RD_Mesh* mesh) {
+	m_rndr->UnregisterMesh(mesh);
+}
+
+void EXP_Game::UnregisterDirLight(RD_DirLight* dlight) {
+	m_rndr->UnregisterDirLight(dlight);
+}
+
+void EXP_Game::UnregisterPointLight(RD_PointLight* plight) {
+	m_rndr->UnregisterPointLight(plight);
+}
+
+void EXP_Game::UnregisterActor(EXP_Actor* actor) {
+	int index = GetElemIndex<EXP_Actor*>(m_actors, actor);
+
+	if (index != -1) {
+		m_actors.erase(m_actors.begin() + index);
+		actor->CallUnregister();
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}

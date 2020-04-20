@@ -534,6 +534,39 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	m_quad->RenderQuad();
 }
 
+void RaindropRenderer::UnregisterMesh(RD_Mesh* mesh) {
+	int index = GetElemIndex<RD_Mesh*>(m_meshes, mesh);
+
+	if (index != -1) {
+		m_meshes.erase(m_meshes.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}
+
+void RaindropRenderer::UnregisterDirLight(RD_DirLight* light) {
+	int index = GetElemIndex<RD_DirLight*>(m_DirLights, light);
+
+	if (index != -1) {
+		m_DirLights.erase(m_DirLights.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}
+
+void RaindropRenderer::UnregisterPointLight(RD_PointLight* ptLight) {
+	int index = GetElemIndex<RD_PointLight*>(m_pt_lights, ptLight);
+
+	if (index != -1) {
+		m_pt_lights.erase(m_pt_lights.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 
 void glfwWinCallback(GLFWwindow* win, int w, int h) {

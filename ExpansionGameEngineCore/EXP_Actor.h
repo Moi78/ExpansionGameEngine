@@ -30,7 +30,7 @@ class EXP_Game;
 class EXPGE_API EXP_Actor
 {
 public:
-	EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::function<void()> tickFunc, std::function<void()> startFunc);
+	EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::function<void()> tickFunc, std::function<void()> startFunc, std::function<void()> OnUnregister);
 	~EXP_Actor();
 
 	vec3f GetWorldPos();
@@ -39,6 +39,7 @@ public:
 
 	void CallTick();
 	void CallOnStart();
+	void CallUnregister();
 	
 protected:
 	EXP_Game* m_game;
@@ -49,5 +50,6 @@ protected:
 
 	RD_Callback* m_tick;
 	RD_Callback* m_onStart;
+	RD_Callback* m_onUnregister;
 };
 

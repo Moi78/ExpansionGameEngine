@@ -1,21 +1,24 @@
 #include "pch.h"
 #include "EXP_PointLight.h"
 
-EXP_PointLight::EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f rot, vec3f scale, vec3f color, float brightness) : EXP_Component(pos, rot, scale) {
+EXP_PointLight::EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f color, float brightness) : EXP_Component(pos, vec3f(), vec3f()), RD_PointLight(pos, color, brightness) {
 	m_gameinstance = gameinstance;
-	m_light = new RD_PointLight(pos, color, brightness);
 
 	RegisterLightToGame();
 }
 EXP_PointLight::~EXP_PointLight() {
-	delete m_light;
+
 }
 
 void EXP_PointLight::RegisterLightToGame() {
-	if (m_light) {
-		m_gameinstance->RegisterPointLight(m_light);
-	}
-	else {
-		std::cerr << "Cannot create and register light" << std::endl;
-	}
+	m_gameinstance->RegisterPointLight(this);
+}
+
+void EXP_PointLight::SetPosition(vec3f nPos) {
+	RD_PointLight::SetPosition(nPos);
+	EXP_Component::m_pos = nPos;
+}
+
+vec3f EXP_PointLight::GetPosition() {
+	return RD_PointLight::GetPosition();
 }

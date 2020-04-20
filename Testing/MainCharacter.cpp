@@ -1,6 +1,6 @@
 #include "MainCharacter.h"
 
-MainCharacter::MainCharacter(EXP_Game* gameinstance, vec3f spawnpoint) : EXP_Actor(gameinstance, spawnpoint, vec3f(), vec3f(), CL_VDFUNCPTR(MainCharacter::Tick), CL_VDFUNCPTR(MainCharacter::OnLoad)) {
+MainCharacter::MainCharacter(EXP_Game* gameinstance, vec3f spawnpoint) : EXP_Actor(gameinstance, spawnpoint, vec3f(), vec3f(), CL_VDFUNCPTR(MainCharacter::Tick), CL_VDFUNCPTR(MainCharacter::OnLoad), CL_VDFUNCPTR(MainCharacter::OnUnregister)) {
 	m_gameinstance = gameinstance;
 
 	m_camera = new EXP_Camera(gameinstance, spawnpoint + vec3f(0.0f, 0.0f, 2.75f), vec3f(), vec3f(), vec3f(0.0f, 0.0f, 0.0f), 60.0f);
@@ -18,6 +18,7 @@ MainCharacter::MainCharacter(EXP_Game* gameinstance, vec3f spawnpoint) : EXP_Act
 }
 
 MainCharacter::~MainCharacter() {
+	m_game->GetPhysicsHandler()->RemoveBodyFromWorld(m_bound->GetBody());
 	delete m_bound;
 }
 
@@ -27,6 +28,20 @@ void MainCharacter::Tick() {
 
 void MainCharacter::OnLoad() {
 	
+}
+
+void MainCharacter::OnUnregister() {
+	m_game->UnregisterKeyboardCallback(m_forwd);
+	m_game->UnregisterKeyboardCallback(m_back);
+
+	m_game->UnregisterKeyboardCallback(m_camPP);
+	m_game->UnregisterKeyboardCallback(m_camPM);
+	m_game->UnregisterKeyboardCallback(m_camYP);
+	m_game->UnregisterKeyboardCallback(m_camYM);
+
+	m_game->GetPhysicsHandler()->RemoveBodyFromWorld(m_bound->GetBody());
+
+	delete m_bound;
 }
 
 void MainCharacter::MoveForward() {

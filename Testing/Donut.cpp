@@ -1,6 +1,6 @@
 #include "Donut.h"
 
-Donut::Donut(EXP_Game* gameinstance, vec3f spawn) : EXP_Actor(gameinstance, spawn, vec3f(), vec3f(), CL_VDFUNCPTR(Donut::Tick), CL_VDFUNCPTR(Donut::OnStart)) {
+Donut::Donut(EXP_Game* gameinstance, vec3f spawn) : EXP_Actor(gameinstance, spawn, vec3f(), vec3f(), CL_VDFUNCPTR(Donut::Tick), CL_VDFUNCPTR(Donut::OnStart), CL_VDFUNCPTR(Donut::OnUnregister)) {
 	RD_Texture* tex = new RD_Texture();
 	tex->LoadTexture("Content/Donut/tex.png");
 
@@ -25,4 +25,8 @@ void Donut::OnStart() {
 
 void Donut::Tick() {
 	m_donut->GetRawMeshData()->addRotation(vec3f(0.0f, 0.1f, 0.0f));
+}
+
+void Donut::OnUnregister() {
+	m_game->UnregisterMesh(m_donut->GetRawMeshData());
 }

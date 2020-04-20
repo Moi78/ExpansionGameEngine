@@ -1,26 +1,13 @@
 #include <iostream>
 
 #include <EXP_Game.h>
-#include <EXP_StaticMesh.h>
 #include <EXP_Camera.h>
-#include <EXP_PointLight.h>
-#include <EXP_SoundEmitter.h>
-#include <EXP_RigidBody.h>
-#include <EXP_PhysicsHandler.h>
-#include <EXP_DirLight.h>
 
-#include <RD_GUI.h>
-#include <RD_Callback.h>
-#include <RD_DirLight.h>
-
-#include <PhysicaSound.h>
+#include "Donut.h"
+#include "MainCharacter.h"
 
 #include <vec3.h>
 
-#include <BD_StructMan.h>
-
-#include "MainCharacter.h"
-#include "Donut.h"
 
 int main(int argc, char* argv[]) {
 	BD_GameInfo gi = {};
@@ -32,41 +19,12 @@ int main(int argc, char* argv[]) {
 	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
 	game->GetRenderer()->SetAmbientStrength(0.1f);
 
-	EXP_DirLight* dlight = new EXP_DirLight(game, vec3f(1.0, 0.0f, -0.5f), vec3f(1.0f, 1.0f, 1.0f), 1.0f);
-
-	MainCharacter* chara = new MainCharacter(game, vec3f(-5.0f, -5.0f, 0.5f));
-	Donut* donut = new Donut(game, vec3f(0.0f, 0.0f, 2.5f));
-
-	RD_Texture* color = new RD_Texture();
-	color->GenerateColorTex(vec3f(1.0f, 0.2f, 0.3f));
-
-	RD_Texture* colorShape = new RD_Texture();
-	colorShape->GenerateColorTex(vec3f(0.8f, 0.8f, 0.8f));
-
-	RD_Texture* spec = new RD_Texture();
-	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
-
-	BD_MatDef mat = {};
-	mat.BaseColor = color->GetTextureID();
-	mat.Specular = spec->GetTextureID();
-	mat.Shininess = 128.0f;
-
-	EXP_StaticMesh* floor = new EXP_StaticMesh(game, "/floor", mat, vec3f(), vec3f(), vec3f(10.0f, 10.0f, 0.5f));
-
-	EXP_RB_Box* rbfloor = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 0.0f), vec3f(), vec3f(10.0f, 10.0f, 0.5f), 0.0f);
+	EXP_Camera* cam = new EXP_Camera(game, vec3f(0.0, -6.0), vec3f(), vec3f(), vec3f(90.0f), 60);
+	cam->Use();
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->MainLoop();
 	}
-
-	delete game;
-	delete chara;
-	delete donut;
-	delete color;
-	delete colorShape;
-	delete spec;
-	delete floor;
-	delete rbfloor;
 
 	return 0;
 }

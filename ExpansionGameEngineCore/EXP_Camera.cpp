@@ -38,8 +38,10 @@ vec3f EXP_Camera::GetScale() {
 
 void EXP_Camera::SetPosition(vec3f nPos) {
 	RD_Camera::SetLocation(nPos);
+	EXP_Component::m_pos = nPos;
 }
 
 void EXP_Camera::SetRotation(vec3f YPR) {
 	RD_Camera::SetYPR(YPR);
+	EXP_Component::m_rot = YPR;
 }
