@@ -32,3 +32,11 @@ void EXP_Component::SetRotation(vec3f nRot) {
 void EXP_Component::SetScale(vec3f nScale) {
 	m_scale = nScale;
 }
+
+void EXP_Component::SetNameTag(std::string nTagName) {
+	m_nameTag = nTagName;
+}
+
+std::string EXP_Component::GetNameTag() {
+	return m_nameTag;
+}

@@ -35,10 +35,15 @@ public:
 	virtual void SetRotation(vec3f nRot);
 	virtual void SetScale(vec3f nScale);
 
+	void SetNameTag(std::string);
+	std::string GetNameTag();
+
 protected:
 	vec3f m_pos;
 	vec3f m_rot;
 	vec3f m_scale;
+
+	std::string m_nameTag;
 };
 
 #endif //_EXP_COMPONENT_H__

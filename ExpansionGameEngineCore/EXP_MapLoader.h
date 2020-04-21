@@ -15,20 +15,35 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <vector>
+
+#include <vector>
 
 #include <json/json.h>
 
 #include "EXP_Game.h"
 #include "EXP_StaticMesh.h"
+#include "EXP_PointLight.h"
+#include "EXP_DirLight.h"
 
-class EXP_MapLoader
+class EXPGE_API EXP_MapLoader
 {
 public:
-	EXP_MapLoader(std::string mapFile);
+	EXP_MapLoader(EXP_Game* game, std::string mapFile);
 	~EXP_MapLoader();
 
-	void LoadMap();
+	bool LoadMap();
 	void UnloadMap();
+
+private:
+	EXP_Game* m_game;
+
+	std::vector<EXP_StaticMesh*> m_meshes;
+	std::vector<EXP_PointLight*> m_ptlights;
+	std::vector<EXP_DirLight*> m_dlights;
+
+	std::ifstream m_map;
 };
 
 #endif
