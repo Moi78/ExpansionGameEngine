@@ -8,7 +8,11 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Lightweight build (<30MB for all engine files) & SDK (<300MB for the whole sdk)
  - [x] Light and Shadow fully realtime
  - [x] Deffered rendering
- - [x] Cross-Platorm ([x] Windows, [x] Linux, [ ] Console, [ ] maybe MacOS)
+ - [x] Cross-Platorm :
+  - [x] Windows
+  - [x] Linux
+  - [ ] Console (XBox, PS4, Switch)
+  - [ ] MacOS (last priority)
  - [ ] Optimise as f\*ck -> I want to have a very well optimised engine to run everywhere
  - [ ] An easy to understand & easy to use engine (w/ an editor and everything that goes with)
  - [ ] JS Scripting
