@@ -4,6 +4,9 @@ Expansion Game Engine is a little 3D game engine in developpement.
 
 ## Target List
  - [ ] Multi-API rendering (OpenGL, Vulkan, and DirectX11/12 if I want to export to XBox)
+   - [x] OpenGL 3/4
+   - [ ] Vulkan (In priority to D3D, soon to be started)
+   - [ ] Direct3D
  - [ ] Going PBR
  - [x] Lightweight build (<30MB for all engine files) & SDK (<300MB for the whole sdk)
  - [x] Light and Shadow fully realtime
