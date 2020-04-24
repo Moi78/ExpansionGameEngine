@@ -94,10 +94,8 @@ void EXP_Game::MainLoop() {
 
 	//Process shadows
 	m_rndr->RenderLightsDepth(m_currentCamera->GetLocation());
-
 	//GBuff
 	m_rndr->RenderGbuff(m_currentCamera);
-
 	//Light pass
 	m_rndr->RenderLightPass(m_currentCamera->GetLocation());
 
@@ -220,6 +218,7 @@ void EXP_Game::UpdateCallbacks() {
 
 	for (auto act : m_actors) {
 		act->CallTick();
+		act->UpdateActor();
 	}
 }
 

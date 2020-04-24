@@ -10,6 +10,8 @@ EXP_Actor::EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::fun
 	m_rot = rot;
 	m_scale = scale;
 
+	m_root = new EXP_Component(pos, rot, scale);
+
 	m_onStart = new RD_Callback(onStart);
 	m_tick = new RD_Callback(tick);
 	m_onUnregister = new RD_Callback(OnUnregister);
@@ -45,4 +47,21 @@ void EXP_Actor::CallOnStart() {
 
 void EXP_Actor::CallUnregister() {
 	m_onUnregister->Call();
+}
+
+glm::mat4 EXP_Actor::GenerateActorMatrix() {
+	glm::mat4 mat = glm::mat4(1.0f);
+
+	mat = glm::translate(mat, glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()));
+	mat = glm::scale(mat, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+
+	mat = glm::rotate(mat, glm::radians(m_rot.getX()), glm::vec3(1.0f, 0.0, 0.0));
+	mat = glm::rotate(mat, glm::radians(m_rot.getY()), glm::vec3(0.0f, 1.0, 0.0));
+	mat = glm::rotate(mat, glm::radians(m_rot.getZ()), glm::vec3(0.0f, 0.0, 1.0));
+
+	return mat;
+}
+
+void EXP_Actor::UpdateActor() {
+	CallTick();
 }

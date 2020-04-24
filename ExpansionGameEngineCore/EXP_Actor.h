@@ -25,6 +25,11 @@
 
 #endif //_WIN32
 
+#include <vector>
+
+#include "EXP_Component.h"
+
+//Forward decl
 class EXP_Game;
 
 class EXPGE_API EXP_Actor
@@ -40,6 +45,10 @@ public:
 	void CallTick();
 	void CallOnStart();
 	void CallUnregister();
+
+	void UpdateActor();
+
+	glm::mat4 GenerateActorMatrix();
 	
 protected:
 	EXP_Game* m_game;

@@ -27,14 +27,22 @@
 #include "EXP_PointLight.h"
 #include "EXP_DirLight.h"
 
+class EXP_Level;
+
 class EXPGE_API EXP_MapLoader
 {
 public:
 	EXP_MapLoader(EXP_Game* game, std::string mapFile);
 	~EXP_MapLoader();
 
-	bool LoadMap();
+	bool LoadMap(EXP_Level*);
 	void UnloadMap();
+
+	void UpdateLevel();
+
+	EXP_StaticMesh* GetStaticMeshByName(std::string name);
+	EXP_PointLight* GetPointLightByName(std::string name);
+	EXP_DirLight* GetDirLightByName(std::string name);
 
 private:
 	EXP_Game* m_game;
@@ -44,6 +52,8 @@ private:
 	std::vector<EXP_DirLight*> m_dlights;
 
 	std::ifstream m_map;
+
+	EXP_Level* m_levelCode;
 };
 
 #endif

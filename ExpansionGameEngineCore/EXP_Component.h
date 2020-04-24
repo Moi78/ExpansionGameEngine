@@ -39,6 +39,7 @@ public:
 	std::string GetNameTag();
 
 protected:
+
 	vec3f m_pos;
 	vec3f m_rot;
 	vec3f m_scale;

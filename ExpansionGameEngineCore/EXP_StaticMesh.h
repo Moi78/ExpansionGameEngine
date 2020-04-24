@@ -36,6 +36,10 @@ public:
 
 	void Update();
 
+	virtual void SetPosition(vec3f nPos) override;
+	virtual void SetRotation(vec3f nRot) override;
+	virtual void SetScale(vec3f nScale) override;
+
 private:
 	RD_Mesh* m_RawMesh;
 	BD_MatDef m_material;

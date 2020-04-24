@@ -34,3 +34,18 @@ void EXP_StaticMesh::Update() {
 	m_RawMesh->SetRotation(GetRotation());
 	m_RawMesh->SetScale(GetScale());
 }
+
+void EXP_StaticMesh::SetPosition(vec3f nPos) {
+	m_pos = nPos;
+	m_RawMesh->SetPosition(nPos);
+}
+
+void EXP_StaticMesh::SetRotation(vec3f nRot) {
+	m_rot = nRot;
+	m_RawMesh->SetRotation(nRot);
+}
+
+void EXP_StaticMesh::SetScale(vec3f nScale) {
+	m_scale = nScale;
+	m_RawMesh->SetScale(nScale);
+}

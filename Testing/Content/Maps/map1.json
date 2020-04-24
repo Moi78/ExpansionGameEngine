@@ -1,5 +1,5 @@
 {
-    "nodeCount" : 5,
+    "nodeCount" : 3,
     "0" : {
         "type":"mesh",
         "nameTag":"floor",
@@ -11,16 +11,6 @@
     },
 
     "1" : {
-        "type":"mesh",
-        "ref":"/shape",
-        "nameTag":"chose",
-
-        "pos":[0, 0, 2.5],
-        "rot":[60, 30, 20],
-        "scale":[1, 1, 1]
-    },
-
-    "2" : {
         "type":"plight",
         "nameTag":"pointLight1",
 
@@ -29,22 +19,12 @@
         "brightness":5.0
     },
 
-    "3" : {
+    "2" : {
         "type":"dlight",
         "nameTag":"dirLight1",
 
         "dir":[1.0, 0.0, -0.5],
         "color":[1.0, 1.0, 1.0],
         "brightness":1.0
-    },
-
-    "4" : {
-        "type":"mesh",
-        "ref":"/floor",
-        "nameTag":"ceiling",
-
-        "pos":[0, 0, 6],
-        "rot":[0, 0, 0],
-        "scale":[10, 10, 1]
     }
 }

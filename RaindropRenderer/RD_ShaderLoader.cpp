@@ -6,7 +6,8 @@ RD_ShaderLoader::RD_ShaderLoader() {
 }
 
 RD_ShaderLoader::~RD_ShaderLoader() {
-
+	glUseProgram(0);
+	glDeleteProgram(m_program_id);
 }
 
 void RD_ShaderLoader::compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile) {

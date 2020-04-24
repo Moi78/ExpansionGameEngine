@@ -141,10 +141,12 @@
     <ClCompile Include="Donut.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainCharacter.cpp" />
+    <ClCompile Include="Map1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Donut.h" />
     <ClInclude Include="MainCharacter.h" />
+    <ClInclude Include="Map1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Shaders\glsl\Gshad.frag" />

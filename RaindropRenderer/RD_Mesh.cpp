@@ -18,6 +18,10 @@ RD_Mesh::RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale
 }
 
 RD_Mesh::~RD_Mesh() {
+	glDeleteBuffers(1, &VBO);
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &EBO);
+
 	delete m_mat;
 }
 

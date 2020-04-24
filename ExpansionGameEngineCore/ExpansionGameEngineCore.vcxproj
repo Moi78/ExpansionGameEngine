@@ -173,6 +173,7 @@
     <ClInclude Include="EXP_DirLight.h" />
     <ClInclude Include="EXP_Game.h" />
     <ClInclude Include="EXP_GuiManager.h" />
+    <ClInclude Include="EXP_Level.h" />
     <ClInclude Include="EXP_MapLoader.h" />
     <ClInclude Include="EXP_PhysicsHandler.h" />
     <ClInclude Include="EXP_PointLight.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="EXP_DirLight.cpp" />
     <ClCompile Include="EXP_Game.cpp" />
     <ClCompile Include="EXP_GuiManager.cpp" />
+    <ClCompile Include="EXP_Level.cpp" />
     <ClCompile Include="EXP_MapLoader.cpp" />
     <ClCompile Include="EXP_PhysicsHandler.cpp" />
     <ClCompile Include="EXP_PointLight.cpp" />

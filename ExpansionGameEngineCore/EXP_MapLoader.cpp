@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "EXP_MapLoader.h"
 
+#include "EXP_Level.h"
+
 EXP_MapLoader::EXP_MapLoader(EXP_Game* game, std::string Mapfile) {
 	m_map = std::ifstream(Mapfile);
 	m_game = game;
@@ -10,7 +12,9 @@ EXP_MapLoader::~EXP_MapLoader() {
 
 }
 
-bool EXP_MapLoader::LoadMap() {
+bool EXP_MapLoader::LoadMap(EXP_Level* lvl) {
+	m_levelCode = lvl;
+
 	Json::Value root;
 	JSONCPP_STRING errs;
 
@@ -76,5 +80,60 @@ bool EXP_MapLoader::LoadMap() {
 }
 
 void EXP_MapLoader::UnloadMap() {
+	for (auto mesh : m_meshes) {
+		m_game->UnregisterMesh(mesh->GetRawMeshData());
+		delete mesh;
+	}
+	m_meshes.clear();
 
+	for (auto dlight : m_dlights) {
+		m_game->UnregisterDirLight(dlight);
+		delete dlight;
+	}
+	m_dlights.clear();
+
+	for (auto plight : m_ptlights) {
+		m_game->UnregisterPointLight(plight);
+		delete plight;
+	}
+	m_ptlights.clear();
+
+	delete m_levelCode;
+}
+
+void EXP_MapLoader::UpdateLevel() {
+	m_levelCode->CallEvents();
+}
+
+EXP_StaticMesh* EXP_MapLoader::GetStaticMeshByName(std::string name) {
+	for (auto mesh : m_meshes) {
+		if (mesh->GetNameTag() == name) {
+			return mesh;
+		}
+	}
+
+	std::cerr << "ERROR: StaticMesh " << name << " was not found. Returning nullptr." << std::endl;
+	return nullptr;
+}
+
+EXP_PointLight* EXP_MapLoader::GetPointLightByName(std::string name) {
+	for (auto plight : m_ptlights) {
+		if (plight->GetNameTag() == name) {
+			return plight;
+		}
+	}
+
+	std::cerr << "ERROR: PointLight " << name << " was not found. Returning nullptr." << std::endl;
+	return nullptr;
+}
+
+EXP_DirLight* EXP_MapLoader::GetDirLightByName(std::string name) {
+	for (auto dlight : m_dlights) {
+		if (dlight->GetNameTag() == name) {
+			return dlight;
+		}
+	}
+
+	std::cerr << "ERROR: DirLight " << name << " was not found. Returning nullptr." << std::endl;
+	return nullptr;
 }

@@ -11,7 +11,8 @@ RD_SimpleMaterial::RD_SimpleMaterial(BD_MatDef mdef) {
 }
 
 RD_SimpleMaterial::~RD_SimpleMaterial() {
-
+	glDeleteTextures(1, &m_BaseColor);
+	glDeleteTextures(1, &m_Specular);
 }
 
 void RD_SimpleMaterial::BindMaterial(RD_ShaderLoader* shader) {

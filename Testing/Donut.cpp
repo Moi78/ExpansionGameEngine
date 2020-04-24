@@ -1,6 +1,6 @@
 #include "Donut.h"
 
-Donut::Donut(EXP_Game* gameinstance, vec3f spawn) : EXP_Actor(gameinstance, spawn, vec3f(), vec3f(), CL_VDFUNCPTR(Donut::Tick), CL_VDFUNCPTR(Donut::OnStart), CL_VDFUNCPTR(Donut::OnUnregister)) {
+Donut::Donut(EXP_Game* gameinstance, vec3f spawn) : EXP_Actor(gameinstance, spawn, vec3f(), vec3f(1.0f, 1.0f, 1.0f), CL_VDFUNCPTR(Donut::Tick), CL_VDFUNCPTR(Donut::OnStart), CL_VDFUNCPTR(Donut::OnUnregister)) {
 	RD_Texture* tex = new RD_Texture();
 	tex->LoadTexture("Content/Donut/tex.png");
 
@@ -12,7 +12,8 @@ Donut::Donut(EXP_Game* gameinstance, vec3f spawn) : EXP_Actor(gameinstance, spaw
 	mdonut.Shininess = 2.0f;
 	mdonut.Specular = spec->GetTextureID();
 
-	m_donut = new EXP_StaticMesh(m_game, "/Donut/donut", mdonut, spawn, vec3f(60.0f, 70.0f), vec3f(0.005f, 0.005f, 0.005f));
+	m_donut = new EXP_StaticMesh(m_game, "/Donut/donut", mdonut, vec3f(0.0f, 0.0f, 2.0f), vec3f(60.0f, 70.0f), vec3f(0.005f, 0.005f, 0.005f));
+	AddComponent(m_donut);
 }
 
 Donut::~Donut() {
