@@ -7,17 +7,43 @@
 #include "EXP_PhysicsHandler.h"
 #include "EXP_Callbacks.h"
 
-EXP_Game::EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor) {
+EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
 	m_first_exec = true;
 	
 	InitPhysicaSound();
-	InitGame(res, refreshColor, gameinfo);
+	InitGame(refreshColor, gameinfo);
 	InitGui();
 	InitPhysics();
 
 	RD_Texture* defTex = new RD_Texture();
 	defTex->LoadTexture(gameinfo.RootEngineContentFolder + "/Textures/defTex.png");
+
+	RD_Texture* spec = new RD_Texture();
+	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
+
+	m_def_mat = {};
+	m_def_mat.BaseColor = defTex->GetTextureID();
+	m_def_mat.Specular = spec->GetTextureID();
+	m_def_mat.Shininess = 1.0f;
+
+	delete spec;
+	delete defTex;
+}
+
+EXP_Game::EXP_Game(std::string gameinfo) {
+	BD_GameInfo gi = CreateGameInfoFromJSON(gameinfo);
+
+	m_currentCamera = nullptr;
+	m_first_exec = true;
+
+	InitPhysicaSound();
+	InitGame(vec3f(), gi);
+	InitGui();
+	InitPhysics();
+
+	RD_Texture* defTex = new RD_Texture();
+	defTex->LoadTexture(gi.RootEngineContentFolder + "/Textures/defTex.png");
 
 	RD_Texture* spec = new RD_Texture();
 	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
@@ -44,13 +70,44 @@ EXP_Game::~EXP_Game() {
 	delete m_listener;
 }
 
-void EXP_Game::InitGame(BD_Resolution res, vec3f refreshColor, BD_GameInfo gameinfo) {
-	m_res = res;
+BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
+	Json::Value root;
+	JSONCPP_STRING errs;
+
+	Json::CharReaderBuilder builder;
+	builder["collectComment"] = false;
+
+	std::ifstream gameinfo(file);
+
+	if (!Json::parseFromStream(builder, gameinfo, &root, &errs)) {
+		std::cerr << "Cannot load GameInfo.json file. " << errs << std::endl;
+		return {}; //Returning void structure
+	}
+
+	std::string engineFolder = root["RootEngineContentFolder"].asString();
+	std::string contentFolder = root["RootGameContentFolder"].asString();
+	std::string gameName = root["GameName"].asString();
+
+	BD_Resolution res = {root["GameBaseResolution"][0].asInt(), root["GameBaseResolution"][1].asInt()};
+
+	std::string startupMap = root["StartupMap"].asString();
+
+	BD_GameInfo gi = {};
+	gi.GameName = gameName;
+	gi.RootEngineContentFolder = engineFolder;
+	gi.RootGameContentFolder = contentFolder;
+	gi.GameBaseResolution = res;
+
+	return gi;
+}
+
+void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
+	m_res = gameinfo.GameBaseResolution;
 	m_refreshColor = refreshColor;
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
 
-	m_rndr = new RaindropRenderer(res.x, res.y, gameinfo.GameName, 60);
+	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
 }
 
 void EXP_Game::InitPhysicaSound() {

@@ -1,0 +1,9 @@
+{
+    "RootEngineContentFolder":"Engine",
+    "RootGameContentFolder":"Content",
+    "GameBaseResolution":[1280, 720],
+
+    "GameName":"Donut Mmh",
+
+    "StartupMap":"/Maps/map1.json"
+}

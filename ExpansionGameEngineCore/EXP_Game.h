@@ -24,9 +24,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include <thread>
 #include <mutex>
+
+#include <json/json.h>
 
 #include <RaindropRenderer.h>
 #include <RD_Mesh.h>
@@ -52,7 +55,9 @@ class EXP_KeyboardCallback;
 class EXPGE_API EXP_Game
 {
 public:
-	EXP_Game(BD_Resolution res, BD_GameInfo gameinfo, vec3f refreshColor);
+	EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor);
+	EXP_Game(std::string gameInfoJSON);
+
 	~EXP_Game();
 	
 	BD_GameInfo GetGameInfo();
@@ -92,11 +97,12 @@ public:
 	EXP_PhysicsHandler* GetPhysicsHandler();
 
 private:
-	void InitGame(BD_Resolution winRes, vec3f refreshColor, BD_GameInfo gameinfo);
+	void InitGame(vec3f refreshColor, BD_GameInfo gameinfo);
 	void InitPhysicaSound();
 	void InitGui();
 	void InitPhysics();
 	void UpdateCallbacks();
+	BD_GameInfo CreateGameInfoFromJSON(std::string gameInfo);
 
 	bool m_first_exec;
 
