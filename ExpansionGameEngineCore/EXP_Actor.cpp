@@ -10,8 +10,6 @@ EXP_Actor::EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::fun
 	m_rot = rot;
 	m_scale = scale;
 
-	m_root = new EXP_Component(pos, rot, scale);
-
 	m_onStart = new RD_Callback(onStart);
 	m_tick = new RD_Callback(tick);
 	m_onUnregister = new RD_Callback(OnUnregister);

@@ -12,8 +12,7 @@ Donut::Donut(EXP_Game* gameinstance, vec3f spawn) : EXP_Actor(gameinstance, spaw
 	mdonut.Shininess = 2.0f;
 	mdonut.Specular = spec->GetTextureID();
 
-	m_donut = new EXP_StaticMesh(m_game, "/Donut/donut", mdonut, vec3f(0.0f, 0.0f, 2.0f), vec3f(60.0f, 70.0f), vec3f(0.005f, 0.005f, 0.005f));
-	AddComponent(m_donut);
+	m_donut = new EXP_StaticMesh(m_game, "/Donut/donut", mdonut, spawn, vec3f(60.0f, 70.0f), vec3f(0.005f, 0.005f, 0.005f));
 }
 
 Donut::~Donut() {
