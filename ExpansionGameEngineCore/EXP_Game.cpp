@@ -6,10 +6,16 @@
 #include "EXP_SoundEmitter.h"
 #include "EXP_PhysicsHandler.h"
 #include "EXP_Callbacks.h"
+#include "EXP_HotLoad.h"
+#include "EXP_MapLoader.h"
 
 EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
 	m_first_exec = true;
+
+	m_GameLib = new EXP_HotLoad();
+	std::wstring glib = std::wstring(gameinfo.GameLib.begin(), gameinfo.GameLib.end());
+	m_GameLib->LoadLib(glib.c_str());
 	
 	InitPhysicaSound();
 	InitGame(refreshColor, gameinfo);
@@ -33,6 +39,11 @@ EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 
 EXP_Game::EXP_Game(std::string gameinfo) {
 	BD_GameInfo gi = CreateGameInfoFromJSON(gameinfo);
+
+	m_GameLib = new EXP_HotLoad();
+
+	std::wstring glib = std::wstring(gi.GameLib.begin(), gi.GameLib.end());
+	m_GameLib->LoadLib(glib.c_str());
 
 	m_currentCamera = nullptr;
 	m_first_exec = true;
@@ -84,6 +95,8 @@ BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 		return {}; //Returning void structure
 	}
 
+	std::string GameLib = root["GameBin"].asString();
+
 	std::string engineFolder = root["RootEngineContentFolder"].asString();
 	std::string contentFolder = root["RootGameContentFolder"].asString();
 	std::string gameName = root["GameName"].asString();
@@ -97,6 +110,8 @@ BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 	gi.RootEngineContentFolder = engineFolder;
 	gi.RootGameContentFolder = contentFolder;
 	gi.GameBaseResolution = res;
+	gi.GameLib = GameLib;
+	gi.StartupMap = startupMap;
 
 	return gi;
 }
@@ -108,6 +123,9 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_gameinfo = gameinfo;
 
 	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
+
+	m_PlayingMap = new EXP_MapLoader(this, gameinfo.RootGameContentFolder + gameinfo.StartupMap);
+	m_PlayingMap->LoadMap();
 }
 
 void EXP_Game::InitPhysicaSound() {
@@ -148,6 +166,7 @@ void EXP_Game::InitGui() {
 
 void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
+	m_PlayingMap->UpdateLevel();
 
 	//Process shadows
 	m_rndr->RenderLightsDepth(m_currentCamera->GetLocation());
@@ -316,4 +335,8 @@ void EXP_Game::UnregisterActor(EXP_Actor* actor) {
 	else {
 		std::cerr << "ERROR: Element does not exists" << std::endl;
 	}
+}
+
+EXP_HotLoad* EXP_Game::GetGameLib() {
+	return m_GameLib;
 }

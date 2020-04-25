@@ -1,4 +1,5 @@
 {
+    "MapLevelCodeObjectName" : "Map1",
     "nodeCount" : 3,
     "0" : {
         "type":"mesh",

@@ -85,7 +85,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>..\libs\GL\lib;C:\VulkanSDK\1.1.106.0\Lib;..\libs\VULKAN\lib;C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\x64\Debug;%(AdditionalLibraryDirectories);..\libs\PA112RSER\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libs\GL\lib;C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExpansionMath.lib;PhysicaSound.lib;libsndfile-1.lib;ExpansionGameEngineCore.lib;OpenAL32.lib;RaindropRenderer.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -133,7 +133,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\libs\GL\lib;C:\VulkanSDK\1.1.106.0\Lib;..\libs\VULKAN\lib;C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\x64\Release;%(AdditionalLibraryDirectories);..\libs\PA112RSER\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libs\GL\lib;C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\x64\Release;%(AdditionalLibraryDirectories);..\libs\PA112RSER\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExpansionMath.lib;PhysicaSound.lib;libsndfile-1.lib;ExpansionGameEngineCore.lib;OpenAL32.lib;RaindropRenderer.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

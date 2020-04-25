@@ -3,7 +3,8 @@
     "RootGameContentFolder":"Content",
     "GameBaseResolution":[1280, 720],
 
-    "GameName":"Donut Mmh",
+    "GameBin":"../x64/Debug/Game.dll",
 
+    "GameName":"Donut Mmh",
     "StartupMap":"/Maps/map1.json"
 }

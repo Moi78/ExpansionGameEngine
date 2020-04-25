@@ -38,6 +38,7 @@ struct BULLDOZERFILEMANAGER_API BD_GameInfo {
 	std::string RootGameContentFolder = "Engine";
 	std::string RootEngineContentFolder = "Content";
 	BD_Resolution GameBaseResolution = {1280, 720};
+	std::string GameLib = "Game.dll";
 
 	std::string GameName = "Default Game";
 	std::string StartupMap;

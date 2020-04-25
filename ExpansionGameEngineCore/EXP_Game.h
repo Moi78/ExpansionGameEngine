@@ -51,6 +51,8 @@ class EXP_SoundEmitter;
 class EXP_RigidBody;
 class EXP_PhysicsHandler;
 class EXP_KeyboardCallback;
+class EXP_HotLoad;
+class EXP_MapLoader;
 
 class EXPGE_API EXP_Game
 {
@@ -74,6 +76,8 @@ public:
 	void UnregisterMesh(RD_Mesh*);
 	void UnregisterDirLight(RD_DirLight*);
 	void UnregisterPointLight(RD_PointLight*);
+
+	EXP_HotLoad* GetGameLib();
 
 	//Rendering
 	RaindropRenderer* GetRenderer();
@@ -106,6 +110,8 @@ private:
 
 	bool m_first_exec;
 
+	EXP_MapLoader* m_PlayingMap;
+
 	RaindropRenderer* m_rndr;
 
 	PSound* m_soundEngine;
@@ -120,6 +126,8 @@ private:
 
 	EXP_Camera* m_currentCamera;
 	PS_Listener* m_listener;
+
+	EXP_HotLoad* m_GameLib;
 
 	//Physics
 	EXP_PhysicsHandler* m_physicsHandler;

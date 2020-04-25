@@ -6,24 +6,36 @@
 EXP_MapLoader::EXP_MapLoader(EXP_Game* game, std::string Mapfile) {
 	m_map = std::ifstream(Mapfile);
 	m_game = game;
+
+	m_mapRef = Mapfile;
 }
 
 EXP_MapLoader::~EXP_MapLoader() {
 
 }
 
-bool EXP_MapLoader::LoadMap(EXP_Level* lvl) {
-	m_levelCode = lvl;
-
+bool EXP_MapLoader::LoadMap() {
 	Json::Value root;
 	JSONCPP_STRING errs;
+
+	std::cout << "Loading map" << std::endl;
 
 	Json::CharReaderBuilder builder;
 	builder["collectComment"] = false;
 
 	if (!Json::parseFromStream(builder, m_map, &root, &errs)) {
-		std::cerr << "Cannot load map file. " << errs << std::endl;
+		std::cerr << "Cannot load map file " << m_mapRef << ". " << errs << std::endl;
 		return false;
+	}
+
+	std::string MapCodeObject = root["MapLevelCodeObjectName"].asString() + "Handler";
+	LEVELCODEHANDLER lvlH = m_game->GetGameLib()->FetchLibHandler<LEVELCODEHANDLER>(MapCodeObject.c_str());
+	if (lvlH == NULL) {
+		std::cerr << "Cannot load code object " << root["MapLevelCodeObjectName"].asString() << std::endl;
+		exit(-3);
+	}
+	else {
+		m_levelCode = lvlH(m_game, this);
 	}
 
 	int nodeCount = root.get("nodeCount", "0").asInt();
@@ -36,6 +48,8 @@ bool EXP_MapLoader::LoadMap(EXP_Level* lvl) {
 		//Actors must be spawned from a EXP_Level child class
 
 		if (type == "mesh") { //Mesh type
+			std::cout << "Registering mesh" << std::endl;
+
 			std::string ref = node.get("ref", "/").asString();
 
 			Json::Value pos = node["pos"];
@@ -52,6 +66,8 @@ bool EXP_MapLoader::LoadMap(EXP_Level* lvl) {
 			m_meshes.push_back(mesh);
 
 		} else if (type == "plight") { //PointLight type
+			std::cout << "Registering point light." << std::endl;
+
 			Json::Value pos = node["pos"];
 			vec3f mpos(pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat());
 
@@ -63,6 +79,8 @@ bool EXP_MapLoader::LoadMap(EXP_Level* lvl) {
 			m_ptlights.push_back(plight);
 
 		} else if (type == "dlight") { //DirLights type
+			std::cout << "Registering directional light" << std::endl;
+
 			Json::Value dir = node["dir"];
 			vec3f mdir(dir[0].asFloat(), dir[1].asFloat(), dir[2].asFloat());
 

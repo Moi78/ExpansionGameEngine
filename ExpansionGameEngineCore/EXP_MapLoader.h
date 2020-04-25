@@ -26,6 +26,7 @@
 #include "EXP_StaticMesh.h"
 #include "EXP_PointLight.h"
 #include "EXP_DirLight.h"
+#include "EXP_HotLoad.h"
 
 class EXP_Level;
 
@@ -35,7 +36,7 @@ public:
 	EXP_MapLoader(EXP_Game* game, std::string mapFile);
 	~EXP_MapLoader();
 
-	bool LoadMap(EXP_Level*);
+	bool LoadMap();
 	void UnloadMap();
 
 	void UpdateLevel();
@@ -52,8 +53,11 @@ private:
 	std::vector<EXP_DirLight*> m_dlights;
 
 	std::ifstream m_map;
+	std::string m_mapRef;
 
 	EXP_Level* m_levelCode;
 };
+
+TYPEDEF(EXP_Level*, LEVELCODEHANDLER, EXP_Game*, EXP_MapLoader*);
 
 #endif

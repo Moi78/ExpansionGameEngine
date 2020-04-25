@@ -6,30 +6,17 @@
 #include <EXP_DirLight.h>
 #include <EXP_PointLight.h>
 
-#include "Donut.h"
-#include "MainCharacter.h"
+#include <EXP_HotLoad.h>
+
 #include "Map1.h"
 
 #include <vec3.h>
 
-
 int main(int argc, char* argv[]) {
 	EXP_Game* game = new EXP_Game("GameInfo.json");
-	game->GetRenderer()->SetAmbientColor(vec3f(1.0f, 1.0f, 1.0f));
-	game->GetRenderer()->SetAmbientStrength(0.1f);
-
-	EXP_MapLoader* mload = new EXP_MapLoader(game, game->GetFilePathByRef("/Maps/map1.json"));
-	Map1* map = new Map1(game, mload);
-
-	mload->LoadMap(map);
-
-	EXP_Camera* cam = new EXP_Camera(game, vec3f(0.0, -6.0, 2.0f), vec3f(), vec3f(), vec3f(90.0f), 60);
-	cam->Use();
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->MainLoop();
-
-		mload->UpdateLevel();
 	}
 
 	return 0;
