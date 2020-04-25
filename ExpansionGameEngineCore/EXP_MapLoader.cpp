@@ -52,6 +52,17 @@ bool EXP_MapLoader::LoadMap() {
 
 			std::string ref = node.get("ref", "/").asString();
 
+			std::string mat = node.get("material", "").asString();
+			BD_MatDef mdef = {};
+
+			if (mat == "" || std::filesystem::exists(m_game->GetGameInfo().RootGameContentFolder + mat + ".exmtl")) {
+				mdef = m_game->FetchMaterialFromFile(mat);
+			}
+			else {
+				std::cerr << "Material file " << mat << " does not exists, or node propertie is not present." << std::endl;
+				mdef = m_game->GetDefaultMaterial();
+			}
+
 			Json::Value pos = node["pos"];
 			vec3f mpos(pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat());
 
@@ -61,7 +72,7 @@ bool EXP_MapLoader::LoadMap() {
 			Json::Value scale = node["scale"];
 			vec3f mscale(scale[0].asFloat(), scale[1].asFloat(), scale[2].asFloat());
 
-			EXP_StaticMesh* mesh = new EXP_StaticMesh(m_game, ref, m_game->GetDefaultMaterial(), mpos, mrot, mscale);
+			EXP_StaticMesh* mesh = new EXP_StaticMesh(m_game, ref, mdef, mpos, mrot, mscale);
 			mesh->SetNameTag(node["nameTag"].asString());
 			m_meshes.push_back(mesh);
 

@@ -64,6 +64,8 @@ public:
 	
 	BD_GameInfo GetGameInfo();
 
+	void StartGame();
+
 	//For internal usage only
 	void RegisterMesh(RD_Mesh*);
 	void RegisterPointLight(RD_PointLight*);

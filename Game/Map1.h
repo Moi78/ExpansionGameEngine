@@ -13,6 +13,8 @@
 	#define GAME_API
 #endif
 
+#include "Donut.h"
+
 #include <iostream>
 
 #include <EXP_Game.h>
@@ -33,6 +35,7 @@ public:
 
 private:
 	EXP_Camera* m_cam;
+	Donut* m_donut;
 };
 
 EXPGE_LEVEL_HEADER(Map1);

@@ -125,6 +125,9 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
 
 	m_PlayingMap = new EXP_MapLoader(this, gameinfo.RootGameContentFolder + gameinfo.StartupMap);
+}
+
+void EXP_Game::StartGame() {
 	m_PlayingMap->LoadMap();
 }
 
@@ -226,11 +229,39 @@ BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
 	std::string fullpath = m_gameinfo.RootGameContentFolder + ref + ".exmtl";
 
 	BD_MatRead* mr = new BD_MatRead();
-	BD_MatDef mat = mr->ReadMaterialFromFile(fullpath);
+	BD_WriteMdef mat = mr->ReadMaterialFromFile(fullpath);
 
 	delete mr;
 
-	return mat;
+	BD_MatDef mdef = {};
+
+	RD_Texture* bc = new RD_Texture();
+
+	if (mat.BaseColorRef != "") {
+		bc->LoadTexture(mat.BaseColorRef);
+	}
+	else {
+		bc->GenerateColorTex(mat.BaseColor);
+	}
+
+	mdef.BaseColor = bc->GetTextureID();
+	delete bc;
+
+	RD_Texture* spec = new RD_Texture();
+
+	if (mat.SpecularColorRef != "") {
+		spec->LoadTexture(mat.SpecularColorRef);
+	}
+	else {
+		spec->GenerateColorTex(mat.SpecularColor);
+	}
+
+	mdef.Specular = spec->GetTextureID();
+	delete spec;
+
+	mdef.Shininess = mat.Shininess;
+
+	return mdef;
 }
 
 PSound* EXP_Game::GetSoundEngine() {

@@ -24,7 +24,19 @@
 #include <string>
 #include <fstream>
 
+#include <json/json.h>
+
 //Write
+
+struct BD_WriteMdef {
+	std::string BaseColorRef = "";
+	vec3f BaseColor;
+
+	std::string SpecularColorRef = "";
+	vec3f SpecularColor;
+
+	float Shininess;
+};
 
 class BULLDOZERFILEMANAGER_API BD_MatWrite
 {
@@ -32,7 +44,7 @@ public:
 	BD_MatWrite();
 	~BD_MatWrite();
 	
-	bool WriteMaterialToFile(BD_MatDef material, std::string filepath);
+	bool WriteMaterialToFile(BD_WriteMdef material, std::string filepath);
 };
 
 //Read
@@ -42,7 +54,7 @@ public:
 	BD_MatRead();
 	~BD_MatRead();
 
-	BD_MatDef ReadMaterialFromFile(std::string filepath);
+	BD_WriteMdef ReadMaterialFromFile(std::string filepath);
 };
 
 #endif //_BD_MAT_RW_H__
