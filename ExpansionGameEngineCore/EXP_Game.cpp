@@ -139,12 +139,6 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_PlayingMap->LoadMap();
 }
 
-void EXP_Game::StartGame() {
-    std::cout << "Starting Game" << std::endl;
-    
-	m_PlayingMap->LoadMap();
-}
-
 void EXP_Game::InitPhysicaSound() {
 	m_soundEngine = new PSound();
 

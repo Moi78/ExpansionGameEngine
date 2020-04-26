@@ -21,8 +21,8 @@ RD_Mesh::~RD_Mesh() {
 	glDeleteBuffers(1, &VBO);
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &EBO);
-
-	delete m_mat;
+    
+    delete mat;
 }
 
 void RD_Mesh::loadMesh(std::string filepath) {
