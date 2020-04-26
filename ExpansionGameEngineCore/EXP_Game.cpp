@@ -49,7 +49,7 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 	m_GameLib = new EXP_HotLoad();
 
 #ifdef _WIN32
-	std::wstring glib = std::wstring(gameinfo.GameLib.begin(), gameinfo.GameLib.end());
+	std::wstring glib = std::wstring(gi.GameLib.begin(), gi.GameLib.end());
     m_GameLib->LoadLib(glib.c_str());
 #else
     m_GameLib->LoadLib(gi.GameLib.c_str());
@@ -133,9 +133,10 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_gameinfo = gameinfo;
 
     m_PlayingMap = new EXP_MapLoader(this, gameinfo.RootGameContentFolder + gameinfo.StartupMap);
-    m_PlayingMap->LoadMap();
     
 	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
+
+	m_PlayingMap->LoadMap();
 }
 
 void EXP_Game::StartGame() {

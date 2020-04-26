@@ -13,7 +13,7 @@ EXP_HotLoad::~EXP_HotLoad() {
 	}
 }
 
-bool EXP_HotLoad::LoadLib(std::string libFile) {
+bool EXP_HotLoad::LoadLib(LPCWSTR libFile) {
 	m_moduleHandle = LoadLibrary(libFile);
 	if (m_moduleHandle == NULL) {
 		std::wcerr << L"Cannot load lib " << libFile << std::endl;
