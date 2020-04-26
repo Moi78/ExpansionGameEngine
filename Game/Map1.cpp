@@ -2,6 +2,8 @@
 #include "Map1.h"
 
 Map1::Map1(EXP_Game* game, EXP_MapLoader* mload) : EXP_Level(mload, true, true) {
+    std::cout << "Starting Map1 code object." << std::endl;
+    
 	game->GetRenderer()->SetAmbientStrength(0.1f);
 	game->GetRenderer()->SetAASampling(4);
 

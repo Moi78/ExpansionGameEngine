@@ -14,9 +14,15 @@ EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_first_exec = true;
 
 	m_GameLib = new EXP_HotLoad();
+    
+
+#ifdef _WIN32
 	std::wstring glib = std::wstring(gameinfo.GameLib.begin(), gameinfo.GameLib.end());
-	m_GameLib->LoadLib(glib.c_str());
-	
+    m_GameLib->LoadLib(glib.c_str());
+#else
+    m_GameLib->LoadLib(gameinfo.GameLib.c_str());
+#endif //_WIN32
+    
 	InitPhysicaSound();
 	InitGame(refreshColor, gameinfo);
 	InitGui();
@@ -42,8 +48,12 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 
 	m_GameLib = new EXP_HotLoad();
 
-	std::wstring glib = std::wstring(gi.GameLib.begin(), gi.GameLib.end());
-	m_GameLib->LoadLib(glib.c_str());
+#ifdef _WIN32
+	std::wstring glib = std::wstring(gameinfo.GameLib.begin(), gameinfo.GameLib.end());
+    m_GameLib->LoadLib(glib.c_str());
+#else
+    m_GameLib->LoadLib(gi.GameLib.c_str());
+#endif //_WIN32
 
 	m_currentCamera = nullptr;
 	m_first_exec = true;
@@ -122,12 +132,15 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
 
+    m_PlayingMap = new EXP_MapLoader(this, gameinfo.RootGameContentFolder + gameinfo.StartupMap);
+    m_PlayingMap->LoadMap();
+    
 	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
-
-	m_PlayingMap = new EXP_MapLoader(this, gameinfo.RootGameContentFolder + gameinfo.StartupMap);
 }
 
 void EXP_Game::StartGame() {
+    std::cout << "Starting Game" << std::endl;
+    
 	m_PlayingMap->LoadMap();
 }
 
@@ -142,14 +155,8 @@ void EXP_Game::InitPhysicaSound() {
 		return;
 	}
 
-	if (m_currentCamera != nullptr) {
-		m_listener = new PS_Listener(m_currentCamera->GetPosition(), m_currentCamera->GetSubject());
-		m_soundEngine->RegisterListener(m_listener);
-	}
-	else {
-		m_listener = new PS_Listener(vec3f(), vec3f());
-		m_soundEngine->RegisterListener(m_listener);
-	}
+    m_listener = new PS_Listener(vec3f(), vec3f());
+    m_soundEngine->RegisterListener(m_listener);
 }
 
 void EXP_Game::InitPhysics() {
@@ -171,12 +178,19 @@ void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
 	m_PlayingMap->UpdateLevel();
 
+    vec3f CamLock;
+    if(m_currentCamera == nullptr) {
+        CamLock = vec3f();
+    } else {
+        CamLock = m_currentCamera->GetLocation();
+    }
+    
 	//Process shadows
-	m_rndr->RenderLightsDepth(m_currentCamera->GetLocation());
+	m_rndr->RenderLightsDepth(CamLock);
 	//GBuff
 	m_rndr->RenderGbuff(m_currentCamera);
 	//Light pass
-	m_rndr->RenderLightPass(m_currentCamera->GetLocation());
+	m_rndr->RenderLightPass(CamLock);
 
 	if (RENDER_DBG) {
 		m_rndr->RenderDbg();

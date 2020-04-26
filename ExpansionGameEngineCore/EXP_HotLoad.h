@@ -3,7 +3,15 @@
 #ifndef _EXP_HOTLOAD_H__
 #define _EXP_HOTLOAD_H__
 
-#define TYPEDEF(rVal, tName, ...) typedef rVal (__cdecl* tName)(__VA_ARGS__)
+
+#ifdef _WIN32
+    #define TYPEDEF(rVal, tName, ...) typedef rVal (__cdecl* tName)(__VA_ARGS__)
+#else
+    #define TYPEDEF(rVal, tName, ...) typedef rVal (*tName)(__VA_ARGS__)
+#endif
+
+#include "EXP_Game.h"
+#include "EXP_MapLoader.h"
 
 #ifdef _WIN32
 
@@ -12,9 +20,6 @@
 #else
 #define EXPGE_API __declspec(dllimport)
 #endif
-
-#include "EXP_Game.h"
-#include "EXP_MapLoader.h"
 
 #define EXPGE_LEVEL_HEADER(obj) extern "C" __declspec(dllexport) obj* obj##Handler (EXP_Game*, EXP_MapLoader*)
 #define EXPGE_LEVEL_CODE(obj) obj* obj##Handler(EXP_Game* game, EXP_MapLoader* lvl) { return new obj(game, lvl); }
@@ -45,6 +50,45 @@ public:
 
 private:
 	HINSTANCE m_moduleHandle;
+};
+
+#else
+
+#define EXPGE_LEVEL_HEADER(obj) extern "C" obj* obj##Handler (EXP_Game*, EXP_MapLoader*)
+#define EXPGE_LEVEL_CODE(obj) obj* obj##Handler(EXP_Game* game, EXP_MapLoader* lvl) { return new obj(game, lvl); }
+
+#include <iostream>
+#include <string>
+
+#include <dlfcn.h>
+#include <cerrno>
+
+class EXP_HotLoad
+{
+public:
+	EXP_HotLoad();
+	~EXP_HotLoad();
+
+	bool LoadLib(const char* libFile);
+
+	template<typename T>
+	T FetchLibHandler(const char* ObjectName) {
+        std::cout << "Trying to get symbol " << ObjectName << "." << std::endl;
+        
+		void* Obj = dlsym(m_moduleHandle, ObjectName);
+		if (Obj != nullptr) {
+			T ObjectHandler = reinterpret_cast<T>(Obj);
+            return ObjectHandler;
+		}
+		else {
+            std::cerr << "ERROR: Cannot fetch object \"" << ObjectName << "\". ERROR: " << dlerror() << std::endl;
+            
+			return nullptr;
+		}
+	};
+
+private:
+	void* m_moduleHandle;
 };
 
 #endif //_WIN32

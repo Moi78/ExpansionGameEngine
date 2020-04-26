@@ -9,9 +9,16 @@
 	#else
 		#define EXPGE_API __declspec(dllimport)
 	#endif
+	
+    #define WINPLATFORM true
+    
+    #include <json/json.h>
 #else
 
-#define EXPGE_API
+    #define EXPGE_API
+    #define WINPLATFORM false
+    
+    #include <jsoncpp/json/json.h>
 
 #endif //_WIN32
 
@@ -28,8 +35,6 @@
 
 #include <thread>
 #include <mutex>
-
-#include <json/json.h>
 
 #include <RaindropRenderer.h>
 #include <RD_Mesh.h>

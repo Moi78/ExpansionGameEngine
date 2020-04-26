@@ -10,6 +10,9 @@ file(GLOB SRC "*.cpp" "*.h")
 
 add_executable(Testing ${SRC})
 
+SET(GCC_ARGS "--std=c++17 -rdynamic -ldl")
+add_definitions(${GCC_ARGS})
+
 find_package(Bullet REQUIRED)
 if(BULLET_FOUND)
 	include_directories(${BULLET_INCLUDE_DIRS})

@@ -36,6 +36,12 @@ bool EXP_MapLoader::LoadMap() {
 	}
 	else {
 		m_levelCode = lvlH(m_game, this);
+        if(!m_levelCode) {
+            std::cerr << "ERROR: Cannot create instance of level code object. " << MapCodeObject << std::endl;
+            exit(-4);
+        } else {
+            std::cout << "Instanciated level code object. " << MapCodeObject << std::endl;
+        }
 	}
 
 	int nodeCount = root.get("nodeCount", "0").asInt();

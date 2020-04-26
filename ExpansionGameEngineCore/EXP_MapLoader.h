@@ -9,8 +9,11 @@
 	#else
 		#define EXPGE_API __declspec(dllimport)
 	#endif
+	
+	#include <json/json.h>
 #else
 	#define EXPGE_API
+    #include <jsoncpp/json/json.h>
 #endif
 
 #include <iostream>
@@ -20,8 +23,6 @@
 #include <filesystem>
 
 #include <vector>
-
-#include <json/json.h>
 
 #include "EXP_Game.h"
 #include "EXP_StaticMesh.h"
