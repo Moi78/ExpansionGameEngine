@@ -1,6 +1,6 @@
 {
     "MapLevelCodeObjectName" : "Map1",
-    "nodeCount" : 2,
+    "nodeCount" : 3,
     "0" : {
         "type":"mesh",
         "nameTag":"floor",
@@ -19,5 +19,16 @@
         "dir":[1.0, 0.0, -0.5],
         "color":[1.0, 1.0, 1.0],
         "brightness":1.0
+    },
+
+    "2" : {
+        "type":"mesh",
+        "nameTag":"quad",
+        "ref":"/plane",
+        "material":"/plane",
+
+        "pos":[0, -3, 2],
+        "rot":[90, -10, 0],
+        "scale":[3, 3, 1]
     }
 }

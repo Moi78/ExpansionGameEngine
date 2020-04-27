@@ -33,6 +33,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
 
+	m_blankTexture = new RD_Texture();
+	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
+
 	RD_Texture* spec = new RD_Texture();
 	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
@@ -565,6 +568,10 @@ void RaindropRenderer::UnregisterPointLight(RD_PointLight* ptLight) {
 	else {
 		std::cerr << "ERROR: Element does not exists" << std::endl;
 	}
+}
+
+RD_Texture* RaindropRenderer::GetBlankTexture() {
+	return m_blankTexture;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------

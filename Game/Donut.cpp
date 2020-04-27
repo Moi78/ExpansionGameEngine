@@ -12,6 +12,7 @@ Donut::Donut(EXP_Game* game, vec3f spawn) : EXP_Actor(game, spawn, vec3f(), vec3
 	mdef.BaseColor = bc->GetTextureID();
 	mdef.Specular = w->GetTextureID();
 	mdef.Shininess = 2.0f;
+	mdef.NormalEnabled = false;
 
 	m_donut = new EXP_StaticMesh(game, "/Donut/donut", mdef, spawn, vec3f(60.0f, 70.0f), vec3f(0.005f, 0.005f, 0.005f));
 }

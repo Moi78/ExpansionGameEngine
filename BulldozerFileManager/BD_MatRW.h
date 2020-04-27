@@ -37,6 +37,8 @@ struct BD_WriteMdef {
 	std::string SpecularColorRef = "";
 	vec3f SpecularColor;
 
+	std::string NormalMap = "";
+
 	float Shininess;
 };
 

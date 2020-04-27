@@ -22,7 +22,7 @@ void Map1::OnStart() {
 }
 
 void Map1::OnTick() {
-
+	//GetMap()->GetStaticMeshByName("quad")->GetRawMeshData()->addRotation(vec3f(0.0f, 0.1f, 0.0f));
 }
 
 EXPGE_LEVEL_CODE(Map1);

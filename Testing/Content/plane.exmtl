@@ -1,0 +1,6 @@
+{
+    "BaseColor":"/floorTex.jpg",
+    "Specular":"/SpecularMap.png",
+    "Shininess":1.0,
+    "NormalMap":"/NormalMap.png"
+}

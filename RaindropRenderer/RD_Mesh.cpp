@@ -150,6 +150,8 @@ void RD_Mesh::Bufferize() {
 		MixVertNormUV.push_back(m_uv[i].getY());
 	}
 
+	size_t elemSize = 8;
+
 	glGenVertexArrays(1, &VAO);
 
 	glGenBuffers(1, &VBO);
@@ -164,15 +166,15 @@ void RD_Mesh::Bufferize() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), &m_indices[0], GL_STATIC_DRAW);
 
 	//Vertices
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	//Normals
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	//UV Coords
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 }
 

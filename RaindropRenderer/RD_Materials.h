@@ -31,8 +31,11 @@ public:
 private:
 	void UpdateColor(RD_ShaderLoader*);
 	void UpdateSpecular(RD_ShaderLoader*);
+	void UpdateNormal(RD_ShaderLoader*);
 
 	unsigned int m_BaseColor;
+	unsigned int m_NormalMap;
+	bool m_normalEnabled;
 
 	unsigned int m_Specular;
 	float m_Shininess;

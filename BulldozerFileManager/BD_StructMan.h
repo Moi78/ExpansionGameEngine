@@ -30,6 +30,10 @@ struct BULLDOZERFILEMANAGER_API BD_Resolution {
 
 struct BULLDOZERFILEMANAGER_API BD_MatDef {
 	unsigned int BaseColor;
+
+	unsigned int NormalMap;
+	bool NormalEnabled = false;
+
 	unsigned int Specular;
 	float Shininess;
 };
@@ -57,10 +61,11 @@ struct BULLDOZERFILEMANAGER_API Gbuff {
 	unsigned int gRBO;
 
 	unsigned int gPos;
-	unsigned int gNorm;
 	unsigned int gAlbedo;
 	unsigned int gSpec;
 	unsigned int gShadows;
+
+	unsigned int gNorm;
 
 	unsigned int gAttachement[5];
 };

@@ -61,7 +61,7 @@ bool EXP_MapLoader::LoadMap() {
 			std::string mat = node.get("material", "").asString();
 			BD_MatDef mdef = {};
 
-			if (mat == "" || std::filesystem::exists(m_game->GetGameInfo().RootGameContentFolder + mat + ".exmtl")) {
+			if (mat != "" || std::filesystem::exists(m_game->GetGameInfo().RootGameContentFolder + mat + ".exmtl")) {
 				mdef = m_game->FetchMaterialFromFile(mat);
 			}
 			else {

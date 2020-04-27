@@ -82,6 +82,8 @@ public:
 
 	void RenderGbuff(RD_Camera*);
 
+	RD_Texture* GetBlankTexture();
+
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(vec3f nColor);
@@ -154,6 +156,7 @@ private:
 	BD_MatDef m_mdef;
 
 	RD_Texture* m_defTex;
+	RD_Texture* m_blankTexture;
 
 	//Deffered Rendering
 	Gbuff m_g_buffer;

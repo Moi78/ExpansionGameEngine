@@ -236,6 +236,10 @@ BD_MatDef EXP_Game::GetDefaultMaterial() {
 
 BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
 	std::string fullpath = m_gameinfo.RootGameContentFolder + ref + ".exmtl";
+	if (!std::filesystem::exists(fullpath)) {
+		std::cerr << "Material file " << ref << " does not exist. Returning default material." << std::endl;
+		return GetDefaultMaterial();
+	}
 
 	BD_MatRead* mr = new BD_MatRead();
 	BD_WriteMdef mat = mr->ReadMaterialFromFile(fullpath);
@@ -247,7 +251,7 @@ BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
 	RD_Texture* bc = new RD_Texture();
 
 	if (mat.BaseColorRef != "") {
-		bc->LoadTexture(mat.BaseColorRef);
+		bc->LoadTexture(m_gameinfo.RootGameContentFolder + mat.BaseColorRef);
 	}
 	else {
 		bc->GenerateColorTex(mat.BaseColor);
@@ -259,10 +263,20 @@ BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
 	RD_Texture* spec = new RD_Texture();
 
 	if (mat.SpecularColorRef != "") {
-		spec->LoadTexture(mat.SpecularColorRef);
+		spec->LoadTexture(m_gameinfo.RootGameContentFolder + mat.SpecularColorRef);
 	}
 	else {
 		spec->GenerateColorTex(mat.SpecularColor);
+	}
+
+	if (mat.NormalMap != "") {
+		RD_Texture* normm = new RD_Texture();
+		normm->LoadTexture(m_gameinfo.RootGameContentFolder + mat.NormalMap);
+		mdef.NormalMap = normm->GetTextureID();
+		mdef.NormalEnabled = true;
+	}
+	else {
+		mdef.NormalEnabled = false;
 	}
 
 	mdef.Specular = spec->GetTextureID();

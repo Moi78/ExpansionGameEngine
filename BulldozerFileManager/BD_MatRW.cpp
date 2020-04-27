@@ -46,6 +46,7 @@ bool BD_MatWrite::WriteMaterialToFile(BD_WriteMdef material, std::string filepat
 		root["Specular"] = ColorVec;
 	}
 
+	root["NormalMap"] = material.NormalMap;
 	root["Shininess"] = material.Shininess;
 
 	file << root;
@@ -104,6 +105,7 @@ BD_WriteMdef BD_MatRead::ReadMaterialFromFile(std::string filepath) {
 		buffer.SpecularColorRef = root["Specular"].asString();
 	}
 
+	buffer.NormalMap = root.get("NormalMap", "").asString();
 	buffer.Shininess = shininess;
 
 	return buffer;
