@@ -21,9 +21,9 @@ Expansion Game Engine is a little 3D game engine in developpement.
    - [ ] MacOS (last priority)
  - [ ] Optimise as f\*ck -> I want to have a very well optimised engine to run everywhere
  - [ ] An easy to understand & easy to use engine
-   - [ ] JS Scripting
-   - [ ] Powerful all-in-one editor
-   - [ ] Well written documentation
+     - [ ] JS Scripting
+     - [ ] Powerful all-in-one editor
+     - [ ] Well written documentation
 
 ## TODO List :
 
@@ -33,6 +33,8 @@ Expansion Game Engine is a little 3D game engine in developpement.
    - [ ] Improve these (for instance, better PCF)
  - [ ] Limit CPU && GPU Overusage
  - [ ] Fix Debug rendering (Combine forward rendering with deffered)
+ - [ ] Rebuild point-lighting system (--> Lignting in volumes)
+ - [ ] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
