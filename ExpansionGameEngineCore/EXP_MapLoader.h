@@ -32,16 +32,19 @@
 
 class EXP_Level;
 
+TYPEDEF(EXP_Level*, LEVELCODEHANDLER, EXP_Game*, EXP_MapLoader*);
+TYPEDEF(void, LEVELCODERELEASER, void*);
+
 class EXPGE_API EXP_MapLoader
 {
 public:
-	EXP_MapLoader(EXP_Game* game, std::string mapFile);
+	EXP_MapLoader(EXP_Game* game);
 	~EXP_MapLoader();
 
-	bool LoadMap();
+	bool LoadMap(std::string);
 	void UnloadMap();
 
-	void UpdateLevel();
+	EXP_Level* GetLevelCode();
 
 	EXP_StaticMesh* GetStaticMeshByName(std::string name);
 	EXP_PointLight* GetPointLightByName(std::string name);
@@ -54,12 +57,10 @@ private:
 	std::vector<EXP_PointLight*> m_ptlights;
 	std::vector<EXP_DirLight*> m_dlights;
 
-	std::ifstream m_map;
-	std::string m_mapRef;
-
 	EXP_Level* m_levelCode;
-};
 
-TYPEDEF(EXP_Level*, LEVELCODEHANDLER, EXP_Game*, EXP_MapLoader*);
+	LEVELCODERELEASER m_rl;
+	void* m_rawLevelCode;
+};
 
 #endif

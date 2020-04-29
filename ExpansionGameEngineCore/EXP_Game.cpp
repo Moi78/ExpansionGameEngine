@@ -8,12 +8,15 @@
 #include "EXP_Callbacks.h"
 #include "EXP_HotLoad.h"
 #include "EXP_MapLoader.h"
+#include "EXP_Level.h"
 
 EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
 	m_first_exec = true;
 
 	m_GameLib = new EXP_HotLoad();
+
+	m_actors = {};
     
 
 #ifdef _WIN32
@@ -48,6 +51,8 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 
 	m_GameLib = new EXP_HotLoad();
 
+	m_actors = {};
+
 #ifdef _WIN32
 	std::wstring glib = std::wstring(gi.GameLib.begin(), gi.GameLib.end());
     m_GameLib->LoadLib(glib.c_str());
@@ -79,16 +84,13 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 }
 
 EXP_Game::~EXP_Game() {
+	UnloadCurrentMap();
+	delete m_GameLib;
+
 	m_soundEngine->shutdownAL();
 
-	m_actors.clear();
-	m_kb_callbacks.clear();
-
-	delete m_soundEngine;
-	delete m_rndr;
 	delete m_physicsHandler;
-	delete m_currentCamera;
-	delete m_listener;
+	delete m_rndr;
 }
 
 BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
@@ -131,12 +133,16 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_refreshColor = refreshColor;
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
-
-    m_PlayingMap = new EXP_MapLoader(this, gameinfo.RootGameContentFolder + gameinfo.StartupMap);
     
 	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
 
-	m_PlayingMap->LoadMap();
+	m_PlayingMap = new EXP_MapLoader(this);
+	m_PlayingMap->LoadMap(gameinfo.RootGameContentFolder + gameinfo.StartupMap);
+
+	EXP_Level* lvl = m_PlayingMap->GetLevelCode();
+	if (lvl) {
+		lvl->CallStart();
+	}
 }
 
 void EXP_Game::InitPhysicaSound() {
@@ -171,7 +177,13 @@ void EXP_Game::InitGui() {
 
 void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
-	m_PlayingMap->UpdateLevel();
+
+	if (m_PlayingMap != nullptr) {
+		EXP_Level* lvl = m_PlayingMap->GetLevelCode();
+		if (lvl) {
+			lvl->CallTick();
+		}
+	}
 
     vec3f CamLock;
     if(m_currentCamera == nullptr) {
@@ -393,4 +405,24 @@ void EXP_Game::UnregisterActor(EXP_Actor* actor) {
 
 EXP_HotLoad* EXP_Game::GetGameLib() {
 	return m_GameLib;
+}
+
+void EXP_Game::UnloadCurrentMap() {
+	//m_actors.size();
+
+	for (int i = 0; i < m_actors.size(); i++) {
+		if (m_actors[i]) {
+			m_actors[i]->CallUnregister();
+			delete m_actors[i];
+		}
+	}
+	if(!m_actors.empty())
+		m_actors.clear();
+
+	m_PlayingMap->UnloadMap();
+}
+
+void EXP_Game::LoadMap(std::string map) {
+	UnloadCurrentMap();
+	m_PlayingMap->LoadMap(m_gameinfo.RootGameContentFolder + map);
 }

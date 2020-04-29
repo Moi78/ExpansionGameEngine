@@ -23,7 +23,6 @@ bool EXP_HotLoad::LoadLib(LPCWSTR libFile) {
 
 	return true;
 }
-
 #else
 
 EXP_HotLoad::EXP_HotLoad() {

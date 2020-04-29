@@ -58,6 +58,7 @@ class EXP_PhysicsHandler;
 class EXP_KeyboardCallback;
 class EXP_HotLoad;
 class EXP_MapLoader;
+class EXP_Level;
 
 class EXPGE_API EXP_Game
 {
@@ -83,6 +84,9 @@ public:
 	void UnregisterPointLight(RD_PointLight*);
 
 	EXP_HotLoad* GetGameLib();
+
+	void UnloadCurrentMap();
+	void LoadMap(std::string map);
 
 	//Rendering
 	RaindropRenderer* GetRenderer();

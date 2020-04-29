@@ -18,22 +18,19 @@
 class EXPGE_API EXP_Level
 {
 public:
-	EXP_Level(EXP_MapLoader* map, bool OnStartEnable = true, bool OnTickEnable = true);
+	EXP_Level(bool OnStartEnable = true, bool OnTickEnable = true);
 
 	virtual void OnStart() = 0;
 	virtual void OnTick() = 0;
 
-	EXP_MapLoader* GetMap();
-
-	void CallEvents();
+	void CallStart();
+	void CallTick();
 
 private:
 	bool m_startEnabled;
 	bool m_tickEnabled;
 
 	bool m_isStart;
-
-	EXP_MapLoader* m_map;
 };
 
 #endif

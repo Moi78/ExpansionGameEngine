@@ -3,18 +3,17 @@
 
 #include "EXP_Level.h"
 
-EXP_MapLoader::EXP_MapLoader(EXP_Game* game, std::string Mapfile) {
-	m_map = std::ifstream(Mapfile);
+EXP_MapLoader::EXP_MapLoader(EXP_Game* game) {
 	m_game = game;
-
-	m_mapRef = Mapfile;
 }
 
 EXP_MapLoader::~EXP_MapLoader() {
 
 }
 
-bool EXP_MapLoader::LoadMap() {
+bool EXP_MapLoader::LoadMap(std::string map) {
+	std::ifstream mapStream(map.c_str());
+
 	Json::Value root;
 	JSONCPP_STRING errs;
 
@@ -23,11 +22,12 @@ bool EXP_MapLoader::LoadMap() {
 	Json::CharReaderBuilder builder;
 	builder["collectComment"] = false;
 
-	if (!Json::parseFromStream(builder, m_map, &root, &errs)) {
-		std::cerr << "Cannot load map file " << m_mapRef << ". " << errs << std::endl;
+	if (!Json::parseFromStream(builder, mapStream, &root, &errs)) {
+		std::cerr << "Cannot load map file " << map << ". " << errs << std::endl;
 		return false;
 	}
 
+	//Getting Level code object from user's shared lib (Handler)
 	std::string MapCodeObject = root["MapLevelCodeObjectName"].asString() + "Handler";
 	LEVELCODEHANDLER lvlH = m_game->GetGameLib()->FetchLibHandler<LEVELCODEHANDLER>(MapCodeObject.c_str());
 	if (lvlH == NULL) {
@@ -35,13 +35,22 @@ bool EXP_MapLoader::LoadMap() {
 		exit(-3);
 	}
 	else {
-		m_levelCode = lvlH(m_game, this);
+		m_rawLevelCode = lvlH(m_game, this);
+		m_levelCode = (EXP_Level*)m_rawLevelCode;
         if(!m_levelCode) {
             std::cerr << "ERROR: Cannot create instance of level code object. " << MapCodeObject << std::endl;
             exit(-4);
         } else {
             std::cout << "Instanciated level code object. " << MapCodeObject << std::endl;
         }
+	}
+
+	//Getting Level code object from user's shared lib (Remover)
+	std::string MapCodeObjRl = root["MapLevelCodeObjectName"].asString() + "Remover";
+	m_rl = m_game->GetGameLib()->FetchLibHandler<LEVELCODERELEASER>(MapCodeObjRl.c_str());
+	if (m_rl == NULL) {
+		std::cerr << "Cannot load code object" << root["MapLevelCodeObjectName"] << std::endl;
+		exit(-3);
 	}
 
 	int nodeCount = root.get("nodeCount", "0").asInt();
@@ -110,34 +119,52 @@ bool EXP_MapLoader::LoadMap() {
 		}
 	}
 
-	m_map.close();
+	mapStream.close();
 	return true;
 }
 
 void EXP_MapLoader::UnloadMap() {
+	std::cout << "Unloading map." << std::endl;
+
 	for (auto mesh : m_meshes) {
+		std::cout << "Unloading mesh" << std::endl;
+
 		m_game->UnregisterMesh(mesh->GetRawMeshData());
 		delete mesh;
 	}
 	m_meshes.clear();
 
 	for (auto dlight : m_dlights) {
+		std::cout << "Unloading dir light" << std::endl;
+
 		m_game->UnregisterDirLight(dlight);
 		delete dlight;
 	}
 	m_dlights.clear();
 
 	for (auto plight : m_ptlights) {
+		std::cout << "Unloading point light" << std::endl;
+
 		m_game->UnregisterPointLight(plight);
 		delete plight;
 	}
 	m_ptlights.clear();
 
-	delete m_levelCode;
+	if (m_levelCode) { //If there is a level code object, call it destructor and set it to nullptr
+		std::cout << "Unloading level code object" << std::endl;
+
+		m_rl(m_rawLevelCode);
+		m_levelCode = nullptr;
+	}
 }
 
-void EXP_MapLoader::UpdateLevel() {
-	m_levelCode->CallEvents();
+EXP_Level* EXP_MapLoader::GetLevelCode() {
+	if (m_levelCode) {
+		return m_levelCode;
+	}
+	else {
+		return nullptr;
+	}
 }
 
 EXP_StaticMesh* EXP_MapLoader::GetStaticMeshByName(std::string name) {

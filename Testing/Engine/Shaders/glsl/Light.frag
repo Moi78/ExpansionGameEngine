@@ -48,7 +48,7 @@ vec3 CalcDirLight(int index) {
 	//Specular
 	vec3 d_specular = vec3(0.0);
 
-	vec3 reflectDir = reflect(vec3(dir.xy, -dir.z), norm);
+	vec3 reflectDir = reflect(-dir, norm);
 
 		float spec = pow(max(0.0, dot(viewDir, reflectDir)), SpecularExp);
 
