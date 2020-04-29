@@ -1,6 +1,6 @@
 {
     "MapLevelCodeObjectName" : "demoMap",
-    "nodeCount" : 5,
+    "nodeCount" : 7,
 
     "0" : {
         "type":"mesh",
@@ -17,9 +17,9 @@
         "type":"dlight",
         "nameTag":"dirLight1",
 
-        "dir":[0.5, 0.0, -0.8],
+        "dir":[0.1, 0.5, -0.8],
         "color":[1.0, 1.0, 1.0],
-        "brightness":1.0
+        "brightness":0.8
     },
 
     "2" : {
@@ -48,9 +48,31 @@
         "type":"mesh",
         "nameTag":"shaderBall1",
         "ref":"/shaderBall",
-        "material":"/water",
+        "material":"/wool",
 
         "pos":[10, 7, 3],
+        "rot":[0, 0, 0],
+        "scale":[2, 2, 2]
+    },
+
+    "5" : {
+        "type":"mesh",
+        "nameTag":"shaderBall1",
+        "ref":"/shaderBall",
+        "material":"/terracota",
+
+        "pos":[-5, 7, 3],
+        "rot":[0, 0, 0],
+        "scale":[2, 2, 2]
+    },
+
+    "6" : {
+        "type":"mesh",
+        "nameTag":"shaderBall1",
+        "ref":"/shaderBall",
+        "material":"/metal",
+
+        "pos":[-10, 7, 3],
         "rot":[0, 0, 0],
         "scale":[2, 2, 2]
     }

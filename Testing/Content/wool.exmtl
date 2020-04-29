@@ -1,0 +1,6 @@
+{
+    "BaseColor":"/wool/wool.png",
+    "Specular":[0.0, 0.0, 0.0],
+    "Shininess":1.0,
+    "NormalMap":"/wool/woolN.png"
+}
