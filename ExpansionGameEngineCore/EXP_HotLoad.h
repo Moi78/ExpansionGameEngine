@@ -56,7 +56,7 @@ private:
 
 #else
 
-#define EXPGE_LEVEL_HEADER(obj) extern "C" obj* obj##Handler (EXP_Game*, EXP_MapLoader*)\
+#define EXPGE_LEVEL_HEADER(obj) extern "C" obj* obj##Handler (EXP_Game*, EXP_MapLoader*);\
 								extern "C" void obj##Remover (obj*)
 #define EXPGE_LEVEL_CODE(obj) obj* obj##Handler(EXP_Game* game, EXP_MapLoader* lvl) { return new obj(game, lvl); }\
 							  void obj##Remover(obj* objCode) { delete objCode; }
