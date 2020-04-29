@@ -33,7 +33,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
    - [ ] Improve these (for instance, better PCF)
  - [ ] Limit CPU && GPU Overusage
  - [ ] Fix Debug rendering (Combine forward rendering with deffered)
- - [ ] Rebuild point-lighting system (--> Lignting in volumes)
+ - [ ] Rebuild point-lighting system (--> Lighting in volumes)
  - [ ] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
  
 ## Dependencies :
