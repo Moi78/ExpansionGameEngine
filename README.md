@@ -32,6 +32,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Impl. Shadows to Raindrop Renderer
    - [ ] Improve these (for instance, better PCF)
  - [ ] Limit CPU && GPU Overusage
+ - [ ] Fix Debug rendering (Combine forward rendering with deffered)
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
