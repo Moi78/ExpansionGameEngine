@@ -14,17 +14,24 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Cross-Platorm :
    - [x] Windows
    - [x] Linux
-   - [ ] Console (XBox, PS4, Switch)
+   - [ ] Console
+     - [ ] Switch
+     - [ ] PS4
+     - [ ] XBox
    - [ ] MacOS (last priority)
  - [ ] Optimise as f\*ck -> I want to have a very well optimised engine to run everywhere
- - [ ] An easy to understand & easy to use engine (w/ an editor and everything that goes with)
- - [ ] JS Scripting
+ - [ ] An easy to understand & easy to use engine
+   - [ ] JS Scripting
+   - [ ] Powerful all-in-one editor
+   - [ ] Well written documentation
 
 ## TODO List :
 
  - [x] Check compatibility with linux (and make it compatible)
- - [ ] Reduce RAM usage
+ - [x] Reduce RAM usage
  - [x] Impl. Shadows to Raindrop Renderer
+   - [ ] Improve these (for instance, better PCF)
+ - [ ] Limit CPU && GPU Overusage
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
