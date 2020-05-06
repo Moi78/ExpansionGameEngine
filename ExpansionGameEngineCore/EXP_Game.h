@@ -32,6 +32,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <thread>
 
 #include <thread>
 #include <mutex>
@@ -95,7 +96,13 @@ public:
 	BD_MatDef FetchMaterialFromFile(std::string fileref);
 
 	void MainLoop();
+	void StartCallbackThread();
+	void StartSoundEngineThread();
+	void StartPhysicsEngineThread();
 	
+	void UpdateCallbacks();
+	void UpdateLevel();
+
 	//Sounds
 	void UpdateSound();
 	PSound* GetSoundEngine();
@@ -114,7 +121,6 @@ private:
 	void InitPhysicaSound();
 	void InitGui();
 	void InitPhysics();
-	void UpdateCallbacks();
 	BD_GameInfo CreateGameInfoFromJSON(std::string gameInfo);
 
 	bool m_first_exec;

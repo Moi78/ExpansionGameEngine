@@ -166,9 +166,14 @@ void EXP_Game::InitPhysics() {
 }
 
 void EXP_Game::UpdateSound() {
-	m_listener->setPosition(m_currentCamera->GetPosition());
-	m_listener->setOrientation(m_currentCamera->GetSubject());
-	m_soundEngine->mainLoop();
+	if (m_listener && m_currentCamera) {	//nullptr security with threads
+		m_listener->setPosition(m_currentCamera->GetPosition());
+		m_listener->setOrientation(m_currentCamera->GetSubject());
+	}
+
+	if (m_soundEngine) {					//nullptr security with threads
+		m_soundEngine->mainLoop();
+	}
 }
 
 void EXP_Game::InitGui() {
@@ -178,26 +183,19 @@ void EXP_Game::InitGui() {
 void EXP_Game::MainLoop() {
 	m_rndr->ClearWindow(m_refreshColor);
 
-	if (m_PlayingMap != nullptr) {
-		EXP_Level* lvl = m_PlayingMap->GetLevelCode();
-		if (lvl) {
-			lvl->CallTick();
-		}
-	}
-
-    vec3f CamLock;
+    vec3f CamLoc;
     if(m_currentCamera == nullptr) {
-        CamLock = vec3f();
+        CamLoc = vec3f();
     } else {
-        CamLock = m_currentCamera->GetLocation();
+        CamLoc = m_currentCamera->GetLocation();
     }
     
 	//Process shadows
-	m_rndr->RenderLightsDepth(CamLock);
+	m_rndr->RenderLightsDepth(CamLoc);
 	//GBuff
 	m_rndr->RenderGbuff(m_currentCamera);
 	//Light pass
-	m_rndr->RenderLightPass(CamLock);
+	m_rndr->RenderLightPass(CamLoc);
 
 	if (RENDER_DBG) {
 		m_rndr->RenderDbg();
@@ -215,11 +213,46 @@ void EXP_Game::MainLoop() {
 		m_first_exec = false;
 	}
 
-	UpdateSound();
-	UpdatePhysics();
-	UpdateCallbacks();
+	//Putting non-rendering work on separate threads
+	StartCallbackThread();
+	StartSoundEngineThread();
+	StartPhysicsEngineThread();
 
 	m_rndr->SwapWindow();
+}
+
+void EXP_Game::StartCallbackThread() {
+	std::thread cbk_thread([](EXP_Game* game) {
+		game->UpdateCallbacks();
+		game->UpdateLevel();
+	}, this);
+
+	cbk_thread.join();
+}
+
+void EXP_Game::StartSoundEngineThread() {
+	std::thread snd_thread([](EXP_Game* game) {
+		game->UpdateSound();
+	}, this);
+
+	snd_thread.join();
+}
+
+void EXP_Game::StartPhysicsEngineThread() {
+	std::thread phys_thread([](EXP_Game* game) {
+		game->UpdatePhysics();
+	}, this);
+
+	phys_thread.join();
+}
+
+void EXP_Game::UpdateLevel() {
+	if (m_PlayingMap != nullptr) {
+		EXP_Level* lvl = m_PlayingMap->GetLevelCode();
+		if (lvl) {
+			lvl->CallTick();
+		}
+	}
 }
 
 BD_GameInfo EXP_Game::GetGameInfo() {
