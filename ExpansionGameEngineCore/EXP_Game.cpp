@@ -12,7 +12,6 @@
 
 EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
-	m_first_exec = true;
 
 	m_GameLib = new EXP_HotLoad();
 
@@ -61,7 +60,6 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 #endif //_WIN32
 
 	m_currentCamera = nullptr;
-	m_first_exec = true;
 
 	InitPhysicaSound();
 	InitGame(vec3f(), gi);
@@ -91,6 +89,7 @@ EXP_Game::~EXP_Game() {
 
 	delete m_physicsHandler;
 	delete m_rndr;
+	delete m_materialManager;
 }
 
 BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
@@ -135,6 +134,7 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_gameinfo = gameinfo;
     
 	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
+	m_materialManager = new RD_MaterialLibrary();
 
 	m_PlayingMap = new EXP_MapLoader(this);
 	m_PlayingMap->LoadMap(gameinfo.RootGameContentFolder + gameinfo.StartupMap);
@@ -142,6 +142,10 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	EXP_Level* lvl = m_PlayingMap->GetLevelCode();
 	if (lvl) {
 		lvl->CallStart();
+	}
+
+	for (auto act : m_actors) {
+		act->CallOnStart();
 	}
 }
 
@@ -203,14 +207,6 @@ void EXP_Game::MainLoop() {
 
 	if (m_currentCamera != nullptr) {
 		m_currentCamera->UpdateCamera();
-	}
-
-	if (m_first_exec) {
-		for (auto act : m_actors) {
-			act->CallOnStart();
-		}
-
-		m_first_exec = false;
 	}
 
 	//Putting non-rendering work on separate threads
@@ -280,6 +276,10 @@ BD_MatDef EXP_Game::GetDefaultMaterial() {
 }
 
 BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
+	if (m_materialManager->DoMaterialExists(ref)) {
+		return m_materialManager->GetMaterialByName(ref);
+	}
+
 	std::string fullpath = m_gameinfo.RootGameContentFolder + ref + ".exmtl";
 	if (!std::filesystem::exists(fullpath)) {
 		std::cerr << "Material file " << ref << " does not exist. Returning default material." << std::endl;
@@ -329,6 +329,7 @@ BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
 
 	mdef.Shininess = mat.Shininess;
 
+	m_materialManager->AddMaterialToLib(mdef, ref);
 	return mdef;
 }
 
@@ -441,8 +442,6 @@ EXP_HotLoad* EXP_Game::GetGameLib() {
 }
 
 void EXP_Game::UnloadCurrentMap() {
-	//m_actors.size();
-
 	for (int i = 0; i < m_actors.size(); i++) {
 		if (m_actors[i]) {
 			m_actors[i]->CallUnregister();
@@ -453,6 +452,7 @@ void EXP_Game::UnloadCurrentMap() {
 		m_actors.clear();
 
 	m_PlayingMap->UnloadMap();
+	m_materialManager->ClearLibrary();
 }
 
 void EXP_Game::LoadMap(std::string map) {

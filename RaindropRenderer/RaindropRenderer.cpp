@@ -87,20 +87,29 @@ RaindropRenderer::~RaindropRenderer() {
 
 void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	if (!glfwInit()) {
-		dispErrorMessageBox(TEXT("Cannot init GLFW"));
+		const char* error;
+		glfwGetError(&error);
+
+		dispErrorMessageBox(StrToWStr("Cannot initalize GLFW. " + std::string(error)));
+		glfwTerminate();
+		exit(-1);
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, GL_FALSE);
 
 	glfwWindowHint(GLFW_SAMPLES, 1);
 
 	win = glfwCreateWindow(w, h, name.c_str(), NULL, NULL);
 
 	if (win == NULL) {
-		dispErrorMessageBox(TEXT("Cannot create the window."));
+		const char* error;
+		glfwGetError(&error);
+
+		dispErrorMessageBox(StrToWStr("Cannot create window. " + std::string(error)));
 		glfwTerminate();
 		exit(-1);
 	}
@@ -111,6 +120,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 
 	glViewport(0, 0, m_width, m_height);
 
+	glfwSetWindowUserPointer(win, this);
 	glfwSetFramebufferSizeCallback(win, glfwWinCallback);
 
 	glEnable(GL_DEPTH_TEST);
@@ -158,13 +168,13 @@ bool RaindropRenderer::WantToClose() {
 void RaindropRenderer::initGlad(bool minInit) {
 	if (!minInit) {
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-			dispErrorMessageBox(TEXT("Cannot init GLAD."));
+			dispErrorMessageBox(StrToWStr("Cannot init GLAD."));
 			exit(-1);
 		}
 	}
 	else {
 		if (gladLoadGL() != 1) {
-			dispErrorMessageBox(TEXT("Cannot init GLAD"));
+			dispErrorMessageBox(StrToWStr("Cannot init OpenGL"));
 			exit(-1);
 		}
 	}
@@ -406,6 +416,9 @@ RD_ShaderLoader* RaindropRenderer::GetShadowShader() {
 }
 
 void RaindropRenderer::CreateGbuff() {
+	m_width = getWindowWidth();
+	m_height = getWindowHeigh();
+
 	glGenFramebuffers(1, &m_g_buffer.gBuff);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
 
@@ -462,7 +475,8 @@ void RaindropRenderer::CreateGbuff() {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_g_buffer.gRBO);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		std::cerr << "Incomplete Framebuffer" << std::endl;
+		dispErrorMessageBox(StrToWStr("ERROR: Framebuffer incomplete. :/"));
+		exit(-6);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -574,8 +588,54 @@ RD_Texture* RaindropRenderer::GetBlankTexture() {
 	return m_blankTexture;
 }
 
+void RaindropRenderer::DeleteGbuff() {
+	//Deleting Gbuff FBO texture & Render buffer
+	glDeleteTextures(1, &m_g_buffer.gAlbedo);
+	glDeleteTextures(1, &m_g_buffer.gNorm);
+	glDeleteTextures(1, &m_g_buffer.gPos);
+	glDeleteTextures(1, &m_g_buffer.gShadows);
+	glDeleteTextures(1, &m_g_buffer.gSpec);
+
+	glDeleteRenderbuffers(1, &m_g_buffer.gRBO);
+
+	//Deleting Gbuff FBO itself
+	glDeleteFramebuffers(1, &m_g_buffer.gBuff);
+}
+
+void RaindropRenderer::RecreateGbuff() {
+	DeleteGbuff();
+
+	CreateGbuff();
+}
+
+void RaindropRenderer::SetFullscreenMode(bool mode) {
+	if (mode) {
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		if (!monitor) {
+			std::cerr << "Cannot turn on fullscreen mode" << std::endl;
+		}
+
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+		glfwSetWindowMonitor(win, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+	}
+	else {
+		glfwSetWindowMonitor(win, nullptr, 0, 0, m_width, m_height, 60);
+	}
+}
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 
 void glfwWinCallback(GLFWwindow* win, int w, int h) {
+	RaindropRenderer* rndr = (RaindropRenderer*)glfwGetWindowUserPointer(win);
+	rndr->RecreateGbuff();
+	
 	glViewport(0, 0, w, h);
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+std::wstring StrToWStr(std::string str) {
+	std::wstring wstr(str.begin(), str.end());
+	return wstr;
 }

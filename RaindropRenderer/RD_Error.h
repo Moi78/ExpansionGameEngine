@@ -6,9 +6,11 @@
 #ifdef _WIN32
 
 #include <Windows.h>
+#include <iostream>
+#include <string>
 
 //Error displayer
-void dispErrorMessageBox(LPCWSTR Message);
+void dispErrorMessageBox(std::wstring Message);
 
 #else
 

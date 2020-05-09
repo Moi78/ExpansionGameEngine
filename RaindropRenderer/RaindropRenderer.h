@@ -69,6 +69,7 @@ public:
 
 	int getWindowHeigh();
 	int getWindowWidth();
+	void SetFullscreenMode(bool fullscr);
 
 	double GetLastDeltaTime();
 
@@ -81,6 +82,7 @@ public:
 	void RenderLightsDepth(vec3f camPos);
 
 	void RenderGbuff(RD_Camera*);
+	void RecreateGbuff();
 
 	RD_Texture* GetBlankTexture();
 
@@ -131,6 +133,7 @@ private:
 	void EnableAllFeatures();
 
 	void CreateGbuff();
+	void DeleteGbuff();
 
 	GLFWwindow* win;
 
@@ -184,5 +187,7 @@ int GetElemIndex(std::vector<T> array, T element) {
 }
 
 void glfwWinCallback(GLFWwindow* win, int w, int h);
+
+RAINDROPRENDERER_API std::wstring StrToWStr(std::string str);
 
 #endif // !_RAINDROP_RENDERER_H__

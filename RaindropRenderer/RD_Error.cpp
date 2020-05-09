@@ -4,14 +4,16 @@
 #ifdef _WIN32
 
 //Error displayer
-void dispErrorMessageBox(LPCWSTR Message) {
-	MessageBox(nullptr, Message, TEXT("ERROR !!!"), MB_ICONERROR | MB_OK);
+void dispErrorMessageBox(std::wstring Message) {
+	std::wcerr << "ERROR:" << Message << std::endl;
+
+	MessageBox(nullptr, Message.c_str(), TEXT("ERROR !!!"), MB_ICONERROR | MB_OK);
 }
 
 #else
 
-void dispErrorMessageBox(std::string Message) {
-	std::cerr << Message << std::endl;
+void dispErrorMessageBox(std::wstring Message) {
+	std::wcerr << Message << std::endl;
 }
 
 #endif //_WIN32

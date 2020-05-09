@@ -41,6 +41,7 @@
 #include <RD_Mesh.h>
 #include <RD_PointLight.h>
 #include <RD_Texture.h>
+#include <RD_MaterialLibrary.h>
 
 #include <BD_StructMan.h>
 #include <BD_MatRW.h>
@@ -123,11 +124,10 @@ private:
 	void InitPhysics();
 	BD_GameInfo CreateGameInfoFromJSON(std::string gameInfo);
 
-	bool m_first_exec;
-
 	EXP_MapLoader* m_PlayingMap;
 
 	RaindropRenderer* m_rndr;
+	RD_MaterialLibrary* m_materialManager;
 
 	PSound* m_soundEngine;
 
