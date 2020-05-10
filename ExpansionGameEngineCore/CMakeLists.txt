@@ -19,11 +19,6 @@ if(BULLET_FOUND)
 	target_link_libraries(ExpansionGameEngineCore ${BULLET_DYNAMICS_LIBRARY} ${BULLET_COLLISION_LIBRARY} ${BULLET_MATH_LIBRARY})
 endif(BULLET_FOUND)
 
-#find_package(OpenAL REQUIRED)
-#if(OPENAL_FOUND)
-#	include_directories(${OPENAL_INCLUDE_DIRS})
-#	target_link_libraries(PhysicaSound ${OPENAL_LIBRARIES})
-#endif(OPENAL_FOUND)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)

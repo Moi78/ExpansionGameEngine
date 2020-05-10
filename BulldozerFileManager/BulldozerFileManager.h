@@ -15,7 +15,7 @@
 #else
 
 #define BULLDOZERFILEMANAGER_API
-#define TEXT(x) std::string(x)
+#define TEXT(x) L"x"
 
 #endif //_WIN32
 
@@ -26,7 +26,7 @@
 #ifdef _WIN32
 void dispErrorMessageBox(LPCWSTR Message);
 #else
-void dispErrorMessageBox(std::string);
+void dispErrorMessageBox(std::wstring);
 #endif
 
 std::string BULLDOZERFILEMANAGER_API getFileData(std::string filePath);

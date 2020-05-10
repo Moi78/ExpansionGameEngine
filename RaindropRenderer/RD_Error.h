@@ -16,7 +16,7 @@ void dispErrorMessageBox(std::wstring Message);
 
 #include <iostream>
 
-void dispErrorMessageBox(std::string);
+void dispErrorMessageBox(std::wstring message);
 
 #endif //_WIN32
 

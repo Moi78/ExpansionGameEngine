@@ -25,4 +25,9 @@ if(OPENAL_FOUND)
 	target_link_libraries(Testing ${OPENAL_LIBRARIES})
 endif(OPENAL_FOUND)
 
+# find_package(PkgConfig REQUIRED)
+# pkg_check_modules(JSONCPP jsoncpp)
+# include_directories("${JSONCPP_INCLUDE_DIRS}/jsoncpp")
+# target_link_libraries(Testing ${JSONCPP_LIBRARIES})
+
 target_link_libraries(Testing BulldozerFileManager ExpansionMath RaindropRenderer PhysicaSound ExpansionGameEngineCore)

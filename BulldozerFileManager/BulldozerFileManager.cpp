@@ -10,8 +10,8 @@ void dispErrorMessageBox(LPCWSTR Message) {
 
 #else
 
-void dispErrorMessageBox(std::string Message) {
-	std::cerr << Message << std::endl;
+void dispErrorMessageBox(std::wstring Message) {
+	std::wcerr << Message << std::endl;
 }
 
 #endif //_WIN32

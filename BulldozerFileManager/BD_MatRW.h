@@ -12,11 +12,9 @@
 
     #include <Windows.h>
     #include <json/json.h>
-
 #else
 
     #define BULLDOZERFILEMANAGER_API
-
     #include <jsoncpp/json/json.h>
 
 #endif //_WIN32

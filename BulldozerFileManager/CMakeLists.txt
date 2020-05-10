@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(BulldozerFileManager)
 
 include_directories(../ExpansionMath/)
+include_directories(../libs/JSONCPP/include/)
 
 file(GLOB SRC "*.cpp" "*.h")
 
@@ -14,6 +15,5 @@ target_include_directories(BulldozerFileManager PUBLIC)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)
-link_libraries(${JSONCPP_LIBRARIES})
-target_link_libraries(BulldozerFileManager ${JSONCPP_LIBRARIES})
 include_directories(${JSONCPP_INCLUDE_DIRS})
+target_link_libraries(BulldozerFileManager ${JSONCPP_LIBRARIES})

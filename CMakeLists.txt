@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.0)
 project(EXPGE)
 
 #FOR DEBUG
-SET(GCC_ARGS "-g3")
-add_definitions(${GCC_ARGS})
+#SET(GCC_ARGS "-g3")
+#add_definitions(${GCC_ARGS})
 
 add_subdirectory(ExpansionMath)
 add_subdirectory(BulldozerFileManager)
