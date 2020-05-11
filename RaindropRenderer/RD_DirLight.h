@@ -42,6 +42,7 @@ public:
 	glm::mat4 GetLightSpace();
 	unsigned int GetDepthTexID();
 
+	void Cleanup(RaindropRenderer* rndr);
 private:
 	vec3f m_dir;
 	vec3f m_color;

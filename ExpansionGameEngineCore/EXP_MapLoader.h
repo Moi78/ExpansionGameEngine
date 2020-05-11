@@ -45,6 +45,7 @@ public:
 	void UnloadMap();
 
 	EXP_Level* GetLevelCode();
+	void SigLevelDestroy();
 
 	EXP_StaticMesh* GetStaticMeshByName(std::string name);
 	EXP_PointLight* GetPointLightByName(std::string name);

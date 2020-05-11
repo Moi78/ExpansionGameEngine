@@ -29,7 +29,8 @@ void EXP_PhysicsHandler::InitWorld() {
 }
 
 void EXP_PhysicsHandler::UpdateWorld() {
-	m_dWorld->stepSimulation(m_updtTime, 10);
+	if(m_dWorld)
+		m_dWorld->stepSimulation(m_updtTime, 10);
 }
 
 void EXP_PhysicsHandler::RegisterRigidBody(EXP_RigidBody* rb) {

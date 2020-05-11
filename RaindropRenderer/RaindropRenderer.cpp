@@ -566,6 +566,7 @@ void RaindropRenderer::UnregisterDirLight(RD_DirLight* light) {
 	int index = GetElemIndex<RD_DirLight*>(m_DirLights, light);
 
 	if (index != -1) {
+		light->Cleanup(this);
 		m_DirLights.erase(m_DirLights.begin() + index);
 	}
 	else {
@@ -621,6 +622,26 @@ void RaindropRenderer::SetFullscreenMode(bool mode) {
 	}
 	else {
 		glfwSetWindowMonitor(win, nullptr, 0, 0, m_width, m_height, 60);
+	}
+}
+
+void RaindropRenderer::AddToTextureGarbageCollector(unsigned int texID) {
+	m_textureGarbageCollector.push_back(texID);
+}
+
+void RaindropRenderer::EmptyTextureGarbageCollector() {
+	for (auto tex : m_textureGarbageCollector) {
+		glDeleteTextures(1, &tex);
+	}
+}
+
+void RaindropRenderer::AddToFramebufferGarbageCollector(unsigned int fboID) {
+	m_framebufferGarbageCollector.push_back(fboID);
+}
+
+void RaindropRenderer::EmptyFramebufferGarbageCollector() {
+	for (auto fbo : m_framebufferGarbageCollector) {
+		glDeleteFramebuffers(1, &fbo);
 	}
 }
 

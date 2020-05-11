@@ -85,6 +85,12 @@ public:
 	void RecreateGbuff();
 
 	RD_Texture* GetBlankTexture();
+	
+	void AddToTextureGarbageCollector(unsigned int texID);
+	void EmptyTextureGarbageCollector();
+
+	void AddToFramebufferGarbageCollector(unsigned int fboID);
+	void EmptyFramebufferGarbageCollector();
 
 	//Lighting
 	void SetAmbientStrength(float strength);
@@ -160,6 +166,9 @@ private:
 
 	RD_Texture* m_defTex;
 	RD_Texture* m_blankTexture;
+
+	std::vector<unsigned int> m_textureGarbageCollector;
+	std::vector<unsigned int> m_framebufferGarbageCollector;
 
 	//Deffered Rendering
 	Gbuff m_g_buffer;

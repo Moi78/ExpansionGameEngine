@@ -104,3 +104,8 @@ glm::mat4 RD_DirLight::GetLightSpace() {
 unsigned int RD_DirLight::GetDepthTexID() {
 	return m_depthMapTEX;
 }
+
+void RD_DirLight::Cleanup(RaindropRenderer* rndr) {
+	rndr->AddToFramebufferGarbageCollector(m_depthMapFBO);
+	rndr->AddToTextureGarbageCollector(m_depthMapTEX);
+}

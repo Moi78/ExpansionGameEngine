@@ -104,6 +104,8 @@ public:
 	void UpdateCallbacks();
 	void UpdateLevel();
 
+	std::mutex* GetMainMutex();
+
 	//Sounds
 	void UpdateSound();
 	PSound* GetSoundEngine();
@@ -143,6 +145,13 @@ private:
 	PS_Listener* m_listener;
 
 	EXP_HotLoad* m_GameLib;
+
+	//Signals
+	bool m_sigClearMatMan;
+	bool m_sigLevelFinalCleanup;
+
+	//Threading
+	std::mutex m_mutex;
 
 	//Physics
 	EXP_PhysicsHandler* m_physicsHandler;

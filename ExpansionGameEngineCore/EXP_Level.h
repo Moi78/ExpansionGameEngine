@@ -30,6 +30,7 @@ private:
 	bool m_startEnabled;
 	bool m_tickEnabled;
 
+	bool m_sigDestroy;
 	bool m_isStart;
 };
 

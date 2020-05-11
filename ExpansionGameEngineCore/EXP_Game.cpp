@@ -139,6 +139,9 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_PlayingMap = new EXP_MapLoader(this);
 	m_PlayingMap->LoadMap(gameinfo.RootGameContentFolder + gameinfo.StartupMap);
 
+	m_sigClearMatMan = false;
+	m_sigLevelFinalCleanup = false;
+
 	EXP_Level* lvl = m_PlayingMap->GetLevelCode();
 	if (lvl) {
 		lvl->CallStart();
@@ -147,6 +150,11 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	for (auto act : m_actors) {
 		act->CallOnStart();
 	}
+
+	//Putting non-rendering work on separate threads
+	StartCallbackThread();
+	StartSoundEngineThread();
+	StartPhysicsEngineThread();
 }
 
 void EXP_Game::InitPhysicaSound() {
@@ -209,37 +217,64 @@ void EXP_Game::MainLoop() {
 		m_currentCamera->UpdateCamera();
 	}
 
-	//Putting non-rendering work on separate threads
-	StartCallbackThread();
-	StartSoundEngineThread();
-	StartPhysicsEngineThread();
+	if (m_sigClearMatMan) {
+		m_materialManager->ClearLibrary();
+
+		m_sigClearMatMan = false;
+	}
+
+	if (m_sigLevelFinalCleanup) {
+		m_rndr->EmptyFramebufferGarbageCollector();
+		m_rndr->EmptyTextureGarbageCollector();
+
+		m_sigLevelFinalCleanup = false;
+	}
 
 	m_rndr->SwapWindow();
 }
 
+std::mutex* EXP_Game::GetMainMutex() {
+	return &m_mutex;
+}
+
 void EXP_Game::StartCallbackThread() {
 	std::thread cbk_thread([](EXP_Game* game) {
-		game->UpdateCallbacks();
-		game->UpdateLevel();
+		while (!game->GetRenderer()->WantToClose()) {
+
+			game->UpdateCallbacks();
+
+			game->GetMainMutex()->lock();
+			game->UpdateLevel();
+			game->GetMainMutex()->unlock();
+		}
+
 	}, this);
 
-	cbk_thread.join();
+	cbk_thread.detach();
 }
 
 void EXP_Game::StartSoundEngineThread() {
 	std::thread snd_thread([](EXP_Game* game) {
-		game->UpdateSound();
+		while (!game->GetRenderer()->WantToClose()) {
+
+			game->UpdateSound();
+		}
+
 	}, this);
 
-	snd_thread.join();
+	snd_thread.detach();
 }
 
 void EXP_Game::StartPhysicsEngineThread() {
 	std::thread phys_thread([](EXP_Game* game) {
-		game->UpdatePhysics();
+		while (!game->GetRenderer()->WantToClose()) {
+			
+			game->UpdatePhysics();
+		}
+
 	}, this);
 
-	phys_thread.join();
+	phys_thread.detach();
 }
 
 void EXP_Game::UpdateLevel() {
@@ -452,7 +487,11 @@ void EXP_Game::UnloadCurrentMap() {
 		m_actors.clear();
 
 	m_PlayingMap->UnloadMap();
-	m_materialManager->ClearLibrary();
+	
+	//Did this terribleness because openGL need to delete texture in the same thread
+	//as the context.
+	m_sigClearMatMan = true;
+	m_sigLevelFinalCleanup = true;
 }
 
 void EXP_Game::LoadMap(std::string map) {
