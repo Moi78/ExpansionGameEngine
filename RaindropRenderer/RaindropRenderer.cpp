@@ -71,7 +71,6 @@ RaindropRenderer::~RaindropRenderer() {
 
 	m_pt_lights.clear();
 	m_DirLights.clear();
-	m_sound_emitters.clear();
 	m_guis.clear();
 	m_meshes.clear();
 
@@ -147,13 +146,7 @@ void RaindropRenderer::SwapWindow() {
 	glfwSwapBuffers(win);
 
 	m_frmLmt->stop();
-
-	if (m_frmLmt->GetElapsedTime() < (float)1 / m_frmLmt->GetFrameLimit()) {
-
-		long long delta = ((long long) 1.0f / m_frmLmt->GetFrameLimit()) * 1000 - m_frmLmt->GetElapsedTime();
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(delta));
-	}
+	m_frmLmt->WaitAll();
 }
 
 bool RaindropRenderer::WantToClose() {
@@ -276,11 +269,6 @@ void RaindropRenderer::RenderDbg() {
 			m_DBG_light_mdl->render(m_CurrentShader, RenderMode::Wireframe);
 		}
 
-		for (int i = 0; i < m_sound_emitters.size(); i++) {
-			m_DBG_sound_emitter_mdl->SetPosition(m_sound_emitters[i]->getLocation());
-			m_DBG_sound_emitter_mdl->render(m_CurrentShader, RenderMode::Wireframe);
-		}
-
 		if(rEnableLighting)
 			EnableFeature(RendererFeature::Lighting);
 	}
@@ -363,10 +351,6 @@ float RaindropRenderer::GetFramerate() {
 
 RD_ShaderLoader* RaindropRenderer::GetCurrentShader() {
 	return m_CurrentShader;
-}
-
-void RaindropRenderer::RegisterSoundEmitter(PS_Emitter* emitter) {
-	m_sound_emitters.push_back(emitter);
 }
 
 void RaindropRenderer::InitGUI() {

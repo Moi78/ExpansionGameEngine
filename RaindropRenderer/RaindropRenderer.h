@@ -44,8 +44,6 @@
 	#include <Windows.h>
 #endif
 
-#include <PS_Emitter.h>
-
 //Frwd Declaration
 class RD_DirLight;
 class RD_Mesh;
@@ -113,7 +111,6 @@ public:
 	//Debug
 	void RenderDbg();
 	float GetFramerate();
-	void RegisterSoundEmitter(PS_Emitter*);
 
 	//Renderer Feature
 	void EnableFeature(RendererFeature ftr);
@@ -156,7 +153,6 @@ private:
 
 	std::vector<RD_PointLight*> m_pt_lights;
 	std::vector<RD_DirLight*> m_DirLights;
-	std::vector<PS_Emitter*> m_sound_emitters;
 	std::vector<RD_GUI*> m_guis;
 	std::vector<RD_Mesh*> m_meshes;
 

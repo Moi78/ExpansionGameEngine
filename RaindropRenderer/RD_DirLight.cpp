@@ -6,8 +6,8 @@ RD_DirLight::RD_DirLight(vec3f dir, vec3f color, float brightness) : m_dir(dir),
 }
 
 RD_DirLight::~RD_DirLight() {
-	glDeleteTextures(1, &m_depthMapTEX);
-	glDeleteFramebuffers(1, &m_depthMapFBO);
+	//glDeleteTextures(1, &m_depthMapTEX);
+	//glDeleteFramebuffers(1, &m_depthMapFBO);
 }
 
 void RD_DirLight::SetLightBrightness(float nBrightness) {

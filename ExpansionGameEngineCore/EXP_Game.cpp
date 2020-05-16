@@ -239,14 +239,22 @@ std::mutex* EXP_Game::GetMainMutex() {
 
 void EXP_Game::StartCallbackThread() {
 	std::thread cbk_thread([](EXP_Game* game) {
+		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
+
 		while (!game->GetRenderer()->WantToClose()) {
+			lmt->start();
 
 			game->UpdateCallbacks();
 
 			game->GetMainMutex()->lock();
 			game->UpdateLevel();
 			game->GetMainMutex()->unlock();
+
+			lmt->stop();
+			lmt->WaitAll();
 		}
+
+		delete lmt;
 
 	}, this);
 
@@ -255,10 +263,18 @@ void EXP_Game::StartCallbackThread() {
 
 void EXP_Game::StartSoundEngineThread() {
 	std::thread snd_thread([](EXP_Game* game) {
+		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
+
 		while (!game->GetRenderer()->WantToClose()) {
+			lmt->start();
 
 			game->UpdateSound();
+
+			lmt->stop();
+			lmt->WaitAll();
 		}
+
+		delete lmt;
 
 	}, this);
 
@@ -267,10 +283,18 @@ void EXP_Game::StartSoundEngineThread() {
 
 void EXP_Game::StartPhysicsEngineThread() {
 	std::thread phys_thread([](EXP_Game* game) {
+		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
+
 		while (!game->GetRenderer()->WantToClose()) {
-			
+			lmt->start();
+
 			game->UpdatePhysics();
+
+			lmt->stop();
+			lmt->WaitAll();
 		}
+
+		delete lmt;
 
 	}, this);
 
@@ -403,7 +427,6 @@ void EXP_Game::RegisterCamera(EXP_Camera* cam) {
 
 void EXP_Game::RegisterSoundEmitter(EXP_SoundEmitter* sm) {
 	m_soundEngine->RegisterEmitter(sm, false);
-	m_rndr->RegisterSoundEmitter(sm);
 }
 
 std::string EXP_Game::GetFilePathByRef(std::string ref) {

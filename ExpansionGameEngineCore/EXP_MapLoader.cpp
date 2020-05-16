@@ -124,6 +124,8 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 }
 
 void EXP_MapLoader::UnloadMap() {
+	m_mu.lock();
+
 	std::cout << "Unloading map." << std::endl;
 
 	for (auto mesh : m_meshes) {
@@ -156,6 +158,8 @@ void EXP_MapLoader::UnloadMap() {
 		m_rl(m_rawLevelCode);
 		m_levelCode = nullptr;
 	}
+
+	m_mu.unlock();
 }
 
 EXP_Level* EXP_MapLoader::GetLevelCode() {

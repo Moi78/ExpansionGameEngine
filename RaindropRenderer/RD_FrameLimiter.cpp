@@ -33,8 +33,13 @@ double RD_FrameLimiter::GetElapsedTime() {
 	return elapsed;
 }
 
-void RD_FrameLimiter::WaitAll(double dur) {
-	
+void RD_FrameLimiter::WaitAll() {
+	if (GetElapsedTime() < (float)1 / GetFrameLimit()) {
+		float frameTime = 1.0f / GetFrameLimit();
+		double delta = (frameTime * 1000) - GetElapsedTime();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds((long long)delta));
+	}
 }
 
 double RD_FrameLimiter::GetLastDeltaTime() {

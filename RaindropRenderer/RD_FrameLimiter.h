@@ -38,7 +38,7 @@ public:
 
 	double GetElapsedTime();
 
-	void WaitAll(double dur);
+	void WaitAll();
 
 	double GetLastDeltaTime();
 private:

@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>stb\;C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>stb\;C:\Program Files\Mega-Nerd\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -101,7 +101,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;OpenAL32.lib;libsndfile-1.lib;PhysicaSound.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
@@ -154,7 +154,7 @@
       <PreprocessorDefinitions>NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Program Files\Mega-Nerd\libsndfile\include;..\libs\AL\include\;..\PhysicaSound\;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;stb\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>stb\;C:\Program Files\Mega-Nerd\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -166,7 +166,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;PhysicaSound.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
