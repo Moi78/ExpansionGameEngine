@@ -22,26 +22,22 @@
 
 #include <BulldozerFileManager.h>
 
-class EXPGE_API EXP_StaticMesh : public EXP_Component
+class EXPGE_API EXP_StaticMesh :
+	public EXP_Component,
+	public RD_Mesh
 {
 public:
 	EXP_StaticMesh(EXP_Game* gameinstance, std::string meshRef, BD_MatDef material, vec3f pos, vec3f rot, vec3f scale);
 	~EXP_StaticMesh();
 
-	//For internal usage only
-	RD_Mesh* GetRawMeshData();
-
 	bool MeshRefExists(std::string MeshRef);
 	void LoadMesh(std::string MeshRef);
-
-	void Update();
 
 	virtual void SetPosition(vec3f nPos) override;
 	virtual void SetRotation(vec3f nRot) override;
 	virtual void SetScale(vec3f nScale) override;
 
 private:
-	RD_Mesh* m_RawMesh;
 	BD_MatDef m_material;
 	EXP_Game* m_gameinstance;
 };

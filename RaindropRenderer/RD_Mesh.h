@@ -21,6 +21,7 @@
 #include "RaindropRenderer.h"
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include <string>
 #include <vector>

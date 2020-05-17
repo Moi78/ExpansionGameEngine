@@ -380,6 +380,7 @@ void RaindropRenderer::RenderLightsDepth(vec3f camPos) {
 }
 
 void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
+	std::cout << "Added mesh to renderer." << std::endl;
 	m_meshes.push_back(mesh);
 }
 

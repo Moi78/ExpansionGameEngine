@@ -1,16 +1,15 @@
 #include "pch.h"
 #include "EXP_StaticMesh.h"
 
-EXP_StaticMesh::EXP_StaticMesh(EXP_Game* gameinstance, std::string MeshRef, BD_MatDef material, vec3f pos, vec3f rot, vec3f scale) : EXP_Component(pos, rot, scale), m_gameinstance(gameinstance), m_material(material) {
+EXP_StaticMesh::EXP_StaticMesh(EXP_Game* gameinstance, std::string MeshRef, BD_MatDef material, vec3f pos, vec3f rot, vec3f scale) :
+	EXP_Component(pos, rot, scale), m_gameinstance(gameinstance), m_material(material),
+	RD_Mesh(material, pos, rot, scale)
+{
 	LoadMesh(MeshRef);
 }
 
 EXP_StaticMesh::~EXP_StaticMesh() {
-	delete m_RawMesh;
-}
 
-RD_Mesh* EXP_StaticMesh::GetRawMeshData() {
-	return m_RawMesh;
 }
 
 bool EXP_StaticMesh::MeshRefExists(std::string MeshRef) {
@@ -19,33 +18,26 @@ bool EXP_StaticMesh::MeshRefExists(std::string MeshRef) {
 
 void EXP_StaticMesh::LoadMesh(std::string MeshRef) {
 	if (MeshRefExists(MeshRef)) {
-		m_RawMesh = new RD_Mesh(m_material, GetPosition(), GetRotation(), GetScale());
-		m_RawMesh->loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh");
+		RD_Mesh::loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh");
 
-		m_gameinstance->RegisterMesh(m_RawMesh);
+		m_gameinstance->RegisterMesh(this);
 	}
 	else {
 		std::cerr << "Can't load mesh " << MeshRef << ". Mesh Reference not found." << std::endl;
 	}
 }
 
-void EXP_StaticMesh::Update() {
-	m_RawMesh->SetPosition(GetPosition());
-	m_RawMesh->SetRotation(GetRotation());
-	m_RawMesh->SetScale(GetScale());
-}
-
 void EXP_StaticMesh::SetPosition(vec3f nPos) {
-	m_pos = nPos;
-	m_RawMesh->SetPosition(nPos);
+	EXP_Component::m_pos = nPos;
+	RD_Mesh::SetPosition(nPos);
 }
 
 void EXP_StaticMesh::SetRotation(vec3f nRot) {
-	m_rot = nRot;
-	m_RawMesh->SetRotation(nRot);
+	EXP_Component::m_rot = nRot;
+	RD_Mesh::SetRotation(nRot);
 }
 
 void EXP_StaticMesh::SetScale(vec3f nScale) {
-	m_scale = nScale;
-	m_RawMesh->SetScale(nScale);
+	EXP_Component::m_scale = nScale;
+	RD_Mesh::SetScale(nScale);
 }

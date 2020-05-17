@@ -83,17 +83,14 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
 
 	//Rotation
-	rotation = glm::rotate(rotation, glm::radians(m_rotation.getX()), glm::vec3(1.0f, 0.0f, 0.0f));
-	rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
-	rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::quat rot(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ()));
+	rotation = glm::toMat4(rot);
 
-	if (inActor) {
-		mdl = translate * rotation * scale;
-		mdl *= m_actor_mat;
-	}
-	else {
-		mdl = translate * rotation * scale;
-	}
+	//rotation = glm::rotate(rotation, glm::radians(m_rotation.getX()), glm::vec3(1.0f, 0.0f, 0.0f));
+	//rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
+	//rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	mdl = translate * scale * rotation;
 
 	shader->SetMatrix("model", mdl);
 
