@@ -23,8 +23,11 @@ public:
 
 private:
 	EXP_Game* m_game;
+	EXP_MapLoader* m_load;
 
 	EXP_Camera* cam;
+
+	vec3f rot;
 };
 
 EXPGE_LEVEL_HEADER(demoMap);

@@ -2,8 +2,6 @@
 #include "RD_Mesh.h"
 
 RD_Mesh::RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale) {
-	inActor = false;
-	m_actor_mat = glm::mat4(1.0f);
 	m_nbr_indices = 0;
 
 	VAO = 0;
@@ -12,9 +10,13 @@ RD_Mesh::RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale
 
 	m_mat = new RD_SimpleMaterial(material);
 
-	m_position = position;
-	m_rotation = rotation;
-	m_scale = scale;
+	m_position = vec3f(0.0f, 0.0f, 0.0f);
+	m_rotation = vec3f(0.0f, 0.0f, 0.0f);
+	m_scale = vec3f(1.0f, 1.0f, 1.0f);
+
+	m_worldPos = position;
+	m_worldRot = rotation;
+	m_worldScale = scale;
 }
 
 RD_Mesh::~RD_Mesh() {
@@ -72,6 +74,7 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 
 	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
 
+	//Local transform
 	glm::mat4 translate = glm::mat4(1.0f);
 	glm::mat4 scale = glm::mat4(1.0f);
 	glm::mat4 rotation = glm::mat4(1.0f);
@@ -86,11 +89,29 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 	glm::quat rot(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ()));
 	rotation = glm::toMat4(rot);
 
-	//rotation = glm::rotate(rotation, glm::radians(m_rotation.getX()), glm::vec3(1.0f, 0.0f, 0.0f));
-	//rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
-	//rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
+	mdl = translate * rotation * scale;
 
-	mdl = translate * scale * rotation;
+	//World Transform
+	glm::mat4 wmdl = glm::mat4(1.0f);
+	glm::mat4 wtranslate = glm::mat4(1.0f);
+	glm::mat4 wscale = glm::mat4(1.0f);
+	glm::mat4 wrotation = glm::mat4(1.0f);
+
+	//Rotation
+	glm::quat wrot(glm::vec3(m_worldRot.getX(), m_worldRot.getY(), m_worldRot.getZ()));
+	wrotation *= glm::toMat4(wrot);
+
+	//Scale
+	wscale = glm::scale(wscale, glm::vec3(m_worldScale.getX(), m_worldScale.getY(), m_worldScale.getZ()));
+
+	//Position
+	wtranslate = glm::translate(wtranslate, glm::vec3(m_worldPos.getX(), m_worldPos.getY(), m_worldPos.getZ()));
+
+	//World model matrix
+	wmdl = wtranslate * wrotation * wscale;
+	
+	//Final mat
+	mdl = wmdl * mdl;
 
 	shader->SetMatrix("model", mdl);
 
@@ -203,10 +224,14 @@ vec3f RD_Mesh::GetLocation() {
 	return m_position;
 }
 
-void RD_Mesh::ApplyActorMatrix(glm::mat4 mat) {
-	m_actor_mat = mat;
+void RD_Mesh::SetWorldPosition(vec3f nPos) {
+	m_worldPos = nPos;
 }
 
-void RD_Mesh::SetActorMode(bool mode) {
-	inActor = mode;
+void RD_Mesh::SetWorldRotation(vec3f nRot) {
+	m_worldRot = nRot;
+}
+
+void RD_Mesh::SetWorldScale(vec3f nScale) {
+	m_worldScale = nScale;
 }

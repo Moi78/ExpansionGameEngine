@@ -51,13 +51,11 @@ public:
 	void SetPosition(vec3f nPos);
 	void SetScale(vec3f nScale);
 
+	void SetWorldPosition(vec3f nPos);
+	void SetWorldRotation(vec3f nRot);
+	void SetWorldScale(vec3f nScale);
+
 	vec3f GetLocation();
-
-	void ApplyActorMatrix(glm::mat4);
-	void SetActorMode(bool mode);
-
-	glm::mat4 m_actor_mat;
-	bool inActor;
 	
 private:
 	void Bufferize();
@@ -70,7 +68,6 @@ private:
 	std::vector<vec2f> m_uv;
 
 	int m_nbr_indices;
-	int m_nbr_vertices;
 
 	std::vector<float> MixVertNormUV;
 
@@ -79,6 +76,10 @@ private:
 	vec3f m_position;
 	vec3f m_rotation;
 	vec3f m_scale;
+
+	vec3f m_worldPos;
+	vec3f m_worldRot;
+	vec3f m_worldScale;
 };
 
 #endif
