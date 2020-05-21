@@ -12,8 +12,7 @@ demoMap::demoMap(EXP_Game* game, EXP_MapLoader* mload) : EXP_Level(true, true) {
 }
 
 void demoMap::OnStart() {
-	m_load->GetStaticMeshByName("shaderBall1")->SetPosition(vec3f(0.0f, 0.5f, 0.0f));
-	rot = vec3f(0.0f, 45.0f, 0.0f);
+
 }
 
 void demoMap::OnTick() {
@@ -21,8 +20,4 @@ void demoMap::OnTick() {
 		m_game->UnloadCurrentMap();
 	}
 
-	rot = rot + vec3f(0.0f, 0.0f, 0.01f);
-
-	m_load->GetStaticMeshByName("shaderBall1")->addRotation(vec3f(0.0f, 0.0f, 0.01f));
-	m_load->GetStaticMeshByName("shaderBall1")->SetWorldRotation(rot);
 }

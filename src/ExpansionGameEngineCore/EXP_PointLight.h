@@ -29,7 +29,7 @@ class EXPGE_API EXP_PointLight :
 	public RD_PointLight
 {
 public:
-	EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f color, float brightness);
+	EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f color, float brightness, float radius);
 	~EXP_PointLight();
 
 	virtual void SetPosition(vec3f nPos) override;

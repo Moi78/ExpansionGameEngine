@@ -23,7 +23,7 @@
 class RAINDROPRENDERER_API RD_PointLight
 {
 public:
-	RD_PointLight(vec3f position, vec3f color, float brightness);
+	RD_PointLight(vec3f position, vec3f color, float brightness, float radius);
 	~RD_PointLight();
 
 	void SetPosition(vec3f nPos);
@@ -35,6 +35,9 @@ public:
 	void SetColor(vec3f color);
 	vec3f GetColor();
 
+	void SetLightRadius(float nRad);
+	float GetLightRadius();
+
 	int GetLightIndex();
 
 private:
@@ -43,6 +46,7 @@ private:
 	vec3f m_pos;
 	vec3f m_color;
 	float m_brightness;
+	float m_radius;
 
 	int m_lightIndex;
 };

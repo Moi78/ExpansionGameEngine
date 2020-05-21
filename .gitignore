@@ -338,13 +338,13 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/libs/GLFW/glfw-3.3.2/docs
-/libs/GLFW/glfw-3.3.2/examples
-/libs/ASSIMP/lib/cmake/assimp-5.0
-/libs/ASSIMP/lib/pkgconfig
-/libs/GLFW/glfw-3.3.2/CMake
-/libs/GLFW/glfw-3.3.2/CMakeFiles
-/libs/GLFW/glfw-3.3.2/src
-/libs/GLFW/glfw-3.3.2/tests
-/libs/GLFW
-/libs/PA112RSER
+/src/libs/GLFW/glfw-3.3.2/docs
+/src/libs/GLFW/glfw-3.3.2/examples
+/src/libs/ASSIMP/lib/cmake/assimp-5.0
+/src/libs/ASSIMP/lib/pkgconfig
+/src/libs/GLFW/glfw-3.3.2/CMake
+/src/libs/GLFW/glfw-3.3.2/CMakeFiles
+/src/libs/GLFW/glfw-3.3.2/src
+/src/libs/GLFW/glfw-3.3.2/tests
+/src/libs/GLFW
+/srclibs/PA112RSER

@@ -1,4 +1,7 @@
 #version 410 core
+//To don't mess up with max register limit
+#pragma glsl
+
 out vec4 FragColor;
 
 in vec2 UVcoords;
@@ -16,10 +19,12 @@ uniform float AmbientStrength;
 uniform vec3 AmbientColor;
 
 //Point Light
+const int MAX_POINT_LIGHTS = 246;
+uniform vec3 LightPos[MAX_POINT_LIGHTS];
+uniform float LightBrightness[MAX_POINT_LIGHTS];
+uniform vec3 LightColor[MAX_POINT_LIGHTS];
+uniform float LightRadius[MAX_POINT_LIGHTS];
 uniform int nbrPointLight;
-uniform vec3 LightPos[327];
-uniform float LightBrightness[327];
-uniform vec3 LightColor[327];
 
 //Dir Light
 uniform int nbrDirLight;
@@ -58,30 +63,32 @@ vec3 CalcDirLight(int index) {
 }
 
 vec3 CalcPointLight(int lightIndex) {
-	//Diffuse
-	vec3 LightDir = normalize(LightPos[lightIndex] - FragPos);
-	float diff = max(dot(norm, LightDir), 0.0);
-		
-	float dist = length(LightPos[lightIndex] - FragPos[lightIndex]);
-	float attenuation = (1.0 / (1.0 + 0.7 * (dist * dist)));
+	float dist = length(LightPos[lightIndex] - FragPos);
+	if(dist < LightRadius[lightIndex]) {
+		//Diffuse
+		vec3 LightDir = normalize(LightPos[lightIndex] - FragPos);
+		float attenuation = (1.0 / (1.0 + 0.7 * (dist * dist)));
 
-	vec3 diffuse = (diff * LightBrightness[lightIndex] * LightColor[lightIndex]) / dist;
+		float diffuse = max(0.0, dot(norm, LightDir)) / dist;
 
-	//Specular
-	vec3 specular = vec3(1.0, 1.0, 1.0);
+		//Specular
+		vec3 specular = vec3(1.0, 1.0, 1.0);
 
-	vec3 reflectDir = reflect(-LightDir, norm);
+		vec3 reflectDir = reflect(-LightDir, norm);
 
-	vec3 hwDir = normalize(LightDir + viewDir);
-	float spec = pow(max(0.0, dot(norm, hwDir)), SpecularExp);
+		vec3 hwDir = normalize(LightDir + viewDir);
+		float spec = pow(max(0.0, dot(norm, hwDir)), SpecularExp);
 
-	specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * Specular);
+		specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * Specular);
 
-	return attenuation * (diffuse + specular);
+		return attenuation * (diffuse + specular);
+	} else {
+		return vec3(0.0);
+	}
 }
 
 void main() {
-	vec3 diffSpec;
+	vec3 diffSpec = vec3(0.0);
 
 	float shadow = texture(ShadowPass, UVcoords).r;
 

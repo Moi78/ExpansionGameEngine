@@ -35,6 +35,14 @@ public:
 	virtual void SetRotation(vec3f nRot);
 	virtual void SetScale(vec3f nScale);
 
+	virtual vec3f GetWorldPosition();
+	virtual vec3f GetWorldRotation();
+	virtual vec3f GetWorldScale();
+
+	virtual void SetWorldPosition(vec3f nPos);
+	virtual void SetWorldRotation(vec3f nRot);
+	virtual void SetWorldScale(vec3f nScale);
+
 	void SetNameTag(std::string);
 	std::string GetNameTag();
 
@@ -43,6 +51,10 @@ protected:
 	vec3f m_pos;
 	vec3f m_rot;
 	vec3f m_scale;
+
+	vec3f m_worldPos;
+	vec3f m_worldRot;
+	vec3f m_worldScale;
 
 	std::string m_nameTag;
 };

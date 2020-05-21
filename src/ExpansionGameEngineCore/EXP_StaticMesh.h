@@ -37,6 +37,10 @@ public:
 	virtual void SetRotation(vec3f nRot) override;
 	virtual void SetScale(vec3f nScale) override;
 
+	virtual void SetWorldPosition(vec3f nPos) override;
+	virtual void SetWorldRotation(vec3f nRot) override;
+	virtual void SetWorldScale(vec3f nScale) override;
+
 private:
 	BD_MatDef m_material;
 	EXP_Game* m_gameinstance;

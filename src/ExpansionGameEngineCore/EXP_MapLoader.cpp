@@ -100,7 +100,10 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 			Json::Value color = node["color"];
 			vec3f mcolor(color[0].asFloat(), color[1].asFloat(), color[2].asFloat());
 
-			EXP_PointLight* plight = new EXP_PointLight(m_game, mpos, mcolor, node.get("brightness", "1.0").asFloat());
+			Json::Value brightness = node.get("brightness", "1.0");
+			Json::Value radius = node.get("radius", "5.0");
+
+			EXP_PointLight* plight = new EXP_PointLight(m_game, mpos, mcolor, brightness.asFloat(), radius.asFloat());
 			plight->SetNameTag(node["nameTag"].asString());
 			m_ptlights.push_back(plight);
 

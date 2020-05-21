@@ -1,6 +1,6 @@
 {
     "MapLevelCodeObjectName" : "demoMap",
-    "nodeCount" : 7,
+    "nodeCount" : 8,
 
     "0" : {
         "type":"mesh",
@@ -19,7 +19,7 @@
 
         "dir":[0.8, 0.3, -0.4],
         "color":[1.0, 1.0, 1.0],
-        "brightness":0.8
+        "brightness":0
     },
 
     "2" : {
@@ -29,7 +29,7 @@
         "material":"/roomMat",
 
         "pos":[0, 7, 3],
-        "rot":[0, 45, 0],
+        "rot":[0, 0, 0],
         "scale":[2, 2, 2]
     },
 
@@ -75,5 +75,15 @@
         "pos":[-10, 7, 3],
         "rot":[0, 0, 0],
         "scale":[2, 2, 2]
+    },
+
+    "7" : {
+        "type":"plight",
+        "nametag":"PointLight1",
+        
+        "brightness":20.0,
+        "color":[0, 1, 0],
+        "pos":[0, 5, 4],
+        "radius":20.0
     }
 }

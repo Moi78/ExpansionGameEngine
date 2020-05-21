@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "RD_PointLight.h"
 
-RD_PointLight::RD_PointLight(vec3f position, vec3f color, float brightness) {
+RD_PointLight::RD_PointLight(vec3f position, vec3f color, float brightness, float radius) {
 	m_pos = position;
 	m_brightness = brightness;
 	m_color = color;
+	m_radius = radius;
 
 	m_lightIndex = 0;
 }
@@ -43,4 +44,12 @@ vec3f RD_PointLight::GetPosition() {
 
 float RD_PointLight::GetBrightness() {
 	return m_brightness;
+}
+
+void RD_PointLight::SetLightRadius(float nRad) {
+	m_radius = nRad;
+}
+
+float RD_PointLight::GetLightRadius() {
+	return m_radius;
 }

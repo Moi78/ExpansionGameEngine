@@ -41,3 +41,18 @@ void EXP_StaticMesh::SetScale(vec3f nScale) {
 	EXP_Component::m_scale = nScale;
 	RD_Mesh::SetScale(nScale);
 }
+
+void EXP_StaticMesh::SetWorldPosition(vec3f nPos) {
+	EXP_Component::m_worldPos = nPos;
+	RD_Mesh::SetWorldPosition(nPos);
+}
+
+void EXP_StaticMesh::SetWorldRotation(vec3f nRot) {
+	EXP_Component::m_worldRot = nRot;
+	RD_Mesh::SetWorldRotation(nRot);
+}
+
+void EXP_StaticMesh::SetWorldScale(vec3f nScale) {
+	EXP_Component::m_worldScale = nScale;
+	RD_Mesh::SetWorldScale(nScale);
+}

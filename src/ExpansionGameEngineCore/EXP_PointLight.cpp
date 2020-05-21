@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EXP_PointLight.h"
 
-EXP_PointLight::EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f color, float brightness) : EXP_Component(pos, vec3f(), vec3f()), RD_PointLight(pos, color, brightness) {
+EXP_PointLight::EXP_PointLight(EXP_Game* gameinstance, vec3f pos, vec3f color, float brightness, float radius) : EXP_Component(pos, vec3f(), vec3f()), RD_PointLight(pos, color, brightness, radius) {
 	m_gameinstance = gameinstance;
 
 	RegisterLightToGame();
