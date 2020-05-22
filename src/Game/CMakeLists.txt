@@ -13,6 +13,9 @@ add_library(Game SHARED ${src})
 SET(GCC_ARGS "--std=c++17 -rdynamic -fPIC")
 add_definitions(${GCC_PERM})
 
+SET(PREPOC "-D GLM_ENABLE_EXPERIMENTAL")
+add_definitions(${PREPOC})
+
 target_link_libraries(Game BulldozerFileManager)
 target_link_libraries(Game ExpansionMath)
 target_link_libraries(Game ExpansionGameEngineCore)

@@ -193,6 +193,8 @@ void EXP_Game::InitGui() {
 }
 
 void EXP_Game::MainLoop() {
+    //std::cout << "Loop" << std::endl;
+    
 	m_rndr->ClearWindow(m_refreshColor);
 
     vec3f CamLoc;
@@ -241,6 +243,7 @@ void EXP_Game::StartCallbackThread() {
 	std::thread cbk_thread([](EXP_Game* game) {
 		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
 
+        std::cout << "Started Callback update thread" << std::endl;
 		while (!game->GetRenderer()->WantToClose()) {
 			lmt->start();
 
@@ -265,6 +268,7 @@ void EXP_Game::StartSoundEngineThread() {
 	std::thread snd_thread([](EXP_Game* game) {
 		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
 
+        std::cout << "Started Sound Engine thread" << std::endl;
 		while (!game->GetRenderer()->WantToClose()) {
 			lmt->start();
 
@@ -285,11 +289,14 @@ void EXP_Game::StartPhysicsEngineThread() {
 	std::thread phys_thread([](EXP_Game* game) {
 		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
 
+        std::cout << "Started Physics Engine thread" << std::endl;
 		while (!game->GetRenderer()->WantToClose()) {
 			lmt->start();
 
-			game->UpdatePhysics();
-
+			game->GetMainMutex()->lock();
+            game->UpdatePhysics(); //<-------------- Crash happen here
+			game->GetMainMutex()->unlock();
+            
 			lmt->stop();
 			lmt->WaitAll();
 		}
@@ -434,7 +441,8 @@ std::string EXP_Game::GetFilePathByRef(std::string ref) {
 }
 
 void EXP_Game::UpdatePhysics() {
-	m_physicsHandler->UpdateWorld();
+    if(m_physicsHandler)
+        m_physicsHandler->UpdateWorld();
 }
 
 EXP_PhysicsHandler* EXP_Game::GetPhysicsHandler() {

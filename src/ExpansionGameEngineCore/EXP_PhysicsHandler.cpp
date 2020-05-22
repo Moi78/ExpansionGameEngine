@@ -15,6 +15,8 @@ EXP_PhysicsHandler::~EXP_PhysicsHandler() {
 }
 
 void EXP_PhysicsHandler::InitWorld() {
+    std::cout << "Initializing dynamic world (Physics Engine)" << std::endl;
+    
 	m_CollisionConfig = new btDefaultCollisionConfiguration();
 
 	m_dispatcher = new btCollisionDispatcher(m_CollisionConfig);
@@ -26,10 +28,13 @@ void EXP_PhysicsHandler::InitWorld() {
 	m_dWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_overlappingPairCache, m_solver, m_CollisionConfig);
 
 	m_dWorld->setGravity(btVector3(m_gravity.getX(), m_gravity.getY(), m_gravity.getZ()));
+    
+    if(!m_dWorld)
+        std::cerr << "Error while creating dynamic world (Physics Engine)" << std::endl;
 }
 
 void EXP_PhysicsHandler::UpdateWorld() {
-	if(m_dWorld)
+	if(m_dWorld != nullptr)
 		m_dWorld->stepSimulation(m_updtTime, 10);
 }
 

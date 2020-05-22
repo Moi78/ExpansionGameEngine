@@ -13,6 +13,9 @@ add_library(RaindropRenderer SHARED ${SRC})
 SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17")
 add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
+SET(PREPOC "-D GLM_ENABLE_EXPERIMENTAL")
+add_definitions(${PREPOC})
+
 target_link_libraries(RaindropRenderer BulldozerFileManager)
 target_link_libraries(RaindropRenderer ExpansionMath)
 target_link_libraries(RaindropRenderer PhysicaSound)
