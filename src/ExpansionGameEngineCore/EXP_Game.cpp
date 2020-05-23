@@ -150,11 +150,6 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	for (auto act : m_actors) {
 		act->CallOnStart();
 	}
-
-	//Putting non-rendering work on separate threads
-	StartCallbackThread();
-	StartSoundEngineThread();
-	StartPhysicsEngineThread();
 }
 
 void EXP_Game::InitPhysicaSound() {
@@ -232,6 +227,11 @@ void EXP_Game::MainLoop() {
 		m_sigLevelFinalCleanup = false;
 	}
 
+	//Updating non-rendering relative things
+	ExecCallbackThread();
+	ExecSoundEngineThread();
+	ExecPhysicsEngineThread();
+
 	m_rndr->SwapWindow();
 }
 
@@ -239,73 +239,30 @@ std::mutex* EXP_Game::GetMainMutex() {
 	return &m_mutex;
 }
 
-void EXP_Game::StartCallbackThread() {
+void EXP_Game::ExecCallbackThread() {
 	std::thread cbk_thread([](EXP_Game* game) {
-		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
-
-        std::cout << "Started Callback update thread" << std::endl;
-		while (!game->GetRenderer()->WantToClose()) {
-			lmt->start();
-
 			game->UpdateCallbacks();
-
-			game->GetMainMutex()->lock();
 			game->UpdateLevel();
-			game->GetMainMutex()->unlock();
-
-			lmt->stop();
-			lmt->WaitAll();
-		}
-
-		delete lmt;
-
 	}, this);
 
-	cbk_thread.detach();
+	cbk_thread.join();
 }
 
-void EXP_Game::StartSoundEngineThread() {
+void EXP_Game::ExecSoundEngineThread() {
 	std::thread snd_thread([](EXP_Game* game) {
-		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
-
-        std::cout << "Started Sound Engine thread" << std::endl;
-		while (!game->GetRenderer()->WantToClose()) {
-			lmt->start();
-
 			game->UpdateSound();
 
-			lmt->stop();
-			lmt->WaitAll();
-		}
-
-		delete lmt;
-
 	}, this);
 
-	snd_thread.detach();
+	snd_thread.join();
 }
 
-void EXP_Game::StartPhysicsEngineThread() {
+void EXP_Game::ExecPhysicsEngineThread() {
 	std::thread phys_thread([](EXP_Game* game) {
-		RD_FrameLimiter* lmt = new RD_FrameLimiter(60);
-
-        std::cout << "Started Physics Engine thread" << std::endl;
-		while (!game->GetRenderer()->WantToClose()) {
-			lmt->start();
-
-			game->GetMainMutex()->lock();
-            game->UpdatePhysics(); //<-------------- Crash happen here
-			game->GetMainMutex()->unlock();
-            
-			lmt->stop();
-			lmt->WaitAll();
-		}
-
-		delete lmt;
-
+            game->UpdatePhysics();
 	}, this);
 
-	phys_thread.detach();
+	phys_thread.join();
 }
 
 void EXP_Game::UpdateLevel() {

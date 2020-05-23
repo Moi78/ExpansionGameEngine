@@ -97,9 +97,9 @@ public:
 	BD_MatDef FetchMaterialFromFile(std::string fileref);
 
 	void MainLoop();
-	void StartCallbackThread();
-	void StartSoundEngineThread();
-	void StartPhysicsEngineThread();
+	void ExecCallbackThread();
+	void ExecSoundEngineThread();
+	void ExecPhysicsEngineThread();
 	
 	void UpdateCallbacks();
 	void UpdateLevel();
