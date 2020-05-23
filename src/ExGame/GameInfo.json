@@ -1,10 +1,23 @@
 {
-    "RootEngineContentFolder":"Engine",
-    "RootGameContentFolder":"Content",
-    "GameBaseResolution":[1280, 720],
+    "windows" : {
+        "RootEngineContentFolder":"Engine",
+        "RootGameContentFolder":"Content",
+        "GameBaseResolution":[1280, 720],
 
-    "GameBin":"../x64/Debug/Game.dll",
+        "GameBin":"../x64/Debug/Game.dll",
 
-    "GameName":"Donut Mmh",
-    "StartupMap":"/Maps/demoMap.json"
+        "GameName":"Donut Mmh",
+        "StartupMap":"/Maps/demoMap.json"
+    },
+    
+    "linux" : {
+        "RootEngineContentFolder":"Engine",
+        "RootGameContentFolder":"Content",
+        "GameBaseResolution":[1280, 720],
+
+        "GameBin":"../Game/libGame.so",
+
+        "GameName":"Donut Mmh",
+        "StartupMap":"/Maps/demoMap.json"
+    }
 }

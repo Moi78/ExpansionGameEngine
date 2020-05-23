@@ -10,17 +10,18 @@
 		#define EXPGE_API __declspec(dllimport)
 	#endif
 	
-    #define WINPLATFORM true
-    
-    #include <json/json.h>
+    #define EXECPLATFORM "windows"
 #else
 
     #define EXPGE_API
-    #define WINPLATFORM false
-    
-    #include <jsoncpp/json/json.h>
-
+    #define EXECPLATFORM "linux"
 #endif //_WIN32
+
+#ifdef UBUNTU
+	#include <jsoncpp/json/json.h>
+#else
+	#include <json/json.h>
+#endif
 
 #ifdef _DEBUG
 #define RENDER_DBG false

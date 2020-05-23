@@ -106,15 +106,18 @@ BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 		return {}; //Returning void structure
 	}
 
-	std::string GameLib = root["GameBin"].asString();
+	//Moving "root" to platform corresponding GameInfo
+	Json::Value TargetRoot = root[EXECPLATFORM];
 
-	std::string engineFolder = root["RootEngineContentFolder"].asString();
-	std::string contentFolder = root["RootGameContentFolder"].asString();
-	std::string gameName = root["GameName"].asString();
+	std::string GameLib = TargetRoot["GameBin"].asString();
 
-	BD_Resolution res = {root["GameBaseResolution"][0].asInt(), root["GameBaseResolution"][1].asInt()};
+	std::string engineFolder = TargetRoot["RootEngineContentFolder"].asString();
+	std::string contentFolder = TargetRoot["RootGameContentFolder"].asString();
+	std::string gameName = TargetRoot["GameName"].asString();
 
-	std::string startupMap = root["StartupMap"].asString();
+	BD_Resolution res = { TargetRoot["GameBaseResolution"][0].asInt(), TargetRoot["GameBaseResolution"][1].asInt()};
+
+	std::string startupMap = TargetRoot["StartupMap"].asString();
 
 	BD_GameInfo gi = {};
 	gi.GameName = gameName;
