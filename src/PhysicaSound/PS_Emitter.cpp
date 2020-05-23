@@ -10,7 +10,8 @@ PS_Emitter::~PS_Emitter()
 
     m_samples.clear();
 
-    delete m_File;
+    if(m_File)
+        delete m_File;
 }
 
 PS_Emitter::PS_Emitter(vec3f position, vec3f velocity, float volume, float pitch, bool looping) : m_volume(volume), m_pitch(pitch), m_position(position), m_velocity(velocity), m_looping(looping) {

@@ -13,7 +13,13 @@ add_library(ExpansionGameEngineCore SHARED ${SRC})
 SET(GCC_PERM "-fpermissive --std=c++17 -pthread")
 add_definitions(${GCC_PERM})
 
-SET(PREPOC "-D GLM_ENABLE_EXPERIMENTAL")
+if(${BUILDTARGET} EQUAL "ubuntu")
+    set(UBUNTU "-D UBUNTU")
+else()
+    set(UBUNTU "")
+endif()
+
+SET(PREPOC "-D GLM_ENABLE_EXPERIMENTAL ${UBUNTU}")
 add_definitions(${PREPOC})
 
 find_package(Bullet REQUIRED)
