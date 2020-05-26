@@ -247,8 +247,8 @@ void EXP_Game::ProcessSignals() {
 
 void EXP_Game::ExecCallbackThread() {
 	std::thread cbk_thread([](EXP_Game* game) {
-			game->UpdateCallbacks();
-			game->UpdateLevel();
+        game->UpdateLevel();
+        game->UpdateCallbacks();
 	}, this);
 
 	cbk_thread.join();
@@ -475,7 +475,7 @@ void EXP_Game::UnloadCurrentMap() {
 
 	m_PlayingMap->UnloadMap();
 	
-	//Did this terribleness because openGL need to delete texture in the same thread
+	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.
 	m_sigClearMatMan = true;
 	m_sigLevelFinalCleanup = true;
