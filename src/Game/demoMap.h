@@ -10,6 +10,7 @@
 #include <EXP_Level.h>
 #include <EXP_MapLoader.h>
 #include <EXP_HotLoad.h>
+#include <EXP_InputHandler.h>
 
 #include <EXP_Camera.h>
 
@@ -17,9 +18,12 @@ class demoMap : public EXP_Level
 {
 public:
 	demoMap(EXP_Game*, EXP_MapLoader*);
+	~demoMap();
 
 	virtual void OnStart() override;
 	virtual void OnTick() override;
+
+	void KeyTest();
 
 private:
 	EXP_Game* m_game;
@@ -27,7 +31,7 @@ private:
 
 	EXP_Camera* cam;
 
-	vec3f rot;
+	EXP_KeyboardCallback* m_key;
 };
 
 EXPGE_LEVEL_HEADER(demoMap);

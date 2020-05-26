@@ -62,6 +62,7 @@ class EXP_KeyboardCallback;
 class EXP_HotLoad;
 class EXP_MapLoader;
 class EXP_Level;
+class EXP_InputHandler;
 
 class EXPGE_API EXP_Game
 {
@@ -88,6 +89,8 @@ public:
 
 	EXP_HotLoad* GetGameLib();
 
+	EXP_InputHandler* GetInputHandler();
+
 	void UnloadCurrentMap();
 	void LoadMap(std::string map);
 
@@ -104,8 +107,7 @@ public:
 	
 	void UpdateCallbacks();
 	void UpdateLevel();
-
-	std::mutex* GetMainMutex();
+	void ProcessSignals();
 
 	//Sounds
 	void UpdateSound();
@@ -131,35 +133,28 @@ private:
 
 	RaindropRenderer* m_rndr;
 	RD_MaterialLibrary* m_materialManager;
+	BD_MatDef m_def_mat;
+
+	vec3f m_refreshColor;
+	std::string m_gameName;
 
 	PSound* m_soundEngine;
 
 	BD_Resolution m_res;
 	BD_GameInfo m_gameinfo;
 
-	vec3f m_refreshColor;
-	std::string m_gameName;
-
-	BD_MatDef m_def_mat;
-
 	EXP_Camera* m_currentCamera;
 	PS_Listener* m_listener;
 
 	EXP_HotLoad* m_GameLib;
 
+	EXP_InputHandler* m_hinput;
+
 	//Signals
 	bool m_sigClearMatMan;
 	bool m_sigLevelFinalCleanup;
-
-	//Threading
-	std::mutex m_mutex;
-
 	//Physics
 	EXP_PhysicsHandler* m_physicsHandler;
-
-	//Callbacks
-	std::vector<EXP_KeyboardCallback*> m_kb_callbacks;
-
 	//Actors
 	std::vector<EXP_Actor*> m_actors;
 };

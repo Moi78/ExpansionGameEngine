@@ -9,6 +9,7 @@
 #include "EXP_HotLoad.h"
 #include "EXP_MapLoader.h"
 #include "EXP_Level.h"
+#include "EXP_InputHandler.h"
 
 EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
@@ -138,6 +139,7 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
     
 	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
 	m_materialManager = new RD_MaterialLibrary();
+	m_hinput = new EXP_InputHandler(m_rndr->GetGLFWwindow());
 
 	m_PlayingMap = new EXP_MapLoader(this);
 	m_PlayingMap->LoadMap(gameinfo.RootGameContentFolder + gameinfo.StartupMap);
@@ -217,6 +219,18 @@ void EXP_Game::MainLoop() {
 		m_currentCamera->UpdateCamera();
 	}
 
+	//Process other threads signals... what a terribleness
+	ProcessSignals();
+
+	//Updating non-rendering relative things
+	ExecCallbackThread();
+	ExecSoundEngineThread();
+	ExecPhysicsEngineThread();
+
+	m_rndr->SwapWindow();
+}
+
+void EXP_Game::ProcessSignals() {
 	if (m_sigClearMatMan) {
 		m_materialManager->ClearLibrary();
 
@@ -229,17 +243,6 @@ void EXP_Game::MainLoop() {
 
 		m_sigLevelFinalCleanup = false;
 	}
-
-	//Updating non-rendering relative things
-	ExecCallbackThread();
-	ExecSoundEngineThread();
-	ExecPhysicsEngineThread();
-
-	m_rndr->SwapWindow();
-}
-
-std::mutex* EXP_Game::GetMainMutex() {
-	return &m_mutex;
 }
 
 void EXP_Game::ExecCallbackThread() {
@@ -410,13 +413,17 @@ EXP_PhysicsHandler* EXP_Game::GetPhysicsHandler() {
 }
 
 void EXP_Game::RegisterKeyboardCallback(EXP_KeyboardCallback* callback) {
-	m_kb_callbacks.push_back(callback);
+	std::cout << "Registering Keyboard Callback" << std::endl;
+	m_hinput->RegisterKeyboardCallback(callback);
+}
+
+void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck) {
+	std::cout << "Unregistering Keyboard Callback" << std::endl;
+	m_hinput->UnregisterKeyboardCallback(kbcllbck);
 }
 
 void EXP_Game::UpdateCallbacks() {
-	for (auto cllbck : m_kb_callbacks) {
-		cllbck->UpdateCallback();
-	}
+	m_hinput->UpdateKeyboardInput();
 
 	for (auto act : m_actors) {
 		act->CallTick();
@@ -426,17 +433,6 @@ void EXP_Game::UpdateCallbacks() {
 
 void EXP_Game::RegisterActor(EXP_Actor* act) {
 	m_actors.push_back(act);
-}
-
-void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck) {
-	int index = GetElemIndex<EXP_KeyboardCallback*>(m_kb_callbacks, kbcllbck);
-
-	if (index != -1) {
-		m_kb_callbacks.erase(m_kb_callbacks.begin() + index);
-	}
-	else {
-		std::cerr << "ERROR: Element does not exists" << std::endl;
-	}
 }
 
 void EXP_Game::UnregisterMesh(RD_Mesh* mesh) {
@@ -488,4 +484,8 @@ void EXP_Game::UnloadCurrentMap() {
 void EXP_Game::LoadMap(std::string map) {
 	UnloadCurrentMap();
 	m_PlayingMap->LoadMap(m_gameinfo.RootGameContentFolder + map);
+}
+
+EXP_InputHandler* EXP_Game::GetInputHandler() {
+	return m_hinput;
 }
