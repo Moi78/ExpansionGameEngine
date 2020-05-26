@@ -31,13 +31,11 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Reduce RAM usage
  - [x] Impl. Shadows to Raindrop Renderer
    - [ ] Improve these (for instance, better PCF)
- - [ ] Limit CPU && GPU Overusage
-   - [x] CPU
-   - [ ] GPU
  - [ ] Fix Debug rendering (Combine forward rendering with deffered)
- - [ ] Rebuild point-lighting system (--> Lighting in volumes)
- - [ ] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
- - [ ] Fix window resize
+ - [x] Rebuild point-lighting system (--> Lighting in volumes)
+ - [x] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
+ - [x] Fix window resize
+ - [ ] Proprer input manager
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
