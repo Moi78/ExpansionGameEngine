@@ -13,7 +13,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Deffered rendering
  - [x] Cross-Platorm :
    - [x] Windows
-   - [x] Linux
+   - [ ] Linux
    - [ ] Console
      - [ ] Switch
      - [ ] PS4
@@ -27,7 +27,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
 
 ## TODO List :
 
- - [x] Check compatibility with linux (and make it compatible)
+ - [ ] Check compatibility with linux (and make it compatible)
  - [x] Reduce RAM usage
  - [x] Impl. Shadows to Raindrop Renderer
    - [ ] Improve these (for instance, better PCF)
