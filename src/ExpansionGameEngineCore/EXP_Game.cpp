@@ -192,9 +192,7 @@ void EXP_Game::InitGui() {
 
 }
 
-void EXP_Game::MainLoop() {
-    //std::cout << "Loop" << std::endl;
-    
+void EXP_Game::RenderScene() {
 	m_rndr->ClearWindow(m_refreshColor);
 
     vec3f CamLoc;
@@ -221,12 +219,9 @@ void EXP_Game::MainLoop() {
 
 	//Process other threads signals... what a terribleness
 	ProcessSignals();
+}
 
-	//Updating non-rendering relative things
-	ExecCallbackThread();
-	ExecSoundEngineThread();
-	ExecPhysicsEngineThread();
-
+void EXP_Game::EndFrame() {
 	m_rndr->SwapWindow();
 }
 
@@ -245,30 +240,9 @@ void EXP_Game::ProcessSignals() {
 	}
 }
 
-void EXP_Game::ExecCallbackThread() {
-	std::thread cbk_thread([](EXP_Game* game) {
-			game->UpdateCallbacks();
-			game->UpdateLevel();
-	}, this);
-
-	cbk_thread.join();
-}
-
-void EXP_Game::ExecSoundEngineThread() {
-	std::thread snd_thread([](EXP_Game* game) {
-			game->UpdateSound();
-
-	}, this);
-
-	snd_thread.join();
-}
-
-void EXP_Game::ExecPhysicsEngineThread() {
-	std::thread phys_thread([](EXP_Game* game) {
-            game->UpdatePhysics();
-	}, this);
-
-	phys_thread.join();
+void EXP_Game::ExecCallbacks() {
+	UpdateCallbacks();
+	UpdateLevel();
 }
 
 void EXP_Game::UpdateLevel() {

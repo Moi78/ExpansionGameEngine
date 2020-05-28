@@ -100,10 +100,9 @@ public:
 	BD_MatDef GetDefaultMaterial();
 	BD_MatDef FetchMaterialFromFile(std::string fileref);
 
-	void MainLoop();
-	void ExecCallbackThread();
-	void ExecSoundEngineThread();
-	void ExecPhysicsEngineThread();
+	void RenderScene();
+	void ExecCallbacks();
+	void EndFrame();
 	
 	void UpdateCallbacks();
 	void UpdateLevel();
