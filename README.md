@@ -13,7 +13,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Deffered rendering
  - [x] Cross-Platorm :
    - [x] Windows
-   - [ ] Linux
+   - [x] Linux
    - [ ] Console
      - [ ] Switch
      - [ ] PS4
@@ -27,7 +27,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
 
 ## TODO List :
 
- - [ ] Check compatibility with linux (and make it compatible)
+ - [x] Check compatibility with linux (and make it compatible)
  - [x] Reduce RAM usage
  - [x] Impl. Shadows to Raindrop Renderer
    - [ ] Improve these (for instance, better PCF)
@@ -36,6 +36,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
  - [x] Fix window resize
  - [ ] Proprer input manager
+ - [ ] Custom shader
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
