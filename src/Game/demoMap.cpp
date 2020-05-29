@@ -18,7 +18,7 @@ demoMap::~demoMap() {
 }
 
 void demoMap::OnStart() {
-	
+	m_game->GetRenderer()->DisableFeature(RendererFeature::Lighting);
 }
 
 void demoMap::OnTick() {

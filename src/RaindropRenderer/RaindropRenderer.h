@@ -116,6 +116,7 @@ public:
 	void EnableFeature(RendererFeature ftr);
 	void DisableFeature(RendererFeature ftr);
 	bool IsFeatureEnabled(RendererFeature ftr);
+	void SendFeaturesToShader(RD_ShaderLoader* shader);
 
 	void UpdatePointsLighting();
 

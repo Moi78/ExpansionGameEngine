@@ -19,7 +19,7 @@ uniform float AmbientStrength;
 uniform vec3 AmbientColor;
 
 //Point Light
-const int MAX_POINT_LIGHTS = 246;
+const int MAX_POINT_LIGHTS = 243;
 uniform vec3 LightPos[MAX_POINT_LIGHTS];
 uniform float LightBrightness[MAX_POINT_LIGHTS];
 uniform vec3 LightColor[MAX_POINT_LIGHTS];
@@ -33,6 +33,10 @@ uniform vec3 DirLightColor[10];
 uniform float DirLightBrightness[10];
 
 uniform vec3 CamPos;
+
+uniform bool ftr_lighting = true;
+uniform bool ftr_specular = true;
+uniform bool ftr_ambient = true;
 
 vec3 norm = normalize(texture(gNormal, UVcoords).rgb);
 vec3 FragPos = texture(gPos, UVcoords).rgb;
@@ -72,14 +76,16 @@ vec3 CalcPointLight(int lightIndex) {
 		float diffuse = max(0.0, dot(norm, LightDir)) / dist;
 
 		//Specular
-		vec3 specular = vec3(1.0, 1.0, 1.0);
+		vec3 specular = vec3(0.0, 0.0, 0.0);
 
-		vec3 reflectDir = reflect(-LightDir, norm);
+		if(ftr_specular) {
+			vec3 reflectDir = reflect(-LightDir, norm);
 
-		vec3 hwDir = normalize(LightDir + viewDir);
-		float spec = pow(max(0.0, dot(norm, hwDir)), SpecularExp);
+			vec3 hwDir = normalize(LightDir + viewDir);
+			float spec = pow(max(0.0, dot(norm, hwDir)), SpecularExp);
 
-		specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * Specular);
+			specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * Specular);
+		}
 
 		return attenuation * (diffuse + specular);
 	} else {
@@ -92,12 +98,14 @@ void main() {
 
 	float shadow = texture(ShadowPass, UVcoords).r;
 
-	for(int i = 0; i < nbrDirLight; i++) {
-		diffSpec += CalcDirLight(i) * shadow;
-	}
+	if(ftr_lighting) {
+		for(int i = 0; i < nbrDirLight; i++) {
+			diffSpec += CalcDirLight(i) * shadow;
+		}
 
-	for(int i = 0; i < nbrPointLight; i++) {
-		diffSpec += CalcPointLight(i);
+		for(int i = 0; i < nbrPointLight; i++) {
+			diffSpec += CalcPointLight(i);
+		}
 	}
 
 	vec3 ambient = AmbientColor * AmbientStrength;

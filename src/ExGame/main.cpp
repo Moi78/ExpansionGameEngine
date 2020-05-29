@@ -5,10 +5,6 @@
 #include <EXP_MapLoader.h>
 #include <EXP_HotLoad.h>
 
-void PhysicUpdt(EXP_Game* game) {
-	game->UpdatePhysics();
-}
-
 void SoundUpdt(EXP_Game* game) {
 	game->UpdateSound();
 }
@@ -23,8 +19,7 @@ int main(int argc, char* argv[]) {
 		game->RenderScene();
 		game->ExecCallbacks();
 
-		phys = std::thread(PhysicUpdt, game);
-		phys.join();
+		game->UpdatePhysics();
 
 		snd = std::thread(SoundUpdt, game);
 		snd.join();

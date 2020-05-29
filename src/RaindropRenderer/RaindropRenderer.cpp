@@ -94,7 +94,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 		exit(-1);
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -195,6 +195,9 @@ void RaindropRenderer::SetAmbientColor(vec3f nColor) {
 }
 
 void RaindropRenderer::UpdateAmbientLighting() {
+	if (!IsFeatureEnabled(RendererFeature::Ambient))
+		return;
+
 	m_CurrentShader->SetFloat("AmbientStrength", ambientStrength);
 	m_CurrentShader->SetVec3("AmbientColor", ambientColor);
 }
@@ -220,6 +223,9 @@ int RaindropRenderer::AppendDirLight(RD_DirLight* dirLight) {
 }
 
 void RaindropRenderer::UpdateDirLighting() {
+	if (!IsFeatureEnabled(RendererFeature::Lighting))
+		return;
+
 	for (int i = 0; i < m_DirLights.size(); i++) {
 		FillDirLightIndice(i);
 	}
@@ -228,6 +234,9 @@ void RaindropRenderer::UpdateDirLighting() {
 }
 
 void RaindropRenderer::FillDirLightIndice(int index) {
+	if (!IsFeatureEnabled(RendererFeature::Lighting))
+		return;
+
 	if (index > m_DirLights.size()) {
 		std::cerr << "Can't add this directionnal light : Index out of range." << std::endl;
 		return;
@@ -272,6 +281,9 @@ void RaindropRenderer::RenderDbg() {
 }
 
 void RaindropRenderer::UpdatePointsLighting() {
+	if (!IsFeatureEnabled(RendererFeature::Lighting))
+		return;
+
 	for (int i = 0; i < m_pt_lights.size(); i++) {
 		FillPtLightIndice(i);
 	}
@@ -343,6 +355,12 @@ bool RaindropRenderer::IsFeatureEnabled(RendererFeature ftr) {
 	return m_features_state[ftr];
 }
 
+void RaindropRenderer::SendFeaturesToShader(RD_ShaderLoader* shader) {
+	shader->SetBool(m_features_string[0], m_features_state[0]);
+	shader->SetBool(m_features_string[1], m_features_state[1]);
+	shader->SetBool(m_features_string[2], m_features_state[2]);
+}
+
 float RaindropRenderer::GetFramerate() {
 	return ((float) 1 / m_frmLmt->GetElapsedTime());
 }
@@ -372,6 +390,9 @@ void RaindropRenderer::SetAASampling(int nbs) {
 }
 
 void RaindropRenderer::RenderLightsDepth(vec3f camPos) {
+	if (!IsFeatureEnabled(RendererFeature::Lighting))
+		return;
+
 	for (auto light : m_DirLights) {
 		light->DepthRender(this, camPos);
 	}
@@ -469,25 +490,29 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	SwitchShader(m_gbuff_shader);
 	cam->UpdateCamera();
 
+	SendFeaturesToShader(m_CurrentShader);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glCullFace(GL_BACK);
 	
-	m_gbuff_shader->SetInt("NbrDirLights", m_DirLights.size());
+	if (IsFeatureEnabled(RendererFeature::Lighting)) {
+		m_gbuff_shader->SetInt("NbrDirLights", m_DirLights.size());
 
-	unsigned int texUnit = GL_TEXTURE10;
-	int i = 0;
+		unsigned int texUnit = GL_TEXTURE10;
+		int i = 0;
 
-	for (auto dlight : m_DirLights) {
-		glActiveTexture(texUnit);
-		glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
+		for (auto dlight : m_DirLights) {
+			glActiveTexture(texUnit);
+			glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
 
-		m_gbuff_shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
-		m_gbuff_shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
+			m_gbuff_shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
+			m_gbuff_shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
 
-		texUnit++;
-		i++;
+			texUnit++;
+			i++;
+		}
 	}
 
 	RenderMeshes();
@@ -504,6 +529,7 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	SwitchShader(m_light_shader);
+	SendFeaturesToShader(m_CurrentShader);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gAlbedo);

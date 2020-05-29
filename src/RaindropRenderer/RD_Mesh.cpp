@@ -70,8 +70,6 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	shader->useShader();
-
 	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
 
 	//Local transform
