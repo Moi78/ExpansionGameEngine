@@ -36,7 +36,8 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
  - [x] Fix window resize
  - [ ] Proprer input manager
- - [ ] Custom shader
+ - [ ] Custom shaders
+ - [ ] ExpansionMath Cleanup
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
