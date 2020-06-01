@@ -5,10 +5,6 @@
 #include <EXP_MapLoader.h>
 #include <EXP_HotLoad.h>
 
-void SoundUpdt(EXP_Game* game) {
-	game->UpdateSound();
-}
-
 int main(int argc, char* argv[]) {
 	EXP_Game* game = new EXP_Game("GameInfo.json");
 
@@ -20,9 +16,7 @@ int main(int argc, char* argv[]) {
 		game->ExecCallbacks();
 
 		game->UpdatePhysics();
-
-		snd = std::thread(SoundUpdt, game);
-		snd.join();
+		game->UpdateSound();
 
 		game->EndFrame();
 	}

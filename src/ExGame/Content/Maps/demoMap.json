@@ -1,6 +1,6 @@
 {
     "MapLevelCodeObjectName" : "demoMap",
-    "nodeCount" : 8,
+    "nodeCount" : 3,
 
     "0" : {
         "type":"mesh",
@@ -19,71 +19,16 @@
 
         "dir":[0.8, 0.3, -0.4],
         "color":[1.0, 1.0, 1.0],
-        "brightness":0
+        "brightness":1.0
     },
-
+    
     "2" : {
-        "type":"mesh",
-        "nameTag":"shaderBall1",
-        "ref":"/shaderBall",
-        "material":"/roomMat",
-
-        "pos":[0, 7, 3],
-        "rot":[0, 0, 0],
-        "scale":[2, 2, 2]
-    },
-
-    "3" : {
-        "type":"mesh",
-        "nameTag":"shaderBall1",
-        "ref":"/shaderBall",
-        "material":"/water",
-
-        "pos":[5, 7, 3],
-        "rot":[0, 0, 0],
-        "scale":[2, 2, 2]
-    },
-
-    "4" : {
-        "type":"mesh",
-        "nameTag":"shaderBall1",
-        "ref":"/shaderBall",
-        "material":"/wool",
-
-        "pos":[10, 7, 3],
-        "rot":[0, 0, 0],
-        "scale":[2, 2, 2]
-    },
-
-    "5" : {
-        "type":"mesh",
-        "nameTag":"shaderBall1",
-        "ref":"/shaderBall",
-        "material":"/terracota",
-
-        "pos":[-5, 7, 3],
-        "rot":[0, 0, 0],
-        "scale":[2, 2, 2]
-    },
-
-    "6" : {
-        "type":"mesh",
-        "nameTag":"shaderBall1",
-        "ref":"/shaderBall",
-        "material":"/metal",
-
-        "pos":[-10, 7, 3],
-        "rot":[0, 0, 0],
-        "scale":[2, 2, 2]
-    },
-
-    "7" : {
         "type":"plight",
-        "nametag":"PointLight1",
+        "nameTag":"point",
         
-        "brightness":20.0,
-        "color":[0, 1, 0],
-        "pos":[0, 5, 4],
-        "radius":20.0
+        "brightness":16.0,
+        "radius":50.0,
+        "color":[1, 1, 1],
+        "pos":[0, 0, 8]
     }
 }

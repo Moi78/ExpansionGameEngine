@@ -11,22 +11,27 @@ demoMap::demoMap(EXP_Game* game, EXP_MapLoader* mload) : EXP_Level(true, true) {
 	cam->Use();
 
 	m_key = new EXP_KeyboardCallback(m_game, CL_VDFUNCPTR(demoMap::KeyTest), GLFW_KEY_H);
+	m_mfwd = new EXP_KeyboardCallback(m_game, CL_VDFUNCPTR(demoMap::MoveForward), GLFW_KEY_Z);
 }
 
 demoMap::~demoMap() {
 	delete m_key;
+	delete m_mfwd;
 }
 
 void demoMap::OnStart() {
-	m_game->GetRenderer()->DisableFeature(RendererFeature::Lighting);
+	m_game->GetInputHandler()->CaptureCursor(true);
 }
 
 void demoMap::OnTick() {
-	if (glfwGetKey(m_game->GetRenderer()->GetGLFWwindow(), GLFW_KEY_W) == GLFW_PRESS) {
-		m_game->UnloadCurrentMap();
-	}
+	cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
+	cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 }
 
 void demoMap::KeyTest() {
-	std::cout << "Hello world" << std::endl;
+	m_game->UnloadCurrentMap();
+}
+
+void demoMap::MoveForward() {
+	cam->Translate(cam->GetForwardVector());
 }

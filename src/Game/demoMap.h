@@ -24,6 +24,7 @@ public:
 	virtual void OnTick() override;
 
 	void KeyTest();
+	void MoveForward();
 
 private:
 	EXP_Game* m_game;
@@ -32,6 +33,7 @@ private:
 	EXP_Camera* cam;
 
 	EXP_KeyboardCallback* m_key;
+	EXP_KeyboardCallback* m_mfwd;
 };
 
 EXPGE_LEVEL_HEADER(demoMap);

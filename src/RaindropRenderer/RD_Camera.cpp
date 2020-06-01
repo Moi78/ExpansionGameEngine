@@ -9,8 +9,8 @@ RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, 
 	m_yawPitchRoll = YawPitchRoll;
 
 	m_subject.setX(cos(glm::radians(YawPitchRoll.getX())) * cos(glm::radians(YawPitchRoll.getY())));
-	m_subject.setZ(sin(glm::radians(YawPitchRoll.getY())));
-	m_subject.setY(sin(glm::radians(YawPitchRoll.getX())) * cos(glm::radians(YawPitchRoll.getY())));
+	m_subject.setY(sin(glm::radians(YawPitchRoll.getY())));
+	m_subject.setZ(sin(glm::radians(YawPitchRoll.getX())) * cos(glm::radians(YawPitchRoll.getY())));
 
 	FOV = FOVinDegrees;
 	m_near = CamNear;
@@ -98,7 +98,7 @@ vec3f RD_Camera::GetLocation() {
 vec3f RD_Camera::GetForwardVector() {
 	glm::vec3 camTarg = glm::vec3(m_subject.getX(), m_subject.getY(), m_subject.getZ());
 
-	glm::vec3 fwd = glm::normalize(glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()) - camTarg);
+	glm::vec3 fwd = glm::normalize(camTarg);
 
 	return vec3f(fwd.x, fwd.y, fwd.z);
 }

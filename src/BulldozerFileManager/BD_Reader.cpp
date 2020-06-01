@@ -19,6 +19,11 @@ void BD_Reader::ClearAll() {
 }
 
 void BD_Reader::ReadMSHFile(std::string file) {
+	if (!std::filesystem::exists(file)) {
+		const wchar_t* f = std::wstring(file.begin(), file.end()).c_str();
+		dispErrorMessageBox(f);
+	}
+
 	//Opening bin file
 	std::ifstream bFile;
 	bFile.open(file.c_str(), std::ios::binary);
@@ -37,11 +42,11 @@ void BD_Reader::ReadMSHFile(std::string file) {
 	//Reading vertices
 	bFile.read(reinterpret_cast<char*>(&vSize), sizeof(int)); //Reading Size
 
-	vec3d temp(0.0, 0.0, 0.0); //Temp variable
-	vec2d tempUV(0.0, 0.0); //Temp variable for UV coords
+	vec3f temp(0.0, 0.0, 0.0); //Temp variable
+	vec2f tempUV(0.0, 0.0); //Temp variable for UV coords
 
 	for (int i = 0; i < vSize; i++) {								  //Reading
-		bFile.read(reinterpret_cast<char*>(&temp), sizeof(vec3d));	  //Values
+		bFile.read(reinterpret_cast<char*>(&temp), sizeof(vec3f));	  //Values
 		mVertices.push_back(temp);									  //From file
 	}
 
@@ -58,10 +63,10 @@ void BD_Reader::ReadMSHFile(std::string file) {
 	//Reading normals
 	bFile.read(reinterpret_cast<char*>(&nSize), sizeof(int)); //Same pattern
 
-	temp = vec3d(0.0f, 0.0f, 0.0f);
+	temp = vec3f(0.0f, 0.0f, 0.0f);
 
 	for (int i = 0; i < nSize; i++) {
-		bFile.read(reinterpret_cast<char*>(&temp), sizeof(vec3d));
+		bFile.read(reinterpret_cast<char*>(&temp), sizeof(vec3f));
 		mNormal.push_back(temp);
 	}
 
@@ -69,7 +74,7 @@ void BD_Reader::ReadMSHFile(std::string file) {
 	bFile.read(reinterpret_cast<char*>(&uvSize), sizeof(int)); //Same pattern
 
 	for (int i = 0; i < uvSize; i++) {
-		bFile.read(reinterpret_cast<char*>(&tempUV), sizeof(vec2d));
+		bFile.read(reinterpret_cast<char*>(&tempUV), sizeof(vec2f));
 		mUVcoord.push_back(tempUV);
 	}
 
@@ -91,7 +96,7 @@ int BD_Reader::GetIndiceByIndex(int index) {
 	return mIndices[index];
 }
 
-vec3d BD_Reader::GetVertexByIndex(int index) {
+vec3f BD_Reader::GetVertexByIndex(int index) {
 	//Error check
 	if (index > mVertices.size()) {
 		dispErrorMessageBox(TEXT("Index out of range. See console for details."));
@@ -101,7 +106,7 @@ vec3d BD_Reader::GetVertexByIndex(int index) {
 	return mVertices[index];
 }
 
-vec3d BD_Reader::GetNormalByIndex(int index) {
+vec3f BD_Reader::GetNormalByIndex(int index) {
 	//Error check
 	if (index > mNormal.size()) {
 		dispErrorMessageBox(TEXT("Index out of range. See console for details."));
@@ -111,7 +116,7 @@ vec3d BD_Reader::GetNormalByIndex(int index) {
 	return mNormal[index];
 }
 
-vec2d BD_Reader::GetUVcoordByIndex(int index) {
+vec2f BD_Reader::GetUVcoordByIndex(int index) {
 	//Error check
 	if (index > mUVcoord.size()) {
 		dispErrorMessageBox(TEXT("Index out of range. See console for details."));

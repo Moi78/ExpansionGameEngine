@@ -17,6 +17,8 @@ RD_Mesh::RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale
 	m_worldPos = position;
 	m_worldRot = rotation;
 	m_worldScale = scale;
+
+	Update();
 }
 
 RD_Mesh::~RD_Mesh() {
@@ -34,7 +36,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	reader->ReadMSHFile(filepath);
 
 	for (int i = 0; i < reader->GetVerticesCount(); i++) {
-		m_vertices.push_back(reader->GetVertexByIndex(i).GetFloat());
+		m_vertices.push_back(reader->GetVertexByIndex(i));
 	}
 
 	for (int i = 0; i < reader->GetIndicesCount(); i++) {
@@ -42,11 +44,11 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	}
 
 	for (int i = 0; i < reader->GetNormalCount(); i++) {
-		m_normals.push_back(reader->GetNormalByIndex(i).GetFloat());
+		m_normals.push_back(reader->GetNormalByIndex(i));
 	}
 
 	for (int i = 0; i < reader->GetUVcoordCount(); i++) {
-		m_uv.push_back(reader->GetUVcoordByIndex(i).GetFloat());
+		m_uv.push_back(reader->GetUVcoordByIndex(i));
 	}
 
 	Bufferize();
@@ -70,48 +72,7 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
-
-	//Local transform
-	glm::mat4 translate = glm::mat4(1.0f);
-	glm::mat4 scale = glm::mat4(1.0f);
-	glm::mat4 rotation = glm::mat4(1.0f);
-
-	//Position
-	translate = glm::translate(translate, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
-
-	//Scale
-	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
-
-	//Rotation
-	glm::quat rot(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ()));
-	rotation = glm::toMat4(rot);
-
-	mdl = translate * rotation * scale;
-
-	//World Transform
-	glm::mat4 wmdl = glm::mat4(1.0f);
-	glm::mat4 wtranslate = glm::mat4(1.0f);
-	glm::mat4 wscale = glm::mat4(1.0f);
-	glm::mat4 wrotation = glm::mat4(1.0f);
-
-	//Rotation
-	glm::quat wrot(glm::vec3(m_worldRot.getX(), m_worldRot.getY(), m_worldRot.getZ()));
-	wrotation *= glm::toMat4(wrot);
-
-	//Scale
-	wscale = glm::scale(wscale, glm::vec3(m_worldScale.getX(), m_worldScale.getY(), m_worldScale.getZ()));
-
-	//Position
-	wtranslate = glm::translate(wtranslate, glm::vec3(m_worldPos.getX(), m_worldPos.getY(), m_worldPos.getZ()));
-
-	//World model matrix
-	wmdl = wtranslate * wrotation * wscale;
-	
-	//Final mat
-	mdl = wmdl * mdl;
-
-	shader->SetMatrix("model", mdl);
+	shader->SetMatrix("model", m_mdl);
 
 	m_mat->BindMaterial(shader);
 
@@ -123,23 +84,7 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
 	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
 
-	glm::mat4 translate = glm::mat4(1.0f);
-	glm::mat4 scale = glm::mat4(1.0f);
-	glm::mat4 rotation = glm::mat4(1.0f);
-
-	//Position
-	translate = glm::translate(translate, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
-
-	//Scale
-	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
-
-	//Rotation
-	rotation = glm::rotate(rotation, glm::radians(m_rotation.getX()), glm::vec3(1.0f, 0.0f, 0.0f));
-	rotation = glm::rotate(rotation, glm::radians(m_rotation.getY()), glm::vec3(0.0f, 1.0f, 0.0f));
-	rotation = glm::rotate(rotation, glm::radians(m_rotation.getZ()), glm::vec3(0.0f, 0.0f, 1.0f));
-
-	mdl = translate * scale * rotation;
-	shadowShader->SetMatrix("model", mdl);
+	shadowShader->SetMatrix("model", m_mdl);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
@@ -196,26 +141,32 @@ void RD_Mesh::Bufferize() {
 
 void RD_Mesh::addRotation(vec3f rotation) {
 	m_rotation = m_rotation + rotation;
+	Update();
 }
 
 void RD_Mesh::addTranslation(vec3f translation) {
 	m_position = m_position + translation;
+	Update();
 }
 
 void RD_Mesh::addScale(vec3f scale) {
 	m_scale = m_scale + scale;
+	Update();
 }
 
 void RD_Mesh::SetRotation(vec3f nRotation) {
 	m_rotation = nRotation;
+	Update();
 }
 
 void RD_Mesh::SetPosition(vec3f nPos) {
 	m_position = nPos;
+	Update();
 }
 
 void RD_Mesh::SetScale(vec3f nScale) {
 	m_scale = nScale;
+	Update();
 }
 
 vec3f RD_Mesh::GetLocation() {
@@ -224,12 +175,58 @@ vec3f RD_Mesh::GetLocation() {
 
 void RD_Mesh::SetWorldPosition(vec3f nPos) {
 	m_worldPos = nPos;
+	Update();
 }
 
 void RD_Mesh::SetWorldRotation(vec3f nRot) {
 	m_worldRot = nRot;
+	Update();
 }
 
 void RD_Mesh::SetWorldScale(vec3f nScale) {
 	m_worldScale = nScale;
+	Update();
+}
+
+void RD_Mesh::Update() {
+	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
+
+//Local transform
+	glm::mat4 translate = glm::mat4(1.0f);
+	glm::mat4 scale = glm::mat4(1.0f);
+	glm::mat4 rotation = glm::mat4(1.0f);
+
+	//Position
+	translate = glm::translate(translate, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
+
+	//Scale
+	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+
+	//Rotation
+	glm::quat rot(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ()));
+	rotation = glm::toMat4(rot);
+
+	mdl = translate * rotation * scale;
+
+	//World Transform
+	glm::mat4 wmdl = glm::mat4(1.0f);
+	glm::mat4 wtranslate = glm::mat4(1.0f);
+	glm::mat4 wscale = glm::mat4(1.0f);
+	glm::mat4 wrotation = glm::mat4(1.0f);
+
+	//Rotation
+	glm::quat wrot(glm::vec3(m_worldRot.getX(), m_worldRot.getY(), m_worldRot.getZ()));
+	wrotation *= glm::toMat4(wrot);
+
+	//Scale
+	wscale = glm::scale(wscale, glm::vec3(m_worldScale.getX(), m_worldScale.getY(), m_worldScale.getZ()));
+
+	//Position
+	wtranslate = glm::translate(wtranslate, glm::vec3(m_worldPos.getX(), m_worldPos.getY(), m_worldPos.getZ()));
+
+	//World model matrix
+	wmdl = wtranslate * wrotation * wscale;
+
+	//Final mat
+	m_mdl = wmdl * mdl;
 }

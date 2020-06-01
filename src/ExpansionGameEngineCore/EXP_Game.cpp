@@ -243,6 +243,8 @@ void EXP_Game::ProcessSignals() {
 void EXP_Game::ExecCallbacks() {
 	UpdateCallbacks();
 	UpdateLevel();
+
+	m_hinput->ResetPointer();
 }
 
 void EXP_Game::UpdateLevel() {

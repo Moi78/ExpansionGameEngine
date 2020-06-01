@@ -59,6 +59,7 @@ public:
 	
 private:
 	void Bufferize();
+	void Update();
 
 	unsigned int VAO, VBO, EBO;
 
@@ -80,6 +81,8 @@ private:
 	vec3f m_worldPos;
 	vec3f m_worldRot;
 	vec3f m_worldScale;
+
+	glm::mat4 m_mdl;
 };
 
 #endif

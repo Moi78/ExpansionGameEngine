@@ -34,20 +34,20 @@ public:
 	BD_Writer();
 	~BD_Writer();
 
-	void AppendVertex(vec3d vertex);
-	void AppendNormal(vec3d normal);
+	void AppendVertex(vec3f vertex);
+	void AppendNormal(vec3f normal);
 	void AppendIndices(int indice);
-	void AppendUVcoord(vec2d uv);
+	void AppendUVcoord(vec2f uv);
 
 	void ToBinary(std::string filepath, std::string filename);
 
 	void ClearWriter();
 
 private:
-	std::vector<vec3d> m_vertices;
+	std::vector<vec3f> m_vertices;
 	std::vector<int> m_indices;
-	std::vector<vec3d> m_normals;
-	std::vector<vec2d> m_uv_coord;
+	std::vector<vec3f> m_normals;
+	std::vector<vec2f> m_uv_coord;
 };
 
 #endif

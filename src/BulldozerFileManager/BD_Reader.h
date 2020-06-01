@@ -27,6 +27,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <filesystem>
 
 class BULLDOZERFILEMANAGER_API BD_Reader
 {
@@ -37,9 +38,9 @@ public:
 	void ReadMSHFile(std::string);
 
 	int GetIndiceByIndex(int);
-	vec3d GetVertexByIndex(int);
-	vec3d GetNormalByIndex(int);
-	vec2d GetUVcoordByIndex(int);
+	vec3f GetVertexByIndex(int);
+	vec3f GetNormalByIndex(int);
+	vec2f GetUVcoordByIndex(int);
 
 	int GetIndicesCount();
 	int GetVerticesCount();
@@ -50,9 +51,9 @@ public:
 
 private:
 	std::vector<int> mIndices;
-	std::vector<vec3d> mVertices;
-	std::vector<vec3d> mNormal;
-	std::vector<vec2d> mUVcoord;
+	std::vector<vec3f> mVertices;
+	std::vector<vec3f> mNormal;
+	std::vector<vec2f> mUVcoord;
 
 	int icount;
 	int vcount;

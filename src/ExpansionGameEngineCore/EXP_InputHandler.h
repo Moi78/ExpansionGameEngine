@@ -21,14 +21,18 @@ public:
 	~EXP_InputHandler();
 
 	void RegisterKeyboardCallback(EXP_KeyboardCallback*);
-
 	void UnregisterKeyboardCallback(EXP_KeyboardCallback*);
 
 	void CaptureCursor(bool state);
 	void UpdateKeyboardInput();
 
+	double GetMouseXaxis();
+	double GetMouseYaxis();
+	void ResetPointer();
+
 private:
 	GLFWwindow* m_win;
+	bool m_curHidden;
 
 	//Callbacks
 	std::vector<EXP_KeyboardCallback*> m_kb_callbacks;

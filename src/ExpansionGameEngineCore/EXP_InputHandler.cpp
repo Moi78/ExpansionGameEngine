@@ -3,6 +3,11 @@
 
 EXP_InputHandler::EXP_InputHandler(GLFWwindow* win) {
 	m_win = win;
+	m_curHidden = false;
+
+	/*if (glfwRawMouseMotionSupported()) {
+		glfwSetInputMode(win, GLFW_RAW_MOUSE_MOTION, GL_TRUE);
+	}*/
 }
 
 EXP_InputHandler::~EXP_InputHandler() {
@@ -31,10 +36,32 @@ void EXP_InputHandler::CaptureCursor(bool state) {
 	else {
 		glfwSetInputMode(m_win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
+
+	m_curHidden = state;
 }
 
 void EXP_InputHandler::UpdateKeyboardInput() {
 	for (auto cllbck : m_kb_callbacks) {
 		cllbck->UpdateCallback();
+	}
+}
+
+double EXP_InputHandler::GetMouseXaxis() {
+	double xaxis;
+	glfwGetCursorPos(m_win, &xaxis, NULL);
+
+	return xaxis;
+}
+
+double EXP_InputHandler::GetMouseYaxis() {
+	double yaxis;
+	glfwGetCursorPos(m_win, NULL, &yaxis);
+
+	return yaxis;
+}
+
+void EXP_InputHandler::ResetPointer() {
+	if (m_curHidden) {
+		glfwSetCursorPos(m_win, 0, 0);
 	}
 }
