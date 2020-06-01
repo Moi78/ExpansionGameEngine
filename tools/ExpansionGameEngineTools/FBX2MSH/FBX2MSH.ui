@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FBX2MSHClass</class>
+ <widget class="QWidget" name="FBX2MSHClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>379</width>
+    <height>164</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>379</width>
+    <height>164</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>379</width>
+    <height>164</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>FBX2MSH</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="3" column="2" colspan="2">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Dest file :</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="parcSrc">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="src"/>
+     </item>
+     <item row="2" column="0" colspan="3">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Options</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="opt_Trig">
+            <property name="text">
+             <string>Triangulate Mesh</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Source file :</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="dest"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="ParcDest">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="3">
+      <widget class="QPushButton" name="export_btn">
+       <property name="text">
+        <string>Export</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="FBX2MSH.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>parcSrc</sender>
+   <signal>clicked()</signal>
+   <receiver>FBX2MSHClass</receiver>
+   <slot>ParcSrc()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>312</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ParcDest</sender>
+   <signal>clicked()</signal>
+   <receiver>FBX2MSHClass</receiver>
+   <slot>ParcDest()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>332</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>export_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>FBX2MSHClass</receiver>
+   <slot>Export()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>317</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>ParcSrc()</slot>
+  <slot>ParcDest()</slot>
+  <slot>Export()</slot>
+ </slots>
+</ui>
