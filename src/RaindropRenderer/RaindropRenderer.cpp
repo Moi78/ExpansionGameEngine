@@ -24,11 +24,10 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_shadowShader = new RD_ShaderLoader();
 	m_shadowShader->compileShaderFromFile("Engine/Shaders/glsl/Shadow.vert", "Engine/Shaders/glsl/Shadow.frag");
 
-	m_gbuff_shader = new RD_ShaderLoader();
-	m_gbuff_shader->compileShaderFromFile("Engine/Shaders/glsl/Gshad.vert", "Engine/Shaders/glsl/Gshad.frag");
-
 	m_light_shader = new RD_ShaderLoader();
 	m_light_shader->compileShaderFromFile("Engine/Shaders/glsl/Light.vert", "Engine/Shaders/glsl/Light.frag");
+
+	m_CurrentShader = m_light_shader;
 
 	m_defTex = new RD_Texture();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
@@ -36,22 +35,12 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_blankTexture = new RD_Texture();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
-	RD_Texture* spec = new RD_Texture();
-	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
-
-	m_mdef = {};
-	m_mdef.BaseColor = m_defTex->GetTextureID();
-	m_mdef.Specular = spec->GetTextureID();
-	m_mdef.Shininess = 2.0f;
-
-	delete spec;
-
 	if (RENDER_DEBUG_ENABLED) {
-		m_DBG_light_mdl = new RD_Mesh(m_mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
+		/*m_DBG_light_mdl = new RD_Mesh(m_mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
 		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
 
 		m_DBG_sound_emitter_mdl = new RD_Mesh(m_mdef, vec3f(), vec3f(), vec3f(0.2f, 0.2f, 0.2f));
-		m_DBG_sound_emitter_mdl->loadMesh("Engine/Meshes/snd_emitter.msh");
+		m_DBG_sound_emitter_mdl->loadMesh("Engine/Meshes/snd_emitter.msh");*/
 	}
 
 	ambientStrength = 1.0f;
@@ -60,8 +49,6 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	CreateGbuff();
 
 	m_quad = new RD_Quad();
-
-	m_CurrentShader = m_gbuff_shader;
 
 	InitGUI();
 }
@@ -74,13 +61,12 @@ RaindropRenderer::~RaindropRenderer() {
 	m_guis.clear();
 	m_meshes.clear();
 
-	delete m_DBG_light_mdl;
-	delete m_DBG_sound_emitter_mdl;
+	//delete m_DBG_light_mdl;
+	//delete m_DBG_sound_emitter_mdl;
 
 	delete m_defTex;
 
 	delete m_shadowShader;
-	delete m_gbuff_shader;
 	delete m_quad;
 }
 
@@ -270,9 +256,9 @@ void RaindropRenderer::RenderDbg() {
 		for (int i = 0; i < m_pt_lights.size(); i++) {
 			//mdef.Color = m_pt_lights[i]->GetColor();
 
-			m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
+			//m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
 			//m_DBG_light_mdl->UpdateMaterial(&mdef);
-			m_DBG_light_mdl->render(m_CurrentShader, RenderMode::Wireframe);
+			//m_DBG_light_mdl->render(RenderMode::Wireframe);
 		}
 
 		if(rEnableLighting)
@@ -403,9 +389,30 @@ void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
 	m_meshes.push_back(mesh);
 }
 
-void RaindropRenderer::RenderMeshes() {
+void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
 	for (auto m : m_meshes) {
-		m->render(m_CurrentShader);
+		RD_ShaderLoader* shader = m->GetMaterial()->GetShader();
+		shader->useShader();
+
+		if (IsFeatureEnabled(RendererFeature::Lighting)) {
+			shader->SetInt("NbrDirLights", m_DirLights.size());
+
+			unsigned int texUnit = GL_TEXTURE0;
+			int i = 0;
+
+			for (auto dlight : m_DirLights) {
+				glActiveTexture(texUnit);
+				glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
+
+				shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
+				shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
+
+				texUnit++;
+				i++;
+			}
+		}
+
+		m->render(cam);
 	}
 }
 
@@ -487,42 +494,15 @@ void RaindropRenderer::CreateGbuff() {
 }
 
 void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
-	SwitchShader(m_gbuff_shader);
-	cam->UpdateCamera();
-
-	SendFeaturesToShader(m_CurrentShader);
-
 	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glCullFace(GL_BACK);
-	
-	if (IsFeatureEnabled(RendererFeature::Lighting)) {
-		m_gbuff_shader->SetInt("NbrDirLights", m_DirLights.size());
 
-		unsigned int texUnit = GL_TEXTURE10;
-		int i = 0;
-
-		for (auto dlight : m_DirLights) {
-			glActiveTexture(texUnit);
-			glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
-
-			m_gbuff_shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
-			m_gbuff_shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
-
-			texUnit++;
-			i++;
-		}
-	}
-
-	RenderMeshes();
+	RenderMeshes(cam);
 
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-RD_ShaderLoader* RaindropRenderer::GetGShader() {
-	return m_gbuff_shader;
 }
 
 void RaindropRenderer::RenderLightPass(vec3f CamPos) {
@@ -652,6 +632,30 @@ void RaindropRenderer::EmptyFramebufferGarbageCollector() {
 	for (auto fbo : m_framebufferGarbageCollector) {
 		glDeleteFramebuffers(1, &fbo);
 	}
+}
+
+RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
+	if (!std::filesystem::exists(ref)) {
+		std::cerr << "Shader file " << ref << " does not exist." << std::endl;
+		return nullptr;
+	}
+
+	BD_MatCustomShaderRead mread(ref);
+	std::string fcode = mread.GetShaderCode();
+	std::string vcode = getFileData("Engine/Shaders/glsl/Gshad.vert");
+
+	RD_ShaderLoader* shader = new RD_ShaderLoader();
+	shader->CompileShaderFromCode(vcode, fcode);
+
+	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader);
+	for (int i = 0; i < mread.GetTextureCount(); i++) {
+		RD_Texture tex = RD_Texture();
+		tex.LoadTexture(mread.GetTexturePath(i));
+
+		shdmat->AddTexture(mread.GetTextureParamName(i), tex.GetTextureID());
+	}
+
+	return shdmat;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------

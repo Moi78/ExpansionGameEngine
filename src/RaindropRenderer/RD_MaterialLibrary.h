@@ -16,15 +16,15 @@ public:
 	RD_MaterialLibrary();
 	~RD_MaterialLibrary();
 
-	void AddMaterialToLib(BD_MatDef mat, std::string name);
+	void AddMaterialToLib(RD_ShaderMaterial* mat, std::string name);
 	void RemoveMaterialFromLib(std::string matName);
 	void ClearLibrary();
 
 	bool DoMaterialExists(std::string nameDenominator);
-	BD_MatDef GetMaterialByName(std::string nameDenominator);
+	RD_ShaderMaterial* GetMaterialByName(std::string nameDenominator);
 
 private:
-	std::vector<std::pair<std::string, BD_MatDef>> m_materials;
+	std::vector<std::pair<std::string, RD_ShaderMaterial*>> m_materials;
 };
 
 #endif

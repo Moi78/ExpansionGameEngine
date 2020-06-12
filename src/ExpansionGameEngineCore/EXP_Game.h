@@ -97,8 +97,6 @@ public:
 	//Rendering
 	RaindropRenderer* GetRenderer();
 	vec3f GetRefreshColor();
-	BD_MatDef GetDefaultMaterial();
-	BD_MatDef FetchMaterialFromFile(std::string fileref);
 
 	void RenderScene();
 	void ExecCallbacks();
@@ -132,7 +130,6 @@ private:
 
 	RaindropRenderer* m_rndr;
 	RD_MaterialLibrary* m_materialManager;
-	BD_MatDef m_def_mat;
 
 	vec3f m_refreshColor;
 	std::string m_gameName;

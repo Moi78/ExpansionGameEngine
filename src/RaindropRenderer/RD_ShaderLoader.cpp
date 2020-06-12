@@ -79,28 +79,69 @@ void RD_ShaderLoader::compileShaderFromFile(std::string vertexShaderFile, std::s
 	glDeleteShader(fragmentShader);
 }
 
-std::string RD_ShaderLoader::getFileData(std::string filePath) {
-	std::ifstream file;
-	file.open(filePath);
+void RD_ShaderLoader::CompileShaderFromCode(std::string vertexCode, std::string fragmentCode) {
+	//Common variables
+	const char* c_vertexShaderData;
+	const char* c_fragmentShaderData;
 
-	if (!file) {
-		dispErrorMessageBox(TEXT("File cannot be opened. \"\" will be returned."));
-		return "";
+	unsigned int vertexShader;
+	unsigned int fragmentShader;
+
+	int success;
+	char infoLog[512];
+
+	//Variable Initialization
+	c_vertexShaderData = vertexCode.c_str();
+	c_fragmentShaderData = fragmentCode.c_str();
+
+	//Compiling vertex shader
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+	glShaderSource(vertexShader, 1, &c_vertexShaderData, NULL);
+	glCompileShader(vertexShader);
+
+	//Get compiling error
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		dispErrorMessageBox(TEXT("Vertex shader error, see console."));
+		std::cerr << "GLSL Compile Error (Vertex shader) : " << infoLog << std::endl;
 	}
 
-	std::string temp;
+	//Compiling fragment shader
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-	std::string fileData = "";
+	glShaderSource(fragmentShader, 1, &c_fragmentShaderData, NULL);
+	glCompileShader(fragmentShader);
 
-	while (!file.eof()) {
-		std::getline(file, temp);
-		fileData.append(temp + "\n");
+	//Get compiling error
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		dispErrorMessageBox(TEXT("Fragment shader error, see console."));
+		std::cerr << "GLSL Compile Error (Fragment shader) : " << infoLog << std::endl;
 	}
 
-	file.close();
+	//Creating && Linking program
+	m_program_id = glCreateProgram();
+	//Linking
+	glAttachShader(m_program_id, vertexShader);
+	glAttachShader(m_program_id, fragmentShader);
+	glLinkProgram(m_program_id);
 
-	return fileData;
+	//Get linking errors
+	glGetProgramiv(m_program_id, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(m_program_id, 512, NULL, infoLog);
+		dispErrorMessageBox(TEXT("Error while linking program, see console."));
+		std::cerr << "GLSL Linking Error : " << infoLog << std::endl;
+	}
+
+	//Delete shaders
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 }
+
 
 void RD_ShaderLoader::useShader() {
 	glUseProgram(m_program_id);

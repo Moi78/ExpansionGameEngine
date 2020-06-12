@@ -27,9 +27,6 @@
     <ClInclude Include="BoxVol.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="transform.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="vec2.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -37,9 +34,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="volumes.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="rotator.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="mat4.h">
@@ -59,9 +53,6 @@
     <ClCompile Include="BoxVol.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="transform.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="vec2.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -69,9 +60,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="volumes.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="rotator.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="mat4.cpp">

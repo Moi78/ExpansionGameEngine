@@ -22,18 +22,18 @@
 class EXPANSIONMATH_API mat4
 {
 public:
-	mat4(double filler);
-	mat4(double mat[4][4]);
+	mat4();
+	mat4(float mat[4][4]);
 	~mat4();
 
-	double GetValAt(int row, int column);
+	float GetValAt(int row, int column);
 
 	void DBG_print_matrix();
 
 	mat4 operator*(mat4 const& a);
 
 private:
-	double m_mat[4][4];
+	float m_mat[4][4];
 };
 
 #endif // _MAT4_H__

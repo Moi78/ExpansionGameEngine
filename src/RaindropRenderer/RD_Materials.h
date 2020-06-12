@@ -16,29 +16,25 @@
 
 #endif //_WIN32
 
+#include <vector>
+
 #include "vec3.h"
 #include "RD_ShaderLoader.h"
 
 #include <BD_StructMan.h>
 
-class RAINDROPRENDERER_API RD_SimpleMaterial
-{
+class RAINDROPRENDERER_API RD_ShaderMaterial {
 public:
-	RD_SimpleMaterial(BD_MatDef mat);
-	~RD_SimpleMaterial();
+	RD_ShaderMaterial(RD_ShaderLoader*);
+	~RD_ShaderMaterial();
 
-	void BindMaterial(RD_ShaderLoader*);
+	void AddTexture(std::string param, unsigned int id);
+
+	void BindMaterial();
+	RD_ShaderLoader* GetShader();
 private:
-	void UpdateColor(RD_ShaderLoader*);
-	void UpdateSpecular(RD_ShaderLoader*);
-	void UpdateNormal(RD_ShaderLoader*);
-
-	unsigned int m_BaseColor;
-	unsigned int m_NormalMap;
-	bool m_normalEnabled;
-
-	unsigned int m_Specular;
-	float m_Shininess;
+	RD_ShaderLoader* m_shader;
+	std::vector < std::pair<std::string, unsigned int> > m_textures;
 };
 
 #endif

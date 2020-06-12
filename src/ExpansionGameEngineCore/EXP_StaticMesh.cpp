@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "EXP_StaticMesh.h"
 
-EXP_StaticMesh::EXP_StaticMesh(EXP_Game* gameinstance, std::string MeshRef, BD_MatDef material, vec3f pos, vec3f rot, vec3f scale) :
-	EXP_Component(pos, rot, scale), m_gameinstance(gameinstance), m_material(material),
-	RD_Mesh(material, pos, rot, scale)
+EXP_StaticMesh::EXP_StaticMesh(EXP_Game* gameinstance, RD_ShaderMaterial* shader, std::string MeshRef, vec3f pos, vec3f rot, vec3f scale) :
+	EXP_Component(pos, rot, scale), m_gameinstance(gameinstance),
+	RD_Mesh(shader, pos, rot, scale)
 {
 	LoadMesh(MeshRef);
 }

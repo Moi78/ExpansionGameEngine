@@ -27,6 +27,8 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 		return false;
 	}
 
+	RD_ShaderMaterial* shader = m_game->GetRenderer()->FetchShaderFromFile("Content/matTest.json");
+
 	//Getting Level code object from user's shared lib (Handler)
 	std::string MapCodeObject = root["MapLevelCodeObjectName"].asString() + "Handler";
 	LEVELCODEHANDLER lvlH = m_game->GetGameLib()->FetchLibHandler<LEVELCODEHANDLER>(MapCodeObject.c_str());
@@ -68,15 +70,6 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 			std::string ref = node.get("ref", "/").asString();
 
 			std::string mat = node.get("material", "").asString();
-			BD_MatDef mdef = {};
-
-			if (mat != "" || std::filesystem::exists(m_game->GetGameInfo().RootGameContentFolder + mat + ".exmtl")) {
-				mdef = m_game->FetchMaterialFromFile(mat);
-			}
-			else {
-				std::cerr << "Material file " << mat << " does not exists, or node propertie is not present." << std::endl;
-				mdef = m_game->GetDefaultMaterial();
-			}
 
 			Json::Value pos = node["pos"];
 			vec3f mpos(pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat());
@@ -87,7 +80,7 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 			Json::Value scale = node["scale"];
 			vec3f mscale(scale[0].asFloat(), scale[1].asFloat(), scale[2].asFloat());
 
-			EXP_StaticMesh* mesh = new EXP_StaticMesh(m_game, ref, mdef, mpos, mrot, mscale);
+			EXP_StaticMesh* mesh = new EXP_StaticMesh(m_game, shader, ref, mpos, mrot, mscale);
 			mesh->SetNameTag(node["nameTag"].asString());
 			m_meshes.push_back(mesh);
 

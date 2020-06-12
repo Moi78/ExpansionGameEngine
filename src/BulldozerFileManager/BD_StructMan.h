@@ -28,16 +28,6 @@ struct BULLDOZERFILEMANAGER_API BD_Resolution {
 	int y;
 };
 
-struct BULLDOZERFILEMANAGER_API BD_MatDef {
-	unsigned int BaseColor;
-
-	unsigned int NormalMap;
-	bool NormalEnabled = false;
-
-	unsigned int Specular;
-	float Shininess;
-};
-
 struct BULLDOZERFILEMANAGER_API BD_GameInfo {
 	std::string RootGameContentFolder = "Engine";
 	std::string RootEngineContentFolder = "Content";

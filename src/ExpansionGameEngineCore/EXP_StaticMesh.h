@@ -27,7 +27,7 @@ class EXPGE_API EXP_StaticMesh :
 	public RD_Mesh
 {
 public:
-	EXP_StaticMesh(EXP_Game* gameinstance, std::string meshRef, BD_MatDef material, vec3f pos, vec3f rot, vec3f scale);
+	EXP_StaticMesh(EXP_Game* gameinstance, RD_ShaderMaterial* shader, std::string meshRef, vec3f pos, vec3f rot, vec3f scale);
 	~EXP_StaticMesh();
 
 	bool MeshRefExists(std::string MeshRef);
@@ -42,7 +42,6 @@ public:
 	virtual void SetWorldScale(vec3f nScale) override;
 
 private:
-	BD_MatDef m_material;
 	EXP_Game* m_gameinstance;
 };
 

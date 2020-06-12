@@ -5,8 +5,8 @@ RD_MaterialLibrary::RD_MaterialLibrary() {}
 
 RD_MaterialLibrary::~RD_MaterialLibrary() {}
 
-void RD_MaterialLibrary::AddMaterialToLib(BD_MatDef mat, std::string matName) {
-	std::pair<std::string, BD_MatDef> matPair(matName, mat); //Making a pair of a material and its names
+void RD_MaterialLibrary::AddMaterialToLib(RD_ShaderMaterial* mat, std::string matName) {
+	std::pair<std::string, RD_ShaderMaterial*> matPair(matName, mat); //Making a pair of a material and its names
 
 	m_materials.push_back(matPair);
 }
@@ -15,10 +15,7 @@ void RD_MaterialLibrary::RemoveMaterialFromLib(std::string matName) {
 	//Searching material over registered one
 	for (int i = 0; i < m_materials.size(); i++) {
 		if (m_materials[i].first == matName) {
-			glDeleteTextures(1, &m_materials[i].second.BaseColor);
-			glDeleteTextures(1, &m_materials[i].second.Specular);
-			if(&m_materials[i].second.NormalEnabled)
-				glDeleteTextures(1, &m_materials[i].second.NormalMap);
+			delete m_materials[i].second;
 
 			m_materials.erase(m_materials.begin() + i); //Delete material
 			return;
@@ -39,7 +36,7 @@ bool RD_MaterialLibrary::DoMaterialExists(std::string name) {
 	return false;
 }
 
-BD_MatDef RD_MaterialLibrary::GetMaterialByName(std::string name) {
+RD_ShaderMaterial* RD_MaterialLibrary::GetMaterialByName(std::string name) {
 	//Same logic as DoMaterialExists()
 	for (auto mat : m_materials) {
 		if (mat.first == name) {
@@ -53,10 +50,7 @@ BD_MatDef RD_MaterialLibrary::GetMaterialByName(std::string name) {
 
 void RD_MaterialLibrary::ClearLibrary() {
 	for (auto m : m_materials) {
-		glDeleteTextures(1, &m.second.BaseColor);
-		glDeleteTextures(1, &m.second.Specular);
-		if (&m.second.NormalEnabled)
-			glDeleteTextures(1, &m.second.NormalMap);
+		delete m.second;
 	}
 
 	m_materials.clear();

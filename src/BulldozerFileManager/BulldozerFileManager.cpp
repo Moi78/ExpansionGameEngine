@@ -17,27 +17,25 @@ void dispErrorMessageBox(std::wstring Message) {
 #endif //_WIN32
 
 std::string getFileData(std::string filePath) {
-	std::string data = "";
-
 	std::ifstream file;
 	file.open(filePath);
 
 	if (!file) {
-		dispErrorMessageBox(TEXT("Cannot open file, see console."));
-		std::cerr << "File : " << filePath << " cannot be read, returning \"\"." << std::endl;
+		dispErrorMessageBox(TEXT("File cannot be opened. \"\" will be returned."));
 		return "";
 	}
 
-	std::string tmp;
+	std::string temp;
 
-	while (file.eof()) {
-		std::getline(file, tmp);
-		data.append(tmp);
+	std::string fileData = "";
+
+	while (!file.eof()) {
+		std::getline(file, temp);
+		fileData.append(temp + "\n");
 	}
 
 	file.close();
-
-	return data;
+	return fileData;
 }
 
 std::string getFileExtension(std::string fileName) {

@@ -32,6 +32,8 @@
 
 #include "RD_Error.h"
 
+#include "BulldozerFileManager.h"
+
 #include "vec3.h"
 
 class RAINDROPRENDERER_API RD_ShaderLoader
@@ -40,9 +42,8 @@ public:
 	RD_ShaderLoader();
 	~RD_ShaderLoader();
 
-	std::string getFileData(std::string filePath);
-
 	void compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile);
+	void CompileShaderFromCode(std::string vertexCode, std::string fragmentCode);
 
 	void useShader();
 

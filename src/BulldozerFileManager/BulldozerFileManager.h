@@ -24,7 +24,7 @@
 #include <string>
 
 #ifdef _WIN32
-void dispErrorMessageBox(LPCWSTR Message);
+void BULLDOZERFILEMANAGER_API dispErrorMessageBox(LPCWSTR Message);
 #else
 void dispErrorMessageBox(std::wstring);
 #endif

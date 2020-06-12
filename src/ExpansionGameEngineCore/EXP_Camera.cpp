@@ -12,7 +12,6 @@ EXP_Camera::~EXP_Camera() {
 }
 
 void EXP_Camera::Use() {
-	UseCamera();
 	m_gameinstance->RegisterCamera(this);
 }
 
@@ -20,7 +19,6 @@ void EXP_Camera::Translate(vec3f translation, bool changeSubject) {
 	TranslateCamera(translation, changeSubject);
 	SetPosition(GetLocation());
 }
-
 
 //---------------------------------------------------------------------------------
 

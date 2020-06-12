@@ -1,6 +1,4 @@
 #version 410 core
-//To don't mess up with max register limit
-#pragma glsl
 
 out vec4 FragColor;
 
@@ -56,12 +54,13 @@ vec3 CalcDirLight(int index) {
 
 	//Specular
 	vec3 d_specular = vec3(0.0);
-
-	vec3 reflectDir = reflect(-dir, norm);
+	if(ftr_specular) {
+		vec3 reflectDir = reflect(-dir, norm);
 
 		float spec = pow(max(0.0, dot(viewDir, reflectDir)), SpecularExp);
 
 		d_specular = spec * DirLightColor[index] * DirLightBrightness[index] * Specular;
+	}
 
 	return diffuse + d_specular;
 }
@@ -87,7 +86,7 @@ vec3 CalcPointLight(int lightIndex) {
 			specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * Specular);
 		}
 
-		return attenuation * (diffuse + specular);
+		return attenuation * (LightColor[lightIndex] * (diffuse + specular));
 	} else {
 		return vec3(0.0);
 	}

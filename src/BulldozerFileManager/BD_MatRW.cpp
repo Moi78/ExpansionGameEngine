@@ -110,3 +110,44 @@ BD_WriteMdef BD_MatRead::ReadMaterialFromFile(std::string filepath) {
 
 	return buffer;
 }
+
+//Custom Shader Read
+
+BD_MatCustomShaderRead::BD_MatCustomShaderRead(std::string MatFile) {
+	m_file = std::ifstream(MatFile);
+	if (!m_file) {
+		std::cerr << "Cannot open the file " << MatFile << std::endl;
+		dispErrorMessageBox(TEXT("Cannot open a file, see console for details... Returning void MatDef."));
+	}
+
+	JSONCPP_STRING errs;
+
+	Json::CharReaderBuilder crb;
+	crb["collectComment"] = false;
+	if (!Json::parseFromStream(crb, m_file, &m_root, &errs)) {
+		std::cerr << "Cannot read material file. " << errs << std::endl;
+	}
+}
+
+BD_MatCustomShaderRead::~BD_MatCustomShaderRead() {};
+
+void BD_MatCustomShaderRead::CloseFile() {
+	if (m_file)
+		m_file.close();
+}
+
+std::string BD_MatCustomShaderRead::GetShaderCode() {
+	return m_root["glsl"].asString();
+}
+
+int BD_MatCustomShaderRead::GetTextureCount() {
+	return m_root["textures"].size();
+}
+
+std::string BD_MatCustomShaderRead::GetTextureParamName(int index) {
+	return m_root["textures"][index]["param"].asString();
+}
+
+std::string BD_MatCustomShaderRead::GetTexturePath(int index) {
+	return m_root["textures"][index]["path"].asString();
+}

@@ -7,7 +7,7 @@ demoMap::demoMap(EXP_Game* game, EXP_MapLoader* mload) : EXP_Level(true, true) {
 	m_game = game;
 	m_load = mload;
 
-	cam = new EXP_Camera(game, vec3f(0.0f, -10.0f, 5.0f), vec3f(), vec3f(), vec3f(90.0f), 60.0f, 0.1f, 100.0f);
+	cam = new EXP_Camera(game, vec3f(0.0f, -15.0f, 5.0f), vec3f(), vec3f(), vec3f(90.0f, 90.0f, 0.0f), 60.0f, 0.1f, 100.0f);
 	cam->Use();
 
 	m_key = new EXP_KeyboardCallback(m_game, CL_VDFUNCPTR(demoMap::KeyTest), GLFW_KEY_H);
@@ -21,6 +21,9 @@ demoMap::~demoMap() {
 
 void demoMap::OnStart() {
 	m_game->GetInputHandler()->CaptureCursor(true);
+
+	m_game->GetRenderer()->SetAmbientStrength(0.2f);
+	m_game->GetRenderer()->SetAmbientColor(vec3f(0.1f, 0.2f, 0.2f));
 }
 
 void demoMap::OnTick() {

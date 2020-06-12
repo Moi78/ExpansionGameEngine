@@ -59,4 +59,22 @@ public:
 	BD_WriteMdef ReadMaterialFromFile(std::string filepath);
 };
 
+//Custom Shader Read
+class BULLDOZERFILEMANAGER_API BD_MatCustomShaderRead {
+public:
+	BD_MatCustomShaderRead(std::string matFile);
+	~BD_MatCustomShaderRead();
+
+	void CloseFile();
+
+	std::string GetShaderCode();
+	int GetTextureCount();
+	std::string GetTextureParamName(int index);
+	std::string GetTexturePath(int index);
+
+private:
+	std::ifstream m_file;
+	Json::Value m_root;
+};
+
 #endif //_BD_MAT_RW_H__

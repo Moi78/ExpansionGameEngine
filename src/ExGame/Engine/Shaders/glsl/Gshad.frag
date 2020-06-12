@@ -26,40 +26,40 @@ uniform int NbrDirLights;
 
 vec3 norm = normalize(Normal);
 
-vec3 GetNormFromMap() {
-	vec3 tanNorm = texture(NormalMap, UVcoord).rgb * 2.0 - 1.0;
+vec3 GetNormFromMap(sampler2D NMap, vec3 n, vec3 FPos, vec2 UV) {
+	vec3 tanNorm = texture(NMap, UVcoord).rgb * 2.0 - 1.0;
 
-	vec3 Q1 = dFdx(FragPos);
-	vec3 Q2 = dFdy(FragPos);
-	vec2 st1 = dFdx(UVcoord);
-	vec2 st2 = dFdy(UVcoord);
+	vec3 Q1 = dFdx(FPos);
+	vec3 Q2 = dFdy(FPos);
+	vec2 st1 = dFdx(UV);
+	vec2 st2 = dFdy(UV);
 
 	vec3 T = normalize(Q1 * st2.t - Q2 * st1.t);
-	vec3 B = -normalize(cross(norm, T));
-	mat3 TBN = mat3(T, B, norm);
+	vec3 B = -normalize(cross(n, T));
+	mat3 TBN = mat3(T, B, n);
 
 	return normalize(TBN * tanNorm);
 }
 
-float ProcessShadows(int index) {
-	vec3 projCoords = FragPosLightSpace[index].xyz / FragPosLightSpace[index].w;
+float ProcessShadows(sampler2D SMap, vec4 FPLS) {
+	vec3 projCoords = FPLS.xyz / FPLS.w;
 	projCoords = projCoords * 0.5 + 0.5;
 
 	if(projCoords.z > 1.0) {
 		return 0.0;
 	}
 
-	float closestDepth = texture(ShadowMap[index], projCoords.xy).r;
+	float closestDepth = texture(SMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
 
 	float bias = 0.008;
 
 	float shadow = 0.0;
 
-	vec2 texelSize = 1.0 / textureSize(ShadowMap[index], 0);
+	vec2 texelSize = 1.0 / textureSize(SMap, 0);
 	for(int x = -1; x <= 1; x++) {
 		for(int y = -1; y <= 1; y++) {
-			float pcfDepth = texture(ShadowMap[index], projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = texture(SMap, projCoords.xy + vec2(x, y) * texelSize).r;
 			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
 		}
 	}
@@ -72,7 +72,7 @@ void main() {
 	gPos = FragPos;
 
 	if(NormalEnabled) {
-		gNorm = GetNormFromMap();
+		gNorm = GetNormFromMap(NormalMap, norm, FragPos, UVcoord);
 	} else {
 		gNorm = norm;
 	}
@@ -85,7 +85,7 @@ void main() {
 	//Shadows Calculation
 	float shadow = 0.0;
 	for(int i = 0; i < NbrDirLights; i++) {
-		shadow += ProcessShadows(i);
+		shadow += ProcessShadows(ShadowMap[i], FragPosLightSpace[i]);
 	}
 
 	gShadow = 1.0 - clamp(shadow, 0.0, 1.0);

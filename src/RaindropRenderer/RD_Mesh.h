@@ -19,6 +19,7 @@
 #include "RD_ShaderLoader.h"
 #include "RD_Materials.h"
 #include "RaindropRenderer.h"
+#include "RD_Camera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -35,12 +36,12 @@
 class RAINDROPRENDERER_API RD_Mesh
 {
 public:
-	RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale);
+	RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale);
 	~RD_Mesh();
 
 	void loadMesh(std::string);
 
-	void render(RD_ShaderLoader* shader, RenderMode rndrMode = RenderMode::Filled);
+	void render(RD_Camera* cam, RenderMode rndrMode = RenderMode::Filled);
 	void renderShadows(RD_ShaderLoader* shadowShader);
 
 	void addRotation(vec3f rotation);
@@ -56,6 +57,8 @@ public:
 	void SetWorldScale(vec3f nScale);
 
 	vec3f GetLocation();
+
+	RD_ShaderMaterial* GetMaterial();
 	
 private:
 	void Bufferize();
@@ -72,7 +75,7 @@ private:
 
 	std::vector<float> MixVertNormUV;
 
-	RD_SimpleMaterial* m_mat;
+	RD_ShaderMaterial* m_mat;
 
 	vec3f m_position;
 	vec3f m_rotation;

@@ -27,8 +27,11 @@
 #include "RD_PointLight.h"
 #include "RD_GUI.h"
 #include "RD_Texture.h"
+#include "RD_Materials.h"
+#include "RD_Texture.h"
 
 #include <BD_StructMan.h>
+#include <BD_MatRW.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -73,7 +76,7 @@ public:
 
 	void SetAASampling(int nbrSample);
 
-	void RenderMeshes();
+	void RenderMeshes(RD_Camera* cam);
 	void RenderShadowMeshes();
 
 	void RenderLightPass(vec3f camPos);
@@ -105,8 +108,8 @@ public:
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);
 	RD_ShaderLoader* GetShadowShader();
-	RD_ShaderLoader* GetGShader();
 	RD_ShaderLoader* GetCurrentShader();
+	RD_ShaderMaterial* FetchShaderFromFile(std::string ref);
 
 	//Debug
 	void RenderDbg();
@@ -159,7 +162,6 @@ private:
 
 	RD_Mesh* m_DBG_light_mdl;
 	RD_Mesh* m_DBG_sound_emitter_mdl;
-	BD_MatDef m_mdef;
 
 	RD_Texture* m_defTex;
 	RD_Texture* m_blankTexture;
@@ -172,8 +174,6 @@ private:
 	RD_Quad* m_quad;
 
 	RD_ShaderLoader* m_shadowShader;
-
-	RD_ShaderLoader* m_gbuff_shader;
 	RD_ShaderLoader* m_light_shader;
 
 	RD_ShaderLoader* m_CurrentShader;

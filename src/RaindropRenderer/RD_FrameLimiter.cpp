@@ -34,9 +34,9 @@ double RD_FrameLimiter::GetElapsedTime() {
 }
 
 void RD_FrameLimiter::WaitAll() {
-	if (GetElapsedTime() < (float)1 / GetFrameLimit()) {
-		float frameTime = 1.0f / GetFrameLimit();
-		double delta = (frameTime * 1000) - GetElapsedTime();
+	float frameTime = (1.0f / GetFrameLimit()) * 1000;
+	if (m_last_delta < frameTime) {
+		double delta = frameTime - GetElapsedTime();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds((long long)delta));
 	}

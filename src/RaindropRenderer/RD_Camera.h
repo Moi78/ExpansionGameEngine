@@ -26,7 +26,6 @@
 #include <string>
 
 #include <vec3.h>
-#include <rotator.h>
 
 class RAINDROPRENDERER_API RD_Camera
 {
@@ -34,7 +33,7 @@ public:
 	RD_Camera(RaindropRenderer* rndr , float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f lookingAt);
 	~RD_Camera();
 
-	void UseCamera();
+	void UseCamera(RD_ShaderLoader* shader);
 
 	void SetLocation(vec3f position);
 	void SetSubject(vec3f lookingAt);
@@ -42,9 +41,9 @@ public:
 
 	vec3f GetSubject();
 	
-	void UpdateCamera();
+	void UpdateCamera(RD_ShaderLoader* shader);
 	
-	void RotateCamera(vec3f);
+	void RotateCamera(vec3f rotation);
 	void TranslateCamera(vec3f translation, bool changeSub = false);
 
 	vec3f GetForwardVector();
@@ -59,7 +58,6 @@ public:
 	void SetYPR(vec3f YawPitchRoll);
 private:
 	void ComputeYPR();
-	void SetupCamera();
 	
 
 	glm::mat4 projection;

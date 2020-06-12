@@ -30,20 +30,6 @@ EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	InitGame(refreshColor, gameinfo);
 	InitGui();
 	InitPhysics();
-
-	RD_Texture* defTex = new RD_Texture();
-	defTex->LoadTexture(gameinfo.RootEngineContentFolder + "/Textures/defTex.png");
-
-	RD_Texture* spec = new RD_Texture();
-	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
-
-	m_def_mat = {};
-	m_def_mat.BaseColor = defTex->GetTextureID();
-	m_def_mat.Specular = spec->GetTextureID();
-	m_def_mat.Shininess = 1.0f;
-
-	delete spec;
-	delete defTex;
 }
 
 EXP_Game::EXP_Game(std::string gameinfo) {
@@ -66,20 +52,6 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 	InitGame(vec3f(), gi);
 	InitGui();
 	InitPhysics();
-
-	RD_Texture* defTex = new RD_Texture();
-	defTex->LoadTexture(gi.RootEngineContentFolder + "/Textures/defTex.png");
-
-	RD_Texture* spec = new RD_Texture();
-	spec->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
-
-	m_def_mat = {};
-	m_def_mat.BaseColor = defTex->GetTextureID();
-	m_def_mat.Specular = spec->GetTextureID();
-	m_def_mat.Shininess = 1.0f;
-
-	delete spec;
-	delete defTex;
 }
 
 EXP_Game::~EXP_Game() {
@@ -213,10 +185,6 @@ void EXP_Game::RenderScene() {
 		m_rndr->RenderDbg();
 	}
 
-	if (m_currentCamera != nullptr) {
-		m_currentCamera->UpdateCamera();
-	}
-
 	//Process other threads signals... what a terribleness
 	ProcessSignals();
 }
@@ -274,68 +242,6 @@ void EXP_Game::RegisterPointLight(RD_PointLight* ptlight) {
 
 vec3f EXP_Game::GetRefreshColor() {
 	return m_refreshColor;
-}
-
-BD_MatDef EXP_Game::GetDefaultMaterial() {
-	return m_def_mat;
-}
-
-BD_MatDef EXP_Game::FetchMaterialFromFile(std::string ref) {
-	if (m_materialManager->DoMaterialExists(ref)) {
-		return m_materialManager->GetMaterialByName(ref);
-	}
-
-	std::string fullpath = m_gameinfo.RootGameContentFolder + ref + ".exmtl";
-	if (!std::filesystem::exists(fullpath)) {
-		std::cerr << "Material file " << ref << " does not exist. Returning default material." << std::endl;
-		return GetDefaultMaterial();
-	}
-
-	BD_MatRead* mr = new BD_MatRead();
-	BD_WriteMdef mat = mr->ReadMaterialFromFile(fullpath);
-
-	delete mr;
-
-	BD_MatDef mdef = {};
-
-	RD_Texture* bc = new RD_Texture();
-
-	if (mat.BaseColorRef != "") {
-		bc->LoadTexture(m_gameinfo.RootGameContentFolder + mat.BaseColorRef);
-	}
-	else {
-		bc->GenerateColorTex(mat.BaseColor);
-	}
-
-	mdef.BaseColor = bc->GetTextureID();
-	delete bc;
-
-	RD_Texture* spec = new RD_Texture();
-
-	if (mat.SpecularColorRef != "") {
-		spec->LoadTexture(m_gameinfo.RootGameContentFolder + mat.SpecularColorRef);
-	}
-	else {
-		spec->GenerateColorTex(mat.SpecularColor);
-	}
-
-	if (mat.NormalMap != "") {
-		RD_Texture* normm = new RD_Texture();
-		normm->LoadTexture(m_gameinfo.RootGameContentFolder + mat.NormalMap);
-		mdef.NormalMap = normm->GetTextureID();
-		mdef.NormalEnabled = true;
-	}
-	else {
-		mdef.NormalEnabled = false;
-	}
-
-	mdef.Specular = spec->GetTextureID();
-	delete spec;
-
-	mdef.Shininess = mat.Shininess;
-
-	m_materialManager->AddMaterialToLib(mdef, ref);
-	return mdef;
 }
 
 PSound* EXP_Game::GetSoundEngine() {

@@ -1,14 +1,15 @@
 #include "pch.h"
 #include "RD_Mesh.h"
 
-RD_Mesh::RD_Mesh(BD_MatDef material, vec3f position, vec3f rotation, vec3f scale) {
+RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale) {
 	m_nbr_indices = 0;
 
 	VAO = 0;
 	EBO = 0;
 	VBO = 0;
 
-	m_mat = new RD_SimpleMaterial(material);
+	assert(shader != nullptr && "Given material was nullptr");
+	m_mat = shader;
 
 	m_position = vec3f(0.0f, 0.0f, 0.0f);
 	m_rotation = vec3f(0.0f, 0.0f, 0.0f);
@@ -64,7 +65,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	delete reader;
 }
 
-void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
+void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
 	if (rndrMode == RenderMode::Filled) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
@@ -72,9 +73,10 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	shader->SetMatrix("model", m_mdl);
+	cam->UpdateCamera(m_mat->GetShader());
+	m_mat->GetShader()->SetMatrix("model", m_mdl);
 
-	m_mat->BindMaterial(shader);
+	m_mat->BindMaterial();
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
@@ -82,8 +84,6 @@ void RD_Mesh::render(RD_ShaderLoader* shader, RenderMode rndrMode) {
 }
 
 void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
-	glm::mat4 mdl = glm::mat4(1.0f); //Declaring Model Matrix
-
 	shadowShader->SetMatrix("model", m_mdl);
 
 	glBindVertexArray(VAO);
@@ -229,4 +229,8 @@ void RD_Mesh::Update() {
 
 	//Final mat
 	m_mdl = wmdl * mdl;
+}
+
+RD_ShaderMaterial* RD_Mesh::GetMaterial() {
+	return m_mat;
 }
