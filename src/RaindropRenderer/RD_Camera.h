@@ -41,7 +41,7 @@ public:
 
 	vec3f GetSubject();
 	
-	void UpdateCamera(RD_ShaderLoader* shader);
+	void UpdateCamera();
 	
 	void RotateCamera(vec3f rotation);
 	void TranslateCamera(vec3f translation, bool changeSub = false);

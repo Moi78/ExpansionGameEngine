@@ -22,9 +22,9 @@
   <ItemGroup>
     <None Include="Engine\Shaders\glsl\Shadow.frag" />
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
-    <None Include="Engine\Shaders\glsl\Gshad.frag" />
-    <None Include="Engine\Shaders\glsl\Gshad.vert" />
     <None Include="Engine\Shaders\glsl\Light.frag" />
     <None Include="Engine\Shaders\glsl\Light.vert" />
+    <None Include="Engine\Shaders\glsl\Debug.frag" />
+    <None Include="Engine\Shaders\glsl\Debug.vert" />
   </ItemGroup>
 </Project>

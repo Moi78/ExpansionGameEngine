@@ -66,14 +66,17 @@ void RD_Mesh::loadMesh(std::string filepath) {
 }
 
 void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
+	bool filled;
 	if (rndrMode == RenderMode::Filled) {
+		filled = true;
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	else {
+		filled = false;
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	cam->UpdateCamera(m_mat->GetShader());
+	cam->UseCamera(m_mat->GetShader());
 	m_mat->GetShader()->SetMatrix("model", m_mdl);
 
 	m_mat->BindMaterial();
@@ -81,6 +84,10 @@ void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
+	if (!filled) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {

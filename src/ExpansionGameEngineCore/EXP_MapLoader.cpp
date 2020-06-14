@@ -27,8 +27,6 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 		return false;
 	}
 
-	RD_ShaderMaterial* shader = m_game->GetRenderer()->FetchShaderFromFile("Content/matTest.json");
-
 	//Getting Level code object from user's shared lib (Handler)
 	std::string MapCodeObject = root["MapLevelCodeObjectName"].asString() + "Handler";
 	LEVELCODEHANDLER lvlH = m_game->GetGameLib()->FetchLibHandler<LEVELCODEHANDLER>(MapCodeObject.c_str());
@@ -70,6 +68,7 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 			std::string ref = node.get("ref", "/").asString();
 
 			std::string mat = node.get("material", "").asString();
+			RD_ShaderMaterial* shader = m_game->GetRenderer()->FetchShaderFromFile(m_game->GetFilePathByRef(mat) + ".exmtl");
 
 			Json::Value pos = node["pos"];
 			vec3f mpos(pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat());

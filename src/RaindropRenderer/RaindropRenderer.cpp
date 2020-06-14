@@ -6,6 +6,7 @@
 #include "RD_Quad.h"
 #include "RD_FrameBuffer.h"
 #include "RD_Camera.h"
+#include "RD_MaterialLibrary.h"
 
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit) : m_height(h), m_width(w) {
 	FillFeaturesStringArray();
@@ -36,11 +37,12 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
 	if (RENDER_DEBUG_ENABLED) {
-		/*m_DBG_light_mdl = new RD_Mesh(m_mdef, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
-		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
+		RD_ShaderLoader* shad = new RD_ShaderLoader();
+		shad->compileShaderFromFile("Engine/Shaders/glsl/Debug.vert", "Engine/Shaders/glsl/Debug.frag");
+		RD_ShaderMaterial* dbgmat = new RD_ShaderMaterial(shad);
 
-		m_DBG_sound_emitter_mdl = new RD_Mesh(m_mdef, vec3f(), vec3f(), vec3f(0.2f, 0.2f, 0.2f));
-		m_DBG_sound_emitter_mdl->loadMesh("Engine/Meshes/snd_emitter.msh");*/
+		m_DBG_light_mdl = new RD_Mesh(dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
+		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
 	}
 
 	ambientStrength = 1.0f;
@@ -49,6 +51,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	CreateGbuff();
 
 	m_quad = new RD_Quad();
+	m_matlib = new RD_MaterialLibrary();
 
 	InitGUI();
 }
@@ -61,8 +64,10 @@ RaindropRenderer::~RaindropRenderer() {
 	m_guis.clear();
 	m_meshes.clear();
 
-	//delete m_DBG_light_mdl;
-	//delete m_DBG_sound_emitter_mdl;
+	if (RENDER_DEBUG_ENABLED) {
+		delete m_DBG_light_mdl;
+		//delete m_DBG_sound_emitter_mdl;
+	}
 
 	delete m_defTex;
 
@@ -129,7 +134,7 @@ void RaindropRenderer::SwapWindow() {
 	glfwSwapBuffers(win);
 
 	m_frmLmt->stop();
-	m_frmLmt->WaitAll();
+	//m_frmLmt->WaitAll();
 }
 
 bool RaindropRenderer::WantToClose() {
@@ -244,7 +249,7 @@ void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
 	m_CurrentShader->useShader();
 }
 
-void RaindropRenderer::RenderDbg() {
+void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 	if (RENDER_DEBUG_ENABLED) {
 		bool rEnableLighting = true;
 
@@ -253,12 +258,16 @@ void RaindropRenderer::RenderDbg() {
 		else
 			rEnableLighting = false;
 
-		for (int i = 0; i < m_pt_lights.size(); i++) {
-			//mdef.Color = m_pt_lights[i]->GetColor();
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_g_buffer.gBuff);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			//m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
-			//m_DBG_light_mdl->UpdateMaterial(&mdef);
-			//m_DBG_light_mdl->render(RenderMode::Wireframe);
+		for (int i = 0; i < m_pt_lights.size(); i++) {
+			m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
+
+			m_DBG_light_mdl->SetWorldPosition(m_pt_lights[i]->GetPosition());
+			m_DBG_light_mdl->render(cam, RenderMode::Wireframe);
 		}
 
 		if(rEnableLighting)
@@ -640,6 +649,10 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 		return nullptr;
 	}
 
+	if (m_matlib->DoMaterialExists(ref)) {
+		return m_matlib->GetMaterialByName(ref);
+	}
+
 	BD_MatCustomShaderRead mread(ref);
 	std::string fcode = mread.GetShaderCode();
 	std::string vcode = getFileData("Engine/Shaders/glsl/Gshad.vert");
@@ -655,6 +668,7 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 		shdmat->AddTexture(mread.GetTextureParamName(i), tex.GetTextureID());
 	}
 
+	m_matlib->AddMaterialToLib(shdmat, ref);
 	return shdmat;
 }
 

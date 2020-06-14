@@ -53,6 +53,7 @@ class RD_Mesh;
 class RD_Quad;
 class RD_FrameBuffer;
 class RD_Camera;
+class RD_MaterialLibrary;
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
@@ -112,7 +113,7 @@ public:
 	RD_ShaderMaterial* FetchShaderFromFile(std::string ref);
 
 	//Debug
-	void RenderDbg();
+	void RenderDbg(RD_Camera*);
 	float GetFramerate();
 
 	//Renderer Feature
@@ -177,6 +178,9 @@ private:
 	RD_ShaderLoader* m_light_shader;
 
 	RD_ShaderLoader* m_CurrentShader;
+
+	//Materials
+	RD_MaterialLibrary* m_matlib;
 };
 
 template<class T>

@@ -24,7 +24,7 @@
 #endif
 
 #ifdef _DEBUG
-#define RENDER_DBG false
+#define RENDER_DBG true
 #else
 #define RENDER_DBG false
 #endif

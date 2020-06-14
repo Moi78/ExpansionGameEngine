@@ -1,6 +1,0 @@
-{
-    "BaseColor":[0, 0.1, 1.0],
-    "Specular":[1, 1, 1],
-    "Shininess":128.0,
-    "NormalMap":"/waterNorm.jpeg"
-}

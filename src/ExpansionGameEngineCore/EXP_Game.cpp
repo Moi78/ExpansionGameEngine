@@ -167,11 +167,12 @@ void EXP_Game::InitGui() {
 void EXP_Game::RenderScene() {
 	m_rndr->ClearWindow(m_refreshColor);
 
-    vec3f CamLoc;
+	vec3f CamLoc;
     if(m_currentCamera == nullptr) {
         CamLoc = vec3f();
     } else {
         CamLoc = m_currentCamera->GetLocation();
+		m_currentCamera->UpdateCamera();
     }
     
 	//Process shadows
@@ -181,8 +182,8 @@ void EXP_Game::RenderScene() {
 	//Light pass
 	m_rndr->RenderLightPass(CamLoc);
 
-	if (RENDER_DBG) {
-		m_rndr->RenderDbg();
+	if (RENDER_DBG && m_currentCamera != nullptr) {
+		m_rndr->RenderDbg(m_currentCamera);
 	}
 
 	//Process other threads signals... what a terribleness

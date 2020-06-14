@@ -21,14 +21,10 @@ RD_Camera::~RD_Camera() {
 
 }
 
-void RD_Camera::UpdateCamera(RD_ShaderLoader* shader) {
+void RD_Camera::UpdateCamera() {
 	projection = glm::perspective(glm::radians(FOV), (float)m_rndr->getWindowWidth() / m_rndr->getWindowHeigh(), m_near, m_far); //Projection matrix
 
 	view = glm::lookAt(glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()), glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()) + glm::vec3(m_subject.getX(), m_subject.getY(), m_subject.getZ()), glm::vec3(0.0f, 0.0f, 1.0f)); //View matrix
-
-	shader->SetMatrix("projection", projection);
-	shader->SetMatrix("view", view);
-	shader->SetVec3("CamPos", m_pos);
 }
 
 void RD_Camera::UseCamera(RD_ShaderLoader* shader) {

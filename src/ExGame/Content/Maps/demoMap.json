@@ -6,7 +6,7 @@
         "type":"mesh",
         "nameTag":"mainRoom",
         "ref":"/room",
-        "material":"/roomMat",
+        "material":"/matTest",
 
         "pos":[0, 0, 0],
         "rot":[0, 0, 0],
@@ -26,8 +26,8 @@
         "type":"plight",
         "nameTag":"point",
         
-        "brightness":16.0,
-        "radius":5.0,
+        "brightness":56.0,
+        "radius":10.0,
         "color":[1, 0, 1],
         "pos":[0, 0, 2]
     }

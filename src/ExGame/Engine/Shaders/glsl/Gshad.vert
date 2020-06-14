@@ -4,8 +4,6 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aUV;
 
 out vec3 Normal;
-out vec3 Tan;
-out vec3 Bitan;
 
 out vec3 FragPos;
 out vec2 UVcoord;
