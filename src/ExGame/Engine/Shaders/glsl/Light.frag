@@ -72,7 +72,7 @@ vec3 CalcPointLight(int lightIndex) {
 		vec3 LightDir = normalize(LightPos[lightIndex] - FragPos);
 		float attenuation = (1.0 / (1.0 + 0.7 * (dist * dist)));
 
-		float diffuse = max(0.0, dot(norm, LightDir)) / dist;
+		float diffuse = LightBrightness[lightIndex] * max(0.0, dot(norm, LightDir)) / dist;
 
 		//Specular
 		vec3 specular = vec3(0.0, 0.0, 0.0);
@@ -83,7 +83,7 @@ vec3 CalcPointLight(int lightIndex) {
 			vec3 hwDir = normalize(LightDir + viewDir);
 			float spec = pow(max(0.0, dot(norm, hwDir)), SpecularExp);
 
-			specular = (spec * LightColor[lightIndex] * LightBrightness[lightIndex] * Specular);
+			specular = (spec * LightColor[lightIndex] * Specular);
 		}
 
 		return attenuation * (LightColor[lightIndex] * (diffuse + specular));

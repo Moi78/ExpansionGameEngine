@@ -147,6 +147,7 @@
   <ItemGroup>
     <None Include="Engine\Shaders\glsl\Debug.frag" />
     <None Include="Engine\Shaders\glsl\Debug.vert" />
+    <None Include="Engine\Shaders\glsl\Gshad.vert" />
     <None Include="Engine\Shaders\glsl\Light.frag" />
     <None Include="Engine\Shaders\glsl\Light.vert" />
     <None Include="Engine\Shaders\glsl\Shadow.frag" />

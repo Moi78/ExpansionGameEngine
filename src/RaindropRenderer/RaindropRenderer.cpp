@@ -41,7 +41,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 		shad->compileShaderFromFile("Engine/Shaders/glsl/Debug.vert", "Engine/Shaders/glsl/Debug.frag");
 		RD_ShaderMaterial* dbgmat = new RD_ShaderMaterial(shad);
 
-		m_DBG_light_mdl = new RD_Mesh(dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.1f, 0.1f, 0.1f));
+		m_DBG_light_mdl = new RD_Mesh(dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
 		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
 	}
 
@@ -134,7 +134,7 @@ void RaindropRenderer::SwapWindow() {
 	glfwSwapBuffers(win);
 
 	m_frmLmt->stop();
-	//m_frmLmt->WaitAll();
+	m_frmLmt->WaitAll();
 }
 
 bool RaindropRenderer::WantToClose() {
@@ -426,6 +426,10 @@ void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
 }
 
 void RaindropRenderer::RenderShadowMeshes() {
+	if (!IsFeatureEnabled(RendererFeature::Lighting)) {
+		return;
+	}
+
 	for (auto m : m_meshes) {
 		m->renderShadows(m_shadowShader);
 	}

@@ -21,6 +21,7 @@ demoMap::~demoMap() {
 
 void demoMap::OnStart() {
 	m_game->GetInputHandler()->CaptureCursor(true);
+	m_game->GetRenderer()->DisableFeature(RendererFeature::Lighting);
 
 	m_game->GetRenderer()->SetAmbientStrength(0.2f);
 	m_game->GetRenderer()->SetAmbientColor(vec3f(0.1f, 0.2f, 0.2f));
