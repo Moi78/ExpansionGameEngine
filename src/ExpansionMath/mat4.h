@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <cstring>
 
 class EXPANSIONMATH_API mat4
 {

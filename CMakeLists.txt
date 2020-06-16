@@ -15,6 +15,7 @@ else()
     set(UBUNTU "")
 endif()
 add_definitions(${UBUNTU})
+add_definitions("-std=c++17")
 
 add_subdirectory(src/ExpansionMath)
 add_subdirectory(src/BulldozerFileManager)
