@@ -29,7 +29,6 @@ EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	InitPhysicaSound();
 	InitGame(refreshColor, gameinfo);
 	InitGui();
-	InitPhysics();
 }
 
 EXP_Game::EXP_Game(std::string gameinfo) {
@@ -51,7 +50,6 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 	InitPhysicaSound();
 	InitGame(vec3f(), gi);
 	InitGui();
-	InitPhysics();
 }
 
 EXP_Game::~EXP_Game() {
@@ -113,6 +111,8 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_materialManager = new RD_MaterialLibrary();
 	m_hinput = new EXP_InputHandler(m_rndr->GetGLFWwindow());
 
+	InitPhysics();
+
 	m_PlayingMap = new EXP_MapLoader(this);
 	m_PlayingMap->LoadMap(gameinfo.RootGameContentFolder + gameinfo.StartupMap);
 
@@ -167,13 +167,11 @@ void EXP_Game::InitGui() {
 void EXP_Game::RenderScene() {
 	m_rndr->ClearWindow(m_refreshColor);
 
-	vec3f CamLoc;
-    if(m_currentCamera == nullptr) {
-        CamLoc = vec3f();
-    } else {
-        CamLoc = m_currentCamera->GetLocation();
+	vec3f CamLoc = vec3f();
+	if (m_currentCamera != nullptr) {
+		CamLoc = m_currentCamera->GetLocation();
 		m_currentCamera->UpdateCamera();
-    }
+	}
     
 	//Process shadows
 	m_rndr->RenderLightsDepth(CamLoc);

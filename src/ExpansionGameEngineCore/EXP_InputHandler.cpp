@@ -54,6 +54,10 @@ double EXP_InputHandler::GetMouseXaxis() {
 }
 
 double EXP_InputHandler::GetMouseYaxis() {
+	if (!m_curHidden) {
+		return 0;
+	}
+
 	double yaxis;
 	glfwGetCursorPos(m_win, NULL, &yaxis);
 

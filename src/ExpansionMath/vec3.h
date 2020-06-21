@@ -48,6 +48,7 @@ public:
     vec3f operator-(vec3f const& a);
 
     vec3f operator*(vec3f const& a);
+    vec3f operator*(float const& a);
 
     void DBGPrint();
 

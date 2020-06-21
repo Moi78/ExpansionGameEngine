@@ -507,6 +507,10 @@ void RaindropRenderer::CreateGbuff() {
 }
 
 void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
+	if (!cam) {
+		return;
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

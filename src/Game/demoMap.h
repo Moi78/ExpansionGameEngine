@@ -11,8 +11,10 @@
 #include <EXP_MapLoader.h>
 #include <EXP_HotLoad.h>
 #include <EXP_InputHandler.h>
-
+#include <EXP_RigidBody.h>
 #include <EXP_Camera.h>
+
+#include "demoActor.h"
 
 class demoMap : public EXP_Level
 {
@@ -30,10 +32,14 @@ private:
 	EXP_Game* m_game;
 	EXP_MapLoader* m_load;
 
-	EXP_Camera* cam;
+	demoActor* m_actor;
 
-	EXP_KeyboardCallback* m_key;
-	EXP_KeyboardCallback* m_mfwd;
+	//EXP_Camera* cam;
+
+	//EXP_KeyboardCallback* m_key;
+	//EXP_KeyboardCallback* m_mfwd;
+
+	EXP_RB_Box* m_floor;
 };
 
 EXPGE_LEVEL_HEADER(demoMap);

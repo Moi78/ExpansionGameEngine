@@ -15,6 +15,8 @@ RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, 
 	FOV = FOVinDegrees;
 	m_near = CamNear;
 	m_far = CamFar;
+
+	UpdateCamera();
 }
 
 RD_Camera::~RD_Camera() {
