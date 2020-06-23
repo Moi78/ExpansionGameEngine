@@ -38,7 +38,8 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [ ] Proprer input manager
  - [x] Custom shaders
  - [ ] ExpansionMath Cleanup
- - [ ] Only use smartptr
+ - [x] Use smartptr when possible
+ - [ ] Consistent error handling
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
