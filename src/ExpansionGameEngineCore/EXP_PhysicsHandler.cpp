@@ -6,12 +6,14 @@ EXP_PhysicsHandler::EXP_PhysicsHandler(vec3f gravity, int maxFramerate) : m_grav
 }
 
 EXP_PhysicsHandler::~EXP_PhysicsHandler() {
-	//Memory cleanup
 	delete m_dWorld;
+
 	delete m_solver;
 	delete m_overlappingPairCache;
 	delete m_dispatcher;
 	delete m_CollisionConfig;
+
+	std::cout << "Shutted down physics engine" << std::endl;
 }
 
 void EXP_PhysicsHandler::InitWorld() {
@@ -23,7 +25,7 @@ void EXP_PhysicsHandler::InitWorld() {
 
 	m_overlappingPairCache = new btDbvtBroadphase();
 
-	m_solver = new btSequentialImpulseConstraintSolver;
+	m_solver = new btSequentialImpulseConstraintSolver();
 
 	m_dWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_overlappingPairCache, m_solver, m_CollisionConfig);
 

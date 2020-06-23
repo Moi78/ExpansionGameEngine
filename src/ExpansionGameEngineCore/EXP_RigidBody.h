@@ -38,7 +38,6 @@ public:
 	vec3f GetWorldPosition();
 
 	void AddMovementInput(vec3f direction, float scale);
-	void ClearMovementInput();
 
 	virtual void ConstructShape();
 

@@ -19,21 +19,21 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 		this->MinInit();
 	}
 
-	m_frmLmt = new RD_FrameLimiter(maxFramerate);
+	m_frmLmt = std::make_unique<RD_FrameLimiter>(maxFramerate);
 
 	//Shader Compiling
-	m_shadowShader = new RD_ShaderLoader();
+	m_shadowShader = std::make_unique<RD_ShaderLoader>();
 	m_shadowShader->compileShaderFromFile("Engine/Shaders/glsl/Shadow.vert", "Engine/Shaders/glsl/Shadow.frag");
 
-	m_light_shader = new RD_ShaderLoader();
+	m_light_shader = std::make_unique<RD_ShaderLoader>();
 	m_light_shader->compileShaderFromFile("Engine/Shaders/glsl/Light.vert", "Engine/Shaders/glsl/Light.frag");
 
-	m_CurrentShader = m_light_shader;
+	m_CurrentShader = m_light_shader.get();
 
-	m_defTex = new RD_Texture();
+	m_defTex = std::make_shared<RD_Texture>();
 	m_defTex->LoadTexture("Engine/Textures/defTex.png");
 
-	m_blankTexture = new RD_Texture();
+	m_blankTexture = std::make_shared<RD_Texture>();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
 	if (RENDER_DEBUG_ENABLED) {
@@ -41,7 +41,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 		shad->compileShaderFromFile("Engine/Shaders/glsl/Debug.vert", "Engine/Shaders/glsl/Debug.frag");
 		RD_ShaderMaterial* dbgmat = new RD_ShaderMaterial(shad);
 
-		m_DBG_light_mdl = new RD_Mesh(dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
+		m_DBG_light_mdl = std::make_unique<RD_Mesh>(dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
 		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
 	}
 
@@ -50,8 +50,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 
 	CreateGbuff();
 
-	m_quad = new RD_Quad();
-	m_matlib = new RD_MaterialLibrary();
+	m_quad = std::make_unique<RD_Quad>();
+	m_matlib = std::make_unique<RD_MaterialLibrary>();
 
 	InitGUI();
 }
@@ -63,16 +63,6 @@ RaindropRenderer::~RaindropRenderer() {
 	m_DirLights.clear();
 	m_guis.clear();
 	m_meshes.clear();
-
-	if (RENDER_DEBUG_ENABLED) {
-		delete m_DBG_light_mdl;
-		//delete m_DBG_sound_emitter_mdl;
-	}
-
-	delete m_defTex;
-
-	delete m_shadowShader;
-	delete m_quad;
 }
 
 void RaindropRenderer::initWindow(int w, int h, std::string name) {
@@ -388,8 +378,8 @@ void RaindropRenderer::RenderLightsDepth(vec3f camPos) {
 	if (!IsFeatureEnabled(RendererFeature::Lighting))
 		return;
 
-	for (auto light : m_DirLights) {
-		light->DepthRender(this, camPos);
+	for (int i = 0; i < m_DirLights.size(); i++) {
+		m_DirLights[i]->DepthRender(this, camPos);
 	}
 }
 
@@ -399,8 +389,8 @@ void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
 }
 
 void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
-	for (auto m : m_meshes) {
-		RD_ShaderLoader* shader = m->GetMaterial()->GetShader();
+	for (int i = 0; i < m_meshes.size(); i++) {
+		RD_ShaderLoader* shader = m_meshes[i]->GetMaterial()->GetShader();
 		shader->useShader();
 
 		if (IsFeatureEnabled(RendererFeature::Lighting)) {
@@ -409,19 +399,19 @@ void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
 			unsigned int texUnit = GL_TEXTURE0;
 			int i = 0;
 
-			for (auto dlight : m_DirLights) {
+			for (int i = 0; i < m_DirLights.size(); i++) {
 				glActiveTexture(texUnit);
-				glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
+				glBindTexture(GL_TEXTURE_2D, m_DirLights[i]->GetDepthTexID());
 
 				shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
-				shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
+				shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", m_DirLights[i]->GetLightSpace());
 
 				texUnit++;
 				i++;
 			}
 		}
 
-		m->render(cam);
+		m_meshes[i]->render(cam);
 	}
 }
 
@@ -430,13 +420,13 @@ void RaindropRenderer::RenderShadowMeshes() {
 		return;
 	}
 
-	for (auto m : m_meshes) {
-		m->renderShadows(m_shadowShader);
+	for (int i = 0; i < m_meshes.size(); i++) {
+		m_meshes[i]->renderShadows(m_shadowShader.get());
 	}
 }
 
 RD_ShaderLoader* RaindropRenderer::GetShadowShader() {
-	return m_shadowShader;
+	return m_shadowShader.get();
 }
 
 void RaindropRenderer::CreateGbuff() {
@@ -525,7 +515,7 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	SwitchShader(m_light_shader);
+	SwitchShader(m_light_shader.get());
 	SendFeaturesToShader(m_CurrentShader);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -592,7 +582,7 @@ void RaindropRenderer::UnregisterPointLight(RD_PointLight* ptLight) {
 }
 
 RD_Texture* RaindropRenderer::GetBlankTexture() {
-	return m_blankTexture;
+	return m_blankTexture.get();
 }
 
 void RaindropRenderer::DeleteGbuff() {

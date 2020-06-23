@@ -20,6 +20,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "RaindropRenderer.h"
 #include "RD_Texture.h"

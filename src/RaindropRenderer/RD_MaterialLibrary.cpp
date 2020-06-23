@@ -15,8 +15,6 @@ void RD_MaterialLibrary::RemoveMaterialFromLib(std::string matName) {
 	//Searching material over registered one
 	for (int i = 0; i < m_materials.size(); i++) {
 		if (m_materials[i].first == matName) {
-			delete m_materials[i].second;
-
 			m_materials.erase(m_materials.begin() + i); //Delete material
 			return;
 		}
@@ -49,9 +47,5 @@ RD_ShaderMaterial* RD_MaterialLibrary::GetMaterialByName(std::string name) {
 }
 
 void RD_MaterialLibrary::ClearLibrary() {
-	for (auto m : m_materials) {
-		delete m.second;
-	}
-
 	m_materials.clear();
 }

@@ -22,8 +22,7 @@
 #include <vector>
 #include <filesystem>
 #include <thread>
-
-#include <vector>
+#include <memory>
 
 #include "EXP_Game.h"
 #include "EXP_StaticMesh.h"

@@ -1,11 +1,12 @@
 #include <iostream>
+#include <memory>
 
 #include <EXP_Game.h>
 
 #include <BD_MatRW.h>
 
 int main(int argc, char* argv[]) {
-	EXP_Game* game = new EXP_Game("GameInfo.json");
+	std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>("GameInfo.json");
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->RenderScene();
@@ -16,8 +17,6 @@ int main(int argc, char* argv[]) {
 
 		game->EndFrame();
 	}
-	
-	delete game;
 
 	return 0;
 }

@@ -154,33 +154,33 @@ private:
 	float ambientStrength;
 	vec3f ambientColor;
 
-	RD_FrameLimiter* m_frmLmt;
+	std::unique_ptr<RD_FrameLimiter> m_frmLmt;
 
 	std::vector<RD_PointLight*> m_pt_lights;
 	std::vector<RD_DirLight*> m_DirLights;
 	std::vector<RD_GUI*> m_guis;
 	std::vector<RD_Mesh*> m_meshes;
 
-	RD_Mesh* m_DBG_light_mdl;
-	RD_Mesh* m_DBG_sound_emitter_mdl;
+	std::unique_ptr<RD_Mesh> m_DBG_light_mdl;
+	std::unique_ptr<RD_Mesh> m_DBG_sound_emitter_mdl;
 
-	RD_Texture* m_defTex;
-	RD_Texture* m_blankTexture;
+	std::shared_ptr<RD_Texture> m_defTex;
+	std::shared_ptr<RD_Texture> m_blankTexture;
 
 	std::vector<unsigned int> m_textureGarbageCollector;
 	std::vector<unsigned int> m_framebufferGarbageCollector;
 
 	//Deffered Rendering
 	Gbuff m_g_buffer;
-	RD_Quad* m_quad;
+	std::unique_ptr<RD_Quad> m_quad;
 
-	RD_ShaderLoader* m_shadowShader;
-	RD_ShaderLoader* m_light_shader;
+	std::unique_ptr<RD_ShaderLoader> m_shadowShader;
+	std::unique_ptr<RD_ShaderLoader> m_light_shader;
 
 	RD_ShaderLoader* m_CurrentShader;
 
 	//Materials
-	RD_MaterialLibrary* m_matlib;
+	std::unique_ptr<RD_MaterialLibrary> m_matlib;
 };
 
 template<class T>

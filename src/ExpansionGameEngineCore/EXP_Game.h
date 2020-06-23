@@ -126,31 +126,31 @@ private:
 	void InitPhysics();
 	BD_GameInfo CreateGameInfoFromJSON(std::string gameInfo);
 
-	EXP_MapLoader* m_PlayingMap;
+	std::unique_ptr<EXP_MapLoader> m_PlayingMap;
 
-	RaindropRenderer* m_rndr;
-	RD_MaterialLibrary* m_materialManager;
+	std::shared_ptr<RaindropRenderer> m_rndr;
+	std::unique_ptr<RD_MaterialLibrary> m_materialManager;
 
 	vec3f m_refreshColor;
 	std::string m_gameName;
 
-	PSound* m_soundEngine;
+	std::unique_ptr<PSound> m_soundEngine;
+	std::shared_ptr<PS_Listener> m_listener;
 
 	BD_Resolution m_res;
 	BD_GameInfo m_gameinfo;
 
 	EXP_Camera* m_currentCamera;
-	PS_Listener* m_listener;
 
-	EXP_HotLoad* m_GameLib;
+	std::unique_ptr<EXP_HotLoad> m_GameLib;
 
-	EXP_InputHandler* m_hinput;
+	std::unique_ptr<EXP_InputHandler> m_hinput;
 
 	//Signals
 	bool m_sigClearMatMan;
 	bool m_sigLevelFinalCleanup;
 	//Physics
-	EXP_PhysicsHandler* m_physicsHandler;
+	std::unique_ptr<EXP_PhysicsHandler> m_physicsHandler;
 	//Actors
 	std::vector<EXP_Actor*> m_actors;
 };

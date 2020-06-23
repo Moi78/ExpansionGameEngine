@@ -26,6 +26,7 @@
 #endif //_WIN32
 
 #include <vector>
+#include <memory>
 
 #include "EXP_Component.h"
 
@@ -57,8 +58,8 @@ protected:
 	vec3f m_rot;
 	vec3f m_scale;
 
-	RD_Callback* m_tick;
-	RD_Callback* m_onStart;
-	RD_Callback* m_onUnregister;
+	std::unique_ptr<RD_Callback> m_tick;
+	std::unique_ptr<RD_Callback> m_onStart;
+	std::unique_ptr<RD_Callback> m_onUnregister;
 };
 

@@ -10,17 +10,15 @@ EXP_Actor::EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::fun
 	m_rot = rot;
 	m_scale = scale;
 
-	m_onStart = new RD_Callback(onStart);
-	m_tick = new RD_Callback(tick);
-	m_onUnregister = new RD_Callback(OnUnregister);
+	m_onStart = std::make_unique<RD_Callback>(onStart);
+	m_tick = std::make_unique<RD_Callback>(tick);
+	m_onUnregister = std::make_unique<RD_Callback>(OnUnregister);
 
 	m_game->RegisterActor(this);
 }
 
 EXP_Actor::~EXP_Actor() {
-	delete m_onStart;
-	delete m_tick;
-	delete m_onUnregister;
+
 }
 
 vec3f EXP_Actor::GetWorldPos() {

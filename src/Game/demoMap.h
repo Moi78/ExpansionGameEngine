@@ -36,7 +36,7 @@ private:
 
 	//EXP_Camera* cam;
 
-	//EXP_KeyboardCallback* m_key;
+	EXP_KeyboardCallback* m_key;
 	//EXP_KeyboardCallback* m_mfwd;
 
 	EXP_RB_Box* m_floor;

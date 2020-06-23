@@ -10,7 +10,7 @@ demoMap::demoMap(EXP_Game* game, EXP_MapLoader* mload) : EXP_Level(true, true) {
 	//cam = new EXP_Camera(game, vec3f(0.0f, -15.0f, 5.0f), vec3f(), vec3f(), vec3f(90.0f, 90.0f, 0.0f), 60.0f, 0.1f, 100.0f);
 	//cam->Use();
 
-	//m_key = new EXP_KeyboardCallback(m_game, CL_VDFUNCPTR(demoMap::KeyTest), GLFW_KEY_H);
+	m_key = new EXP_KeyboardCallback(m_game, CL_VDFUNCPTR(demoMap::KeyTest), GLFW_KEY_H);
 	//m_mfwd = new EXP_KeyboardCallback(m_game, CL_VDFUNCPTR(demoMap::MoveForward), GLFW_KEY_Z);
 
 	m_floor = new EXP_RB_Box(m_game, vec3f(), vec3f(), vec3f(20.0f, 20.0f, 1.0f), 0.0f);
@@ -18,7 +18,7 @@ demoMap::demoMap(EXP_Game* game, EXP_MapLoader* mload) : EXP_Level(true, true) {
 }
 
 demoMap::~demoMap() {
-	//delete m_key;
+	delete m_key;
 	//delete m_mfwd;
 	//delete m_floor;
 	//delete m_actor;
@@ -37,7 +37,7 @@ void demoMap::OnTick() {
 }
 
 void demoMap::KeyTest() {
-	m_game->UnloadCurrentMap();
+	m_game->LoadMap("/Maps/map2.json");
 }
 
 void demoMap::MoveForward() {

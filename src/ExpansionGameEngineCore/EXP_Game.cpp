@@ -14,7 +14,7 @@
 EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
 
-	m_GameLib = new EXP_HotLoad();
+	m_GameLib = std::make_unique<EXP_HotLoad>();
 
 	m_actors = {};
     
@@ -34,7 +34,7 @@ EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 EXP_Game::EXP_Game(std::string gameinfo) {
 	BD_GameInfo gi = CreateGameInfoFromJSON(gameinfo);
 
-	m_GameLib = new EXP_HotLoad();
+	m_GameLib = std::make_unique<EXP_HotLoad>();
 
 	m_actors = {};
 
@@ -54,13 +54,7 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 
 EXP_Game::~EXP_Game() {
 	UnloadCurrentMap();
-	delete m_GameLib;
-
 	m_soundEngine->shutdownAL();
-
-	delete m_physicsHandler;
-	delete m_rndr;
-	delete m_materialManager;
 }
 
 BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
@@ -107,13 +101,13 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
     
-	m_rndr = new RaindropRenderer(m_res.x, m_res.y, gameinfo.GameName, 60);
-	m_materialManager = new RD_MaterialLibrary();
-	m_hinput = new EXP_InputHandler(m_rndr->GetGLFWwindow());
+	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, 60);
+	m_materialManager = std::make_unique<RD_MaterialLibrary>();
+	m_hinput = std::make_unique<EXP_InputHandler>(m_rndr->GetGLFWwindow());
 
 	InitPhysics();
 
-	m_PlayingMap = new EXP_MapLoader(this);
+	m_PlayingMap = std::make_unique<EXP_MapLoader>(this);
 	m_PlayingMap->LoadMap(gameinfo.RootGameContentFolder + gameinfo.StartupMap);
 
 	m_sigClearMatMan = false;
@@ -130,7 +124,7 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 }
 
 void EXP_Game::InitPhysicaSound() {
-	m_soundEngine = new PSound();
+	m_soundEngine = std::make_unique<PSound>();
 
 	m_soundEngine->GetDevice();
 	
@@ -140,12 +134,12 @@ void EXP_Game::InitPhysicaSound() {
 		return;
 	}
 
-    m_listener = new PS_Listener(vec3f(), vec3f());
-    m_soundEngine->RegisterListener(m_listener);
+    m_listener = std::make_shared<PS_Listener>(vec3f(), vec3f());
+    m_soundEngine->RegisterListener(m_listener.get());
 }
 
 void EXP_Game::InitPhysics() {
-	m_physicsHandler = new EXP_PhysicsHandler(vec3f(0.0f, 0.0f, -9.82f), GetRenderer()->GetFrameLimit());
+	m_physicsHandler = std::make_unique<EXP_PhysicsHandler>(vec3f(0.0f, 0.0f, -9.82f), GetRenderer()->GetFrameLimit());
 	m_physicsHandler->InitWorld();
 }
 
@@ -228,7 +222,7 @@ BD_GameInfo EXP_Game::GetGameInfo() {
 }
 
 RaindropRenderer* EXP_Game::GetRenderer() {
-	return m_rndr;
+	return m_rndr.get();
 }
 
 void EXP_Game::RegisterMesh(RD_Mesh* mesh) {
@@ -244,7 +238,7 @@ vec3f EXP_Game::GetRefreshColor() {
 }
 
 PSound* EXP_Game::GetSoundEngine() {
-	return m_soundEngine;
+	return m_soundEngine.get();
 }
 
 void EXP_Game::PlaySimpleSound(std::string ref, float gain) {
@@ -252,7 +246,7 @@ void EXP_Game::PlaySimpleSound(std::string ref, float gain) {
 
 	std::thread t([](PSound* engine, std::string file, float gain) {
 		engine->playSimpleSound(file, gain);
-	}, m_soundEngine, fullref, gain);
+	}, m_soundEngine.get(), fullref, gain);
 
 	t.detach();
 }
@@ -265,7 +259,7 @@ void EXP_Game::PlaySound3D(std::string ref, vec3f pos, float gain) {
 
 	std::thread t([](PSound* engine, std::string file, vec3f pos, float gain) {
 		engine->playSound3D(file, pos, gain);
-	}, m_soundEngine, fullref, pos, gain);
+	}, m_soundEngine.get(), fullref, pos, gain);
 
 	t.detach();
 }
@@ -290,7 +284,7 @@ void EXP_Game::UpdatePhysics() {
 }
 
 EXP_PhysicsHandler* EXP_Game::GetPhysicsHandler() {
-	return m_physicsHandler;
+	return m_physicsHandler.get();
 }
 
 void EXP_Game::RegisterKeyboardCallback(EXP_KeyboardCallback* callback) {
@@ -334,6 +328,8 @@ void EXP_Game::UnregisterActor(EXP_Actor* actor) {
 	if (index != -1) {
 		m_actors.erase(m_actors.begin() + index);
 		actor->CallUnregister();
+
+		delete actor;
 	}
 	else {
 		std::cerr << "ERROR: Element does not exists" << std::endl;
@@ -341,7 +337,7 @@ void EXP_Game::UnregisterActor(EXP_Actor* actor) {
 }
 
 EXP_HotLoad* EXP_Game::GetGameLib() {
-	return m_GameLib;
+	return m_GameLib.get();
 }
 
 void EXP_Game::UnloadCurrentMap() {
@@ -351,6 +347,7 @@ void EXP_Game::UnloadCurrentMap() {
 			delete m_actors[i];
 		}
 	}
+
 	if(!m_actors.empty())
 		m_actors.clear();
 
@@ -368,5 +365,5 @@ void EXP_Game::LoadMap(std::string map) {
 }
 
 EXP_InputHandler* EXP_Game::GetInputHandler() {
-	return m_hinput;
+	return m_hinput.get();
 }

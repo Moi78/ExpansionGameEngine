@@ -30,10 +30,10 @@ void RD_FrameBuffer::CreateAttachements() {
 	unsigned int att = GL_COLOR_ATTACHMENT0;
 
 	for (int i = 0; i < m_nbrAttachement; i++) {
-		RD_Texture* tex = new RD_Texture();
+		std::shared_ptr<RD_Texture> tex = std::make_shared<RD_Texture>();
 		tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, att);
 
-		m_attachments.push_back(tex);
+		m_attachments.push_back(tex.get());
 
 		att++;
 	}
