@@ -16,6 +16,12 @@ add_definitions(${GCC_PERM})
 SET(PREPOC "-D GLM_ENABLE_EXPERIMENTAL")
 add_definitions(${PREPOC})
 
+find_package(Bullet REQUIRED)
+if(BULLET_FOUND)
+	include_directories(${BULLET_INCLUDE_DIRS})
+	target_link_libraries(Game ${BULLET_DYNAMICS_LIBRARY} ${BULLET_COLLISION_LIBRARY} ${BULLET_MATH_LIBRARY})
+endif(BULLET_FOUND)
+
 target_link_libraries(Game BulldozerFileManager)
 target_link_libraries(Game ExpansionMath)
 target_link_libraries(Game ExpansionGameEngineCore)
