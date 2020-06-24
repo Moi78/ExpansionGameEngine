@@ -40,6 +40,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [ ] ExpansionMath Cleanup
  - [x] Use smartptr when possible
  - [ ] Consistent error handling
+ - [ ] Fix the error when reducing the window
  
 ## Dependencies :
   - OpenAL Soft (by @Kcat)
