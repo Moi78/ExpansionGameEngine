@@ -5,12 +5,18 @@
 
 #ifdef _WIN32
 
+#ifdef RAINDROPRENDERER_EXPORTS
+#define RAINDROPRENDERER_API __declspec(dllexport)
+#else
+#define RAINDROPRENDERER_API __declspec(dllimport)
+#endif //RAINDROPRENDERER_EXPORTS
+
 #include <Windows.h>
 #include <iostream>
 #include <string>
 
 //Error displayer
-void dispErrorMessageBox(std::wstring Message);
+extern "C" void RAINDROPRENDERER_API dispErrorMessageBox(std::wstring Message);
 
 #else
 

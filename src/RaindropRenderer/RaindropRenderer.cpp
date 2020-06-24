@@ -12,6 +12,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	FillFeaturesStringArray();
 	FillFeatureStateArray();
 
+	m_error_flag = false;
+
 	if (!minInit) {
 		initWindow(w, h, windowName);
 	}
@@ -72,7 +74,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 
 		dispErrorMessageBox(StrToWStr("Cannot initalize GLFW. " + std::string(error)));
 		glfwTerminate();
-		exit(-1);
+		SetErrorFlag(true);
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -86,14 +88,16 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 		const char* error;
 		glfwGetError(&error);
 
-		dispErrorMessageBox(StrToWStr("Cannot create window. " + std::string(error)));
+		dispErrorMessageBox(StrToWStr("Cannot create window. Terminating GLFW.\n" + std::string(error)));
 		glfwTerminate();
-		exit(-1);
+		SetErrorFlag(true);
 	}
 
 	glfwMakeContextCurrent(win);
 
-	initGlad();
+	if (!initGlad()) {
+		SetErrorFlag(true);
+	}
 
 	glViewport(0, 0, m_width, m_height);
 
@@ -122,9 +126,10 @@ void RaindropRenderer::ClearWindow(vec3f refreshColor) {
 
 void RaindropRenderer::SwapWindow() {
 	glfwSwapBuffers(win);
+	m_error_flag = false;
 
 	m_frmLmt->stop();
-	m_frmLmt->WaitAll();
+	//m_frmLmt->WaitAll();
 }
 
 bool RaindropRenderer::WantToClose() {
@@ -136,19 +141,21 @@ bool RaindropRenderer::WantToClose() {
 	}
 }
 
-void RaindropRenderer::initGlad(bool minInit) {
+bool RaindropRenderer::initGlad(bool minInit) {
 	if (!minInit) {
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			dispErrorMessageBox(StrToWStr("Cannot init GLAD."));
-			exit(-1);
+			return false;
 		}
 	}
 	else {
 		if (gladLoadGL() != 1) {
 			dispErrorMessageBox(StrToWStr("Cannot init OpenGL"));
-			exit(-1);
+			return false;
 		}
 	}
+
+	return true;
 }
 
 int RaindropRenderer::getWindowHeigh() {
@@ -280,8 +287,8 @@ void RaindropRenderer::FillPtLightIndice(int index) {
 	if (m_pt_lights.size() < index) {
 		std::cerr << "Can't add point light : Index out of range." << std::endl;
 	}
-	else if (index > 327) {
-		std::cerr << "Can't add point light : No more than 500 lights are supported." << std::endl;
+	else if (index > 243) {
+		std::cerr << "Can't add point light : No more than 243 lights are supported." << std::endl;
 	}
 
 	std::string indexSTR = std::to_string(index);
@@ -429,7 +436,7 @@ RD_ShaderLoader* RaindropRenderer::GetShadowShader() {
 	return m_shadowShader.get();
 }
 
-void RaindropRenderer::CreateGbuff() {
+bool RaindropRenderer::CreateGbuff() {
 	m_width = getWindowWidth();
 	m_height = getWindowHeigh();
 
@@ -490,10 +497,11 @@ void RaindropRenderer::CreateGbuff() {
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		dispErrorMessageBox(StrToWStr("ERROR: Framebuffer incomplete. :/"));
-		exit(-6);
+		return false;
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	return true;
 }
 
 void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
@@ -602,7 +610,9 @@ void RaindropRenderer::DeleteGbuff() {
 void RaindropRenderer::RecreateGbuff() {
 	DeleteGbuff();
 
-	CreateGbuff();
+	if (!CreateGbuff()) {
+		dispErrorMessageBox(StrToWStr("Cannot recreate G-Buffer"));
+	}
 }
 
 void RaindropRenderer::SetFullscreenMode(bool mode) {
@@ -668,6 +678,14 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 
 	m_matlib->AddMaterialToLib(shdmat, ref);
 	return shdmat;
+}
+
+void RaindropRenderer::SetErrorFlag(bool val) {
+	m_error_flag = val;
+}
+
+bool RaindropRenderer::GetErrorFlag() {
+	return m_error_flag;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------

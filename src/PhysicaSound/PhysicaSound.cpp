@@ -96,10 +96,10 @@ bool PSound::playSimpleSound(std::string wavFile, float gain)
         std::this_thread::sleep_for(std::chrono::seconds(1));
     } while (state == AL_PLAYING);
     
-    alDeleteBuffers(1, &Buffer);
-    
     alSourcei(source, AL_BUFFER, 0);
     alDeleteSources(1, &source);
+
+    alDeleteBuffers(1, &Buffer);
     
     return true;
 }

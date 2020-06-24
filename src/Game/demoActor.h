@@ -21,11 +21,14 @@ public:
 	void Unregister();
 
 	void MoveForward();
+	void Kaboom();
 
 private:
 	EXP_Camera* m_cam;
 	EXP_RB_Box* m_bound;
+
 	EXP_KeyboardCallback* m_moveforwd;
+	EXP_KeyboardCallback* m_kaboom;
 };
 
 #endif //_DEMO_ACTOR_H__

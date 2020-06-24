@@ -13,6 +13,7 @@
 
 EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
+	m_error_flag = false;
 
 	m_GameLib = std::make_unique<EXP_HotLoad>();
 
@@ -33,6 +34,8 @@ EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 
 EXP_Game::EXP_Game(std::string gameinfo) {
 	BD_GameInfo gi = CreateGameInfoFromJSON(gameinfo);
+	m_error_flag = false;
+	m_currentCamera = nullptr;
 
 	m_GameLib = std::make_unique<EXP_HotLoad>();
 
@@ -44,8 +47,6 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 #else
     m_GameLib->LoadLib(gi.GameLib.c_str());
 #endif //_WIN32
-
-	m_currentCamera = nullptr;
 
 	InitPhysicaSound();
 	InitGame(vec3f(), gi);
@@ -366,4 +367,12 @@ void EXP_Game::LoadMap(std::string map) {
 
 EXP_InputHandler* EXP_Game::GetInputHandler() {
 	return m_hinput.get();
+}
+
+bool EXP_Game::CheckErrors() {
+	if (m_rndr->GetErrorFlag() && m_error_flag) {
+		return true;
+	}
+
+	return false;
 }

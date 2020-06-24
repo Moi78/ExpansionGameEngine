@@ -24,12 +24,15 @@
 
 class EXPGE_API EXP_KeyboardCallback : public RD_Callback {
 public:
-	EXP_KeyboardCallback(EXP_Game* gameinstance, std::function<void()> func, int key);
+	EXP_KeyboardCallback(EXP_Game* gameinstance, std::function<void()> func, int key, bool waitRelease = false);
 	~EXP_KeyboardCallback();
 
 	void UpdateCallback();
 private:
 	int m_key;
+
+	bool m_waitRealease;
+	bool m_released;
 
 	EXP_Game* m_gameinstance;
 };

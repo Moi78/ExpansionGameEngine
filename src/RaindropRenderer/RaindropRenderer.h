@@ -60,7 +60,7 @@ public:
 	RaindropRenderer(int w, int h, std::string windowName, int maxFramerate = 60, bool minInit = false);
 	~RaindropRenderer();
 
-	void initGlad(bool minInit = false);
+	bool initGlad(bool minInit = false);
 	void MinInit();
 
 	void initWindow(int w, int h, std::string name);
@@ -129,6 +129,7 @@ public:
 	void RegisterGUI(RD_GUI*);
 
 	int GetFrameLimit();
+	bool GetErrorFlag();
 private:
 	void UpdateAmbientLighting();
 	void UpdateDirLighting();
@@ -140,13 +141,17 @@ private:
 	void FillFeatureStateArray();
 	void EnableAllFeatures();
 
-	void CreateGbuff();
+	bool CreateGbuff();
 	void DeleteGbuff();
+
+	void SetErrorFlag(bool val);
 
 	GLFWwindow* win;
 
 	int m_height;
 	int m_width;
+
+	bool m_error_flag;
 
 	std::string m_features_string[3];
 	bool m_features_state[3];

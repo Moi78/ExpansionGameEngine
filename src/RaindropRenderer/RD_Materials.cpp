@@ -8,6 +8,10 @@ RD_ShaderMaterial::RD_ShaderMaterial(RD_ShaderLoader* shader) {
 RD_ShaderMaterial::~RD_ShaderMaterial() {
 	if(m_shader)
 		delete m_shader;
+
+	for (auto tex : m_textures) {
+		glDeleteTextures(1, &tex.second);
+	}
 }
 
 void RD_ShaderMaterial::BindMaterial() {

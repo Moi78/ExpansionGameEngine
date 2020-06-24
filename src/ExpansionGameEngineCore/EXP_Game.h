@@ -119,6 +119,8 @@ public:
 	void UpdatePhysics();
 	EXP_PhysicsHandler* GetPhysicsHandler();
 
+	bool CheckErrors();
+
 private:
 	void InitGame(vec3f refreshColor, BD_GameInfo gameinfo);
 	void InitPhysicaSound();
@@ -149,6 +151,7 @@ private:
 	//Signals
 	bool m_sigClearMatMan;
 	bool m_sigLevelFinalCleanup;
+	bool m_error_flag;
 	//Physics
 	std::unique_ptr<EXP_PhysicsHandler> m_physicsHandler;
 	//Actors
