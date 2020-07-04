@@ -21,7 +21,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
    - [ ] MacOS (last priority)
  - [ ] Optimise as f\*ck -> I want to have a very well optimised engine to run everywhere
  - [ ] An easy to understand & easy to use engine
-     - [ ] JS Scripting
+     - [ ] JS **and** Python Scripting
      - [ ] Powerful all-in-one editor
      - [ ] Well written documentation
 
