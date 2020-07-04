@@ -62,7 +62,7 @@ void EXP_RigidBody::AddMovementInput(vec3f direction, float scale) {
 	vec3f fMov = direction * scale;
 	btVector3 btMov(fMov.getX(), fMov.getY(), fMov.getZ());
 
-	m_body->applyCentralImpulse(btMov);
+	m_body->setLinearVelocity(btMov);
 }
 
 //RB Box

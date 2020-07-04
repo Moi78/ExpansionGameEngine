@@ -40,8 +40,8 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 100.0f);
 
 	glm::mat4 lightView = glm::lookAt(
-		glm::vec3(-m_dir.getX() * 10, -m_dir.getY() * 10, -m_dir.getZ() * 10),
-		glm::vec3(0),
+		glm::vec3((-m_dir.getX() * 5) + CamPos.getX(), (-m_dir.getY() * 5) + CamPos.getY(), (-m_dir.getZ() * 5) + CamPos.getZ()),
+		glm::vec3(CamPos.getX(), CamPos.getY(), CamPos.getZ()),
 		glm::vec3(0.0f, 0.0f, 1.0f)
 		);
 

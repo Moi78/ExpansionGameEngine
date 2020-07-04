@@ -120,7 +120,7 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	}
 
 	for (auto act : m_actors) {
-		act->CallOnStart();
+		act->Start();
 	}
 }
 
@@ -302,8 +302,7 @@ void EXP_Game::UpdateCallbacks() {
 	m_hinput->UpdateKeyboardInput();
 
 	for (auto act : m_actors) {
-		act->CallTick();
-		act->UpdateActor();
+		act->Tick();
 	}
 }
 
@@ -328,7 +327,7 @@ void EXP_Game::UnregisterActor(EXP_Actor* actor) {
 
 	if (index != -1) {
 		m_actors.erase(m_actors.begin() + index);
-		actor->CallUnregister();
+		actor->Unregister();
 
 		delete actor;
 	}
@@ -344,7 +343,7 @@ EXP_HotLoad* EXP_Game::GetGameLib() {
 void EXP_Game::UnloadCurrentMap() {
 	for (int i = 0; i < m_actors.size(); i++) {
 		if (m_actors[i]) {
-			m_actors[i]->CallUnregister();
+			m_actors[i]->Unregister();
 			delete m_actors[i];
 		}
 	}

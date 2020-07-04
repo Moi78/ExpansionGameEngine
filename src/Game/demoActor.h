@@ -8,6 +8,7 @@
 #include <EXP_RigidBody.h>
 #include <EXP_Camera.h>
 #include <EXP_InputHandler.h>
+#include <EXP_PointLight.h>
 #include <EXP_Callbacks.h>
 
 class demoActor : public EXP_Actor
@@ -16,9 +17,9 @@ public:
 	demoActor(EXP_Game* game, vec3f spawn);
 	~demoActor();
 
-	void Tick();
-	void Start();
-	void Unregister();
+	virtual void Tick() override;
+	virtual void Start() override;
+	virtual void Unregister() override;
 
 	void MoveForward();
 	void Kaboom();
@@ -26,6 +27,7 @@ public:
 private:
 	EXP_Camera* m_cam;
 	EXP_RB_Box* m_bound;
+	EXP_PointLight* m_plight;
 
 	EXP_KeyboardCallback* m_moveforwd;
 	EXP_KeyboardCallback* m_kaboom;

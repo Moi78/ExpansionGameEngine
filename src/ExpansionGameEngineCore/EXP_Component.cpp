@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EXP_Component.h"
 
-EXP_Component::EXP_Component(vec3f pos, vec3f rot, vec3f scale) : m_worldPos(pos), m_worldRot(rot), m_worldScale(scale) {
+EXP_Component::EXP_Component(vec3f pos, vec3f rot, vec3f scale) : m_pos(pos), m_rot(rot), m_scale(scale), m_parent_mat(1.0f), m_nameTag("") {
 
 }
 
@@ -41,26 +41,10 @@ std::string EXP_Component::GetNameTag() {
 	return m_nameTag;
 }
 
-vec3f EXP_Component::GetWorldPosition() {
-	return m_worldPos;
+void EXP_Component::UseParentMatrix(glm::mat4 mat) {
+	m_parent_mat = mat;
 }
 
-vec3f EXP_Component::GetWorldRotation() {
-	return m_worldRot;
-}
-
-vec3f EXP_Component::GetWorldScale() {
-	return m_worldScale;
-}
-
-void EXP_Component::SetWorldPosition(vec3f nPos) {
-	m_worldPos = nPos;
-}
-
-void EXP_Component::SetWorldRotation(vec3f nRot) {
-	m_worldRot = nRot;
-}
-
-void EXP_Component::SetWorldScale(vec3f nScale) {
-	m_worldScale = nScale;
+glm::mat4 EXP_Component::GetParentMatrix() {
+	return m_parent_mat;
 }

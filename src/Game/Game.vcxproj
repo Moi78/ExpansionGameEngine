@@ -91,6 +91,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\ExpansionGameEngineCore;..\RaindropRenderer;..\ExpansionMath;..\BulldozerFileManager;..\PhysicaSound;..\libs\AL\include;..\libs\BULLET\include;..\libs\GL\include;..\libs\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,6 +150,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\ExpansionGameEngineCore;..\RaindropRenderer;..\ExpansionMath;..\BulldozerFileManager;..\PhysicaSound;..\libs\AL\include;..\libs\BULLET\include;..\libs\GL\include;..\libs\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -36,16 +36,16 @@ class EXP_Game;
 class EXPGE_API EXP_Actor
 {
 public:
-	EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::function<void()> tickFunc, std::function<void()> startFunc, std::function<void()> OnUnregister);
+	EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale);
 	~EXP_Actor();
 
 	vec3f GetWorldPos();
 	vec3f GetWorldRot();
 	vec3f GetWorldScale();
 
-	void CallTick();
-	void CallOnStart();
-	void CallUnregister();
+	virtual void Tick();
+	virtual void Start();
+	virtual void Unregister();
 
 	void UpdateActor();
 
@@ -57,9 +57,5 @@ protected:
 	vec3f m_pos;
 	vec3f m_rot;
 	vec3f m_scale;
-
-	std::unique_ptr<RD_Callback> m_tick;
-	std::unique_ptr<RD_Callback> m_onStart;
-	std::unique_ptr<RD_Callback> m_onUnregister;
 };
 

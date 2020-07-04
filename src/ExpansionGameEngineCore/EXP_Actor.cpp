@@ -3,16 +3,12 @@
 
 #include "EXP_Game.h"
 
-EXP_Actor::EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::function<void()> tick, std::function<void()> onStart, std::function<void()> OnUnregister) {
+EXP_Actor::EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale) {
 	m_game = game;
 
 	m_pos = pos;
 	m_rot = rot;
 	m_scale = scale;
-
-	m_onStart = std::make_unique<RD_Callback>(onStart);
-	m_tick = std::make_unique<RD_Callback>(tick);
-	m_onUnregister = std::make_unique<RD_Callback>(OnUnregister);
 
 	m_game->RegisterActor(this);
 }
@@ -33,16 +29,16 @@ vec3f EXP_Actor::GetWorldScale() {
 	return m_scale;
 }
 
-void EXP_Actor::CallTick() {
-	m_tick->Call();
+void EXP_Actor::Start() {
+
 }
 
-void EXP_Actor::CallOnStart() {
-	m_onStart->Call();
+void EXP_Actor::Tick() {
+
 }
 
-void EXP_Actor::CallUnregister() {
-	m_onUnregister->Call();
+void EXP_Actor::Unregister() {
+
 }
 
 glm::mat4 EXP_Actor::GenerateActorMatrix() {
@@ -59,5 +55,5 @@ glm::mat4 EXP_Actor::GenerateActorMatrix() {
 }
 
 void EXP_Actor::UpdateActor() {
-	CallTick();
+	
 }

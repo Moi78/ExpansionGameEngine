@@ -19,6 +19,11 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+#include <glm/common.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 #include <vec3.h>
 
 class EXPGE_API EXP_Component
@@ -35,13 +40,8 @@ public:
 	virtual void SetRotation(vec3f nRot);
 	virtual void SetScale(vec3f nScale);
 
-	virtual vec3f GetWorldPosition();
-	virtual vec3f GetWorldRotation();
-	virtual vec3f GetWorldScale();
-
-	virtual void SetWorldPosition(vec3f nPos);
-	virtual void SetWorldRotation(vec3f nRot);
-	virtual void SetWorldScale(vec3f nScale);
+	virtual void UseParentMatrix(glm::mat4 mat);
+	virtual glm::mat4 GetParentMatrix();
 
 	void SetNameTag(std::string);
 	std::string GetNameTag();
@@ -52,9 +52,7 @@ protected:
 	vec3f m_rot;
 	vec3f m_scale;
 
-	vec3f m_worldPos;
-	vec3f m_worldRot;
-	vec3f m_worldScale;
+	glm::mat4 m_parent_mat;
 
 	std::string m_nameTag;
 };

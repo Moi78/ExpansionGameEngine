@@ -263,7 +263,7 @@ void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 		for (int i = 0; i < m_pt_lights.size(); i++) {
 			m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
 
-			m_DBG_light_mdl->SetWorldPosition(m_pt_lights[i]->GetPosition());
+			m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
 			m_DBG_light_mdl->render(cam, RenderMode::Wireframe);
 		}
 
@@ -524,7 +524,7 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	SwitchShader(m_light_shader.get());
-	SendFeaturesToShader(m_CurrentShader);
+	SendFeaturesToShader(m_light_shader.get());
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gAlbedo);

@@ -43,7 +43,7 @@ private:
 
 	btCollisionDispatcher* m_dispatcher;
 	btBroadphaseInterface* m_overlappingPairCache;
-	btSequentialImpulseConstraintSolver*m_solver;
+	btSequentialImpulseConstraintSolver* m_solver;
 	btDefaultCollisionConfiguration* m_CollisionConfig;
 
 	vec3f m_gravity;

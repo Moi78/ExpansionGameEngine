@@ -36,10 +36,8 @@ public:
 	virtual void SetPosition(vec3f nPos) override;
 	virtual void SetRotation(vec3f nRot) override;
 	virtual void SetScale(vec3f nScale) override;
-
-	virtual void SetWorldPosition(vec3f nPos) override;
-	virtual void SetWorldRotation(vec3f nRot) override;
-	virtual void SetWorldScale(vec3f nScale) override;
+	
+	virtual void UseParentMatrix(glm::mat4 parent) override;
 
 private:
 	EXP_Game* m_gameinstance;

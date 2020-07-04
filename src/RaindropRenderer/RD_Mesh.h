@@ -44,17 +44,17 @@ public:
 	void render(RD_Camera* cam, RenderMode rndrMode = RenderMode::Filled);
 	void renderShadows(RD_ShaderLoader* shadowShader);
 
-	void addRotation(vec3f rotation);
-	void addTranslation(vec3f translation);
-	void addScale(vec3f scale);
+	void addRotation(vec3f rotation, bool update = true);
+	void addTranslation(vec3f translation, bool update = true);
+	void addScale(vec3f scale, bool update = true);
 
-	void SetRotation(vec3f nRotation);
-	void SetPosition(vec3f nPos);
-	void SetScale(vec3f nScale);
+	void SetRotation(vec3f nRotation, bool update = true);
+	void SetPosition(vec3f nPos, bool update = true);
+	void SetScale(vec3f nScale, bool update = true);
 
-	void SetWorldPosition(vec3f nPos);
-	void SetWorldRotation(vec3f nRot);
-	void SetWorldScale(vec3f nScale);
+	void UseMatrix(glm::mat4 mdl);
+	void SetParentMatrix(glm::mat4 parent);
+	void Update();
 
 	vec3f GetLocation();
 
@@ -62,7 +62,6 @@ public:
 	
 private:
 	void Bufferize();
-	void Update();
 
 	unsigned int VAO, VBO, EBO;
 
@@ -81,11 +80,8 @@ private:
 	vec3f m_rotation;
 	vec3f m_scale;
 
-	vec3f m_worldPos;
-	vec3f m_worldRot;
-	vec3f m_worldScale;
-
 	glm::mat4 m_mdl;
+	glm::mat4 m_parent;
 };
 
 #endif
