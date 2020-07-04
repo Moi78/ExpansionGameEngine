@@ -406,12 +406,12 @@ void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
 			unsigned int texUnit = GL_TEXTURE0;
 			int i = 0;
 
-			for (int i = 0; i < m_DirLights.size(); i++) {
+			for (auto dlight : m_DirLights) {
 				glActiveTexture(texUnit);
-				glBindTexture(GL_TEXTURE_2D, m_DirLights[i]->GetDepthTexID());
+				glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
 
 				shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
-				shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", m_DirLights[i]->GetLightSpace());
+				shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
 
 				texUnit++;
 				i++;

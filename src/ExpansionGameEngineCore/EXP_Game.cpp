@@ -362,6 +362,11 @@ void EXP_Game::UnloadCurrentMap() {
 void EXP_Game::LoadMap(std::string map) {
 	UnloadCurrentMap();
 	m_PlayingMap->LoadMap(m_gameinfo.RootGameContentFolder + map);
+
+	m_PlayingMap->GetLevelCode()->OnStart();
+	for (auto actor : m_actors) {
+		actor->Start();
+	}
 }
 
 EXP_InputHandler* EXP_Game::GetInputHandler() {

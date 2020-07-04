@@ -9,7 +9,7 @@ float ProcessShadows(sampler2D SMap, vec4 FPLS) {
 	float closestDepth = texture(SMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
 
-	float bias = 0.003;
+	float bias = 0.0015;
 
 	float shadow = 0.0;
 
