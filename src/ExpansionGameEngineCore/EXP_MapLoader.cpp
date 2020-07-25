@@ -12,6 +12,11 @@ EXP_MapLoader::~EXP_MapLoader() {
 }
 
 bool EXP_MapLoader::LoadMap(std::string map) {
+	if (!std::filesystem::exists(map)) {
+		std::cerr << "Cannot load map file, file " << map << " does not exists" << std::endl;
+		return false;
+	}
+
 	std::ifstream mapStream(map.c_str());
 
 	Json::Value root;
