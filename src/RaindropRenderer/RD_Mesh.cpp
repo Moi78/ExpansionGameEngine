@@ -212,4 +212,5 @@ void RD_Mesh::UseMatrix(glm::mat4 mdl) {
 
 void RD_Mesh::SetParentMatrix(glm::mat4 parent) {
 	m_parent = parent;
+	Update();
 }

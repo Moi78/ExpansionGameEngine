@@ -34,6 +34,8 @@ public:
 
 	virtual void SetPosition(vec3f nPos) override;
 	virtual vec3f GetPosition() override;
+	
+	virtual void UseParentMatrix(glm::mat4 mat) override;
 
 private:
 	void RegisterLightToGame();

@@ -43,13 +43,23 @@ public:
 	vec3f GetWorldRot();
 	vec3f GetWorldScale();
 
+	void SetWorldPos(vec3f nPos);
+	void SetWorldRot(vec3f nRot);
+	void SetWorldScale(vec3f nScale);
+
+	void AddWorldPos(vec3f pos_offset);
+	void AddWorldRot(vec3f rot_offset);
+	void AddWorldScale(vec3f scale_offset);
+
 	virtual void Tick();
 	virtual void Start();
 	virtual void Unregister();
 
 	void UpdateActor();
+	void UpdateActorMatrix();
 
 	glm::mat4 GenerateActorMatrix();
+	void LinkComponent(EXP_Component* comp);
 	
 protected:
 	EXP_Game* m_game;
@@ -57,5 +67,9 @@ protected:
 	vec3f m_pos;
 	vec3f m_rot;
 	vec3f m_scale;
+	
+	glm::mat4 m_actor_mat;
+
+	std::vector<EXP_Component*> m_comps;
 };
 

@@ -1,6 +1,6 @@
 {
     "MapLevelCodeObjectName" : "demoMap",
-    "nodeCount" : 4,
+    "nodeCount" : 3,
 
     "0" : {
         "type":"mesh",
@@ -26,18 +26,9 @@
         "type":"plight",
         "nameTag":"point",
         
-        "brightness":20.0,
-        "radius":20.0,
+        "brightness":50.0,
+        "radius":10.0,
         "color":[1, 0, 1],
         "pos":[0, 0, 2]
-    },
-
-    "3" : {
-        "type":"dlight",
-        "nameTag":"dirLight1",
-
-        "dir":[-0.8, 0.3, -0.4],
-        "color":[0.0, 1.0, 1.0],
-        "brightness":1.0
     }
 }

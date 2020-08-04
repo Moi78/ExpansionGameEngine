@@ -10,6 +10,7 @@
 #include <EXP_InputHandler.h>
 #include <EXP_PointLight.h>
 #include <EXP_Callbacks.h>
+#include <EXP_StaticMesh.h>
 
 class demoActor : public EXP_Actor
 {
@@ -28,6 +29,8 @@ private:
 	EXP_Camera* m_cam;
 	EXP_RB_Box* m_bound;
 	EXP_PointLight* m_plight;
+
+	EXP_StaticMesh* m_sphere;
 
 	EXP_KeyboardCallback* m_moveforwd;
 	EXP_KeyboardCallback* m_kaboom;
