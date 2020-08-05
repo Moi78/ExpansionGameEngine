@@ -7,7 +7,7 @@
         "GameBin":"../x64/Debug/Game.dll",
 
         "GameName":"Donut Mmh",
-        "StartupMap":"/Maps/demoMap.json"
+        "StartupMap":"/map/cave.json"
     },
     
     "linux" : {

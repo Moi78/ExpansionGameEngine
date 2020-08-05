@@ -165,17 +165,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="demoActor.h" />
-    <ClInclude Include="demoMap.h" />
+    <ClInclude Include="cave.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="map2.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="demoActor.cpp" />
-    <ClCompile Include="demoMap.cpp" />
+    <ClCompile Include="cave.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="map2.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -58,10 +58,10 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 		exit(-3);
 	}
 
-	int nodeCount = root.get("nodeCount", "0").asInt();
+	int nodeCount = root["nodes"].size();
 	for (int i = 0; i < nodeCount; i++) {
 
-		Json::Value node = root[std::to_string(i)];
+		Json::Value node = root["nodes"][i];
 		std::string type = node.get("type", "mesh").asString();
 
 		//Creating map by specified type
