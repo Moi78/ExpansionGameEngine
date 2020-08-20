@@ -102,7 +102,7 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
     
-	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, 60);
+	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, 60, false, gameinfo.RootEngineContentFolder);
 	m_materialManager = std::make_unique<RD_MaterialLibrary>();
 	m_hinput = std::make_unique<EXP_InputHandler>(m_rndr->GetGLFWwindow());
 
@@ -172,7 +172,9 @@ void EXP_Game::RenderScene() {
 	m_rndr->RenderLightsDepth(CamLoc);
 	//GBuff
 	m_rndr->RenderGbuff(m_currentCamera);
-	//Light pass
+	//Rendering GUI
+	m_rndr->RenderGUI_Screen();
+	//Light pass (final pass)
 	m_rndr->RenderLightPass(CamLoc);
 
 	if (RENDER_DBG && m_currentCamera != nullptr) {

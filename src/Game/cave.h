@@ -4,6 +4,9 @@
 #include <EXP_MapLoader.h>
 #include <EXP_Level.h>
 
+#include <EXP_GUI_ColorCache.h>
+#include <EXP_GUI_ImageTexture.h>
+
 #include "Character.h"
 
 class cave : public EXP_Level
@@ -17,6 +20,9 @@ public:
 
 private:
 	Character* m_character;
+
+	EXP_GUI_ColorCache* m_gui_cache;
+	EXP_GUI_ImageTexture* m_gui_tex;
 };
 
 EXPGE_LEVEL_HEADER(cave);

@@ -7,8 +7,9 @@
 #include "RD_FrameBuffer.h"
 #include "RD_Camera.h"
 #include "RD_MaterialLibrary.h"
+#include "RD_GUI_Manager.h"
 
-RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit) : m_height(h), m_width(w) {
+RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit, std::string engineDir) : m_height(h), m_width(w), m_engineDir(engineDir) {
 	FillFeaturesStringArray();
 	FillFeatureStateArray();
 
@@ -24,27 +25,29 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_frmLmt = std::make_unique<RD_FrameLimiter>(maxFramerate);
 
 	//Shader Compiling
+	std::cout << "Compiling main shaders..." << std::endl;
+
 	m_shadowShader = std::make_unique<RD_ShaderLoader>();
-	m_shadowShader->compileShaderFromFile("Engine/Shaders/glsl/Shadow.vert", "Engine/Shaders/glsl/Shadow.frag");
+	m_shadowShader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Shadow.vert", m_engineDir + "/Shaders/glsl/Shadow.frag");
 
 	m_light_shader = std::make_unique<RD_ShaderLoader>();
-	m_light_shader->compileShaderFromFile("Engine/Shaders/glsl/Light.vert", "Engine/Shaders/glsl/Light.frag");
+	m_light_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Light.vert", m_engineDir + "/Shaders/glsl/Light.frag");
 
 	m_CurrentShader = m_light_shader.get();
 
 	m_defTex = std::make_shared<RD_Texture>();
-	m_defTex->LoadTexture("Engine/Textures/defTex.png");
+	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
 
 	m_blankTexture = std::make_shared<RD_Texture>();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
 	if (RENDER_DEBUG_ENABLED) {
 		RD_ShaderLoader* shad = new RD_ShaderLoader();
-		shad->compileShaderFromFile("Engine/Shaders/glsl/Debug.vert", "Engine/Shaders/glsl/Debug.frag");
+		shad->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Debug.vert", m_engineDir + "/Shaders/glsl/Debug.frag");
 		RD_ShaderMaterial* dbgmat = new RD_ShaderMaterial(shad);
 
 		m_DBG_light_mdl = std::make_unique<RD_Mesh>(dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
-		m_DBG_light_mdl->loadMesh("Engine/Meshes/Light.msh");
+		m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
 	}
 
 	ambientStrength = 1.0f;
@@ -52,10 +55,13 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 
 	CreateGbuff();
 
-	m_quad = std::make_unique<RD_Quad>();
-	m_matlib = std::make_unique<RD_MaterialLibrary>();
+	m_gui_manager = std::make_unique<RD_GUI_Manager>(this);
+	m_gui_manager->InitManager();
 
-	InitGUI();
+	m_quad = std::make_unique<RD_Quad>();
+	m_quad->Bufferize();
+
+	m_matlib = std::make_unique<RD_MaterialLibrary>();
 }
 
 RaindropRenderer::~RaindropRenderer() {
@@ -63,7 +69,6 @@ RaindropRenderer::~RaindropRenderer() {
 
 	m_pt_lights.clear();
 	m_DirLights.clear();
-	m_guis.clear();
 	m_meshes.clear();
 }
 
@@ -81,7 +86,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    
+
 	win = glfwCreateWindow(w, h, name.c_str(), NULL, NULL);
 
 	if (win == NULL) {
@@ -106,6 +111,7 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_ARB_clear_texture);
 }
 
 void RaindropRenderer::MinInit() {
@@ -361,14 +367,6 @@ RD_ShaderLoader* RaindropRenderer::GetCurrentShader() {
 	return m_CurrentShader;
 }
 
-void RaindropRenderer::InitGUI() {
-
-}
-
-void RaindropRenderer::RegisterGUI(RD_GUI* gui) {
-	m_guis.push_back(gui);
-}
-
 double RaindropRenderer::GetLastDeltaTime() {
 	return m_frmLmt->GetLastDeltaTime();
 }
@@ -546,6 +544,10 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
 	m_light_shader->SetInt("ShadowPass", 4);
 
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_gui_manager->GetScreenTexture());
+	m_light_shader->SetInt("GUIscreen", 5);
+
 	m_light_shader->SetVec3("CamPos", CamPos);
 
 	UpdateAmbientLighting();
@@ -663,7 +665,7 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 
 	BD_MatCustomShaderRead mread(ref);
 	std::string fcode = mread.GetShaderCode();
-	std::string vcode = getFileData("Engine/Shaders/glsl/Gshad.vert");
+	std::string vcode = getFileData(m_engineDir + "/Shaders/glsl/Gshad.vert");
 
 	RD_ShaderLoader* shader = new RD_ShaderLoader();
 	shader->CompileShaderFromCode(vcode, fcode);
@@ -688,6 +690,18 @@ bool RaindropRenderer::GetErrorFlag() {
 	return m_error_flag;
 }
 
+std::string RaindropRenderer::GetEngineDir() {
+	return m_engineDir;
+}
+
+void RaindropRenderer::RenderGUI_Screen() {
+	m_gui_manager->RenderScreen();
+}
+
+RD_GUI_Manager* RaindropRenderer::GetGUI_Manager() {
+	return m_gui_manager.get();
+}
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 
 void glfwWinCallback(GLFWwindow* win, int w, int h) {
@@ -695,6 +709,8 @@ void glfwWinCallback(GLFWwindow* win, int w, int h) {
 	rndr->RecreateGbuff();
 	
 	glViewport(0, 0, w, h);
+
+	rndr->GetGUI_Manager()->RebuildFramebuffer();
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------

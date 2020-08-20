@@ -96,3 +96,8 @@ void RD_Texture::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, un
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void RD_Texture::BindTexture(unsigned int tex_unit) {
+	glActiveTexture(tex_unit);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+}

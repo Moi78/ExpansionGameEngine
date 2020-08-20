@@ -27,5 +27,11 @@
     <None Include="Engine\Shaders\glsl\Debug.frag" />
     <None Include="Engine\Shaders\glsl\Debug.vert" />
     <None Include="Engine\Shaders\glsl\Gshad.vert" />
+    <None Include="Engine\Shaders\glsl\gui\GUI_Clean.frag" />
+    <None Include="Engine\Shaders\glsl\gui\GUI_Clean.vert" />
+    <None Include="Engine\Shaders\glsl\gui\GUI_ColorCache.frag" />
+    <None Include="Engine\Shaders\glsl\gui\GUI_ColorCache.vert" />
+    <None Include="Engine\Shaders\glsl\gui\GUI_ImageTexture.frag" />
+    <None Include="Engine\Shaders\glsl\gui\GUI_ImageTexture.vert" />
   </ItemGroup>
 </Project>

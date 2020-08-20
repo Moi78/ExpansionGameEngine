@@ -48,9 +48,6 @@
     <ClInclude Include="RD_DirLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="RD_GUI.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="RD_Callback.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -64,6 +61,15 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="RD_MaterialLibrary.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="RD_GUI_Manager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="RD_SizedQuad.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="RD_GUI_Element.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -104,9 +110,6 @@
     <ClCompile Include="RD_DirLight.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="RD_GUI.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="RD_Callback.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -120,6 +123,15 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_MaterialLibrary.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RD_GUI_Manager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RD_SizedQuad.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RD_GUI_Element.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

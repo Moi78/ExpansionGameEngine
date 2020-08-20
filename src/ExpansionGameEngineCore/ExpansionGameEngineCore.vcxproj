@@ -175,6 +175,8 @@
     <ClInclude Include="EXP_DirLight.h" />
     <ClInclude Include="EXP_Game.h" />
     <ClInclude Include="EXP_GuiManager.h" />
+    <ClInclude Include="EXP_GUI_ColorCache.h" />
+    <ClInclude Include="EXP_GUI_ImageTexture.h" />
     <ClInclude Include="EXP_HotLoad.h" />
     <ClInclude Include="EXP_InputHandler.h" />
     <ClInclude Include="EXP_Level.h" />
@@ -196,6 +198,8 @@
     <ClCompile Include="EXP_DirLight.cpp" />
     <ClCompile Include="EXP_Game.cpp" />
     <ClCompile Include="EXP_GuiManager.cpp" />
+    <ClCompile Include="EXP_GUI_ColorCache.cpp" />
+    <ClCompile Include="EXP_GUI_ImageTexture.cpp" />
     <ClCompile Include="EXP_HotLoad.cpp" />
     <ClCompile Include="EXP_InputHandler.cpp" />
     <ClCompile Include="EXP_Level.cpp" />

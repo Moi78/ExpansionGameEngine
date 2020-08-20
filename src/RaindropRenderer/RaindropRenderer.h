@@ -25,7 +25,6 @@
 #include "RD_ShaderLoader.h"
 #include "RD_FrameLimiter.h"
 #include "RD_PointLight.h"
-#include "RD_GUI.h"
 #include "RD_Texture.h"
 #include "RD_Materials.h"
 #include "RD_Texture.h"
@@ -54,10 +53,11 @@ class RD_Quad;
 class RD_FrameBuffer;
 class RD_Camera;
 class RD_MaterialLibrary;
+class RD_GUI_Manager;
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
-	RaindropRenderer(int w, int h, std::string windowName, int maxFramerate = 60, bool minInit = false);
+	RaindropRenderer(int w, int h, std::string windowName, int maxFramerate = 60, bool minInit = false, std::string EngineDir = "Engine");
 	~RaindropRenderer();
 
 	bool initGlad(bool minInit = false);
@@ -72,6 +72,8 @@ public:
 	int getWindowHeigh();
 	int getWindowWidth();
 	void SetFullscreenMode(bool fullscr);
+	
+	std::string GetEngineDir();
 
 	double GetLastDeltaTime();
 
@@ -125,8 +127,8 @@ public:
 	void UpdatePointsLighting();
 
 	//GUI
-	void InitGUI();
-	void RegisterGUI(RD_GUI*);
+	void RenderGUI_Screen();
+	RD_GUI_Manager* GetGUI_Manager();
 
 	int GetFrameLimit();
 	bool GetErrorFlag();
@@ -151,6 +153,8 @@ private:
 	int m_height;
 	int m_width;
 
+	std::string m_engineDir;
+
 	bool m_error_flag;
 
 	std::string m_features_string[3];
@@ -163,7 +167,6 @@ private:
 
 	std::vector<RD_PointLight*> m_pt_lights;
 	std::vector<RD_DirLight*> m_DirLights;
-	std::vector<RD_GUI*> m_guis;
 	std::vector<RD_Mesh*> m_meshes;
 
 	std::unique_ptr<RD_Mesh> m_DBG_light_mdl;
@@ -178,6 +181,8 @@ private:
 	//Deffered Rendering
 	Gbuff m_g_buffer;
 	std::unique_ptr<RD_Quad> m_quad;
+
+	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
 
 	std::unique_ptr<RD_ShaderLoader> m_shadowShader;
 	std::unique_ptr<RD_ShaderLoader> m_light_shader;

@@ -1,21 +1,20 @@
 #include "pch.h"
-#include "RD_Quad.h"
+#include "RD_SizedQuad.h"
 
-RD_Quad::RD_Quad() {
+RD_SizedQuad::RD_SizedQuad(float sx, float sy, float ox, float oy) : m_sizex(sx), m_sizey(sy), m_offsetx(ox), m_offsety(oy), RD_Quad() {
 
 }
 
-RD_Quad::~RD_Quad() {
-	glDeleteBuffers(1, &m_vbo);
-	glDeleteVertexArrays(1, &m_vao);
+RD_SizedQuad::~RD_SizedQuad() {
+
 }
 
-void RD_Quad::Bufferize() {
+void RD_SizedQuad::Bufferize() {
 	float geom[20] = {
-	-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-	1.0f, -1.0f, 0.0f, 1.0f, 0.0f
+	m_offsetx,			 m_offsety,						0.0f,			0.0f, 1.0f,
+	m_offsetx,			 -m_sizey + m_offsety,			0.0f,			0.0f, 0.0f,
+	m_sizex + m_offsetx, m_offsety,						0.0f,			1.0f, 1.0f,
+	m_sizex + m_offsetx, -m_sizey + m_offsety,			0.0f,			1.0f, 0.0f
 	};
 
 	glGenVertexArrays(1, &m_vao);
@@ -33,10 +32,4 @@ void RD_Quad::Bufferize() {
 	//UVs
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-}
-
-void RD_Quad::RenderQuad() {
-	glBindVertexArray(m_vao);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindVertexArray(0);
 }

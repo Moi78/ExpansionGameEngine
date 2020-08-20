@@ -8,6 +8,7 @@ uniform sampler2D gPos;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gSpec;
+uniform sampler2D GUIscreen;
 
 //Passes
 uniform sampler2D ShadowPass;
@@ -111,5 +112,11 @@ void main() {
 	vec3 result = (diffSpec + ambient);
 
 	vec4 gamma = vec4(1.0 / 2.2);
-	FragColor = pow(vec4(Diffuse, 1.0) * vec4(result, 1.0), gamma);
+
+	vec4 gui = texture(GUIscreen, UVcoords);
+
+	vec4 render = clamp(pow(vec4(Diffuse, 1.0) * vec4(result, 1.0), gamma), 0.0, 1.0);
+	render.a = 1.0;
+
+	FragColor = mix(render, gui, gui.a);
 }

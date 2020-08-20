@@ -19,8 +19,6 @@
 
 #include "RaindropRenderer.h"
 
-#include <cstring>
-
 class RAINDROPRENDERER_API RD_Quad
 {
 public:
@@ -28,10 +26,9 @@ public:
 	~RD_Quad();
 
 	void RenderQuad();
+	virtual void Bufferize();
 
-private:
-	void Bufferize();
-
+protected:
 	unsigned int m_vao;
 	unsigned int m_vbo;
 };

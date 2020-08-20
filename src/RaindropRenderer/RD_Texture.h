@@ -33,6 +33,7 @@ public:
 	void LoadTexture(std::string filepath);
 	void GenerateColorTex(vec3f color);
 	void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = GL_COLOR_ATTACHMENT0, unsigned int format = GL_RGB);
+	void BindTexture(unsigned int tex_unit = GL_TEXTURE0);
 
 	unsigned int GetTextureID();
 
