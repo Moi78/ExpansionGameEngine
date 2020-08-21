@@ -12,11 +12,11 @@ RD_Texture::~RD_Texture() {
 
 }
 
-void RD_Texture::LoadTexture(std::string tex) {
+void RD_Texture::LoadTexture(std::string tex, bool flipTex) {
 	int w, h, nbrC;
 
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* imgData = stbi_load(tex.c_str(), &w, &h, &nbrC, 0);
+	stbi_set_flip_vertically_on_load(flipTex);
+	unsigned char* imgData = stbi_load(tex.c_str(), &w, &h, &nbrC, STBI_rgb_alpha);
 
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -33,13 +33,13 @@ void RD_Texture::LoadTexture(std::string tex) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	GLint format;
-	if (nbrC == 3) {
+	GLint format = GL_RGBA;
+	/*if (nbrC == 3) {
 		format = GL_RGB;
 	}
 	else {
 		format = GL_RGBA;
-	}
+	}*/
 
 	if (imgData) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, format, GL_UNSIGNED_BYTE, imgData);
