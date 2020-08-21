@@ -25,7 +25,7 @@
 class EXPGE_API EXP_GUI_ImageTexture : public RD_GUI_Element
 {
 public:
-	EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, float opacity, float posx, float posy, float sizex, float sizey);
+	EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, float opacity, float sizex, float sizey, float posx, float posy);
 	~EXP_GUI_ImageTexture();
 
 	virtual void RenderElement() override;

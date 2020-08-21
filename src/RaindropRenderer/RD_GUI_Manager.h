@@ -23,6 +23,7 @@
 #include "RD_Quad.h"
 #include "RD_SizedQuad.h"
 #include "RD_GUI_Element.h"
+#include "RD_MaterialLibrary.h"
 
 #include <string>
 #include <vector>
@@ -44,11 +45,14 @@ public:
 	void RegisterElement(RD_GUI_Element* elem);
 	void UnregisterElement(RD_GUI_Element* elem);
 
+	RD_MaterialLibrary* GetGUIshaderManager();
+
 private:
 	void CreateFramebuffer();
 	void DeleteFrambuffer();
 
 	RaindropRenderer* m_rndr;
+	std::unique_ptr<RD_MaterialLibrary> m_matLib;
 
 	std::vector<RD_GUI_Element*> m_gui_elements;
 

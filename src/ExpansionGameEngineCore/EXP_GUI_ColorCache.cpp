@@ -6,6 +6,8 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 	m_opacity = opacity;
 	m_game = game;
 
+	RD_GUI_Manager* m_manager = game->GetRenderer()->GetGUI_Manager();
+
 	m_mdl = glm::mat4(1.0f);
 	//Ugliest way to proceed, meh, at least it works well
 	m_mdl = glm::translate(m_mdl, glm::vec3(posx + sizex, posy + sizey, 0.0f));
@@ -17,9 +19,17 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 	m_surface = std::make_unique<RD_Quad>();
 	m_surface->Bufferize();
 
-	std::cout << "Compiling GUI Color Cache Shader..." << std::endl;
-	std::string workingDir = game->GetRenderer()->GetEngineDir();
-	m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_ColorCache.vert", workingDir + "/Shaders/glsl/gui/GUI_ColorCache.frag");
+	if (!m_manager->GetGUIshaderManager()->DoMaterialExists("/Shaders/glsl/gui/GUI_ColorCache.frag")) {
+		std::cout << "Compiling GUI Color Cache Shader..." << std::endl;
+		std::string workingDir = game->GetRenderer()->GetEngineDir();
+		m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_ColorCache.vert", workingDir + "/Shaders/glsl/gui/GUI_ColorCache.frag");
+
+		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader);
+		m_manager->GetGUIshaderManager()->AddMaterialToLib(m_mat, "/Shaders/glsl/gui/GUI_ColorCache.frag");
+	}
+	else {
+		m_gui_shader = m_manager->GetGUIshaderManager()->GetMaterialByName("/Shaders/glsl/gui/GUI_ColorCache.frag")->GetShader();
+	}
 
 	game->GetRenderer()->GetGUI_Manager()->RegisterElement(this);
 }

@@ -8,6 +8,8 @@ RD_GUI_Manager::RD_GUI_Manager(RaindropRenderer* rndr) {
 	m_gui_tex = NULL;
 	m_renderbuffer = NULL;
 
+	m_matLib = std::make_unique<RD_MaterialLibrary>();
+
 	m_gui_elements.push_back(new ScreenCleaner(rndr->GetEngineDir()));
 }
 
@@ -102,6 +104,10 @@ void RD_GUI_Manager::UnregisterElement(RD_GUI_Element* elem) {
 		delete m_gui_elements[index];
 		m_gui_elements.erase(m_gui_elements.begin() + index);
 	}
+}
+
+RD_MaterialLibrary* RD_GUI_Manager::GetGUIshaderManager() {
+	return m_matLib.get();
 }
 
 //--------------------------ScreenCleaner---------------------------------

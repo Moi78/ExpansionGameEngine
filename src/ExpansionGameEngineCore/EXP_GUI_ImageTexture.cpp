@@ -24,9 +24,19 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 	m_surface = std::make_unique<RD_Quad>();
 	m_surface->Bufferize();
 
-	std::cout << "Compiling GUI ImageTexture Shader..." << std::endl;
-	std::string workingDir = game->GetRenderer()->GetEngineDir();
-	m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.vert", workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.frag");
+	RD_GUI_Manager* m_manager = game->GetRenderer()->GetGUI_Manager();
+
+	if (!m_manager->GetGUIshaderManager()->DoMaterialExists("/Shaders/glsl/gui/GUI_ImageTexture.frag")) {
+		std::cout << "Compiling GUI ImageTexture Shader..." << std::endl;
+		std::string workingDir = game->GetRenderer()->GetEngineDir();
+		m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.vert", workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.frag");
+
+		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader);
+		m_manager->GetGUIshaderManager()->AddMaterialToLib(m_mat, "/Shaders/glsl/gui/GUI_ImageTexture.frag");
+	}
+	else {
+		m_gui_shader = m_manager->GetGUIshaderManager()->GetMaterialByName("/Shaders/glsl/gui/GUI_ImageTexture.frag")->GetShader();
+	}
 
 	game->GetRenderer()->GetGUI_Manager()->RegisterElement(this);
 }

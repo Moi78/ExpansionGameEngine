@@ -31,7 +31,7 @@ public:
 
 	virtual void RenderElement() = 0;
 protected:
-	std::unique_ptr<RD_ShaderLoader> m_gui_shader;
+	RD_ShaderLoader* m_gui_shader;
 };
 
 #endif //RD_GUI_ELEMENT_H__
