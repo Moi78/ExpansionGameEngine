@@ -8,3 +8,7 @@ RD_GUI_Element::RD_GUI_Element() {
 RD_GUI_Element::~RD_GUI_Element() {
 
 }
+
+void RD_GUI_Element::RebuildElement() {
+	return;
+}

@@ -10,9 +10,8 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 
 	m_mdl = glm::mat4(1.0f);
 	//Ugliest way to proceed, meh, at least it works well
-	m_mdl = glm::translate(m_mdl, glm::vec3(posx + sizex, posy + sizey, 0.0f));
-
-	m_mdl = glm::scale(m_mdl, glm::vec3(sizex, sizey, 0.0f));
+	m_mdl = glm::translate(m_mdl, glm::vec3(posx + (sizex / 2), posy + (sizey / 2), 0.0f));
+	m_mdl = glm::scale(m_mdl, glm::vec3(sizex / 2, sizey / 2, 0.0f));
 
 	m_proj = glm::ortho(0.0f, (float)m_game->GetRenderer()->getWindowWidth(), (float)m_game->GetRenderer()->getWindowHeigh(), 0.0f, -1.0f, 1.0f);
 
@@ -47,4 +46,8 @@ void EXP_GUI_ColorCache::RenderElement() {
 	m_gui_shader->SetMatrix("proj", m_proj);
 
 	m_surface->RenderQuad();
+}
+
+void EXP_GUI_ColorCache::RebuildElement() {
+	m_proj = glm::ortho(0.0f, (float)m_game->GetRenderer()->getWindowWidth(), (float)m_game->GetRenderer()->getWindowHeigh(), 0.0f, -1.0f, 1.0f);
 }

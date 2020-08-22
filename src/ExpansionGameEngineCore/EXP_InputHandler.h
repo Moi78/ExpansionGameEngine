@@ -30,6 +30,9 @@ public:
 	double GetMouseYaxis();
 	void ResetPointer();
 
+	double GetAbsoluteMousePosX();
+	double GetAbsoluteMousePosY();
+
 private:
 	GLFWwindow* m_win;
 	bool m_curHidden;

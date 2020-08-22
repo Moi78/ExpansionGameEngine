@@ -76,6 +76,10 @@ void RD_GUI_Manager::DeleteFrambuffer() {
 void RD_GUI_Manager::RebuildFramebuffer() {
 	DeleteFrambuffer();
 	CreateFramebuffer();
+
+	for (auto elem : m_gui_elements) {
+		elem->RebuildElement();
+	}
 }
 
 void RD_GUI_Manager::RenderScreen() {

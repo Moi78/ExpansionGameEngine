@@ -32,6 +32,7 @@ public:
 	~EXP_GUI_ColorCache();
 
 	virtual void RenderElement() override;
+	virtual void RebuildElement() override;
 
 private:
 	EXP_Game* m_game;

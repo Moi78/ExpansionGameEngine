@@ -47,6 +47,10 @@ void EXP_InputHandler::UpdateKeyboardInput() {
 }
 
 double EXP_InputHandler::GetMouseXaxis() {
+	if (!m_curHidden) {
+		return 0;
+	}
+
 	double xaxis;
 	glfwGetCursorPos(m_win, &xaxis, NULL);
 
@@ -55,6 +59,28 @@ double EXP_InputHandler::GetMouseXaxis() {
 
 double EXP_InputHandler::GetMouseYaxis() {
 	if (!m_curHidden) {
+		return 0;
+	}
+
+	double yaxis;
+	glfwGetCursorPos(m_win, NULL, &yaxis);
+
+	return yaxis;
+}
+
+double EXP_InputHandler::GetAbsoluteMousePosX() {
+	if (m_curHidden) {
+		return 0;
+	}
+
+	double xaxis;
+	glfwGetCursorPos(m_win, &xaxis, NULL);
+
+	return xaxis;
+}
+
+double EXP_InputHandler::GetAbsoluteMousePosY() {
+	if (m_curHidden) {
 		return 0;
 	}
 

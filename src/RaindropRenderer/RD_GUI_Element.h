@@ -30,6 +30,7 @@ public:
 	~RD_GUI_Element();
 
 	virtual void RenderElement() = 0;
+	virtual void RebuildElement();
 protected:
 	RD_ShaderLoader* m_gui_shader;
 };

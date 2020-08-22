@@ -14,12 +14,14 @@ Character::~Character() {
 
 void Character::Start() {
 	m_cam->Use();
-	m_game->GetInputHandler()->CaptureCursor(true);
+	//m_game->GetInputHandler()->CaptureCursor(true);
 }
 
 void Character::Tick() {
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 	m_cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
+
+	//std::cout << m_game->GetInputHandler()->GetAbsoluteMousePosX() << std::endl;
 }
 
 void Character::MoveForward() {

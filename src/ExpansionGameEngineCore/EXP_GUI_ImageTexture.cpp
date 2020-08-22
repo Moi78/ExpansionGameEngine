@@ -9,10 +9,10 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 
 	glm::mat4 trans = glm::mat4(1.0f);
 	//Ugliest way to proceed, meh, at least it works well
-	trans = glm::translate(trans, glm::vec3(posx + sizex, posy + sizex, 0.0f));
+	trans = glm::translate(trans, glm::vec3(posx + (sizex / 2), posy + (sizex /2), 0.0f));
 
 	glm::mat4 scale = glm::mat4(1.0f);
-	scale = glm::scale(scale, glm::vec3(sizex, sizey, 0.0f));
+	scale = glm::scale(scale, glm::vec3(sizex / 2, sizey / 2, 0.0f));
 
 	m_mdl = trans * scale;
 
@@ -57,4 +57,8 @@ void EXP_GUI_ImageTexture::RenderElement() {
 	m_gui_shader->SetMatrix("proj", m_proj);
 
 	m_surface->RenderQuad();
+}
+
+void EXP_GUI_ImageTexture::RebuildElement() {
+	m_proj = glm::ortho(0.0f, (float)m_game->GetRenderer()->getWindowWidth(), (float)m_game->GetRenderer()->getWindowHeigh(), 0.0f, -1.0f, 1.0f);
 }

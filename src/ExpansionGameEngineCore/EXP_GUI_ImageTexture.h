@@ -29,6 +29,7 @@ public:
 	~EXP_GUI_ImageTexture();
 
 	virtual void RenderElement() override;
+	virtual void RebuildElement() override;
 
 private:
 	std::unique_ptr<RD_Quad> m_surface;
