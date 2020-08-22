@@ -20,8 +20,6 @@ void Character::Start() {
 void Character::Tick() {
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 	m_cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
-
-	//std::cout << m_game->GetInputHandler()->GetAbsoluteMousePosX() << std::endl;
 }
 
 void Character::MoveForward() {

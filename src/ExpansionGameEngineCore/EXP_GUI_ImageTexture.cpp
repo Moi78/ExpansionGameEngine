@@ -5,6 +5,9 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 	m_opacity = opacity;
 	m_game = game;
 
+	m_pos = vec3f(posx, posy, 0);
+	m_size = vec3f(sizex, sizey, 0);
+
 	m_mdl = glm::mat4(1.0f);
 
 	glm::mat4 trans = glm::mat4(1.0f);
@@ -60,5 +63,25 @@ void EXP_GUI_ImageTexture::RenderElement() {
 }
 
 void EXP_GUI_ImageTexture::RebuildElement() {
-	m_proj = glm::ortho(0.0f, (float)m_game->GetRenderer()->getWindowWidth(), (float)m_game->GetRenderer()->getWindowHeigh(), 0.0f, -1.0f, 1.0f);
+	float w = (float)m_game->GetRenderer()->getWindowWidth();
+	float h = (float)m_game->GetRenderer()->getWindowHeigh();
+
+	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
+}
+
+void EXP_GUI_ImageTexture::SetPosition(vec3f nPos) {
+	m_pos = nPos;
+
+	glm::mat4 trans = glm::mat4(1.0f);
+	//Ugliest way to proceed, meh, at least it works well
+	trans = glm::translate(trans, glm::vec3(m_pos.getX() + (m_size.getX() / 2), m_pos.getY() + (m_size.getY() / 2), 0.0f));
+
+	glm::mat4 scale = glm::mat4(1.0f);
+	scale = glm::scale(scale, glm::vec3(m_size.getX() / 2, m_size.getY() / 2, 0.0f));
+
+	m_mdl = trans * scale;
+}
+
+vec3f EXP_GUI_ImageTexture::GetPosition() {
+	return m_pos;
 }

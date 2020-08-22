@@ -31,6 +31,9 @@ public:
 	virtual void RenderElement() override;
 	virtual void RebuildElement() override;
 
+	void SetPosition(vec3f nPos);
+	vec3f GetPosition();
+
 private:
 	std::unique_ptr<RD_Quad> m_surface;
 	std::unique_ptr<RD_Texture> m_image;
@@ -38,6 +41,9 @@ private:
 	float m_opacity;
 
 	EXP_Game* m_game;
+
+	vec3f m_pos;
+	vec3f m_size;
 
 	glm::mat4 m_mdl;
 	glm::mat4 m_proj;

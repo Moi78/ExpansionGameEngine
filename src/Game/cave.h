@@ -19,6 +19,8 @@ public:
 	virtual void OnTick() override;
 
 private:
+	EXP_Game* m_game;
+
 	Character* m_character;
 
 	EXP_GUI_ColorCache* m_gui_cache;

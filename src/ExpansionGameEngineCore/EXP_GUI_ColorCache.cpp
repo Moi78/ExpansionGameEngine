@@ -6,6 +6,9 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 	m_opacity = opacity;
 	m_game = game;
 
+	m_size = vec3f(sizex, sizey, 0);
+	m_pos = vec3f(posx, posy, 0);
+
 	RD_GUI_Manager* m_manager = game->GetRenderer()->GetGUI_Manager();
 
 	m_mdl = glm::mat4(1.0f);
@@ -49,5 +52,25 @@ void EXP_GUI_ColorCache::RenderElement() {
 }
 
 void EXP_GUI_ColorCache::RebuildElement() {
-	m_proj = glm::ortho(0.0f, (float)m_game->GetRenderer()->getWindowWidth(), (float)m_game->GetRenderer()->getWindowHeigh(), 0.0f, -1.0f, 1.0f);
+	float w = (float)m_game->GetRenderer()->getWindowWidth();
+	float h = (float)m_game->GetRenderer()->getWindowHeigh();
+
+	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
+}
+
+void EXP_GUI_ColorCache::SetPosition(vec3f nPos) {
+	m_pos = nPos;
+
+	glm::mat4 trans = glm::mat4(1.0f);
+	//Ugliest way to proceed, meh, at least it works well
+	trans = glm::translate(trans, glm::vec3(m_pos.getX() + (m_size.getX() / 2), m_pos.getY() + (m_size.getY() / 2), 0.0f));
+
+	glm::mat4 scale = glm::mat4(1.0f);
+	scale = glm::scale(scale, glm::vec3(m_size.getX() / 2, m_size.getY() / 2, 0.0f));
+
+	m_mdl = trans * scale;
+}
+
+vec3f EXP_GUI_ColorCache::GetPosition() {
+	return m_pos;
 }

@@ -34,6 +34,9 @@ public:
 	virtual void RenderElement() override;
 	virtual void RebuildElement() override;
 
+	void SetPosition(vec3f nPos);
+	vec3f GetPosition();
+
 private:
 	EXP_Game* m_game;
 
@@ -41,6 +44,9 @@ private:
 
 	glm::mat4 m_mdl;
 	glm::mat4 m_proj;
+
+	vec3f m_pos;
+	vec3f m_size;
 
 	vec3f m_color;
 	float m_opacity;

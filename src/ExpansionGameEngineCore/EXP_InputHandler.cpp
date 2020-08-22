@@ -90,6 +90,28 @@ double EXP_InputHandler::GetAbsoluteMousePosY() {
 	return yaxis;
 }
 
+double EXP_InputHandler::GetGUI_SpaceMousePosX() {
+	int w;
+	glfwGetWindowSize(m_win, &w, NULL);
+
+	double x;
+	glfwGetCursorPos(m_win, &x, NULL);
+
+	return (x * 1280) / w;
+}
+
+double EXP_InputHandler::GetGUI_SpaceMousePosY() {
+	int w;
+	int h;
+	glfwGetWindowSize(m_win, &w, &h);
+
+	double y;
+	glfwGetCursorPos(m_win, NULL, &y);
+
+	float rh = 1280 / ((float)w / (float)h);
+	return (y * rh) / h;
+}
+
 void EXP_InputHandler::ResetPointer() {
 	if (m_curHidden) {
 		glfwSetCursorPos(m_win, 0, 0);

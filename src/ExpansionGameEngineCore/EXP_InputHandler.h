@@ -33,6 +33,9 @@ public:
 	double GetAbsoluteMousePosX();
 	double GetAbsoluteMousePosY();
 
+	double GetGUI_SpaceMousePosX();
+	double GetGUI_SpaceMousePosY();
+
 private:
 	GLFWwindow* m_win;
 	bool m_curHidden;
