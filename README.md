@@ -1,6 +1,6 @@
 # ExpansionGameEngine
 
-Expansion Game Engine is a 3D game engine currently being developed.
+Expansion Game Engine is a 3D game engine under development.
 
 ## Target List
  - [ ] Multi-API rendering (OpenGL, Vulkan, and DirectX11/12 if I want to export to XBox)
