@@ -1,6 +1,6 @@
 # ExpansionGameEngine
 
-Expansion Game Engine is a little 3D game engine in developpement.
+Expansion Game Engine is a 3D game engine under development.
 
 ## Target List
  - [ ] Multi-API rendering (OpenGL, Vulkan, and DirectX11/12 if I want to export to XBox)
@@ -25,7 +25,7 @@ Expansion Game Engine is a little 3D game engine in developpement.
      - [ ] Powerful all-in-one editor
      - [ ] Well written documentation
 
-## TODO List :
+## TODO List
 
  - [x] Check compatibility with linux (and make it compatible)
  - [x] Reduce RAM usage
@@ -35,14 +35,14 @@ Expansion Game Engine is a little 3D game engine in developpement.
  - [x] Rebuild point-lighting system (--> Lighting in volumes)
  - [x] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
  - [x] Fix window resize
- - [ ] Proprer input manager
+ - [x] Proprer input manager
  - [x] Custom shaders
  - [ ] ExpansionMath Cleanup
  - [x] Use smartptr when possible
  - [ ] Consistent error handling
  - [ ] Fix the error when reducing the window
  
-## Dependencies :
+## Dependencies
   - OpenAL Soft (by @Kcat)
   - GLFW3
   - OpenGL
@@ -55,11 +55,11 @@ Expansion Game Engine is a little 3D game engine in developpement.
   - Qt (For tools)
   - Jsoncpp
  
- NB1 : All libs that are precompiled and in this repo are compiled for Windows x64. If you want to compile this engine for Windows x86 you need to do it yourself. If you want to compile this engine for linux you need to install deps via your package manager.
+NB1 : All libs that are precompiled and in this repo are compiled for Windows x64. If you want to compile this engine for Windows x86 you need to do it yourself. If you want to compile this engine for linux you'll need to install all the dependencies using your package manager.
  
- NB2 : CMakeLists.txt are specially made for Linux, if you want to compile for Windows, you can just use my Visual Studio Solution (I normally update it at each VS major release, for now it is a VS2019 solution)
+NB2 : CMakeLists.txt is specially made for Linux, if you want to compile it for Windows, you can just use my Visual Studio solution (I usually update it at each VS major release, for now it is a VS2019 solution).
  
- ## Licensing
- This project is under CC-BY-NC-SA license.
- 
- For any question please mail me.
+## License
+This project is under CC-BY-NC-SA license.
+
+For any question please contact me.
