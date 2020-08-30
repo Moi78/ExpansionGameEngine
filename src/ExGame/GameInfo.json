@@ -18,6 +18,6 @@
         "GameBin":"../Game/libGame.so",
 
         "GameName":"Donut Mmh",
-        "StartupMap":"/Maps/demoMap.json"
+        "StartupMap":"/map/cave.json"
     }
 }

@@ -40,3 +40,7 @@ if(GLEW_FOUND)
 	include_directories(${GLEW_INCLUDE_DIRS})
 	target_link_libraries(RaindropRenderer ${GLEW_LIBRARIES})
 endif (GLEW_FOUND)
+
+find_package(FreeType REQUIRED)
+include_directories("../libs/freetype/include/freetype2/")
+target_link_libraries(RaindropRenderer "freetype")
