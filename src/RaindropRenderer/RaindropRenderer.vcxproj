@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>stb\;C:\Program Files\Mega-Nerd\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>stb\;..\libs\freetype\include\freetype2;..libs\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -101,8 +101,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\freetype\lib;..\libs\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
@@ -155,7 +155,7 @@
       <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>stb\;C:\Program Files\Mega-Nerd\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>stb\;..\libs\freetype\include\freetype2;..libs\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -167,8 +167,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Program Files\Mega-Nerd\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\freetype\lib;..\libs\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
@@ -180,6 +180,8 @@
     <ClInclude Include="RD_Camera.h" />
     <ClInclude Include="RD_DirLight.h" />
     <ClInclude Include="RD_Error.h" />
+    <ClInclude Include="RD_Font.h" />
+    <ClInclude Include="RD_FontRenderer.h" />
     <ClInclude Include="RD_FrameBuffer.h" />
     <ClInclude Include="RD_FrameLimiter.h" />
     <ClInclude Include="RD_GUI_Element.h" />
@@ -202,6 +204,8 @@
     <ClCompile Include="RD_Camera.cpp" />
     <ClCompile Include="RD_DirLight.cpp" />
     <ClCompile Include="RD_Error.cpp" />
+    <ClCompile Include="RD_Font.cpp" />
+    <ClCompile Include="RD_FontRenderer.cpp" />
     <ClCompile Include="RD_FrameBuffer.cpp" />
     <ClCompile Include="RD_FrameLimiter.cpp" />
     <ClCompile Include="RD_GUI_Element.cpp" />

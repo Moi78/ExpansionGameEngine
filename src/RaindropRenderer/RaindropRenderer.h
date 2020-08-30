@@ -54,6 +54,7 @@ class RD_FrameBuffer;
 class RD_Camera;
 class RD_MaterialLibrary;
 class RD_GUI_Manager;
+class RD_FontRenderer;
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
@@ -129,6 +130,7 @@ public:
 	//GUI
 	void RenderGUI_Screen();
 	RD_GUI_Manager* GetGUI_Manager();
+	RD_FontRenderer* GetFontRenderer();
 
 	int GetFrameLimit();
 	bool GetErrorFlag();
@@ -183,6 +185,7 @@ private:
 	std::unique_ptr<RD_Quad> m_quad;
 
 	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
+	std::unique_ptr<RD_FontRenderer> m_ft_rndr;
 
 	std::unique_ptr<RD_ShaderLoader> m_shadowShader;
 	std::unique_ptr<RD_ShaderLoader> m_light_shader;

@@ -63,6 +63,7 @@ class EXP_HotLoad;
 class EXP_MapLoader;
 class EXP_Level;
 class EXP_InputHandler;
+class EXP_MouseButtonCallback;
 
 class EXPGE_API EXP_Game
 {
@@ -80,12 +81,14 @@ public:
 	void RegisterCamera(EXP_Camera*);
 	void RegisterKeyboardCallback(EXP_KeyboardCallback*);
 	void RegisterActor(EXP_Actor*);
+	void RegisterMouseButtonCallback(EXP_MouseButtonCallback*);
 
 	void UnregisterKeyboardCallback(EXP_KeyboardCallback*);
 	void UnregisterActor(EXP_Actor*);
 	void UnregisterMesh(RD_Mesh*);
 	void UnregisterDirLight(RD_DirLight*);
 	void UnregisterPointLight(RD_PointLight*);
+	void UnregisterMouseButtonCallback(EXP_MouseButtonCallback*);
 
 	EXP_HotLoad* GetGameLib();
 

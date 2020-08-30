@@ -72,6 +72,12 @@
     <ClInclude Include="RD_GUI_Element.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="RD_FontRenderer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="RD_Font.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -132,6 +138,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_GUI_Element.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RD_FontRenderer.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RD_Font.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

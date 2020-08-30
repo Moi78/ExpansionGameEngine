@@ -19,7 +19,10 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 
 	m_mdl = trans * scale;
 
-	m_proj = glm::ortho(0.0f, (float)m_game->GetRenderer()->getWindowWidth(), (float)m_game->GetRenderer()->getWindowHeigh(), 0.0f, -1.0f, 1.0f);
+	float w = (float)m_game->GetRenderer()->getWindowWidth();
+	float h = (float)m_game->GetRenderer()->getWindowHeigh();
+
+	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
 
 	m_image = std::make_unique<RD_Texture>();
 	m_image->LoadTexture(game->GetFilePathByRef(texRef), false);

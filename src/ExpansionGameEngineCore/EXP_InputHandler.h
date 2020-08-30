@@ -22,9 +22,18 @@ public:
 
 	void RegisterKeyboardCallback(EXP_KeyboardCallback*);
 	void UnregisterKeyboardCallback(EXP_KeyboardCallback*);
+	bool GetKey(int key);
+
+	void RegisterMouseButtonCallback(EXP_MouseButtonCallback*);
+	void UnregisterMouseButtonCallback(EXP_MouseButtonCallback*);
+	bool GetMouseButton(int button);
+
+	void UnregisterAllCallbacks();
 
 	void CaptureCursor(bool state);
+
 	void UpdateKeyboardInput();
+	void UpdateMouseInput();
 
 	double GetMouseXaxis();
 	double GetMouseYaxis();
@@ -42,6 +51,7 @@ private:
 
 	//Callbacks
 	std::vector<EXP_KeyboardCallback*> m_kb_callbacks;
+	std::vector<EXP_MouseButtonCallback*> m_mouse_callbacks;
 };
 
 #endif //_EXP_INPUT_HANDLER_H__

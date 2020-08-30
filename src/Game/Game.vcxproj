@@ -90,7 +90,7 @@
       <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;_DEBUG;GAME_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\ExpansionGameEngineCore;..\RaindropRenderer;..\ExpansionMath;..\BulldozerFileManager;..\PhysicaSound;..\libs\AL\include;..\libs\BULLET\include;..\libs\GL\include;..\libs\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\freetype\include\freetype2;..\libs\libsndfile\include;..\ExpansionGameEngineCore;..\RaindropRenderer;..\ExpansionMath;..\BulldozerFileManager;..\PhysicaSound;..\libs\AL\include;..\libs\BULLET\include;..\libs\GL\include;..\libs\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -149,7 +149,7 @@
       <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;NDEBUG;GAME_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\ExpansionGameEngineCore;..\RaindropRenderer;..\ExpansionMath;..\BulldozerFileManager;..\PhysicaSound;..\libs\AL\include;..\libs\BULLET\include;..\libs\GL\include;..\libs\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\freetype\include\freetype2;..\libs\libsndfile\include;..\ExpansionGameEngineCore;..\RaindropRenderer;..\ExpansionMath;..\BulldozerFileManager;..\PhysicaSound;..\libs\AL\include;..\libs\BULLET\include;..\libs\GL\include;..\libs\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

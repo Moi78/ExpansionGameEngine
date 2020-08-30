@@ -6,6 +6,11 @@
 
 #include <EXP_GUI_ColorCache.h>
 #include <EXP_GUI_ImageTexture.h>
+#include <EXP_GUI_Button.h>
+
+#include <EXP_Callbacks.h>
+
+#include <RD_Font.h>
 
 #include "Character.h"
 
@@ -18,6 +23,8 @@ public:
 	virtual void OnStart() override;
 	virtual void OnTick() override;
 
+	void Click();
+
 private:
 	EXP_Game* m_game;
 
@@ -25,6 +32,8 @@ private:
 
 	EXP_GUI_ColorCache* m_gui_cache;
 	EXP_GUI_ImageTexture* m_gui_tex;
+
+	EXP_MouseButtonCallback* m_mcllbck;
 };
 
 EXPGE_LEVEL_HEADER(cave);

@@ -4,10 +4,6 @@
 EXP_InputHandler::EXP_InputHandler(GLFWwindow* win) {
 	m_win = win;
 	m_curHidden = false;
-
-	/*if (glfwRawMouseMotionSupported()) {
-		glfwSetInputMode(win, GLFW_RAW_MOUSE_MOTION, GL_TRUE);
-	}*/
 }
 
 EXP_InputHandler::~EXP_InputHandler() {
@@ -29,6 +25,21 @@ void EXP_InputHandler::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcbk) {
 	}
 }
 
+void EXP_InputHandler::RegisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) {
+	m_mouse_callbacks.push_back(cllbck);
+}
+
+void EXP_InputHandler::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) {
+	int index = GetElemIndex<EXP_MouseButtonCallback*>(m_mouse_callbacks, cllbck);
+
+	if (index != -1) {
+		m_mouse_callbacks.erase(m_mouse_callbacks.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}
+
 void EXP_InputHandler::CaptureCursor(bool state) {
 	if (state) {
 		glfwSetInputMode(m_win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -42,6 +53,12 @@ void EXP_InputHandler::CaptureCursor(bool state) {
 
 void EXP_InputHandler::UpdateKeyboardInput() {
 	for (auto cllbck : m_kb_callbacks) {
+		cllbck->UpdateCallback();
+	}
+}
+
+void EXP_InputHandler::UpdateMouseInput() {
+	for (auto cllbck : m_mouse_callbacks) {
 		cllbck->UpdateCallback();
 	}
 }
@@ -116,4 +133,28 @@ void EXP_InputHandler::ResetPointer() {
 	if (m_curHidden) {
 		glfwSetCursorPos(m_win, 0, 0);
 	}
+}
+
+void EXP_InputHandler::UnregisterAllCallbacks() {
+	for (auto elem : m_kb_callbacks) {
+		std::cout << "Unregistering keyboard callback." << std::endl;
+		if (elem)
+			delete elem;
+	}
+	m_kb_callbacks.clear();
+
+	for (auto elem : m_mouse_callbacks) {
+		std::cout << "Unregistering mouse callback." << std::endl;
+		if (elem)
+			delete elem;
+	}
+	m_mouse_callbacks.clear();
+}
+
+bool EXP_InputHandler::GetMouseButton(int button) {
+	return glfwGetMouseButton(m_win, button) == GLFW_PRESS;
+}
+
+bool EXP_InputHandler::GetKey(int key) {
+	return glfwGetKey(m_win, key) == GLFW_PRESS;
 }

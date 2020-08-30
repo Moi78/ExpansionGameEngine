@@ -302,6 +302,7 @@ void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck) {
 
 void EXP_Game::UpdateCallbacks() {
 	m_hinput->UpdateKeyboardInput();
+	m_hinput->UpdateMouseInput();
 
 	for (auto act : m_actors) {
 		act->Tick();
@@ -354,6 +355,7 @@ void EXP_Game::UnloadCurrentMap() {
 		m_actors.clear();
 
 	m_PlayingMap->UnloadMap();
+	m_hinput->UnregisterAllCallbacks();
 	
 	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.
@@ -381,4 +383,14 @@ bool EXP_Game::CheckErrors() {
 	}
 
 	return false;
+}
+
+void EXP_Game::RegisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) {
+	std::cout << "Registering Mouse Button Callback" << std::endl;
+	m_hinput->RegisterMouseButtonCallback(cllbck);
+}
+
+void EXP_Game::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) {
+	std::cout << "Unregistering Mouse Button Callback" << std::endl;
+	m_hinput->UnregisterMouseButtonCallback(cllbck);
 }
