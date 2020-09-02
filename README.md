@@ -25,6 +25,11 @@ Expansion Game Engine is a 3D game engine under development.
      - [ ] Powerful all-in-one editor
      - [ ] Well written documentation
 
+## Screenshots
+Here you have some screenshots I took from the last demo I've made.
+![alt text](screenshots/EXPGE_Screen_1.PNG)
+![alt text](screenshots/EXPGE_Screen_2.PNG)
+
 ## TODO List
 
  - [x] Check compatibility with linux (and make it compatible)
