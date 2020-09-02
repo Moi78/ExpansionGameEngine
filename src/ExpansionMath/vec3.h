@@ -20,104 +20,102 @@
 #include <string>
 #include <iostream>
 
-class EXPANSIONMATH_API vec3f {
+template<class T>
+class vec3 {
 public:
-    vec3f(float x = 0.0f, float y = 0.0f, float z = 0.0f);
-    ~vec3f();
-    
-    float getX();
-    float getY();
-    float getZ();
-    
-    void setX(float x);
-    void setY(float y);
-    void setZ(float z);
-    
-    void setAll(float x, float y, float z);
-    
-    float dotProduct(vec3f a);
+    vec3(T x = 0, T y = 0, T z = 0) {
+        m_x = x;
+        m_y = y;
+        m_z = z;
+    }
 
-    void NormalizeVector();
+    ~vec3() {
     
-    std::string ConvertToParserFormat(std::string prefix);
-    
-    bool operator==(vec3f const& a);
-    bool operator!=(vec3f const& a);
-    
-    vec3f operator+(vec3f const& a);
-    vec3f operator-(vec3f const& a);
+    }
 
-    vec3f operator*(vec3f const& a);
-    vec3f operator*(float const& a);
+    T getX() {
+        return m_x;
+    }
 
-    void DBGPrint();
+    T getY() {
+        return m_y;
+    }
+    
+    T getZ() {
+        return m_z;
+    }
+
+    void setX(T x) {
+        m_x = x;
+    }
+
+    void setY(T y) {
+        m_y = y;
+    }
+
+    void setZ(T z) {
+        m_z = z;
+    }
+
+    void setAll(T x, T y, T z) {
+        m_x = x;
+        m_y = y;
+        m_z = z;
+    }
+
+    float dotProduct(vec3<T> a) {
+        std::valarray<double> fa = { m_x, m_y, m_z };
+        std::valarray<double> fb = {(double) a.getX(),(double) a.getY(),(double) a.getZ() };
+
+        float result = (fa * fb).sum();
+
+        return result;
+    }
+
+    void NormalizeVector() {
+        float length = (float)abs(sqrt((m_x * m_x) + (m_y * m_y) + (m_z * m_z)));
+
+        m_x /= length;
+        m_y /= length;
+        m_z /= length;
+    }
+
+    bool operator==(vec3<T> const& a) {
+        return m_x == a.m_x && m_y == a.m_y && m_z == a.m_z ? true : false;
+    }
+
+    bool operator!=(vec3<T> const& a) {
+        return m_x == a.m_x && m_y == a.m_y && m_z == a.m_z ? false : true;
+    }
+
+    vec3<T> operator+(vec3<T> const& a) {
+        return vec3<T>(m_x + a.m_x, m_y + a.m_y, m_z + a.m_z);
+    }
+
+    vec3<T> operator-(vec3<T> const& a) {
+        return vec3<T>(m_x - a.m_x, m_y - a.m_y, m_z - a.m_z);
+    }
+
+    vec3<T> operator*(vec3<T> const& a) {
+        return vec3<T>(m_x * a.m_x, m_y * a.m_y, m_z * a.m_z);
+    }
+
+    vec3<T> operator*(float const& a) {
+        return vec3<T>(m_x * a, m_y * a, m_z * a);
+    }
+
+    void DBGPrint() {
+        std::cout << "X : " << m_x << " Y : " << m_y << " Z : " << m_z << std::endl;
+    }
 
 private:
-    float m_x;
-    float m_y;
-    float m_z;
+    T m_x;
+    T m_y;
+    T m_z;
 };
 
-class EXPANSIONMATH_API vec3i {
-public:
-    vec3i(int x, int y, int z);
-    ~vec3i();
-    
-    int getX();
-    int getY();
-    int getZ();
-    
-    void setX(int x);
-    void setY(int y);
-    void setZ(int z);
-    
-    void setAll(int x, int y, int z);
-    
-    float dotProduct(vec3i a);
-
-    void NormalizeVector();
-    
-    bool operator==(vec3i const& a);
-    bool operator!=(vec3i const& a);
-    
-    vec3i operator+(vec3i const& a);
-    vec3i operator-(vec3i const& a);
-    
-private:
-    int m_x, m_y, m_z;
-};
-
-class EXPANSIONMATH_API vec3d {
-public:
-    vec3d(double x, double y, double z);
-    ~vec3d();
-    
-    double getX();
-    double getY();
-    double getZ();
-    
-    void setX(double x);
-    void setY(double y);
-    void setZ(double z);
-    
-    void setAll(double x, double y, double z);
-    
-    float dotProduct(vec3d a);
-
-    void NormalizeVector();
-
-    vec3f GetFloat();
-    
-    bool operator==(vec3d const& a);
-    bool operator!=(vec3d const& a);
-    
-    vec3d operator+(vec3d const& a);
-    vec3d operator-(vec3d const& a);
-
-    vec3d operator*(vec3d const& a);
-    
-private:
-    double m_x, m_y, m_z;
-};
+typedef vec3<float> vec3f;
+typedef vec3<int> vec3i;
+typedef vec3<double> vec3d;
 
 #endif //_VEC3_H__

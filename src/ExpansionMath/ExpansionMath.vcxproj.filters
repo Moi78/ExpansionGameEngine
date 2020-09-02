@@ -53,12 +53,6 @@
     <ClCompile Include="BoxVol.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="vec2.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="vec3.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="volumes.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>

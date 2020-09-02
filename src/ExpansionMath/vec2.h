@@ -18,56 +18,71 @@
 
 #include <valarray>
 
-class EXPANSIONMATH_API vec2f {
+template<class T>
+class vec2 {
 public:
-    vec2f(float x, float y);
-    ~vec2f();
-    
-    float getX();
-    void setX(float x);
-    
-    float getY();
-    void setY(float y);
-    
-    void setAll(float x, float y);
-    
-    float dotProduct(vec2f const& a);
-    
-    bool operator==(vec2f const& a);
-    bool operator!=(vec2f const& a);
-    vec2f operator+(vec2f const& a);
-    vec2f operator-(vec2f const& a);
+    vec2(T x, T y) {
+        m_x = x;
+        m_y = y;
+    }
+
+    ~vec2() {
+
+    }
+
+    T getX() {
+        return m_x;
+    }
+
+    void setX(T x) {
+        m_x = x;
+    }
+
+    T getY() {
+        return m_y;
+    }
+
+    void setY(T y) {
+        m_y = y;
+    }
+
+    void setAll(T x, T y) {
+        m_x = x;
+        m_y = y;
+    }
+
+    float dotProduct(vec2<T> const& a) {
+        std::valarray<double> fa = { m_x, m_y };
+        std::valarray<double> fb = { (double)a.getX(),(double)a.getY() };
+
+        float result = (fa * fb).sum();
+
+        return result;
+    }
+
+    bool operator==(vec2<T> const& a) {
+        return m_x == a.m_x && m_y == a.m_y ? true : false;
+    }
+
+    bool operator!=(vec2<T> const& a) {
+        return m_x == a.m_x && m_y == a.m_y ? false : true;
+    }
+
+    vec2<T> operator+(vec2<T> const& a) {
+        return vec2<T>(m_x + a.m_x, m_y + a.m_y);
+    }
+
+    vec2<T> operator-(vec2<T> const& a) {
+        return vec2<T>(m_x - a.m_x, m_y - a.m_y);
+    }
     
 private:
-    float m_x;
-    float m_y;
+    T m_x;
+    T m_y;
 };
 
-class EXPANSIONMATH_API vec2d {
-public:
-    vec2d(double x, double y);
-    ~vec2d();
-
-    double getX();
-    void setX(double x);
-
-    double getY();
-    void setY(double y);
-
-    void setAll(double x, double y);
-
-    float dotProduct(vec2d const& a);
-
-    vec2f GetFloat();
-
-    bool operator==(vec2d const& a);
-    bool operator!=(vec2d const& a);
-    vec2d operator+(vec2d const& a);
-    vec2d operator-(vec2d const& a);
-
-private:
-    float m_x;
-    float m_y;
-};
+typedef vec2<float> vec2f;
+typedef vec2<double> vec2d;
+typedef vec2<int> vec2i;
 
 #endif
