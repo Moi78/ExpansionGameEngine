@@ -35,6 +35,10 @@ link_libraries(${JSONCPP_LIBRARIES})
 target_link_libraries(ExpansionGameEngineCore ${JSONCPP_LIBRARIES})
 include_directories(${JSONCPP_INCLUDE_DIRS})
 
+find_package(FreeType REQUIRED)
+include_directories("../libs/freetype/include/freetype2/")
+target_link_libraries(ExpansionGameEngineCore ${FREETYPE_LIBRARIES})
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(ExpansionGameEngineCore Threads::Threads)

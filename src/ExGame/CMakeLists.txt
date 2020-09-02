@@ -33,4 +33,8 @@ endif(OPENAL_FOUND)
 # include_directories("${JSONCPP_INCLUDE_DIRS}/jsoncpp")
 # target_link_libraries(ExGame ${JSONCPP_LIBRARIES})
 
+find_package(FreeType REQUIRED)
+include_directories("../libs/freetype/include/freetype2/")
+target_link_libraries(ExGame ${FREETYPE_LIBRARIES})
+
 target_link_libraries(ExGame BulldozerFileManager ExpansionMath RaindropRenderer PhysicaSound ExpansionGameEngineCore)

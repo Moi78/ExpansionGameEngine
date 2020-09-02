@@ -22,6 +22,10 @@ if(BULLET_FOUND)
 	target_link_libraries(Game ${BULLET_DYNAMICS_LIBRARY} ${BULLET_COLLISION_LIBRARY} ${BULLET_MATH_LIBRARY})
 endif(BULLET_FOUND)
 
+find_package(FreeType REQUIRED)
+include_directories("../libs/freetype/include/freetype2/")
+target_link_libraries(Game ${FREETYPE_LIBS})
+
 target_link_libraries(Game BulldozerFileManager)
 target_link_libraries(Game ExpansionMath)
 target_link_libraries(Game ExpansionGameEngineCore)
