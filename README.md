@@ -38,9 +38,14 @@ Expansion Game Engine is a 3D game engine under development.
  - [x] Proprer input manager
  - [x] Custom shaders
  - [ ] ExpansionMath Cleanup
+   - [x] Rewrite vectors (vec3X & vec2X)
+   - [ ] Add matrices support
+   - [ ] Add Quaternion support
+   - [ ] Use SIMD operations
  - [x] Use smartptr when possible
  - [ ] Consistent error handling
  - [ ] Fix the error when reducing the window
+ - [ ] Font Rendering on GUI System
  
 ## Dependencies
   - OpenAL Soft (by @Kcat)
@@ -58,7 +63,7 @@ Expansion Game Engine is a 3D game engine under development.
  
 NB1 : All libs that are precompiled and in this repo are compiled for Windows x64. If you want to compile this engine for Windows x86 you need to do it yourself. If you want to compile this engine for linux you'll need to install all the dependencies using your package manager.
  
-NB2 : CMakeLists.txt is specially made for Linux, if you want to compile it for Windows, you can just use my Visual Studio solution (I usually update it at each VS major release, for now it is a VS2019 solution).
+NB2 : CMakeLists.txt are specially made for Linux, if you want to compile the engine for Windows, you can just use my Visual Studio solution (I usually update it at each VS major release, for now it is a VS2019 solution).
  
 ## License
 This project is under CC-BY-NC-SA license.
