@@ -165,7 +165,7 @@ set RELEASELIB_PATH=..\..\..\%PROJ_NAME%\Lib\Release\
 
 echo Copying Debug Bins...
 cd src/x64/Debug
-copy /Y .\BULLDOZERFILEMANAGER.dll %DEBUG_PATH%\BULLDOZERFILEMANAGER.dll
+copy /Y .\BulldozerFileManager.dll %DEBUG_PATH%\BulldozerFileManager.dll
 copy /Y .\ExGame.exe %DEBUG_PATH%\ExGame.exe
 copy /Y .\ExpansionGameEngineCore.dll %DEBUG_PATH%\ExpansionGameEngineCore.dll
 copy /Y .\ExpansionMath.dll %DEBUG_PATH%\ExpansionMath.dll
@@ -174,7 +174,7 @@ copy /Y .\RaindropRenderer.dll %DEBUG_PATH%\RaindropRenderer.dll
 
 echo Copying Release Bins...
 cd ../Release
-copy /Y .\BULLDOZERFILEMANAGER.dll %RELEASE_PATH%\BULLDOZERFILEMANAGER.dll
+copy /Y .\BulldozerFileManager.dll %RELEASE_PATH%\BulldozerFileManager.dll
 copy /Y .\ExGame.exe %RELEASE_PATH%\ExGame.exe
 copy /Y .\ExpansionGameEngineCore.dll %RELEASE_PATH%\ExpansionGameEngineCore.dll
 copy /Y .\ExpansionMath.dll %RELEASE_PATH%\ExpansionMath.dll
@@ -182,14 +182,14 @@ copy /Y .\PhysicaSound.dll %RELEASE_PATH%\PhysicaSound.dll
 copy /Y .\RaindropRenderer.dll %RELEASE_PATH%\RaindropRenderer.dll
 
 echo Copying Debug Lib Files...
-copy /Y .\BULLDOZERFILEMANAGER.lib %DEBUGLIB_PATH%\BULLDOZERFILEMANAGER.lib
+copy /Y .\BulldozerFileManager.lib %DEBUGLIB_PATH%\BulldozerFileManager.lib
 copy /Y .\ExpansionGameEngineCore.lib %DEBUGLIB_PATH%\ExpansionGameEngineCore.lib
 copy /Y .\ExpansionMath.lib %DEBUGLIB_PATH%\ExpansionMath.lib
 copy /Y .\PhysicaSound.lib %DEBUGLIB_PATH%\PhysicaSound.lib
 copy /Y .\RaindropRenderer.lib %DEBUGLIB_PATH%\RaindropRenderer.lib
 
 echo Copying Release Lib Files...
-copy /Y .\BULLDOZERFILEMANAGER.lib %RELEASELIB_PATH%\BULLDOZERFILEMANAGER.lib
+copy /Y .\BulldozerFileManager.lib %RELEASELIB_PATH%\BulldozerFileManager.lib
 copy /Y .\ExpansionGameEngineCore.lib %RELEASELIB_PATH%\ExpansionGameEngineCore.lib
 copy /Y .\ExpansionMath.lib %RELEASELIB_PATH%\ExpansionMath.lib
 copy /Y .\PhysicaSound.lib %RELEASELIB_PATH%\PhysicaSound.lib
@@ -235,8 +235,8 @@ exit /B 0
 rem ------------------------------------------------------------
 
 :CheckEngineBins
-CALL :CheckFileExistence BULLDOZERFILEMANAGER.dll
-CALL :CheckFileExistence BULLDOZERFILEMANAGER.lib
+CALL :CheckFileExistence BulldozerFileManager.dll
+CALL :CheckFileExistence BulldozerFileManager.lib
 
 CALL :CheckFileExistence ExGame.exe
 

@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{78C2A131-76B5-457A-A6D3-C1814722FEEF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{857d9b8e-9e74-41cb-bc79-05f73c0259bf}</ProjectGuid>
     <RootNamespace>RaindropRenderer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -70,52 +70,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>stb\;..\libs\freetype\include\freetype2;..libs\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\libs\freetype\lib;..\libs\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <FxCompile>
-      <ShaderModel>4.0_level_9_3</ShaderModel>
-    </FxCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -126,14 +99,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -144,21 +116,38 @@
       <EnableUAC>false</EnableUAC>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>stb\;..\libs\JSONCPP\include;..\ExpansionMath;..\libs\GL\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;glew32.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>stb\;..\libs\freetype\include\freetype2;..libs\libsndfile\include;..\BulldozerFileManager;..\libs\GL\include;..\ExpansionMath;..\libs\JSONCPP\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>stb\;..\libs\JSONCPP\include;..\ExpansionMath;..\libs\GL\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -167,21 +156,18 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\libs\freetype\lib;..\libs\libsndfile\lib;..\libs\AL\lib;..\libs\GL\lib;..\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ExpansionMath.lib;glfw3dll.lib;opengl32.lib;BULLDOZERFILEMANAGER.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;glew32.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <FxCompile>
-      <ShaderModel>4.0_level_9_3</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="RaindropRenderer.h" />
     <ClInclude Include="RD_Callback.h" />
     <ClInclude Include="RD_Camera.h" />
     <ClInclude Include="RD_DirLight.h" />
     <ClInclude Include="RD_Error.h" />
-    <ClInclude Include="RD_Font.h" />
-    <ClInclude Include="RD_FontRenderer.h" />
     <ClInclude Include="RD_FrameBuffer.h" />
     <ClInclude Include="RD_FrameLimiter.h" />
     <ClInclude Include="RD_GUI_Element.h" />
@@ -189,8 +175,6 @@
     <ClInclude Include="RD_MaterialLibrary.h" />
     <ClInclude Include="RD_Materials.h" />
     <ClInclude Include="RD_Mesh.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="RaindropRenderer.h" />
     <ClInclude Include="RD_PointLight.h" />
     <ClInclude Include="RD_Quad.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
@@ -200,19 +184,6 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="glad.cpp" />
-    <ClCompile Include="RD_Callback.cpp" />
-    <ClCompile Include="RD_Camera.cpp" />
-    <ClCompile Include="RD_DirLight.cpp" />
-    <ClCompile Include="RD_Error.cpp" />
-    <ClCompile Include="RD_Font.cpp" />
-    <ClCompile Include="RD_FontRenderer.cpp" />
-    <ClCompile Include="RD_FrameBuffer.cpp" />
-    <ClCompile Include="RD_FrameLimiter.cpp" />
-    <ClCompile Include="RD_GUI_Element.cpp" />
-    <ClCompile Include="RD_GUI_Manager.cpp" />
-    <ClCompile Include="RD_MaterialLibrary.cpp" />
-    <ClCompile Include="RD_Materials.cpp" />
-    <ClCompile Include="RD_Mesh.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -220,6 +191,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RaindropRenderer.cpp" />
+    <ClCompile Include="RD_Callback.cpp" />
+    <ClCompile Include="RD_Camera.cpp" />
+    <ClCompile Include="RD_DirLight.cpp" />
+    <ClCompile Include="RD_Error.cpp" />
+    <ClCompile Include="RD_FrameBuffer.cpp" />
+    <ClCompile Include="RD_FrameLimiter.cpp" />
+    <ClCompile Include="RD_GUI_Element.cpp" />
+    <ClCompile Include="RD_GUI_Manager.cpp" />
+    <ClCompile Include="RD_MaterialLibrary.cpp" />
+    <ClCompile Include="RD_Materials.cpp" />
+    <ClCompile Include="RD_Mesh.cpp" />
     <ClCompile Include="RD_PointLight.cpp" />
     <ClCompile Include="RD_Quad.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />

@@ -1,5 +1,10 @@
 {
-    "textures" : [],
+    "textures" : [
+		{
+			"path":"Content/noice.png",
+			"param":"test"
+		}
+	],
 
     "glsl":
 "
@@ -48,6 +53,8 @@ float ProcessShadows(sampler2D SMap, vec4 FPLS) {
 	return shadow / 9;
 	
 }
+
+uniform sampler2D test;
 
 void main() {
     gPos = FragPos;

@@ -36,7 +36,7 @@ public:
 
 private:
 	std::unique_ptr<RD_Quad> m_surface;
-	std::unique_ptr<RD_Texture> m_image;
+	RD_Texture* m_image;
 
 	float m_opacity;
 

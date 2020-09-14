@@ -24,8 +24,11 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 
 	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
 
-	m_image = std::make_unique<RD_Texture>();
-	m_image->LoadTexture(game->GetFilePathByRef(texRef), false);
+	m_image = new RD_Texture();
+
+	std::string ref = game->GetFilePathByRef(texRef);
+
+	m_image->LoadTexture(ref, false);
 
 	m_surface = std::make_unique<RD_Quad>();
 	m_surface->Bufferize();

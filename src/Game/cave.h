@@ -10,8 +10,6 @@
 
 #include <EXP_Callbacks.h>
 
-#include <RD_Font.h>
-
 #include "Character.h"
 
 class cave : public EXP_Level

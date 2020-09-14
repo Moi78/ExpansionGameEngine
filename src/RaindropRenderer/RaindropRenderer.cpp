@@ -8,7 +8,6 @@
 #include "RD_Camera.h"
 #include "RD_MaterialLibrary.h"
 #include "RD_GUI_Manager.h"
-#include "RD_FontRenderer.h"
 
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit, std::string engineDir) : m_height(h), m_width(w), m_engineDir(engineDir) {
 	FillFeaturesStringArray();
@@ -59,8 +58,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 	m_gui_manager = std::make_unique<RD_GUI_Manager>(this);
 	m_gui_manager->InitManager();
 
-	m_ft_rndr = std::make_unique<RD_FontRenderer>();
-	m_ft_rndr->InitFontRenderer();
+	//m_ft_rndr = std::make_unique<RD_FontRenderer>();
+	//m_ft_rndr->InitFontRenderer();
 
 	m_quad = std::make_unique<RD_Quad>();
 	m_quad->Bufferize();
@@ -116,6 +115,9 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_ARB_clear_texture);
+	
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void RaindropRenderer::MinInit() {
@@ -706,9 +708,9 @@ RD_GUI_Manager* RaindropRenderer::GetGUI_Manager() {
 	return m_gui_manager.get();
 }
 
-RD_FontRenderer* RaindropRenderer::GetFontRenderer() {
-	return m_ft_rndr.get();
-}
+//RD_FontRenderer* RaindropRenderer::GetFontRenderer() {
+//	return m_ft_rndr.get();
+//}
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 
