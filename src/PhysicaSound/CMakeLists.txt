@@ -21,3 +21,5 @@ if(OPENAL_FOUND)
 	include_directories(${OPENAL_INCLUDE_DIRS})
 	target_link_libraries(PhysicaSound ${OPENAL_LIBRARY})
 endif(OPENAL_FOUND)
+
+target_link_libraries(PhysicaSound ExpansionMath)
