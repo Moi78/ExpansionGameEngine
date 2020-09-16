@@ -128,6 +128,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\libs\libsndfile\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BulldozerFileManager.lib;ExpansionGameEngineCore.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,12 +145,13 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\libs\libsndfile\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BulldozerFileManager.lib;ExpansionGameEngineCore.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>mainCRTStartup </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

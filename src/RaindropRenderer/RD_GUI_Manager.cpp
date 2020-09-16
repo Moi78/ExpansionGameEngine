@@ -68,9 +68,6 @@ void RD_GUI_Manager::DeleteFrambuffer() {
 
 	//De-allocating framebuffer
 	glDeleteFramebuffers(1, &m_framebuffer);
-
-	//De-allocating renderbuffer
-	glDeleteRenderbuffers(GL_RENDERBUFFER, &m_renderbuffer);
 }
 
 void RD_GUI_Manager::RebuildFramebuffer() {
