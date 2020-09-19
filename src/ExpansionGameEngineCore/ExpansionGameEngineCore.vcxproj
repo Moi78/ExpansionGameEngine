@@ -173,6 +173,7 @@
     <ClInclude Include="EXP_GUI_ImageTexture.h" />
     <ClInclude Include="EXP_HotLoad.h" />
     <ClInclude Include="EXP_InputHandler.h" />
+    <ClInclude Include="EXP_InstanciatedMesh.h" />
     <ClInclude Include="EXP_Level.h" />
     <ClInclude Include="EXP_MapLoader.h" />
     <ClInclude Include="EXP_PhysicsHandler.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="EXP_GUI_ImageTexture.cpp" />
     <ClCompile Include="EXP_HotLoad.cpp" />
     <ClCompile Include="EXP_InputHandler.cpp" />
+    <ClCompile Include="EXP_InstanciatedMesh.cpp" />
     <ClCompile Include="EXP_Level.cpp" />
     <ClCompile Include="EXP_MapLoader.cpp" />
     <ClCompile Include="EXP_PhysicsHandler.cpp" />

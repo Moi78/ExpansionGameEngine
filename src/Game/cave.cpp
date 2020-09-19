@@ -13,6 +13,7 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	m_gui_tex = new EXP_GUI_ImageTexture(game, "/noice.png", 0.5f, 200.0f, 200.0f, 100.0f, 100.0f);
 
 	RaindropRenderer* rndr = game->GetRenderer();
+
 	/*RD_Font* font = new RD_Font(rndr->GetFontRenderer(), "test", game->GetFilePathByRef("/font/font.otf"), 48);
 
 	RD_TextBox* tb = new RD_TextBox(rndr, rndr->GetFontRenderer(), "H", "test", 20, 0, 0);*/
@@ -23,7 +24,7 @@ cave::~cave() {
 }
 
 void cave::OnStart() {
-
+	std::cout << "Game started" << std::endl;
 }
 
 void cave::OnTick() {

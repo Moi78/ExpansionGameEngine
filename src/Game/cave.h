@@ -10,6 +10,8 @@
 
 #include <EXP_Callbacks.h>
 
+#include <RD_InstanciatedMesh.h>
+
 #include "Character.h"
 
 class cave : public EXP_Level

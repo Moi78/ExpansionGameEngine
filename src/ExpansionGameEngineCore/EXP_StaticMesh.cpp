@@ -23,7 +23,7 @@ void EXP_StaticMesh::LoadMesh(std::string MeshRef) {
 		m_gameinstance->RegisterMesh(this);
 	}
 	else {
-		std::cerr << "Can't load mesh " << MeshRef << ". Mesh Reference not found." << std::endl;
+		std::cerr << "ERROR: Can't load mesh " << MeshRef << ". Mesh Reference not found." << std::endl;
 		dispErrorMessageBox(StrToWStr("Can't load mesh " + MeshRef + ". Mesh reference not found."));
 	}
 }

@@ -30,7 +30,6 @@ public:
 	EXP_StaticMesh(EXP_Game* gameinstance, RD_ShaderMaterial* shader, std::string meshRef, vec3f pos, vec3f rot, vec3f scale);
 	~EXP_StaticMesh();
 
-	bool MeshRefExists(std::string MeshRef);
 	void LoadMesh(std::string MeshRef);
 
 	virtual void SetPosition(vec3f nPos) override;
@@ -40,6 +39,8 @@ public:
 	virtual void UseParentMatrix(glm::mat4 parent) override;
 
 private:
+	bool MeshRefExists(std::string MeshRef);
+
 	EXP_Game* m_gameinstance;
 };
 

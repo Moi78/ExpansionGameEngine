@@ -5,6 +5,7 @@
 #include <EXP_Camera.h>
 #include <EXP_InputHandler.h>
 #include <EXP_Callbacks.h>
+#include <EXP_InstanciatedMesh.h>
 
 class Character : public EXP_Actor
 {
@@ -21,5 +22,7 @@ private:
 	EXP_Camera* m_cam;
 
 	EXP_KeyboardCallback* m_move;
+
+	EXP_InstanciatedMesh* m_meshes;
 };
 

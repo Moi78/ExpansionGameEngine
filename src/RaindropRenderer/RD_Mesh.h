@@ -41,47 +41,47 @@ public:
 
 	void loadMesh(std::string);
 
-	void render(RD_Camera* cam, RenderMode rndrMode = RenderMode::Filled);
-	void renderShadows(RD_ShaderLoader* shadowShader);
+	virtual void render(RD_Camera* cam, RenderMode rndrMode = RenderMode::Filled);
+	virtual void renderShadows(RD_ShaderLoader* shadowShader);
 
-	void addRotation(vec3f rotation, bool update = true);
-	void addTranslation(vec3f translation, bool update = true);
-	void addScale(vec3f scale, bool update = true);
+	virtual void addRotation(vec3f rotation, bool update = true);
+	virtual void addTranslation(vec3f translation, bool update = true);
+	virtual void addScale(vec3f scale, bool update = true);
 
-	void SetRotation(vec3f nRotation, bool update = true);
-	void SetPosition(vec3f nPos, bool update = true);
-	void SetScale(vec3f nScale, bool update = true);
+	virtual void SetRotation(vec3f nRotation, bool update = true);
+	virtual void SetPosition(vec3f nPos, bool update = true);
+	virtual void SetScale(vec3f nScale, bool update = true);
 
-	void UseMatrix(glm::mat4 mdl);
-	void SetParentMatrix(glm::mat4 parent);
-	void Update();
+	virtual void UseMatrix(glm::mat4 mdl);
+	virtual void SetParentMatrix(glm::mat4 parent);
+	virtual void Update();
 
-	vec3f GetLocation();
+	virtual vec3f GetLocation();
 
 	RD_ShaderMaterial* GetMaterial();
 	
 private:
 	void Bufferize();
 
-	unsigned int VAO, VBO, EBO;
-
 	std::vector<vec3f> m_vertices;
 	std::vector<unsigned int> m_indices;
 	std::vector<vec3f> m_normals;
 	std::vector<vec2f> m_uv;
 
-	int m_nbr_indices;
-
 	std::vector<float> MixVertNormUV;
 
+	glm::mat4 m_mdl;
+
+protected:
+	glm::mat4 m_parent;
 	RD_ShaderMaterial* m_mat;
+
+	unsigned int VAO, VBO, EBO;
+	int m_nbr_indices;
 
 	vec3f m_position;
 	vec3f m_rotation;
 	vec3f m_scale;
-
-	glm::mat4 m_mdl;
-	glm::mat4 m_parent;
 };
 
 #endif

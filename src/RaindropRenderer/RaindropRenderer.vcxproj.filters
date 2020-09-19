@@ -72,6 +72,9 @@
     <ClInclude Include="RD_Texture.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="RD_InstanciatedMesh.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -132,6 +135,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_Texture.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RD_InstanciatedMesh.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
