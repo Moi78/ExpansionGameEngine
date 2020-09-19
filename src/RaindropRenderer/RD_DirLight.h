@@ -26,7 +26,7 @@ class RAINDROPRENDERER_API RD_DirLight
 {
 public:
 	RD_DirLight(vec3f dir, vec3f color, float brightness);
-	~RD_DirLight();
+	virtual ~RD_DirLight();
 
 	void SetLightDir(vec3f nDir);
 	vec3f GetLightDir();

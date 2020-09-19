@@ -37,7 +37,7 @@ class RAINDROPRENDERER_API RD_Mesh
 {
 public:
 	RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale);
-	~RD_Mesh();
+	virtual ~RD_Mesh();
 
 	void loadMesh(std::string);
 

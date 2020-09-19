@@ -96,17 +96,23 @@ public:
 	void AddToFramebufferGarbageCollector(unsigned int fboID);
 	void EmptyFramebufferGarbageCollector();
 
-	//Lighting
+	//Ambient Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(vec3f nColor);
 
+	//Elements registrations
 	int AppendLight(RD_PointLight* ptLight);
 	int AppendDirLight(RD_DirLight* dirLight);
 	void RegisterMesh(RD_Mesh* mesh);
 
+	//Elements unregistrations
 	void UnregisterMesh(RD_Mesh*);
 	void UnregisterPointLight(RD_PointLight*);
 	void UnregisterDirLight(RD_DirLight*);
+
+	void UnregisterAllMeshes();
+	void UnregisterAllPointLights();
+	void UnregisterAllDirLights();
 
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);

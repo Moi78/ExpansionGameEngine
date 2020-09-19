@@ -24,7 +24,7 @@ class RAINDROPRENDERER_API RD_PointLight
 {
 public:
 	RD_PointLight(vec3f position, vec3f color, float brightness, float radius);
-	~RD_PointLight();
+	virtual ~RD_PointLight();
 
 	void SetPosition(vec3f nPos);
 	vec3f GetPosition();

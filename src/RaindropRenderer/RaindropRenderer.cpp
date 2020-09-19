@@ -597,6 +597,39 @@ void RaindropRenderer::UnregisterPointLight(RD_PointLight* ptLight) {
 	}
 }
 
+void RaindropRenderer::UnregisterAllMeshes() {
+	for (auto msh : m_meshes) {
+		std::cout << "Unregistering Mesh" << std::endl;
+
+		UnregisterMesh(msh);
+		delete msh;
+	}
+
+	m_meshes.clear();
+}
+
+void RaindropRenderer::UnregisterAllPointLights() {
+	for (auto plight : m_pt_lights) {
+		std::cout << "Unregistering Point Light" << std::endl;
+
+		UnregisterPointLight(plight);
+		delete plight;
+	}
+
+	m_pt_lights.clear();
+}
+
+void RaindropRenderer::UnregisterAllDirLights() {
+	for (auto dlight : m_DirLights) {
+		std::cout << "Unregistering Dir Light" << std::endl;
+
+		UnregisterDirLight(dlight);
+		delete dlight;
+	}
+
+	m_DirLights.clear();
+}
+
 RD_Texture* RaindropRenderer::GetBlankTexture() {
 	return m_blankTexture.get();
 }
