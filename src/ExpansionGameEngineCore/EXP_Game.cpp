@@ -357,9 +357,9 @@ void EXP_Game::UnloadCurrentMap() {
 	m_PlayingMap->UnloadMap();
 	m_hinput->UnregisterAllCallbacks();
 
-	m_rndr->UnregisterAllDirLights();
-	m_rndr->UnregisterAllPointLights();
-	m_rndr->UnregisterAllMeshes();
+	//m_rndr->UnregisterAllDirLights();
+	//m_rndr->UnregisterAllPointLights();
+	//m_rndr->UnregisterAllMeshes();
 	
 	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.
