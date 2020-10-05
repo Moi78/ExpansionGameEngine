@@ -295,9 +295,12 @@ void EXP_Game::RegisterKeyboardCallback(EXP_KeyboardCallback* callback) {
 	m_hinput->RegisterKeyboardCallback(callback);
 }
 
-void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck) {
+void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck, bool nodelete) {
 	std::cout << "Unregistering Keyboard Callback" << std::endl;
 	m_hinput->UnregisterKeyboardCallback(kbcllbck);
+
+	if (!nodelete)
+		delete kbcllbck;
 }
 
 void EXP_Game::UpdateCallbacks() {
@@ -310,29 +313,45 @@ void EXP_Game::UpdateCallbacks() {
 }
 
 void EXP_Game::RegisterActor(EXP_Actor* act) {
+	std::cout << "Registering new actor." << std::endl;
+
 	m_actors.push_back(act);
 }
 
-void EXP_Game::UnregisterMesh(RD_Mesh* mesh) {
+void EXP_Game::UnregisterMesh(RD_Mesh* mesh, bool nodelete) {
+	std::cout << "Unregistering mesh." << std::endl;
 	m_rndr->UnregisterMesh(mesh);
+
+	if (!nodelete)
+		delete mesh;
 }
 
-void EXP_Game::UnregisterDirLight(RD_DirLight* dlight) {
+void EXP_Game::UnregisterDirLight(RD_DirLight* dlight, bool nodelete) {
+	std::cout << "Unregistering DirLight." << std::endl;
 	m_rndr->UnregisterDirLight(dlight);
+
+	if (!nodelete)
+		delete dlight;
 }
 
-void EXP_Game::UnregisterPointLight(RD_PointLight* plight) {
+void EXP_Game::UnregisterPointLight(RD_PointLight* plight, bool nodelete) {
+	std::cout << "Unregistering PointLight" << std::endl;
 	m_rndr->UnregisterPointLight(plight);
+
+	if (!nodelete)
+		delete plight;
 }
 
-void EXP_Game::UnregisterActor(EXP_Actor* actor) {
+void EXP_Game::UnregisterActor(EXP_Actor* actor, bool nodelete) {
+	std::cout << "Unregistering Actor" << std::endl;
 	int index = GetElemIndex<EXP_Actor*>(m_actors, actor);
 
 	if (index != -1) {
 		m_actors.erase(m_actors.begin() + index);
 		actor->Unregister();
 
-		delete actor;
+		if(!nodelete)
+			delete actor;
 	}
 	else {
 		std::cerr << "ERROR: Element does not exists" << std::endl;
@@ -357,9 +376,9 @@ void EXP_Game::UnloadCurrentMap() {
 	m_PlayingMap->UnloadMap();
 	m_hinput->UnregisterAllCallbacks();
 
-	//m_rndr->UnregisterAllDirLights();
-	//m_rndr->UnregisterAllPointLights();
-	//m_rndr->UnregisterAllMeshes();
+	m_rndr->UnregisterAllDirLights();
+	m_rndr->UnregisterAllPointLights();
+	m_rndr->UnregisterAllMeshes();
 	
 	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.
@@ -394,7 +413,16 @@ void EXP_Game::RegisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) {
 	m_hinput->RegisterMouseButtonCallback(cllbck);
 }
 
-void EXP_Game::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) {
+void EXP_Game::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck, bool nodelete) {
 	std::cout << "Unregistering Mouse Button Callback" << std::endl;
 	m_hinput->UnregisterMouseButtonCallback(cllbck);
+
+	if (nodelete)
+		delete cllbck;
+}
+
+RD_ShaderMaterial* EXP_Game::GetShaderByFileRef(std::string ref) {
+	std::string absPath = m_gameinfo.RootGameContentFolder + ref;
+
+	return m_rndr->FetchShaderFromFile(absPath);
 }

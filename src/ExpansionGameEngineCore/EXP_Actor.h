@@ -37,7 +37,7 @@ class EXPGE_API EXP_Actor
 {
 public:
 	EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale);
-	~EXP_Actor();
+	virtual ~EXP_Actor();
 
 	vec3f GetWorldPos();
 	vec3f GetWorldRot();

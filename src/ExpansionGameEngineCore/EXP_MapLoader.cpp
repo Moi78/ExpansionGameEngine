@@ -138,7 +138,6 @@ void EXP_MapLoader::UnloadMap() {
 		std::cout << "Unloading dir light" << std::endl;
 
 		m_game->UnregisterDirLight(dlight);
-		delete dlight;
 	}
 	m_dlights.clear();
 
@@ -146,7 +145,6 @@ void EXP_MapLoader::UnloadMap() {
 		std::cout << "Unloading point light" << std::endl;
 
 		m_game->UnregisterPointLight(plight);
-		delete plight;
 	}
 	m_ptlights.clear();
 

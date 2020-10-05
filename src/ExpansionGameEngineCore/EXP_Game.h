@@ -83,12 +83,12 @@ public:
 	void RegisterActor(EXP_Actor*);
 	void RegisterMouseButtonCallback(EXP_MouseButtonCallback*);
 
-	void UnregisterKeyboardCallback(EXP_KeyboardCallback*);
-	void UnregisterActor(EXP_Actor*);
-	void UnregisterMesh(RD_Mesh*);
-	void UnregisterDirLight(RD_DirLight*);
-	void UnregisterPointLight(RD_PointLight*);
-	void UnregisterMouseButtonCallback(EXP_MouseButtonCallback*);
+	void UnregisterKeyboardCallback(EXP_KeyboardCallback*, bool nodelete = false);
+	void UnregisterActor(EXP_Actor*, bool nodelete = false);
+	void UnregisterMesh(RD_Mesh*, bool nodelete = false);
+	void UnregisterDirLight(RD_DirLight*, bool nodelete = false);
+	void UnregisterPointLight(RD_PointLight*, bool nodelete = false);
+	void UnregisterMouseButtonCallback(EXP_MouseButtonCallback*, bool nodelete = false);
 
 	EXP_HotLoad* GetGameLib();
 
@@ -116,7 +116,9 @@ public:
 	void PlaySimpleSound(std::string ref, float gain);
 	void PlaySound3D(std::string ref, vec3f pos, float gain);
 
+	//Files
 	std::string GetFilePathByRef(std::string ref);
+	RD_ShaderMaterial* GetShaderByFileRef(std::string ref);
 
 	//Physics
 	void UpdatePhysics();

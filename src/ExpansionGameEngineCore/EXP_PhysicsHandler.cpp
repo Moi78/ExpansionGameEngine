@@ -44,6 +44,6 @@ void EXP_PhysicsHandler::RegisterRigidBody(EXP_RigidBody* rb) {
 	m_dWorld->addRigidBody(rb->GetBody());
 }
 
-void EXP_PhysicsHandler::RemoveBodyFromWorld(btRigidBody* bd) {
-	m_dWorld->removeRigidBody(bd);
+void EXP_PhysicsHandler::RemoveBodyFromWorld(EXP_RigidBody* bd) {
+	m_dWorld->removeRigidBody(bd->GetBody());
 }

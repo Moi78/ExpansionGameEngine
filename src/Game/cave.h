@@ -9,6 +9,7 @@
 #include <EXP_GUI_Button.h>
 
 #include <EXP_Callbacks.h>
+#include <EXP_RigidBody.h>
 
 #include <RD_InstanciatedMesh.h>
 
@@ -34,6 +35,10 @@ private:
 	EXP_GUI_ImageTexture* m_gui_tex;
 
 	EXP_MouseButtonCallback* m_mcllbck;
+
+	EXP_InstanciatedMesh* m_meshes;
+
+	EXP_RB_Box* m_floor;
 };
 
 EXPGE_LEVEL_HEADER(cave);

@@ -11,7 +11,7 @@ EXP_KeyboardCallback::EXP_KeyboardCallback(EXP_Game* gameinstance, std::function
 }
 
 EXP_KeyboardCallback::~EXP_KeyboardCallback() {
-	m_gameinstance->UnregisterKeyboardCallback(this);
+	//m_gameinstance->UnregisterKeyboardCallback(this);
 }
 
 void EXP_KeyboardCallback::UpdateCallback() {

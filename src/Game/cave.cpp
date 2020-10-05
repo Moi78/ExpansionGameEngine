@@ -12,7 +12,13 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 
 	m_gui_tex = new EXP_GUI_ImageTexture(game, "/noice.png", 0.5f, 200.0f, 200.0f, 100.0f, 100.0f);
 
-	RaindropRenderer* rndr = game->GetRenderer();
+	m_meshes = new EXP_InstanciatedMesh(game, game->GetShaderByFileRef("/shaders/mat_room.exmtl"), "/meshes/sphere");
+
+	for (int i = 0; i < 10; i++) {
+		for (int y = 0; y < 10; y++) {
+			m_meshes->AppendInstance({ vec3f(0.0f, (float)y * 2, (float)i * 2), vec3f(), vec3f(1.0f, 1.0f, 1.0f) });
+		}
+	}
 
 	/*RD_Font* font = new RD_Font(rndr->GetFontRenderer(), "test", game->GetFilePathByRef("/font/font.otf"), 48);
 

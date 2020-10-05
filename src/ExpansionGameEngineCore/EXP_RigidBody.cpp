@@ -3,9 +3,11 @@
 
 #include "EXP_PhysicsHandler.h"
 
-EXP_RigidBody::EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass) : m_pos(pos), m_rot(rot), m_scale(scale){
+EXP_RigidBody::EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic) : m_pos(pos), m_rot(rot), m_scale(scale){
 	m_mass = mass;
 	m_game = game;
+
+	m_isKinematic = kinematic;
 
 	ConstructShape();
 	m_body->setAngularFactor(btVector3(0.0f, 0.0f, 1.0f));
@@ -51,29 +53,42 @@ void EXP_RigidBody::ConstructShape() {
 	btRigidBody::btRigidBodyConstructionInfo constructInfo(m_mass, m_motionState, m_shape, localInertia);
 
 	m_body = new btRigidBody(constructInfo);
+	
+	if (m_isKinematic) {
+		m_body->setCollisionFlags(m_body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+		m_body->setActivationState(DISABLE_DEACTIVATION);
+	}
 
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }
 
 void EXP_RigidBody::AddMovementInput(vec3f direction, float scale) {
-	m_body->activate();
-	m_body->setAngularFactor(btVector3(0.0f, 0.0f, 1.0f));
+	if(!m_isKinematic)
+		m_body->activate();
 
-	vec3f fMov = direction * scale;
+	m_body->setAngularFactor(btVector3(0.0f, 0.0f, 0.0f));
+
+	vec3f fMov = direction;
 	btVector3 btMov(fMov.getX(), fMov.getY(), fMov.getZ());
+	btVector3 btCurrSpeed = m_body->getLinearVelocity();
 
-	m_body->setLinearVelocity(btMov);
+	btVector3 btMvtFinal(btMov + btCurrSpeed);
+	btMvtFinal.normalize();
+	btMvtFinal *= scale;
+
+	m_body->setLinearVelocity(btMvtFinal);
+	//m_body->applyCentralImpulse(btMov);
 }
 
 //RB Box
 
-EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, vec3f inertia) : EXP_RigidBody(game, pos, rot, scale, mass) {
+EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic, vec3f inertia) : EXP_RigidBody(game, pos, rot, scale, mass, kinematic) {
 	ConstructShape();
 }
 
 //RB Sphere
 
-EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, vec3f inertia) : EXP_RigidBody(game, pos, rot, vec3f(), mass), m_radius(radius) {
+EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic, vec3f inertia) : EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic), m_radius(radius) {
 	ConstructShape();
 }
 

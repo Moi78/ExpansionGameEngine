@@ -36,7 +36,7 @@ public:
 
 	void RegisterRigidBody(EXP_RigidBody*);
 
-	void RemoveBodyFromWorld(btRigidBody*);
+	void RemoveBodyFromWorld(EXP_RigidBody*);
 
 private:
 	btDiscreteDynamicsWorld* m_dWorld;

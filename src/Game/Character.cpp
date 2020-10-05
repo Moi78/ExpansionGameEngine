@@ -6,20 +6,15 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 	LinkComponent(m_cam);
 
 	m_move = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::MoveForward), GLFW_KEY_W);
-
-	m_meshes = new EXP_InstanciatedMesh(game, game->GetRenderer()->FetchShaderFromFile(game->GetFilePathByRef("/shaders/mat_room.exmtl")), "/meshes/sphere");
-
-	for (int i = 0; i < 10; i++) {
-		for (int y = 0; y < 10; y++) {
-			m_meshes->AppendInstance({ vec3f(0.0f, (float)y * 2, (float)i * 2), vec3f(), vec3f(1.0f, 1.0f, 1.0f) });
-		}
-	}
-
-	LinkComponent(m_meshes);
+	m_destroy = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::DestroyActor), GLFW_KEY_H, true);
 }
 
 Character::~Character() {
+	//m_game->UnregisterMesh(m_meshes);
+	m_game->UnregisterKeyboardCallback(m_move);
+	m_game->UnregisterKeyboardCallback(m_destroy);
 
+	m_game->GetInputHandler()->CaptureCursor(false);
 }
 
 void Character::Start() {
@@ -34,4 +29,8 @@ void Character::Tick() {
 
 void Character::MoveForward() {
 	AddWorldPos(m_cam->GetForwardVector() * 0.1);
+}
+
+void Character::DestroyActor() {
+	m_game->UnregisterActor(this);
 }

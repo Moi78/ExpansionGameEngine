@@ -18,11 +18,12 @@ public:
 
 	void MoveForward();
 
+	void DestroyActor();
+
 private:
 	EXP_Camera* m_cam;
 
 	EXP_KeyboardCallback* m_move;
-
-	EXP_InstanciatedMesh* m_meshes;
+	EXP_KeyboardCallback* m_destroy;
 };
 

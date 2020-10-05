@@ -31,7 +31,7 @@ class EXP_PhysicsHandler;
 class EXPGE_API EXP_RigidBody
 {
 public:
-	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass);
+	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false);
 	~EXP_RigidBody();
 
 	btRigidBody* GetBody();
@@ -50,17 +50,19 @@ protected:
 
 	float m_mass;
 
+	bool m_isKinematic;
+
 	EXP_Game* m_game;
 };
 
 class EXPGE_API EXP_RB_Box : public EXP_RigidBody {
 public:
-	EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, vec3f inertia = vec3f());
+	EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false, vec3f inertia = vec3f());
 };
 
 class EXPGE_API EXP_RB_Sphere : public EXP_RigidBody {
 public:
-	EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, vec3f inertia = vec3f());
+	EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic = false, vec3f inertia = vec3f());
 
 	virtual void ConstructShape() override;
 
