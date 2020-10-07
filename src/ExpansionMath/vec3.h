@@ -92,6 +92,10 @@ public:
         return vec3<T>(m_x + a.m_x, m_y + a.m_y, m_z + a.m_z);
     }
 
+    vec3<T> operator+=(vec3<T> const& a) {
+        return vec3<T>(m_x + a.m_x, m_y + a.m_y, m_z + a.m_z);
+    }
+
     vec3<T> operator-(vec3<T> const& a) {
         return vec3<T>(m_x - a.m_x, m_y - a.m_y, m_z - a.m_z);
     }

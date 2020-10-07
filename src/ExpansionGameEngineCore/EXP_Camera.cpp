@@ -79,3 +79,33 @@ void EXP_Camera::ComputeCamRealCoord() {
 	
 	UpdateCamera();
 }
+
+void EXP_Camera::TranslateCamera(vec3f trans, bool changeSub) {
+	RD_Camera::TranslateCamera(trans, changeSub);
+	EXP_Component::m_pos += trans;
+}
+
+void EXP_Camera::RotateCamera(vec3f rotation) {
+	RD_Camera::RotateCamera(rotation);
+	EXP_Component::m_rot += rotation;
+}
+
+void EXP_Camera::AddPitch(float pitch) {
+	RD_Camera::AddPitch(pitch);
+	EXP_Component::m_rot += vec3f(0.0f, pitch, 0.0f);
+}
+
+void EXP_Camera::AddYaw(float yaw) {
+	RD_Camera::AddYaw(yaw);
+	EXP_Component::m_rot += vec3f(yaw, 0.0f, 0.0f);
+}
+
+void EXP_Camera::AddRoll(float roll) {
+	RD_Camera::AddRoll(roll);
+	EXP_Component::m_rot += vec3f(0.0f, 0.0f, roll);
+}
+
+void EXP_Camera::SetYPR(vec3f YPR) {
+	RD_Camera::SetYPR(YPR);
+	EXP_Component::m_rot = YPR;
+}

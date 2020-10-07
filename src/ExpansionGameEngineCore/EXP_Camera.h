@@ -42,6 +42,17 @@ public:
 	virtual void SetRotation(vec3f YawPitchRoll) override;
 
 	virtual void UseParentMatrix(glm::mat4 mat) override;
+
+	//RD_Camera virtual methods override (RD_Camera Wrapping)
+	virtual void TranslateCamera(vec3f trans, bool changeSub = false) override;
+	virtual void RotateCamera(vec3f rotation) override;
+
+	virtual void AddPitch(float pitch) override;
+	virtual void AddYaw(float yaw) override;
+	virtual void AddRoll(float roll) override;
+
+	virtual void SetYPR(vec3f YPR) override;
+
 private:
 	void ComputeCamRealCoord();
 

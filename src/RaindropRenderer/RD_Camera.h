@@ -43,8 +43,8 @@ public:
 	
 	void UpdateCamera();
 	
-	void RotateCamera(vec3f rotation);
-	void TranslateCamera(vec3f translation, bool changeSub = false);
+	virtual void RotateCamera(vec3f rotation);
+	virtual void TranslateCamera(vec3f translation, bool changeSub = false);
 
 	vec3f GetForwardVector();
 	vec3f GetRightVector();
@@ -52,10 +52,10 @@ public:
 	vec3f GetLocation();
 	vec3f GetYPR();
 
-	void AddPitch(float pitch);
-	void AddYaw(float yaw);
-	void AddRoll(float roll);
-	void SetYPR(vec3f YawPitchRoll);
+	virtual void AddPitch(float pitch);
+	virtual void AddYaw(float yaw);
+	virtual void AddRoll(float roll);
+	virtual void SetYPR(vec3f YawPitchRoll);
 private:
 	void ComputeYPR();
 	
