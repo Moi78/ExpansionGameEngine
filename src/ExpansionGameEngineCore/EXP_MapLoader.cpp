@@ -130,7 +130,6 @@ void EXP_MapLoader::UnloadMap() {
 		std::cout << "Unloading mesh" << std::endl;
 
 		m_game->UnregisterMesh(mesh);
-		delete mesh;
 	}
 	m_meshes.clear();
 

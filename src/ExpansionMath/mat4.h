@@ -20,21 +20,23 @@
 #include <algorithm>
 #include <cstring>
 
+#include "vec4.h"
+
 class EXPANSIONMATH_API mat4
 {
 public:
-	mat4();
-	mat4(float mat[4][4]);
+	mat4(float init_val = 1.0f);
 	~mat4();
 
 	float GetValAt(int row, int column);
 
 	void DBG_print_matrix();
 
-	mat4 operator*(mat4 const& a);
+	void operator*(float);
+	void operator*(vec4f const&);
 
 private:
-	float m_mat[4][4];
+	float m_mat[16];
 };
 
 #endif // _MAT4_H__

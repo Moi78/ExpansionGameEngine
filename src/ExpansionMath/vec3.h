@@ -20,7 +20,7 @@
 #include <string>
 #include <iostream>
 
-template<class T>
+template<typename T>
 class vec3 {
 public:
     vec3(T x = 0, T y = 0, T z = 0) {
@@ -64,8 +64,8 @@ public:
     }
 
     float dotProduct(vec3<T> a) {
-        std::valarray<double> fa = { m_x, m_y, m_z };
-        std::valarray<double> fb = {(double) a.getX(),(double) a.getY(),(double) a.getZ() };
+        std::valarray<T> fa = { m_x, m_y, m_z };
+        std::valarray<T> fb = {(double) a.getX(),(double) a.getY(),(double) a.getZ() };
 
         float result = (fa * fb).sum();
 

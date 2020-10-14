@@ -1,5 +1,8 @@
 #pragma once
 
+#include <mat4.h>
+#include <vec4.h>
+
 #include <EXP_Game.h>
 #include <EXP_MapLoader.h>
 #include <EXP_Level.h>

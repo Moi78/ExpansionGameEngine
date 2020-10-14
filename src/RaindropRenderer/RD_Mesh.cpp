@@ -195,7 +195,7 @@ void RD_Mesh::Update() {
 	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
 
 	//Rotation
-	glm::quat rot(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ()));
+	glm::quat rot(glm::radians(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ())));
 	rotation = glm::toMat4(rot);
 
 	m_mdl = translate * rotation * scale;

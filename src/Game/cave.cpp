@@ -20,9 +20,12 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 		}
 	}
 
-	/*RD_Font* font = new RD_Font(rndr->GetFontRenderer(), "test", game->GetFilePathByRef("/font/font.otf"), 48);
+	EXP_StaticMesh* test_axis = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_room.exmtl"), "/meshes/test_axis", vec3f(-15.0f), vec3f(45.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
 
-	RD_TextBox* tb = new RD_TextBox(rndr, rndr->GetFontRenderer(), "H", "test", 20, 0, 0);*/
+	vec4f vtest(2.0f, 3.0, 4.0, 1.0f);
+
+	mat4 mtest = mat4(1.0f);
+	mtest.DBG_print_matrix();
 }
 
 cave::~cave() {
