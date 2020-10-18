@@ -29,6 +29,10 @@ Expansion Game Engine is a 3D game engine under development.
 Here you have some screenshots I took from the last demo I've made.
 ![alt text](screenshots/EXPGE_Screen_1.PNG)
 ![alt text](screenshots/EXPGE_Screen_2.PNG)
+![alt text](screenshots/EXPGE_Screen_3.PNG)
+![alt text](screenshots/EXPGE_Screen_4.PNG)
+![alt text](screenshots/EXPGE_Screen_5.PNG)
+![alt text](screenshots/EXPGE_Screen_6.PNG)
 
 ## TODO List
 
