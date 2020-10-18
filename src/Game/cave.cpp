@@ -36,7 +36,7 @@ cave::~cave() {
 
 void cave::OnStart() {
 	std::cout << "Game started" << std::endl;
-	m_mloader->GetDirLightByName("sun")->SetShadowCasting(false);
+	//m_mloader->GetDirLightByName("sun")->SetShadowCasting(false);
 }
 
 void cave::OnTick() {
