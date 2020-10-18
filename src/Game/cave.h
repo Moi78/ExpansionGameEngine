@@ -31,6 +31,7 @@ public:
 
 private:
 	EXP_Game* m_game;
+	EXP_MapLoader* m_mloader;
 
 	Character* m_character;
 

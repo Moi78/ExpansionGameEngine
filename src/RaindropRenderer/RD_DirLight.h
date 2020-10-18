@@ -37,6 +37,9 @@ public:
 	void SetLightBrightness(float nBrightness);
 	float GetBrightness();
 
+	void SetShadowCasting(bool scast);
+	bool GetShadowCasting();
+
 	void DepthRender(RaindropRenderer*, vec3f CamPos);
 	void SetUpShadowFB(unsigned int shadowQual);
 	glm::mat4 GetLightSpace();
@@ -51,6 +54,8 @@ private:
 	unsigned int m_depthMapTEX;
 	unsigned int m_depthMapFBO;
 	unsigned int m_shadowQuality;
+
+	bool m_shadowCaster;
 
 	glm::mat4 m_lspace;
 };

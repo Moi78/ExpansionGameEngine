@@ -405,12 +405,13 @@ void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
 		shader->useShader();
 
 		if (IsFeatureEnabled(RendererFeature::Lighting)) {
-			shader->SetInt("NbrDirLights", m_DirLights.size());
-
 			unsigned int texUnit = GL_TEXTURE0;
 			int i = 0;
 
 			for (auto dlight : m_DirLights) {
+				if (!dlight->GetShadowCasting())
+					continue;
+
 				glActiveTexture(texUnit);
 				glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
 
@@ -420,6 +421,8 @@ void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
 				texUnit++;
 				i++;
 			}
+
+			shader->SetInt("NbrDirLights", i);
 		}
 
 		m_meshes[i]->render(cam);

@@ -17,6 +17,8 @@ RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3
 
 	m_parent = glm::mat4(1.0);
 
+	m_shadowCaster = true;
+
 	Update();
 }
 
@@ -87,6 +89,9 @@ void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
 }
 
 void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
+	if (!m_shadowCaster)
+		return;
+
 	shadowShader->SetMatrix("model", m_mdl);
 
 	glBindVertexArray(VAO);
@@ -213,4 +218,8 @@ void RD_Mesh::UseMatrix(glm::mat4 mdl) {
 void RD_Mesh::SetParentMatrix(glm::mat4 parent) {
 	m_parent = parent;
 	Update();
+}
+
+void RD_Mesh::SetShadowCasting(bool scasting) {
+	m_shadowCaster = scasting;
 }

@@ -5,6 +5,7 @@ EXPGE_LEVEL_CODE(cave);
 
 cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	m_game = game;
+	m_mloader = mloader;
 
 	m_character = new Character(game);
 
@@ -21,6 +22,7 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	}
 
 	EXP_StaticMesh* test_axis = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_room.exmtl"), "/meshes/test_axis", vec3f(-15.0f), vec3f(45.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
+	//test_axis->SetShadowCasting(false);
 
 	vec4f vtest(2.0f, 3.0, 4.0, 1.0f);
 
@@ -34,6 +36,7 @@ cave::~cave() {
 
 void cave::OnStart() {
 	std::cout << "Game started" << std::endl;
+	m_mloader->GetDirLightByName("sun")->SetShadowCasting(false);
 }
 
 void cave::OnTick() {

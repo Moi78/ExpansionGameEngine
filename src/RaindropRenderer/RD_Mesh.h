@@ -52,6 +52,8 @@ public:
 	virtual void SetPosition(vec3f nPos, bool update = true);
 	virtual void SetScale(vec3f nScale, bool update = true);
 
+	void SetShadowCasting(bool value);
+
 	virtual void UseMatrix(glm::mat4 mdl);
 	virtual void SetParentMatrix(glm::mat4 parent);
 	virtual void Update();
@@ -71,6 +73,8 @@ private:
 	std::vector<float> MixVertNormUV;
 
 	glm::mat4 m_mdl;
+
+	bool m_shadowCaster;
 
 protected:
 	glm::mat4 m_parent;

@@ -3,6 +3,7 @@
 
 RD_DirLight::RD_DirLight(vec3f dir, vec3f color, float brightness) : m_dir(dir), m_color(color), m_brightness(brightness) {
 	SetUpShadowFB(1024);
+	m_shadowCaster = true;
 }
 
 RD_DirLight::~RD_DirLight() {
@@ -35,6 +36,9 @@ vec3f RD_DirLight::GetLightDir() {
 }
 
 void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
+	if (!m_shadowCaster)
+		return;
+
 	rndr->SwitchShader(rndr->GetShadowShader());
 
 	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 100.0f);
@@ -108,4 +112,12 @@ unsigned int RD_DirLight::GetDepthTexID() {
 void RD_DirLight::Cleanup(RaindropRenderer* rndr) {
 	rndr->AddToFramebufferGarbageCollector(m_depthMapFBO);
 	rndr->AddToTextureGarbageCollector(m_depthMapTEX);
+}
+
+void RD_DirLight::SetShadowCasting(bool scast) {
+	m_shadowCaster = scast;
+}
+
+bool RD_DirLight::GetShadowCasting() {
+	return m_shadowCaster;
 }
