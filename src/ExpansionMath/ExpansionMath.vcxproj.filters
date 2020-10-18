@@ -56,9 +56,6 @@
     <ClCompile Include="BoxVol.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="mat4.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="volumes.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>

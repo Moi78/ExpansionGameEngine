@@ -9,38 +9,35 @@ template<typename T>
 class vec4 {
 public:
 	vec4(T x = 0, T y = 0, T z = 0, T w = 0) {
-		m_x = x;
-		m_y = y;
-		m_z = z;
-		m_w = w;
+		m_xyzw[0] = x;
+		m_xyzw[1] = y;
+		m_xyzw[2] = z;
+		m_xyzw[3] = w;
 	}
 
 	/*vec4(vec3<T> const& a, T w = 0) {
 		m_x = a.m_x;
-		m_y = a.m_y;
-		m_z = a.m_z;
-		m_w = w;
+		m_xyzw[1] = a.m_xyzw[1];
+		m_xyzw[2] = a.m_xyzw[2];
+		m_xyzw[3] = w;
 	}*/
 
-	T GetX() { return m_x; };
-	T GetY() { return m_y; };
-	T GetZ() { return m_z; };
-	T GetW() { return m_z; };
+	T GetX() { return m_xyzw[0]; };
+	T GetY() { return m_xyzw[1]; };
+	T GetZ() { return m_xyzw[2]; };
+	T GetW() { return m_xyzw[3]; };
 
-	void SetX(T nx) { m_x = nx; };
-	void SetY(T ny) { m_y = ny; };
-	void SetZ(T nz) { m_z = nz; };
-	void SetW(T nw) { m_w = nw; };
+	void SetX(T nx) { m_xyzw[0] = nx; };
+	void SetY(T ny) { m_xyzw[1] = ny; };
+	void SetZ(T nz) { m_xyzw[2] = nz; };
+	void SetW(T nw) { m_xyzw[3] = nw; };
 
 	void SetAll(T x, T y, T z, T w) {
-		m_x = x;
-		m_y = y;
-		m_z = z;
-		m_w = w;
+		m_xyzw = { x, y, z, w };
 	}
 
 	float DotProduct(vec4<T> a) {
-		std::valarray<T> fa = { m_x, m_y, m_z, m_w };
+		std::valarray<T> fa = { m_xyzw[0], m_xyzw[1], m_xyzw[2], m_xyzw[3] };
 		std::valarray<T> fb = { (double)a.GetX(),(double)a.GetY(),(double)a.GetZ(),(double)a.GetW() };
 
 		float result = (fa * fb).sum();
@@ -49,51 +46,50 @@ public:
 	}
 
 	void NormalizeVector() {
-		float length = (float)abs(sqrt(m_x * m_x) + (m_y * m_y) + (m_z * m_z));
-		
-		m_x /= length;
-		m_y /= length;
-		m_z /= length;
-		m_w /= length;
+		float length = (float)abs(sqrt(m_xyzw[0] * m_xyzw[0]) + (m_xyzw[1] * m_xyzw[1]) + (m_xyzw[2] * m_xyzw[2] + (m_xyzw[3] * m_xyzw[3])));
+
+		m_xyzw[0] /= length;
+		m_xyzw[1] /= length;
+		m_xyzw[2] /= length;
+		m_xyzw[3] /= length;
 	}
 
 	bool operator==(vec4<T> const& a) {
-		return m_x == a.m_x && m_y == a.m_y && m_z == a.m_z && m_w == a.m_w ? true : false;
+		return m_xyzw[0] == a.m_xyzw[0] && m_xyzw[1] == a.m_xyzw[1] && m_xyzw[2] == a.m_xyzw[2] && m_xyzw[3] == a.m_xyzw[3] ? true : false;
 	}
 
 	bool operator!=(vec4<T> const& a) {
-		return m_x == a.m_x && m_y == a.m_y && m_z == a.m_z && m_w == a.m_w ? false : true;
+		return m_xyzw[0] == a.m_xyzw[0] && m_xyzw[1] == a.m_xyzw[1] && m_xyzw[2] == a.m_xyzw[2] && m_xyzw[3] == a.m_xyzw[3] ? false : true;
 	}
 
 	vec4<T> operator+(vec4<T> const& a) {
-		return vec4<T>(m_x + a.m_x, m_y + a.m_y, m_z + a.m_z, m_w + a.m_w);
+		return vec4<T>(m_xyzw[0] + a.m_xyzw[0], m_xyzw[1] + a.m_xyzw[1], m_xyzw[2] + a.m_xyzw[2], m_xyzw[3] + a.m_xyzw[3]);
 	}
 
 	vec4<T> operator+=(vec4<T> const& a) {
-		return vec4<T>(m_x + a.m_x, m_y + a.m_y, m_z + a.m_z, m_w + a.m_w);
+		return vec4<T>(m_xyzw[0] + a.m_xyzw[0], m_xyzw[1] + a.m_xyzw[1], m_xyzw[2] + a.m_xyzw[2], m_xyzw[3] + a.m_xyzw[3]);
 	}
 
 	vec4<T> operator-(vec4<T> const& a) {
-		return vec4<T>(m_x - a.m_x, m_y - a.m_y, m_z - a.m_z, m_w - a.m_w);
+		return vec4<T>(m_xyzw[0] - a.m_xyzw[0], m_xyzw[1] - a.m_xyzw[1], m_xyzw[2] - a.m_xyzw[2], m_xyzw[3] - a.m_xyzw[3]);
 	}
 
 	vec4<T> operator*(vec4<T> const& a) {
-		return vec4<T>(m_x * a.m_x, m_y * a.m_y, m_z * a.m_z, m_w * a.m_w);
+		return vec4<T>(m_xyzw[0] * a.m_xyzw[0], m_xyzw[1] * a.m_xyzw[1], m_xyzw[2] * a.m_xyzw[2], m_xyzw[3] * a.m_xyzw[3]);
 	}
 
 	vec4<T> operator*(float a) {
-		return vec4<T>(m_x * a, m_y * a, m_z * a, m_w * a);
+		return vec4<T>(m_xyzw[0] * a, m_xyzw[1] * a, m_xyzw[2] * a, m_xyzw[3] * a);
 	}
 
 	void DBGPrint() {
-		std::cout << "X : " << m_x << " Y : " << m_y << " Z : " << m_z << std::endl;
+		std::cout << "X : " << m_xyzw[0] << " Y : " << m_xyzw[1] << " Z : " << m_xyzw[2] << " W : " << m_xyzw[3] << std::endl;
 	}
 	
 private:
-	T m_x;
-	T m_y;
-	T m_z;
-	T m_w;
+	T m_xyzw[4];
+
+	bool _simd_enabled;
 };
 
 typedef vec4<float> vec4f;

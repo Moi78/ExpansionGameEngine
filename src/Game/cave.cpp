@@ -26,8 +26,12 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 
 	vec4f vtest(2.0f, 3.0, 4.0, 1.0f);
 
-	mat4 mtest = mat4(1.0f);
-	mtest.DBG_print_matrix();
+	mat4f mtest = mat4f(2.0f);
+
+	vtest = mtest * vtest;
+
+	vtest.DBGPrint();
+	//svtest.DBGPrint();
 }
 
 cave::~cave() {

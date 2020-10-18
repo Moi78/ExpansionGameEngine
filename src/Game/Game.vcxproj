@@ -139,6 +139,7 @@
       <AdditionalIncludeDirectories>..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\libsndfile\include;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\BULLET\include;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,6 +162,7 @@
       <AdditionalIncludeDirectories>..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\libsndfile\include;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\BULLET\include;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
