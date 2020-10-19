@@ -16,16 +16,13 @@
 
 #endif //_WIN32
 
-#define MAKE_MM128_SCALAR(x) {a, a, a, a}
-
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <immintrin.h>
 
 #include "vec4.h"
-
-#include <immintrin.h>
-#include <cstring>
+#include "basic_math.h"
 
 template<class T>
 class mat4
@@ -54,6 +51,11 @@ public:
 		for (int i = 0; i < 16; i += 5) {
 			m_mat[i] = init_val;
 		}
+	}
+
+	mat4(T mat[16]) {
+		memset(m_mat, 0, sizeof(m_mat));
+		memcpy(m_mat, mat, 16 * sizeof(T));
 	}
 
 	~mat4() {
@@ -100,7 +102,7 @@ public:
 
 	mat4<T> operator*(float a) {
 		if (_simd_enabled) {
-			__m128 scalar = MAKE_MM128_SCALAR(a);
+			__m128 scalar = _mm_load_ss(&a);
 			for (int i = 0; i < 16; i += 4) {
 				__m128 m = { m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3] };
 				__m128 mmultiplied = _mm_mul_ps(m, scalar);
@@ -118,7 +120,70 @@ public:
 	}
 
 	mat4<T> operator*(mat4<T> const& a) {
+		if (_simd_enabled) {
+			//SIMD Impl.
 
+			//Allocating matrix in XMM registers
+			__m128 mat_1_rows[4];
+			for (int i = 0; i < 16; i += 4) {
+				mat_1_rows[i / 4] = { m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3] };
+			}
+
+			//Declaring result mat
+			T nMat[16];
+
+			for (int i = 0; i < 4; i++) {
+				for (int c = 0; c < 4; c++) {
+					//Getting column of the second matrix
+					__m128 col = { a.m_mat[c], a.m_mat[c + 4], a.m_mat[c + 8], a.m_mat[c + 12] };
+
+					//Multiplying & storing results
+					__m128 result = _mm_mul_ps(mat_1_rows[i], col);
+
+					//Sum up everything
+					T comp = 0;
+					for (int s = 0; s < 4; s++) {
+						comp += result.m128_f32[s];
+					}
+
+					nMat[4 * i + c] = comp;
+				}
+			}
+
+			memcpy(m_mat, nMat, 16 * sizeof(T));
+
+			return *this;
+		}
+		else {
+			//Non-SIMD impl.
+
+			T nMat[16];
+			for (int i = 0; i < 4; i++) {
+				for (int c = 0; c < 4; c++) {
+					T col[4] = { a.m_mat[c], a.m_mat[c + 4], a.m_mat[c + 8], a.m_mat[c + 12] };
+
+					//Multiply all
+					T results[4];
+					for (int m = 0; m < 4; m++) {
+						results[m] = col[m] * m_mat[4 * i + c];
+					}
+
+					//Sum up everything
+					T comp = 0;
+					for (int s = 0; s < 4; s++) {
+						comp += results[s];
+					}
+				}
+			}
+
+			memcpy(m_mat, nMat, 16 * sizeof(T));
+
+			return *this;
+		}
+	}
+
+	float* GetPTR() {
+		return &m_mat[0];
 	}
 
 private:
@@ -126,6 +191,72 @@ private:
 
 	bool _simd_enabled;
 };
+
+template<class T>
+mat4<T> TranslateMatrix(mat4<T> srcMat, vec3f trans) {
+	T transMat[16] = {
+		1, 0, 0, trans.getX(),
+		0, 1, 0, trans.getY(),
+		0, 0, 1, trans.getZ(),
+		0, 0, 0, 1
+	};
+	mat4<T> tmat(transMat);
+
+	return srcMat * tmat;
+}
+
+template<class T>
+mat4<T> ScaleMatrix(mat4<T> srcMat, vec3f scale) {
+	T scaleMat[16] = {
+		scale.getX(), 0			  , 0			, 0			   ,
+		0			, scale.getY(), 0			, 0			   ,
+		0			, 0			  , scale.getZ(), 0			   ,
+		0			, 0			  ,	0			, 1
+	};
+	mat4<T> smat(scaleMat);
+
+	return srcMat * scaleMat;
+}
+
+template<class T>
+mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
+	mat4<T> srcCopy = srcMat;
+
+	//X
+	float Stheta = sin(DEG_TO_RAD(rot.getX()));
+	float Ctheta = cos(DEG_TO_RAD(rot.getX()));
+
+	T rxMat[16] = {
+	1,		0,		 0, 0,
+	0, Ctheta, -Stheta, 0,
+	0, Stheta,  Ctheta, 0,
+	0,		0,		 0, 1
+	};
+
+	srcCopy = srcCopy * mat4<T>(rxMat);
+
+	//Y
+	T ryMat[16] = {
+		 Ctheta,	 0, Stheta,		0,
+			  0,	 1,		 0,		0,
+		-Stheta,	 0, Ctheta,		0,
+			  0,	 0,		 0,		1
+	};
+
+	srcCopy = srcCopy * mat4<T>(ryMat);
+
+	//Z
+	T rzMat[16] = {
+		Ctheta, -Stheta, 0, 0,
+		Stheta,  Ctheta, 0, 0,
+			 0,		  0, 1, 0,
+			 0,		  0, 0, 1
+	};
+
+	srcCopy = srcCopy * mat4<T>(rzMat);
+
+	return srcCopy;
+}
 
 typedef mat4<float> mat4f;
 

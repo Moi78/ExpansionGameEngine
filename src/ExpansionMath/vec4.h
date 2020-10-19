@@ -5,6 +5,8 @@
 
 #include <valarray>
 
+#include "vec3.h"
+
 template<typename T>
 class vec4 {
 public:
@@ -15,12 +17,12 @@ public:
 		m_xyzw[3] = w;
 	}
 
-	/*vec4(vec3<T> const& a, T w = 0) {
-		m_x = a.m_x;
-		m_xyzw[1] = a.m_xyzw[1];
-		m_xyzw[2] = a.m_xyzw[2];
+	vec4(vec3<T> a, T w = 0) {
+		m_xyzw[0] = a.getX();
+		m_xyzw[1] = a.getY();
+		m_xyzw[2] = a.getZ();
 		m_xyzw[3] = w;
-	}*/
+	}
 
 	T GetX() { return m_xyzw[0]; };
 	T GetY() { return m_xyzw[1]; };

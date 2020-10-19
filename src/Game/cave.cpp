@@ -24,13 +24,15 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	EXP_StaticMesh* test_axis = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_room.exmtl"), "/meshes/test_axis", vec3f(-15.0f), vec3f(45.0f, 0.0f), vec3f(1.0f, 1.0f, 1.0f));
 	//test_axis->SetShadowCasting(false);
 
-	vec4f vtest(2.0f, 3.0, 4.0, 1.0f);
+	vec3f a(1.0f, 2.0f, 4.0f);
+	vec4f vtest(a, 1.0f);
 
-	mat4f mtest = mat4f(2.0f);
+	mat4f t(1.0f);
+	t = TranslateMatrix(t, vec3f(2.0f, 4.0f, 8.0f));
+	t = ScaleMatrix(t, vec3f(1.0f, 4.0f, 5.0f));
+	t = RotateMatrix(t, vec3f(50.0f, 20.0f, 80.0f));
 
-	vtest = mtest * vtest;
-
-	vtest.DBGPrint();
+	t.DBG_print_matrix();
 	//svtest.DBGPrint();
 }
 
