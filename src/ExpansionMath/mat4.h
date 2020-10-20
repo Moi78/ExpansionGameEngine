@@ -101,22 +101,25 @@ public:
 	}
 
 	mat4<T> operator*(float a) {
+		T nMat[16];
+		memset(nMat, 0, 16 * sizeof(T));
+
 		if (_simd_enabled) {
 			__m128 scalar = _mm_load_ss(&a);
 			for (int i = 0; i < 16; i += 4) {
 				__m128 m = { m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3] };
 				__m128 mmultiplied = _mm_mul_ps(m, scalar);
 
-				memcpy(&m_mat[i], mmultiplied.m128_f32, 4 * sizeof(float));
+				memcpy(&nMat[i], mmultiplied.m128_f32, 4 * sizeof(float));
 			}
 		}
 		else {
 			for (int i = 0; i < 16; i++) {
-				m_mat[i] *= a;
+				nMat[i] = m_mat[i] * a;
 			}
 		}
 
-		return *this;
+		return mat4<T>(nMat);
 	}
 
 	mat4<T> operator*(mat4<T> const& a) {
@@ -150,9 +153,7 @@ public:
 				}
 			}
 
-			memcpy(m_mat, nMat, 16 * sizeof(T));
-
-			return *this;
+			return mat4<T>(nMat);
 		}
 		else {
 			//Non-SIMD impl.
@@ -176,9 +177,7 @@ public:
 				}
 			}
 
-			memcpy(m_mat, nMat, 16 * sizeof(T));
-
-			return *this;
+			return mat4<T>(nMat);
 		}
 	}
 
@@ -222,9 +221,13 @@ template<class T>
 mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	mat4<T> srcCopy = srcMat;
 
+	float X = DEG_TO_RAD(rot.getX());
+	float Y = DEG_TO_RAD(rot.getY());
+	float Z = DEG_TO_RAD(rot.getZ());
+
 	//X
-	float Stheta = sin(DEG_TO_RAD(rot.getX()));
-	float Ctheta = cos(DEG_TO_RAD(rot.getX()));
+	float Stheta = sin(X);
+	float Ctheta = cos(X);
 
 	T rxMat[16] = {
 	1,		0,		 0, 0,
@@ -236,6 +239,9 @@ mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	srcCopy = srcCopy * mat4<T>(rxMat);
 
 	//Y
+	Stheta = sin(Y);
+	Ctheta = cos(Y);
+
 	T ryMat[16] = {
 		 Ctheta,	 0, Stheta,		0,
 			  0,	 1,		 0,		0,
@@ -246,6 +252,9 @@ mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	srcCopy = srcCopy * mat4<T>(ryMat);
 
 	//Z
+	Stheta = sin(Z);
+	Ctheta = cos(Z);
+
 	T rzMat[16] = {
 		Ctheta, -Stheta, 0, 0,
 		Stheta,  Ctheta, 0, 0,
