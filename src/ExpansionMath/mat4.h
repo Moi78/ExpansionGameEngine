@@ -29,7 +29,7 @@ class mat4
 {
 public:
 	mat4(T init_val) {
-		memset(m_mat, 0, sizeof(m_mat));
+		memset(m_mat, 0, 16 * sizeof(T));
 
 		if (sizeof(T) == sizeof(float)) {
 			_simd_enabled = true;

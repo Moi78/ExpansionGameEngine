@@ -10,6 +10,7 @@ RD_FrameLimiter::~RD_FrameLimiter() {
 }
 
 void RD_FrameLimiter::SetFrameLimit(int nLimit) {
+	std::cout << "Setting Frame Limit to " << nLimit << std::endl;
 	m_frameLimit = nLimit;
 }
 
@@ -34,11 +35,12 @@ double RD_FrameLimiter::GetElapsedTime() {
 }
 
 void RD_FrameLimiter::WaitAll() {
-	float frameTime = (1.0f / GetFrameLimit()) * 1000;
+	float frameTime = (1.0f / GetFrameLimit() * 1000);
+	//std::cout << "Frame time " << GetFrameLimit() << std::endl;
 	if (m_last_delta < frameTime) {
-		double delta = frameTime - GetElapsedTime();
+		long long delta = (long long)frameTime - GetElapsedTime();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds((long long)delta));
+		std::this_thread::sleep_for(std::chrono::milliseconds(delta));
 	}
 }
 

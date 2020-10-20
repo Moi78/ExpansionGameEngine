@@ -141,7 +141,7 @@ void RaindropRenderer::SwapWindow() {
 	m_error_flag = false;
 
 	m_frmLmt->stop();
-	//m_frmLmt->WaitAll();
+	m_frmLmt->WaitAll();
 }
 
 bool RaindropRenderer::WantToClose() {

@@ -102,7 +102,8 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
     
-	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, 60, false, gameinfo.RootEngineContentFolder);
+	//I absolutely don't know where the fuck my framerate is divided by 2, so I leave that at 120 => it limits to 60FPS
+	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, 120, false, gameinfo.RootEngineContentFolder);
 	m_materialManager = std::make_unique<RD_MaterialLibrary>();
 	m_hinput = std::make_unique<EXP_InputHandler>(m_rndr->GetGLFWwindow());
 

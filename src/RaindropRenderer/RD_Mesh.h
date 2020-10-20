@@ -24,6 +24,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include <mat4.h>
+
 #include <string>
 #include <vector>
 
@@ -72,12 +74,14 @@ private:
 
 	std::vector<float> MixVertNormUV;
 
-	glm::mat4 m_mdl;
+	//glm::mat4 m_mdl;
+	mat4f m_mdl;
 
 	bool m_shadowCaster;
 
 protected:
-	glm::mat4 m_parent;
+	//glm::mat4 m_parent;
+	mat4f m_parent;
 	RD_ShaderMaterial* m_mat;
 
 	unsigned int VAO, VBO, EBO;

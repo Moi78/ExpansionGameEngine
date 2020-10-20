@@ -2,7 +2,7 @@
 #include "RD_InstanciatedMesh.h"
 
 RD_InstanciatedMesh::RD_InstanciatedMesh(RD_ShaderMaterial* mat) : RD_Mesh(mat, vec3f(), vec3f(), vec3f()) {
-
+	m_parent = mat4f(1.0f);
 }
 
 RD_InstanciatedMesh::~RD_InstanciatedMesh() {
@@ -10,26 +10,30 @@ RD_InstanciatedMesh::~RD_InstanciatedMesh() {
 }
 
 int RD_InstanciatedMesh::AppendInstance(RD_MeshInstance inst) {
-	glm::mat4 mdl = glm::mat4(1.0f);
+	mat4f mdl(1.0f);
+	//mdl.DBG_print_matrix();
 
-	glm::mat4 translate = glm::mat4(1.0f);
-	glm::mat4 scale = glm::mat4(1.0f);
-	glm::mat4 rotation = glm::mat4(1.0f);
+	mat4f translate(1.0f);
+	mat4f scale(1.0f);
+	mat4f rotation(1.0f);
 
 	//Position
-	translate = glm::translate(translate, glm::vec3(inst.pos.getX(), inst.pos.getY(), inst.pos.getZ()));
+	translate = TranslateMatrix(translate, inst.pos);
 
 	//Scale
-	scale = glm::scale(scale, glm::vec3(inst.scale.getX(), inst.scale.getY(), inst.scale.getZ()));
+	scale = ScaleMatrix(scale, inst.scale);
 
 	//Rotation
-	glm::quat rot(glm::vec3(inst.rotation.getX(), inst.rotation.getY(), inst.rotation.getZ()));
-	rotation = glm::toMat4(rot);
+	/*glm::quat rot(glm::vec3(inst.rotation.getX(), inst.rotation.getY(), inst.rotation.getZ()));
+	rotation = glm::toMat4(rot);*/
+	rotation = RotateMatrix(rotation, inst.rotation);
 
 	mdl = translate * rotation * scale;
 	mdl = m_parent * mdl;
 
-	m_mdls.push_back(std::pair<glm::mat4, RD_MeshInstance>(mdl, inst));
+	m_parent.DBG_print_matrix();
+
+	m_mdls.push_back(std::pair<mat4f, RD_MeshInstance>(mdl, inst));
 
 	return (int)m_mdls.size() - 1;
 }
@@ -83,19 +87,20 @@ void RD_InstanciatedMesh::Update() {
 }
 
 void RD_InstanciatedMesh::UpdateIndex(int index) {
-	glm::mat4 translate = glm::mat4(1.0f);
-	glm::mat4 scale = glm::mat4(1.0f);
-	glm::mat4 rotation = glm::mat4(1.0f);
+	mat4f translate(1.0f);
+	mat4f scale(1.0f);
+	mat4f rotation(1.0f);
 
 	//Position
-	translate = glm::translate(translate, glm::vec3(m_mdls[index].second.pos.getX(), m_mdls[index].second.pos.getY(), m_mdls[index].second.pos.getZ()));
+	translate = TranslateMatrix(translate, m_mdls[index].second.pos);
 
 	//Scale
-	scale = glm::scale(scale, glm::vec3(m_mdls[index].second.scale.getX(), m_mdls[index].second.scale.getY(), m_mdls[index].second.scale.getZ()));
+	scale = ScaleMatrix(scale, m_mdls[index].second.scale);
 
 	//Rotation
-	glm::quat rot(glm::vec3(m_mdls[index].second.rotation.getX(), m_mdls[index].second.rotation.getY(), m_mdls[index].second.rotation.getZ()));
-	rotation = glm::toMat4(rot);
+	/*glm::quat rot(glm::vec3(m_mdls[index].second.rotation.getX(), m_mdls[index].second.rotation.getY(), m_mdls[index].second.rotation.getZ()));
+	rotation = glm::toMat4(rot);*/
+	rotation = RotateMatrix(rotation, m_mdls[index].second.rotation);
 
 	m_mdls[index].first = translate * rotation * scale;
 	m_mdls[index].first = m_parent * m_mdls[index].first;
