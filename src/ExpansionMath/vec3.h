@@ -118,6 +118,15 @@ private:
     T m_z;
 };
 
+template<class T>
+vec3<T> Cross(vec3<T> a, vec3<T> b) {
+    return vec3<T>(
+        a.getY() * b.getZ() - a.getZ() * b.getY(),
+        a.getZ() * b.getX() - a.getX() * b.getZ(),
+        a.getX() * b.getY() - a.getY() * b.getX()
+    );
+}
+
 typedef vec3<float> vec3f;
 typedef vec3<int> vec3i;
 typedef vec3<double> vec3d;

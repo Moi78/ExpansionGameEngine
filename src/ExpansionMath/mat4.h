@@ -22,6 +22,7 @@
 #include <immintrin.h>
 
 #include "vec4.h"
+#include "vec3.h"
 #include "basic_math.h"
 
 template<class T>
@@ -265,6 +266,35 @@ mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	srcCopy = srcCopy * mat4<T>(rzMat);
 
 	return srcCopy;
+}
+
+template<class T>
+mat4<T> LookAt(vec3<T> pos, vec3<T> target, vec3<T> up) {
+	//Dir
+	vec3<T> cam_dir(pos - target);
+	cam_dir.NormalizeVector();
+
+	//Right
+	vec3<T> cam_right(Cross(up, cam_dir));
+
+	//Up
+	vec3<T> cam_up(Cross(cam_dir, cam_right));
+
+	T mat_rot[16] = {
+		cam_right.getX(), cam_up.getX(), cam_dir.getX(), 0,
+		cam_right.getY(), cam_up.getY(), cam_dir.getY(), 0,
+		cam_right.getZ(), cam_up.getZ(), cam_dir.getZ(), 0,
+		0, 0, 0, 1,
+	};
+
+	T mat_trans[16] = {
+		1, 0, 0, -pos.getX(),
+		0, 1, 0, -pos.getY(),
+		0, 0, 1, -pos.getZ(),
+		0, 0, 0, 1
+	};
+
+	return mat4<T>(mat_rot) * mat4<T>(mat_trans);
 }
 
 typedef mat4<float> mat4f;
