@@ -19,52 +19,36 @@
 #include <valarray>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 template<typename T>
 class vec3 {
 public:
     vec3(T x = 0, T y = 0, T z = 0) {
-        m_x = x;
-        m_y = y;
-        m_z = z;
+        m_xyz[0] = x;
+        m_xyz[1] = y;
+        m_xyz[2] = z;
     }
 
-    ~vec3() {
+    ~vec3() {}
+
+    T getX() { return m_xyz[0]; }
+    T getY() { return m_xyz[1]; }
+    T getZ() { return m_xyz[2]; }
     
-    }
-
-    T getX() {
-        return m_x;
-    }
-
-    T getY() {
-        return m_y;
-    }
     
-    T getZ() {
-        return m_z;
-    }
-
-    void setX(T x) {
-        m_x = x;
-    }
-
-    void setY(T y) {
-        m_y = y;
-    }
-
-    void setZ(T z) {
-        m_z = z;
-    }
+    void setX(T x) { m_xyz[0] = x; }
+    void setY(T y) { m_xyz[1] = y; }
+    void setZ(T z) { m_xyz[2] = z; }
 
     void setAll(T x, T y, T z) {
-        m_x = x;
-        m_y = y;
-        m_z = z;
+        m_xyz[0] = x;
+        m_xyz[1] = y;
+        m_xyz[2] = z;
     }
 
     float dotProduct(vec3<T> a) {
-        std::valarray<T> fa = { m_x, m_y, m_z };
+        std::valarray<T> fa = { m_xyz[0], m_xyz[1], m_xyz[2] };
         std::valarray<T> fb = {(double) a.getX(),(double) a.getY(),(double) a.getZ() };
 
         float result = (fa * fb).sum();
@@ -73,49 +57,51 @@ public:
     }
 
     void NormalizeVector() {
-        float length = (float)abs(sqrt((m_x * m_x) + (m_y * m_y) + (m_z * m_z)));
+        float length = (float)abs(sqrt((m_xyz[0] * m_xyz[0]) + (m_xyz[1] * m_xyz[1]) + (m_xyz[2] * m_xyz[2])));
 
-        m_x /= length;
-        m_y /= length;
-        m_z /= length;
+        m_xyz[0] /= length;
+        m_xyz[1] /= length;
+        m_xyz[2] /= length;
     }
 
     bool operator==(vec3<T> const& a) {
-        return m_x == a.m_x && m_y == a.m_y && m_z == a.m_z ? true : false;
+        return m_xyz[0] == a.m_xyz[0] && m_xyz[1] == a.m_xyz[1] && m_xyz[2] == a.m_xyz[2] ? true : false;
     }
 
     bool operator!=(vec3<T> const& a) {
-        return m_x == a.m_x && m_y == a.m_y && m_z == a.m_z ? false : true;
+        return m_xyz[0] == a.m_xyz[0] && m_xyz[1] == a.m_xyz[1] && m_xyz[2] == a.m_xyz[2] ? false : true;
     }
 
     vec3<T> operator+(vec3<T> const& a) {
-        return vec3<T>(m_x + a.m_x, m_y + a.m_y, m_z + a.m_z);
+        return vec3<T>(m_xyz[0] + a.m_xyz[0], m_xyz[1] + a.m_xyz[1], m_xyz[2] + a.m_xyz[2]);
     }
 
     vec3<T> operator+=(vec3<T> const& a) {
-        return vec3<T>(m_x + a.m_x, m_y + a.m_y, m_z + a.m_z);
+        return vec3<T>(m_xyz[0] + a.m_xyz[0], m_xyz[1] + a.m_xyz[1], m_xyz[2] + a.m_xyz[2]);
     }
 
     vec3<T> operator-(vec3<T> const& a) {
-        return vec3<T>(m_x - a.m_x, m_y - a.m_y, m_z - a.m_z);
+        return vec3<T>(m_xyz[0] - a.m_xyz[0], m_xyz[1] - a.m_xyz[1], m_xyz[2] - a.m_xyz[2]);
     }
 
     vec3<T> operator*(vec3<T> const& a) {
-        return vec3<T>(m_x * a.m_x, m_y * a.m_y, m_z * a.m_z);
+        return vec3<T>(m_xyz[0] * a.m_xyz[0], m_xyz[1] * a.m_xyz[1], m_xyz[2] * a.m_xyz[2]);
     }
 
     vec3<T> operator*(float const& a) {
-        return vec3<T>(m_x * a, m_y * a, m_z * a);
+        return vec3<T>(m_xyz[0] * a, m_xyz[1] * a, m_xyz[2] * a);
     }
 
     void DBGPrint() {
-        std::cout << "X : " << m_x << " Y : " << m_y << " Z : " << m_z << std::endl;
+        std::cout << "X : " << m_xyz[0] << " Y : " << m_xyz[1] << " Z : " << m_xyz[2] << std::endl;
+    }
+
+    T* GetPTR() {
+        return m_xyz;
     }
 
 private:
-    T m_x;
-    T m_y;
-    T m_z;
+    T m_xyz[3];
 };
 
 template<class T>

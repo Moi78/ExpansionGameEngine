@@ -22,8 +22,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+#include <mat4.h>
+
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <vec3.h>
 
@@ -61,7 +64,7 @@ private:
 	
 
 	glm::mat4 projection;
-	glm::mat4 view;
+	mat4f view;
 
 	RaindropRenderer* m_rndr;
 

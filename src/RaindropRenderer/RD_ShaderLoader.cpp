@@ -180,7 +180,8 @@ void RD_ShaderLoader::SetMatrix(const std::string& name, mat4f matrix) {
 void RD_ShaderLoader::SetVec3(const std::string& name, vec3f vec) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
-	glUniform3f(uniloc, vec.getX(), vec.getY(), vec.getZ());
+	//glUniform3f(uniloc, vec.getX(), vec.getY(), vec.getZ());
+	glUniform3fv(uniloc, 1, vec.GetPTR());
 }
 
 unsigned int RD_ShaderLoader::GetProgID() {

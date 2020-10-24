@@ -182,7 +182,7 @@ public:
 		}
 	}
 
-	float* GetPTR() {
+	T* GetPTR() {
 		return &m_mat[0];
 	}
 
@@ -276,15 +276,16 @@ mat4<T> LookAt(vec3<T> pos, vec3<T> target, vec3<T> up) {
 
 	//Right
 	vec3<T> cam_right(Cross(up, cam_dir));
+	cam_right.NormalizeVector();
 
 	//Up
 	vec3<T> cam_up(Cross(cam_dir, cam_right));
 
 	T mat_rot[16] = {
-		cam_right.getX(), cam_up.getX(), cam_dir.getX(), 0,
-		cam_right.getY(), cam_up.getY(), cam_dir.getY(), 0,
-		cam_right.getZ(), cam_up.getZ(), cam_dir.getZ(), 0,
-		0, 0, 0, 1,
+		cam_right.getX(), cam_right.getY(), cam_right.getZ(), 0,
+		   cam_up.getX(),	 cam_up.getY(),	   cam_up.getZ(), 0,
+		  cam_dir.getX(),	cam_dir.getY(),	  cam_dir.getZ(), 0,
+					   0,				 0,				   0, 1,
 	};
 
 	T mat_trans[16] = {

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_Camera.h"
 
-RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll) {
+RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll) : view(1.0f) {
 	m_rndr = rndr; //Attach to renderer;
 
 	m_pos = position; //Camera position
@@ -26,7 +26,7 @@ RD_Camera::~RD_Camera() {
 void RD_Camera::UpdateCamera() {
 	projection = glm::perspective(glm::radians(FOV), (float)m_rndr->getWindowWidth() / m_rndr->getWindowHeigh(), m_near, m_far); //Projection matrix
 
-	view = glm::lookAt(glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()), glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()) + glm::vec3(m_subject.getX(), m_subject.getY(), m_subject.getZ()), glm::vec3(0.0f, 0.0f, 1.0f)); //View matrix
+	view = LookAt(m_pos, m_pos + m_subject, vec3f(0.0f, 0.0f, 1.0f)); //View matrix
 }
 
 void RD_Camera::UseCamera(RD_ShaderLoader* shader) {
@@ -76,23 +76,23 @@ vec3f RD_Camera::GetLocation() {
 }
 
 vec3f RD_Camera::GetForwardVector() {
-	glm::vec3 camTarg = glm::vec3(m_subject.getX(), m_subject.getY(), m_subject.getZ());
+	vec3f fwd = m_subject;
+	fwd.NormalizeVector();
 
-	glm::vec3 fwd = glm::normalize(camTarg);
-
-	return vec3f(fwd.x, fwd.y, fwd.z);
+	return fwd;
 }
 
 vec3f RD_Camera::GetRightVector() {
 	vec3f forwardVector = GetForwardVector();
 
-	glm::vec3 rightVec = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(forwardVector.getX(), forwardVector.getY(), forwardVector.getZ())));
+	vec3f rightVec = Cross(vec3f(0.0f, 0.0f, 1.0f), forwardVector);
 
-	return vec3f(rightVec.x, rightVec.y, rightVec.z);
+	return rightVec;
 }
 
 void RD_Camera::AddPitch(float pitch) {
 	m_yawPitchRoll = m_yawPitchRoll + vec3f(0.0f, pitch, 0.0f);
+	m_yawPitchRoll.setY(std::clamp<float>(m_yawPitchRoll.getY(), -89.9999f, 89.9999f));
 
 	ComputeYPR();
 }
@@ -110,9 +110,9 @@ void RD_Camera::AddRoll(float roll) {
 }
 
 void RD_Camera::ComputeYPR() {
-	m_subject.setX(cos(glm::radians(m_yawPitchRoll.getX())) * cos(glm::radians(m_yawPitchRoll.getY())));
-	m_subject.setZ(sin(glm::radians(m_yawPitchRoll.getY())));
-	m_subject.setY(sin(glm::radians(m_yawPitchRoll.getX())) * cos(glm::radians(m_yawPitchRoll.getY())));
+	m_subject.setX(cos(DEG_TO_RAD(m_yawPitchRoll.getX())) * cos(DEG_TO_RAD(m_yawPitchRoll.getY())));
+	m_subject.setZ(sin(DEG_TO_RAD(m_yawPitchRoll.getY())));
+	m_subject.setY(sin(DEG_TO_RAD(m_yawPitchRoll.getX())) * cos(DEG_TO_RAD(m_yawPitchRoll.getY())));
 }
 
 vec3f RD_Camera::GetYPR() {

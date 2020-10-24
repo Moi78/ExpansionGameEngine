@@ -32,7 +32,7 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	t = ScaleMatrix(t, vec3f(1.0f, 4.0f, 5.0f));
 	t = RotateMatrix(t, vec3f(50.0f, 20.0f, 80.0f));
 
-	t.DBG_print_matrix();
+	//t.DBG_print_matrix();
 	//svtest.DBGPrint();
 }
 
@@ -42,7 +42,9 @@ cave::~cave() {
 
 void cave::OnStart() {
 	std::cout << "Game started" << std::endl;
-	//m_mloader->GetDirLightByName("sun")->SetShadowCasting(false);
+	//m_mloader->GetDirLightByName("sun")->SetLightColor(vec3f(1.0f, 0.0f, 0.0f));
+
+	m_game->GetRenderer()->SetAmbientStrength(0.2f);
 }
 
 void cave::OnTick() {

@@ -31,7 +31,7 @@ int RD_InstanciatedMesh::AppendInstance(RD_MeshInstance inst) {
 	mdl = translate * rotation * scale;
 	mdl = m_parent * mdl;
 
-	m_parent.DBG_print_matrix();
+	//m_parent.DBG_print_matrix();
 
 	m_mdls.push_back(std::pair<mat4f, RD_MeshInstance>(mdl, inst));
 
