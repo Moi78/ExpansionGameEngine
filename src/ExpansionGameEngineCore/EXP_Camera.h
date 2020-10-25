@@ -23,6 +23,7 @@
 #include <RD_Camera.h>
 
 #include <vec3.h>
+#include <mat4.h>
 
 class EXPGE_API EXP_Camera : public EXP_Component, public RD_Camera
 {
@@ -41,7 +42,7 @@ public:
 	virtual void SetPosition(vec3f nPos) override;
 	virtual void SetRotation(vec3f YawPitchRoll) override;
 
-	virtual void UseParentMatrix(glm::mat4 mat) override;
+	virtual void UseParentMatrix(mat4f mat) override;
 
 	//RD_Camera virtual methods override (RD_Camera Wrapping)
 	virtual void TranslateCamera(vec3f trans, bool changeSub = false) override;

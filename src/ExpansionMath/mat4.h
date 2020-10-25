@@ -298,6 +298,18 @@ mat4<T> LookAt(vec3<T> pos, vec3<T> target, vec3<T> up) {
 	return mat4<T>(mat_rot) * mat4<T>(mat_trans);
 }
 
+template<class T>
+mat4<T> ProjPersp(float FOV, float ImageRatio, float nearv = 0.1f, float farv = 1000.0f) {
+	T mat[16] = {
+		1 / (ImageRatio * tan(FOV / 2)),				0,									   0,  0,
+									  0, 1 / tan(FOV / 2),									   0,  0,
+									  0,				0,    -((farv + nearv) / (farv - nearv)), -((2 * (farv * nearv)) / (farv - nearv)),
+									  0,				0, -1,  0
+	};
+
+	return mat4<T>(mat);
+}
+
 typedef mat4<float> mat4f;
 
 #endif // _MAT4_H__

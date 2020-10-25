@@ -45,39 +45,39 @@ void EXP_Camera::SetRotation(vec3f YPR) {
 	EXP_Component::m_rot = YPR;
 }
 
-void EXP_Camera::UseParentMatrix(glm::mat4 mat) {
+void EXP_Camera::UseParentMatrix(mat4f mat) {
 	m_parent_mat = mat;
 	ComputeCamRealCoord();
 }
 
 void EXP_Camera::ComputeCamRealCoord() {
-	glm::mat4 trans(1.0f);
-	glm::mat4 rot(1.0f);
-	glm::mat4 scale(1.0f);
+	mat4f trans(1.0f);
+	mat4f rot(1.0f);
+	mat4f scale(1.0f);
 
-	glm::vec3 glpos(EXP_Component::m_pos.getX(), EXP_Component::m_pos.getY(), EXP_Component::m_pos.getZ());
-	trans = glm::translate(trans, glpos);
+	trans = TranslateMatrix(trans, EXP_Component::m_pos);
 
-	glm::quat glrot(glm::vec3(EXP_Component::m_rot.getX(), EXP_Component::m_rot.getY(), EXP_Component::m_rot.getZ()));
-	rot = glm::toMat4(glrot);
+	rot = RotateMatrix(rot, EXP_Component::m_rot);
 
-	glm::mat4 cam = trans * rot * scale;
+	mat4f cam = trans * rot * scale;
 	cam = m_parent_mat * cam;
 
 	//Computing pos/rot
-	glm::vec4 rpos(glpos.x, glpos.y, glpos.z, 1);
-	rpos = cam * rpos;
+	vec4f pos(EXP_Component::m_pos, 1.0f);
+
+	vec4f rpos = cam * pos;
 	
-	RD_Camera::SetLocation(vec3f(rpos.x, rpos.y, rpos.z));
+	RD_Camera::SetLocation(rpos.XYZ());
 	
 	if (m_inheritParentRot) {
-		glm::quat qrot = glm::toQuat(cam);
+		/*glm::quat qrot = glm::toQuat(cam);
 		glm::vec3 rrot = glm::eulerAngles(qrot);
 
-		RD_Camera::SetYPR(vec3f(rrot.y, rrot.x, rrot.z));
+		RD_Camera::SetYPR(vec3f(rrot.y, rrot.x, rrot.z));*/
+		//Not working yet
 	}
 	
-	UpdateCamera();
+	UpdateView();
 }
 
 void EXP_Camera::TranslateCamera(vec3f trans, bool changeSub) {

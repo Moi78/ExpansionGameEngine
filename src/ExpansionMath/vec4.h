@@ -17,7 +17,7 @@ public:
 		m_xyzw[3] = w;
 	}
 
-	vec4(vec3<T> a, T w = 0) {
+	vec4(vec3<T> a, T w = 1) {
 		m_xyzw[0] = a.getX();
 		m_xyzw[1] = a.getY();
 		m_xyzw[2] = a.getZ();
@@ -84,14 +84,16 @@ public:
 		return vec4<T>(m_xyzw[0] * a, m_xyzw[1] * a, m_xyzw[2] * a, m_xyzw[3] * a);
 	}
 
+	vec3<T> XYZ() {
+		return vec3<T>(m_xyzw[0], m_xyzw[1], m_xyzw[2]);
+	}
+
 	void DBGPrint() {
 		std::cout << "X : " << m_xyzw[0] << " Y : " << m_xyzw[1] << " Z : " << m_xyzw[2] << " W : " << m_xyzw[3] << std::endl;
 	}
 	
 private:
 	T m_xyzw[4];
-
-	bool _simd_enabled;
 };
 
 typedef vec4<float> vec4f;

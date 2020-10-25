@@ -21,9 +21,6 @@
 #include "RaindropRenderer.h"
 #include "RD_Camera.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
-
 #include <mat4.h>
 
 #include <string>
@@ -56,8 +53,8 @@ public:
 
 	void SetShadowCasting(bool value);
 
-	virtual void UseMatrix(glm::mat4 mdl);
-	virtual void SetParentMatrix(glm::mat4 parent);
+	virtual void UseMatrix(mat4f mdl);
+	virtual void SetParentMatrix(mat4f parent);
 	virtual void Update();
 
 	virtual vec3f GetLocation();

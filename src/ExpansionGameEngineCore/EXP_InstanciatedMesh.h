@@ -32,7 +32,7 @@ public:
 
 	void LoadMesh(std::string meshRef);
 
-	virtual void UseParentMatrix(glm::mat4 parent) override;
+	virtual void UseParentMatrix(mat4f parent) override;
 
 private:
 	EXP_Game* m_game;

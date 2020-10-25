@@ -215,12 +215,12 @@ RD_ShaderMaterial* RD_Mesh::GetMaterial() {
 	return m_mat;
 }
 
-void RD_Mesh::UseMatrix(glm::mat4 mdl) {
-	//m_mdl = mdl;
+void RD_Mesh::UseMatrix(mat4f mdl) {
+	m_mdl = mdl;
 }
 
-void RD_Mesh::SetParentMatrix(glm::mat4 parent) {
-	//m_parent = parent;
+void RD_Mesh::SetParentMatrix(mat4f parent) {
+	m_parent = parent;
 	Update();
 }
 

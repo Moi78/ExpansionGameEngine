@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_Camera.h"
 
-RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll) : view(1.0f) {
+RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll) : view(1.0f), projection(1.0f) {
 	m_rndr = rndr; //Attach to renderer;
 
 	m_pos = position; //Camera position
@@ -24,9 +24,16 @@ RD_Camera::~RD_Camera() {
 }
 
 void RD_Camera::UpdateCamera() {
-	projection = glm::perspective(glm::radians(FOV), (float)m_rndr->getWindowWidth() / m_rndr->getWindowHeigh(), m_near, m_far); //Projection matrix
+	UpdateView();
+	UpdateProj();
+}
 
+void RD_Camera::UpdateView() {
 	view = LookAt(m_pos, m_pos + m_subject, vec3f(0.0f, 0.0f, 1.0f)); //View matrix
+}
+
+void RD_Camera::UpdateProj() {
+	projection = ProjPersp<float>(DEG_TO_RAD(FOV), (float)m_rndr->getWindowWidth() / m_rndr->getWindowHeigh(), m_near, m_far);
 }
 
 void RD_Camera::UseCamera(RD_ShaderLoader* shader) {
@@ -45,18 +52,14 @@ void RD_Camera::SetSubject(vec3f lookingAt) {
 
 void RD_Camera::SetFOV(float FOVinDegrees) {
 	FOV = FOVinDegrees;
-	projection = glm::perspective(glm::radians(FOV), (float)m_rndr->getWindowWidth() / m_rndr->getWindowHeigh(), m_near, m_far);
+	UpdateProj();
 }
 
 void RD_Camera::RotateCamera(vec3f rotation) {
-	glm::vec3 sub = glm::vec3(m_subject.getX(), m_subject.getY(), m_subject.getZ());
-	sub = glm::rotateX(sub, rotation.getX());
-	sub = glm::rotateY(sub, rotation.getY());
-	sub = glm::rotateZ(sub, rotation.getZ());
+	mat4f rot(1.0f);
+	rot = RotateMatrix(rot, rotation);
 
-	m_subject.setX(sub.x);
-	m_subject.setY(sub.y);
-	m_subject.setZ(sub.z);
+	m_subject = vec4f(rot * m_subject).XYZ();
 }
 
 void RD_Camera::TranslateCamera(vec3f translation, bool changeSub) {
@@ -92,6 +95,7 @@ vec3f RD_Camera::GetRightVector() {
 
 void RD_Camera::AddPitch(float pitch) {
 	m_yawPitchRoll = m_yawPitchRoll + vec3f(0.0f, pitch, 0.0f);
+	//SAAAAAAAAALEEEEEEEE
 	m_yawPitchRoll.setY(std::clamp<float>(m_yawPitchRoll.getY(), -89.9999f, 89.9999f));
 
 	ComputeYPR();
