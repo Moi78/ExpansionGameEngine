@@ -27,9 +27,6 @@
 
 #include <glad/glad.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include <mat4.h>
 #include <vec3.h>
 
@@ -52,7 +49,6 @@ public:
 	void SetInt(const std::string& name, int value);
 	void SetFloat(const std::string& name, float value);
 
-	void SetMatrix(const std::string& name, glm::mat4 matrix);
 	void SetMatrix(const std::string& name, mat4f matrix);
 
 	void SetVec3(const std::string& name, vec3f vec);

@@ -25,6 +25,7 @@
 
 #include <string>
 #include <vector>
+#include <assert.h>
 
 #include <BD_Reader.h>
 #include <BulldozerFileManager.h>

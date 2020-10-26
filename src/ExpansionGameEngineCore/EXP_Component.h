@@ -19,8 +19,6 @@
 
 #include <string>
 
-#include <glm/gtx/quaternion.hpp>
-
 #include <vec3.h>
 #include <mat4.h>
 

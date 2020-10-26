@@ -9,6 +9,7 @@ RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3
 	VBO = 0;
 
 	assert(shader != nullptr && "Given material was nullptr");
+
 	m_mat = shader;
 
 	m_position = position;
