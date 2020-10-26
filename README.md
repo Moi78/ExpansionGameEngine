@@ -53,9 +53,9 @@ FBX to MSH convertion tool
  - [x] Custom shaders
  - [ ] ExpansionMath Cleanup
    - [x] Rewrite vectors (vec3X & vec2X)
-   - [ ] Add matrices support
+   - [x] Add matrices support
    - [ ] Add Quaternion support
-   - [ ] Use SIMD operations
+   - [x] Use SIMD operations
  - [x] Use smartptr when possible
  - [ ] Consistent error handling
  - [ ] Fix the error when reducing the window
