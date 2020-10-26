@@ -54,7 +54,7 @@ public:
 private:
 	void UpdateIndex(int index);
 
-	std::vector<std::pair<glm::mat4, RD_MeshInstance>> m_mdls;
+	std::vector<std::pair<mat4f, RD_MeshInstance>> m_mdls;
 };
 
 #endif //RD_INSTANCIATED_MESH_H__
