@@ -19,11 +19,11 @@
 #include "RaindropRenderer.h"
 #include "RD_ShaderLoader.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtx/rotate_vector.hpp>
+#include <mat4.h>
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <vec3.h>
 
@@ -42,6 +42,8 @@ public:
 	vec3f GetSubject();
 	
 	void UpdateCamera();
+	void UpdateView();
+	void UpdateProj();
 	
 	virtual void RotateCamera(vec3f rotation);
 	virtual void TranslateCamera(vec3f translation, bool changeSub = false);
@@ -60,8 +62,8 @@ private:
 	void ComputeYPR();
 	
 
-	glm::mat4 projection;
-	glm::mat4 view;
+	mat4f projection;
+	mat4f view;
 
 	RaindropRenderer* m_rndr;
 

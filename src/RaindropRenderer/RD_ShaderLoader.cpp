@@ -165,16 +165,17 @@ void RD_ShaderLoader::SetFloat(const std::string& name, float value) {
 	glUniform1f(uniloc, value);
 }
 
-void RD_ShaderLoader::SetMatrix(const std::string& name, glm::mat4 matrix) {
+void RD_ShaderLoader::SetMatrix(const std::string& name, mat4f matrix) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
-	glUniformMatrix4fv(uniloc, 1, GL_FALSE, glm::value_ptr(matrix));
+	glUniformMatrix4fv(uniloc, 1, GL_TRUE, matrix.GetPTR());
 }
 
 void RD_ShaderLoader::SetVec3(const std::string& name, vec3f vec) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
-	glUniform3f(uniloc, vec.getX(), vec.getY(), vec.getZ());
+	//glUniform3f(uniloc, vec.getX(), vec.getY(), vec.getZ());
+	glUniform3fv(uniloc, 1, vec.GetPTR());
 }
 
 unsigned int RD_ShaderLoader::GetProgID() {

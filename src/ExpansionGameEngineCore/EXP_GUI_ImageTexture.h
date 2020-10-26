@@ -22,6 +22,9 @@
 
 #include <memory>
 
+#include <mat4.h>
+#include <vec3.h>
+
 class EXPGE_API EXP_GUI_ImageTexture : public RD_GUI_Element
 {
 public:
@@ -45,7 +48,7 @@ private:
 	vec3f m_pos;
 	vec3f m_size;
 
-	glm::mat4 m_mdl;
-	glm::mat4 m_proj;
+	mat4f m_mdl;
+	mat4f m_proj;
 };
 

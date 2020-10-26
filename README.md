@@ -67,7 +67,6 @@ FBX to MSH convertion tool
   - OpenGL
   - GLAD
   - GLEW
-  - GLM
   - libsndfile1
   - Bullet Physics
   - ASSIMP (For tools)

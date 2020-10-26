@@ -3,7 +3,7 @@
 
 #include "EXP_Game.h"
 
-EXP_Actor::EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale) {
+EXP_Actor::EXP_Actor(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale) : m_actor_mat(1.0f) {
 	m_game = game;
 
 	m_pos = pos;
@@ -79,17 +79,16 @@ void EXP_Actor::Unregister() {
 
 }
 
-glm::mat4 EXP_Actor::GenerateActorMatrix() {
-	glm::mat4 mat = glm::mat4(1.0f);
+mat4f EXP_Actor::GenerateActorMatrix() {
+	mat4f trans = mat4f(1.0f);
+	mat4f scale = mat4f(1.0f);
+	mat4f rot = mat4f(1.0f);
 
-	mat = glm::translate(mat, glm::vec3(m_pos.getX(), m_pos.getY(), m_pos.getZ()));
-	mat = glm::scale(mat, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+	trans = TranslateMatrix(trans, m_pos);
+	scale = ScaleMatrix(scale, m_scale);
+	rot = RotateMatrix(rot, m_rot);
 
-	mat = glm::rotate(mat, glm::radians(m_rot.getX()), glm::vec3(1.0f, 0.0, 0.0));
-	mat = glm::rotate(mat, glm::radians(m_rot.getY()), glm::vec3(0.0f, 1.0, 0.0));
-	mat = glm::rotate(mat, glm::radians(m_rot.getZ()), glm::vec3(0.0f, 0.0, 1.0));
-
-	return mat;
+	return trans * scale * rot;
 }
 
 void EXP_Actor::UpdateActor() {

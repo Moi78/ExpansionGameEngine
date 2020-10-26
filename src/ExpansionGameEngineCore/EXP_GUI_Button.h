@@ -24,6 +24,9 @@
 #include <string>
 #include <memory>
 
+#include <vec3.h>
+#include <mat4.h>
+
 struct EXP_ButtonImages {
 	std::string texRefNormal;
 	std::string texRefHover;
@@ -56,8 +59,8 @@ private:
 
 	RD_Callback* m_func;
 
-	glm::mat4 m_mdl;
-	glm::mat4 m_proj;
+	mat4f m_mdl;
+	mat4f m_proj;
 
 	float m_opacity;
 

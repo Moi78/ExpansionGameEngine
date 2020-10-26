@@ -26,6 +26,6 @@ void EXP_InstanciatedMesh::LoadMesh(std::string meshRef) {
 	}
 }
 
-void EXP_InstanciatedMesh::UseParentMatrix(glm::mat4 parent) {
+void EXP_InstanciatedMesh::UseParentMatrix(mat4f parent) {
 	RD_InstanciatedMesh::SetParentMatrix(parent);
 }

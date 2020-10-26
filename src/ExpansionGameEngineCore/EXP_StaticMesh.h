@@ -22,6 +22,8 @@
 
 #include <BulldozerFileManager.h>
 
+#include <mat4.h>
+
 class EXPGE_API EXP_StaticMesh :
 	public EXP_Component,
 	public RD_Mesh
@@ -36,7 +38,7 @@ public:
 	virtual void SetRotation(vec3f nRot) override;
 	virtual void SetScale(vec3f nScale) override;
 	
-	virtual void UseParentMatrix(glm::mat4 parent) override;
+	virtual void UseParentMatrix(mat4f parent) override;
 
 private:
 	bool MeshRefExists(std::string MeshRef);

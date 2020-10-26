@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_Mesh.h"
 
-RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale) {
+RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale) : m_mdl(1.0f), m_parent(1.0f) {
 	m_nbr_indices = 0;
 
 	VAO = 0;
@@ -9,13 +9,14 @@ RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3
 	VBO = 0;
 
 	assert(shader != nullptr && "Given material was nullptr");
+
 	m_mat = shader;
 
 	m_position = position;
 	m_rotation = rotation;
 	m_scale = scale;
 
-	m_parent = glm::mat4(1.0);
+	//m_parent = glm::mat4(1.0);
 
 	m_shadowCaster = true;
 
@@ -189,19 +190,23 @@ vec3f RD_Mesh::GetLocation() {
 
 void RD_Mesh::Update() {
 	//Local transform
-	glm::mat4 translate = glm::mat4(1.0f);
+	/*glm::mat4 translate = glm::mat4(1.0f);
 	glm::mat4 scale = glm::mat4(1.0f);
-	glm::mat4 rotation = glm::mat4(1.0f);
+	glm::mat4 rotation = glm::mat4(1.0f);*/
+	mat4f translate(1.0f);
+	mat4f scale(1.0f);
+	mat4f rotation(1.0f);
 
 	//Position
-	translate = glm::translate(translate, glm::vec3(m_position.getX(), m_position.getY(), m_position.getZ()));
+	translate = TranslateMatrix(translate, m_position);
 
 	//Scale
-	scale = glm::scale(scale, glm::vec3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+	scale = ScaleMatrix(scale, m_scale);
 
 	//Rotation
-	glm::quat rot(glm::radians(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ())));
-	rotation = glm::toMat4(rot);
+	/*glm::quat rot(glm::radians(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ())));
+	rotation = glm::toMat4(rot);*/
+	rotation = RotateMatrix(rotation, m_rotation);
 
 	m_mdl = translate * rotation * scale;
 	m_mdl = m_parent * m_mdl;
@@ -211,11 +216,11 @@ RD_ShaderMaterial* RD_Mesh::GetMaterial() {
 	return m_mat;
 }
 
-void RD_Mesh::UseMatrix(glm::mat4 mdl) {
+void RD_Mesh::UseMatrix(mat4f mdl) {
 	m_mdl = mdl;
 }
 
-void RD_Mesh::SetParentMatrix(glm::mat4 parent) {
+void RD_Mesh::SetParentMatrix(mat4f parent) {
 	m_parent = parent;
 	Update();
 }

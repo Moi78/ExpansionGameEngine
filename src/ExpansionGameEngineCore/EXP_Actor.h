@@ -6,10 +6,10 @@
 
 #include <vec3.h>
 
-#include <glm/glm.hpp>
-
 #include "EXP_Game.h"
 #include "EXP_Callbacks.h"
+
+#include <mat4.h>
 
 #ifdef _WIN32
 
@@ -58,7 +58,7 @@ public:
 	void UpdateActor();
 	void UpdateActorMatrix();
 
-	glm::mat4 GenerateActorMatrix();
+	mat4f GenerateActorMatrix();
 	void LinkComponent(EXP_Component* comp);
 	
 protected:
@@ -68,7 +68,7 @@ protected:
 	vec3f m_rot;
 	vec3f m_scale;
 	
-	glm::mat4 m_actor_mat;
+	mat4f m_actor_mat;
 
 	std::vector<EXP_Component*> m_comps;
 };

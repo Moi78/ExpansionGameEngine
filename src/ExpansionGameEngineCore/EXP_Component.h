@@ -19,12 +19,8 @@
 
 #include <string>
 
-#include <glm/glm.hpp>
-#include <glm/common.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/quaternion.hpp>
-
 #include <vec3.h>
+#include <mat4.h>
 
 class EXPGE_API EXP_Component
 {
@@ -40,8 +36,8 @@ public:
 	virtual void SetRotation(vec3f nRot);
 	virtual void SetScale(vec3f nScale);
 
-	virtual void UseParentMatrix(glm::mat4 mat);
-	virtual glm::mat4 GetParentMatrix();
+	virtual void UseParentMatrix(mat4f mat);
+	virtual mat4f GetParentMatrix();
 
 	void SetNameTag(std::string);
 	std::string GetNameTag();
@@ -52,7 +48,7 @@ protected:
 	vec3f m_rot;
 	vec3f m_scale;
 
-	glm::mat4 m_parent_mat;
+	mat4f m_parent_mat;
 
 	std::string m_nameTag;
 };

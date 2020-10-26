@@ -43,6 +43,6 @@ void EXP_StaticMesh::SetScale(vec3f nScale) {
 	RD_Mesh::SetScale(nScale);
 }
 
-void EXP_StaticMesh::UseParentMatrix(glm::mat4 parent) {
+void EXP_StaticMesh::UseParentMatrix(mat4f parent) {
 	RD_Mesh::SetParentMatrix(parent);
 }

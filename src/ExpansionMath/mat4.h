@@ -22,14 +22,15 @@
 #include <immintrin.h>
 
 #include "vec4.h"
+#include "vec3.h"
 #include "basic_math.h"
 
 template<class T>
 class mat4
 {
 public:
-	mat4(T init_val) {
-		memset(m_mat, 0, sizeof(m_mat));
+	mat4(T init_val = 1) {
+		memset(m_mat, 0, 16 * sizeof(T));
 
 		if (sizeof(T) == sizeof(float)) {
 			_simd_enabled = true;
@@ -101,22 +102,25 @@ public:
 	}
 
 	mat4<T> operator*(float a) {
+		T nMat[16];
+		memset(nMat, 0, 16 * sizeof(T));
+
 		if (_simd_enabled) {
 			__m128 scalar = _mm_load_ss(&a);
 			for (int i = 0; i < 16; i += 4) {
 				__m128 m = { m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3] };
 				__m128 mmultiplied = _mm_mul_ps(m, scalar);
 
-				memcpy(&m_mat[i], mmultiplied.m128_f32, 4 * sizeof(float));
+				memcpy(&nMat[i], mmultiplied.m128_f32, 4 * sizeof(float));
 			}
 		}
 		else {
 			for (int i = 0; i < 16; i++) {
-				m_mat[i] *= a;
+				nMat[i] = m_mat[i] * a;
 			}
 		}
 
-		return *this;
+		return mat4<T>(nMat);
 	}
 
 	mat4<T> operator*(mat4<T> const& a) {
@@ -150,9 +154,7 @@ public:
 				}
 			}
 
-			memcpy(m_mat, nMat, 16 * sizeof(T));
-
-			return *this;
+			return mat4<T>(nMat);
 		}
 		else {
 			//Non-SIMD impl.
@@ -176,13 +178,11 @@ public:
 				}
 			}
 
-			memcpy(m_mat, nMat, 16 * sizeof(T));
-
-			return *this;
+			return mat4<T>(nMat);
 		}
 	}
 
-	float* GetPTR() {
+	T* GetPTR() {
 		return &m_mat[0];
 	}
 
@@ -222,9 +222,13 @@ template<class T>
 mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	mat4<T> srcCopy = srcMat;
 
+	float X = DEG_TO_RAD(rot.getX());
+	float Y = DEG_TO_RAD(rot.getY());
+	float Z = DEG_TO_RAD(rot.getZ());
+
 	//X
-	float Stheta = sin(DEG_TO_RAD(rot.getX()));
-	float Ctheta = cos(DEG_TO_RAD(rot.getX()));
+	float Stheta = sin(X);
+	float Ctheta = cos(X);
 
 	T rxMat[16] = {
 	1,		0,		 0, 0,
@@ -236,6 +240,9 @@ mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	srcCopy = srcCopy * mat4<T>(rxMat);
 
 	//Y
+	Stheta = sin(Y);
+	Ctheta = cos(Y);
+
 	T ryMat[16] = {
 		 Ctheta,	 0, Stheta,		0,
 			  0,	 1,		 0,		0,
@@ -246,6 +253,9 @@ mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	srcCopy = srcCopy * mat4<T>(ryMat);
 
 	//Z
+	Stheta = sin(Z);
+	Ctheta = cos(Z);
+
 	T rzMat[16] = {
 		Ctheta, -Stheta, 0, 0,
 		Stheta,  Ctheta, 0, 0,
@@ -256,6 +266,60 @@ mat4<T> RotateMatrix(mat4<T> srcMat, vec3f rot) {
 	srcCopy = srcCopy * mat4<T>(rzMat);
 
 	return srcCopy;
+}
+
+template<class T>
+mat4<T> LookAt(vec3<T> pos, vec3<T> target, vec3<T> up) {
+	//Dir
+	vec3<T> cam_dir(pos - target);
+	cam_dir.NormalizeVector();
+
+	//Right
+	vec3<T> cam_right(Cross(up, cam_dir));
+	cam_right.NormalizeVector();
+
+	//Up
+	vec3<T> cam_up(Cross(cam_dir, cam_right));
+
+	T mat_rot[16] = {
+		cam_right.getX(), cam_right.getY(), cam_right.getZ(), 0,
+		   cam_up.getX(),	 cam_up.getY(),	   cam_up.getZ(), 0,
+		  cam_dir.getX(),	cam_dir.getY(),	  cam_dir.getZ(), 0,
+					   0,				 0,				   0, 1,
+	};
+
+	T mat_trans[16] = {
+		1, 0, 0, -pos.getX(),
+		0, 1, 0, -pos.getY(),
+		0, 0, 1, -pos.getZ(),
+		0, 0, 0, 1
+	};
+
+	return mat4<T>(mat_rot) * mat4<T>(mat_trans);
+}
+
+template<class T>
+mat4<T> ProjPersp(float FOV, float ImageRatio, float nearv = 0.1f, float farv = 1000.0f) {
+	T mat[16] = {
+		1 / (ImageRatio * tan(FOV / 2)),				0,									   0,  0,
+									  0, 1 / tan(FOV / 2),									   0,  0,
+									  0,				0,    -((farv + nearv) / (farv - nearv)), -((2 * (farv * nearv)) / (farv - nearv)),
+									  0,				0, -1,  0
+	};
+
+	return mat4<T>(mat);
+}
+
+template<class T>
+mat4<T> ProjOrtho(T right, T left, T top, T bottom, T nearv, T farv) {
+	T mat[16] = {
+		2 / (right - left), 0, 0, -((right + left) / (right - left)),
+		0, 2 / (top - bottom), 0, -((top + bottom) / (top - bottom)),
+		0, 0, -2 / (farv - nearv), -((farv + nearv) / (farv - nearv)),
+		0, 0, 0, 1
+	};
+
+	return mat4<T>(mat);
 }
 
 typedef mat4<float> mat4f;

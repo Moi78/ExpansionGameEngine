@@ -60,7 +60,7 @@ void main() {
     gPos = FragPos;
     gNorm = normalize(Normal);
 
-    gAlbedo.rgb = vec3(0.3, 0.3, 0.3);
+    gAlbedo.rgb = vec3(0.0, 0.5, 0.5);
     gAlbedo.a = 0.8;
     gSpec = 16.0;
 

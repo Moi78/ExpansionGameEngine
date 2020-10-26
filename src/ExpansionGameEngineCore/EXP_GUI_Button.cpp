@@ -23,14 +23,14 @@ EXP_GUI_Button::EXP_GUI_Button(EXP_Game* game, RD_Callback* func, EXP_ButtonImag
 	m_pressed->LoadTexture(workingDir + images.texRefPressed, false);
 
 	//Making matrices
-	m_mdl = glm::mat4(1.0f);
-	m_mdl = glm::translate(m_mdl, glm::vec3(posx + (sizex / 2), posy + (sizey / 2), 0.0f));
-	m_mdl = glm::scale(m_mdl, glm::vec3(sizex / 2, sizey / 2, 0.0f));
+	m_mdl = mat4f(1.0f);
+	m_mdl = TranslateMatrix(m_mdl, vec3f(posx + (sizex / 2), posy + (sizey / 2), 0.0f));
+	m_mdl = ScaleMatrix(m_mdl, vec3f(sizex / 2, sizey / 2, 0.0f));
 
 	float w = (float)m_game->GetRenderer()->getWindowWidth();
 	float h = (float)m_game->GetRenderer()->getWindowHeigh();
 
-	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
+	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
 
 	//Creating surface to draw on
 	m_surface = std::make_unique<RD_Quad>();
@@ -105,15 +105,15 @@ void EXP_GUI_Button::RebuildElement() {
 	float w = (float)m_game->GetRenderer()->getWindowWidth();
 	float h = (float)m_game->GetRenderer()->getWindowHeigh();
 
-	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
+	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
 }
 
 void EXP_GUI_Button::SetPosition(vec3f nPos) {
 	m_pos = nPos;
 
-	m_mdl = glm::mat4(1.0f);
-	m_mdl = glm::translate(m_mdl, glm::vec3(m_pos.getX() + (m_size.getX() / 2), m_pos.getY() + (m_size.getY() / 2), 0.0f));
-	m_mdl = glm::scale(m_mdl, glm::vec3(m_size.getX() / 2, m_size.getY() / 2, 0.0f));
+	m_mdl = mat4f(1.0f);
+	m_mdl = TranslateMatrix(m_mdl, vec3f(m_pos.getX() + (m_size.getX() / 2), m_pos.getY() + (m_size.getY() / 2), 0.0f));
+	m_mdl = ScaleMatrix(m_mdl, vec3f(m_size.getX() / 2, m_size.getY() / 2, 0.0f));
 }
 
 vec3f EXP_GUI_Button::GetPosition() {

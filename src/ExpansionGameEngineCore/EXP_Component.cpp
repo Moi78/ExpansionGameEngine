@@ -41,10 +41,10 @@ std::string EXP_Component::GetNameTag() {
 	return m_nameTag;
 }
 
-void EXP_Component::UseParentMatrix(glm::mat4 mat) {
+void EXP_Component::UseParentMatrix(mat4f mat) {
 	m_parent_mat = mat;
 }
 
-glm::mat4 EXP_Component::GetParentMatrix() {
+mat4f EXP_Component::GetParentMatrix() {
 	return m_parent_mat;
 }
