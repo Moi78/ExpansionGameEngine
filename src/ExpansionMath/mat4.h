@@ -29,7 +29,7 @@ template<class T>
 class mat4
 {
 public:
-	mat4(T init_val) {
+	mat4(T init_val = 1) {
 		memset(m_mat, 0, 16 * sizeof(T));
 
 		if (sizeof(T) == sizeof(float)) {

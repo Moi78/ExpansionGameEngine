@@ -17,8 +17,7 @@
 #include <RD_GUI_Element.h>
 #include <RD_GUI_Manager.h>
 
-#include <glm/glm.hpp>
-
+#include <mat4.h>
 #include <vec3.h>
 
 #include "EXP_Game.h"
@@ -42,8 +41,8 @@ private:
 
 	std::unique_ptr<RD_Quad> m_surface;
 
-	glm::mat4 m_mdl;
-	glm::mat4 m_proj;
+	mat4f m_mdl;
+	mat4f m_proj;
 
 	vec3f m_pos;
 	vec3f m_size;

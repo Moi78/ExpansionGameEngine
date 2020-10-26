@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EXP_GUI_ColorCache.h"
 
-EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacity, float sizex, float sizey, float posx, float posy) : RD_GUI_Element() {
+EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacity, float sizex, float sizey, float posx, float posy) : RD_GUI_Element(), m_mdl(1.0f), m_proj(1.0f) {
 	m_color = color;
 	m_opacity = opacity;
 	m_game = game;
@@ -14,12 +14,12 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 	float w = (float)game->GetRenderer()->getWindowWidth();
 	float h = (float)game->GetRenderer()->getWindowHeigh();
 
-	m_mdl = glm::mat4(1.0f);
+	m_mdl = mat4f(1.0f);
 	//Ugliest way to proceed, meh, at least it works well
-	m_mdl = glm::translate(m_mdl, glm::vec3(posx + (sizex / 2), posy + (sizey / 2), 0.0f));
-	m_mdl = glm::scale(m_mdl, glm::vec3(sizex / 2, sizey / 2, 0.0f));
+	m_mdl = TranslateMatrix(m_mdl, vec3f(posx + (sizex / 2), posy + (sizey / 2), 0.0f));
+	m_mdl = ScaleMatrix(m_mdl, vec3f(sizex / 2, sizey / 2, 0.0f));
 
-	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
+	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
 
 	m_surface = std::make_unique<RD_Quad>();
 	m_surface->Bufferize();
@@ -58,18 +58,18 @@ void EXP_GUI_ColorCache::RebuildElement() {
 	float w = (float)m_game->GetRenderer()->getWindowWidth();
 	float h = (float)m_game->GetRenderer()->getWindowHeigh();
 
-	m_proj = glm::ortho(0.0f, (float)1280, (float)1280 / (w / h), 0.0f, -1.0f, 1.0f);
+	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
 }
 
 void EXP_GUI_ColorCache::SetPosition(vec3f nPos) {
 	m_pos = nPos;
 
-	glm::mat4 trans = glm::mat4(1.0f);
+	mat4f trans = mat4f(1.0f);
 	//Ugliest way to proceed, meh, at least it works well
-	trans = glm::translate(trans, glm::vec3(m_pos.getX() + (m_size.getX() / 2), m_pos.getY() + (m_size.getY() / 2), 0.0f));
+	trans = TranslateMatrix(trans, vec3f(m_pos.getX() + (m_size.getX() / 2), m_pos.getY() + (m_size.getY() / 2), 0.0f));
 
-	glm::mat4 scale = glm::mat4(1.0f);
-	scale = glm::scale(scale, glm::vec3(m_size.getX() / 2, m_size.getY() / 2, 0.0f));
+	mat4f scale = mat4f(1.0f);
+	scale = ScaleMatrix(scale, vec3f(m_size.getX() / 2, m_size.getY() / 2, 0.0f));
 
 	m_mdl = trans * scale;
 }
