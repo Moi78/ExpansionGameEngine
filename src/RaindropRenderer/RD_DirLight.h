@@ -42,7 +42,7 @@ public:
 
 	void DepthRender(RaindropRenderer*, vec3f CamPos);
 	void SetUpShadowFB(unsigned int shadowQual);
-	glm::mat4 GetLightSpace();
+	mat4f GetLightSpace();
 	unsigned int GetDepthTexID();
 
 	void Cleanup(RaindropRenderer* rndr);
@@ -57,7 +57,7 @@ private:
 
 	bool m_shadowCaster;
 
-	glm::mat4 m_lspace;
+	mat4f m_lspace;
 };
 
 #endif //_DIR_LIGHT_H__

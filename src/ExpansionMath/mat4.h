@@ -310,6 +310,18 @@ mat4<T> ProjPersp(float FOV, float ImageRatio, float nearv = 0.1f, float farv = 
 	return mat4<T>(mat);
 }
 
+template<class T>
+mat4<T> ProjOrtho(T right, T left, T top, T bottom, T nearv, T farv) {
+	T mat[16] = {
+		2 / (right - left), 0, 0, -((right + left) / (right - left)),
+		0, 2 / (top - bottom), 0, -((top + bottom) / (top - bottom)),
+		0, 0, -2 / (farv - nearv), -((farv + nearv) / (farv - nearv)),
+		0, 0, 0, 1
+	};
+
+	return mat4<T>(mat);
+}
+
 typedef mat4<float> mat4f;
 
 #endif // _MAT4_H__

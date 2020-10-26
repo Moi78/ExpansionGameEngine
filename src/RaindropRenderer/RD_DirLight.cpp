@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_DirLight.h"
 
-RD_DirLight::RD_DirLight(vec3f dir, vec3f color, float brightness) : m_dir(dir), m_color(color), m_brightness(brightness) {
+RD_DirLight::RD_DirLight(vec3f dir, vec3f color, float brightness) : m_dir(dir), m_color(color), m_brightness(brightness), m_lspace(1.0f) {
 	SetUpShadowFB(1024);
 	m_shadowCaster = true;
 }
@@ -41,13 +41,10 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 
 	rndr->SwitchShader(rndr->GetShadowShader());
 
-	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 100.0f);
+	mat4f lightProj = ProjOrtho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 100.0f);
 
-	glm::mat4 lightView = glm::lookAt(
-		glm::vec3((-m_dir.getX() * 5) + CamPos.getX(), (-m_dir.getY() * 5) + CamPos.getY(), (-m_dir.getZ() * 5) + CamPos.getZ()),
-		glm::vec3(CamPos.getX(), CamPos.getY(), CamPos.getZ()),
-		glm::vec3(0.0f, 0.0f, 1.0f)
-		);
+	vec3f fpos = (m_dir * -5) + CamPos;
+	mat4f lightView = LookAt<float>(fpos, CamPos, vec3f(0.0f, 0.0f, 1.0f));
 
 	rndr->GetCurrentShader()->SetMatrix("lightproj", lightProj);
 	rndr->GetCurrentShader()->SetMatrix("lightview", lightView);
@@ -101,7 +98,7 @@ void RD_DirLight::SetUpShadowFB(unsigned int shadowQual) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-glm::mat4 RD_DirLight::GetLightSpace() {
+mat4f RD_DirLight::GetLightSpace() {
 	return m_lspace;
 }
 
