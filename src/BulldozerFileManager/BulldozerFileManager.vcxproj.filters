@@ -36,6 +36,9 @@
     <ClInclude Include="BulldozerFileManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="BD_LightDB_RW.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -54,6 +57,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="BulldozerFileManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="BD_LightDB_RW.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

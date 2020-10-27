@@ -3,6 +3,8 @@
 
 #include <EXP_Game.h>
 
+#include <BD_LightDB_RW.h>
+
 int main(int argc, char* argv[]) {
 	std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>("GameInfo.json");
 
