@@ -57,7 +57,9 @@ struct BULLDOZERFILEMANAGER_API Gbuff {
 
 	unsigned int gNorm;
 
-	unsigned int gAttachement[5];
+	unsigned int gLight; //Special tex, not used at the same time.
+
+	unsigned int gAttachement[6];
 };
 
 #endif // _BD_STRUCT_MAN_H__

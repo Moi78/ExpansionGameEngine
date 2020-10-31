@@ -8,6 +8,7 @@
 #include "RD_Camera.h"
 #include "RD_MaterialLibrary.h"
 #include "RD_GUI_Manager.h"
+#include "RD_PostProcess.h"
 
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int maxFramerate, bool minInit, std::string engineDir) : m_height(h), m_width(w), m_engineDir(engineDir) {
 	FillFeaturesStringArray();
@@ -32,6 +33,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, int max
 
 	m_light_shader = std::make_unique<RD_ShaderLoader>();
 	m_light_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Light.vert", m_engineDir + "/Shaders/glsl/Light.frag");
+
+	m_beauty_shader = std::make_unique<RD_ShaderLoader>();
+	m_beauty_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Beauty.vert", m_engineDir + "/Shaders/glsl/Beauty.frag");
 
 	m_CurrentShader = m_light_shader.get();
 
@@ -490,12 +494,21 @@ bool RaindropRenderer::CreateGbuff() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_g_buffer.gShadows, 0);
 
+	//Light buff
+	glGenTextures(1, &m_g_buffer.gLight);
+	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gLight);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, m_g_buffer.gLight, 0);
+
 	m_g_buffer.gAttachement[0] = GL_COLOR_ATTACHMENT0;
 	m_g_buffer.gAttachement[1] = GL_COLOR_ATTACHMENT1;
 	m_g_buffer.gAttachement[2] = GL_COLOR_ATTACHMENT2;
 	m_g_buffer.gAttachement[3] = GL_COLOR_ATTACHMENT3;
 	m_g_buffer.gAttachement[4] = GL_COLOR_ATTACHMENT4;
-	glDrawBuffers(5, m_g_buffer.gAttachement);
+	m_g_buffer.gAttachement[5] = GL_COLOR_ATTACHMENT5;
+	glDrawBuffers(6, m_g_buffer.gAttachement);
 
 	glGenRenderbuffers(1, &m_g_buffer.gRBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_g_buffer.gRBO);
@@ -523,12 +536,22 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 
 	RenderMeshes(cam);
 
+	RenderLightPass(cam->GetLocation());
+	RenderPostProcess();
+
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void RaindropRenderer::RenderPostProcess() {
+	for (auto pp : m_pp_effects) {
+		pp->RenderEffect(m_g_buffer.gLight);
+	}
+}
+
 void RaindropRenderer::RenderLightPass(vec3f CamPos) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
 
 	SwitchShader(m_light_shader.get());
 	SendFeaturesToShader(m_light_shader.get());
@@ -553,15 +576,30 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
 	m_light_shader->SetInt("ShadowPass", 4);
 
-	glActiveTexture(GL_TEXTURE5);
+	/*glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, m_gui_manager->GetScreenTexture());
-	m_light_shader->SetInt("GUIscreen", 5);
+	m_light_shader->SetInt("GUIscreen", 5);*/
 
 	m_light_shader->SetVec3("CamPos", CamPos);
 
 	UpdateAmbientLighting();
 	UpdateDirLighting();
 	UpdatePointsLighting();
+
+	m_quad->RenderQuad();
+	//std::cout << "Rendering light" << std::endl;
+}
+
+void RaindropRenderer::RenderBeauty() {
+	SwitchShader(m_beauty_shader.get());
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gLight);
+	m_beauty_shader->SetInt("lightpass", 5);
+
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, m_gui_manager->GetScreenTexture());
+	m_beauty_shader->SetInt("GUIscreen", 6);
 
 	m_quad->RenderQuad();
 }
@@ -742,6 +780,21 @@ void RaindropRenderer::RenderGUI_Screen() {
 
 RD_GUI_Manager* RaindropRenderer::GetGUI_Manager() {
 	return m_gui_manager.get();
+}
+
+void RaindropRenderer::AddPostProcessEffect(RD_PostProcessEffect* effect) {
+	m_pp_effects.push_back(effect);
+}
+
+void RaindropRenderer::RemovePostProcessEffect(RD_PostProcessEffect* effect) {
+	int index = GetElemIndex<RD_PostProcessEffect*>(m_pp_effects, effect);
+
+	if (index != -1) {
+		m_pp_effects.erase(m_pp_effects.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
 }
 
 //RD_FontRenderer* RaindropRenderer::GetFontRenderer() {

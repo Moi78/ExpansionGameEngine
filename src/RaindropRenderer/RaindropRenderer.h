@@ -54,6 +54,7 @@ class RD_FrameBuffer;
 class RD_Camera;
 class RD_MaterialLibrary;
 class RD_GUI_Manager;
+class RD_PostProcessEffect;
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
@@ -79,6 +80,7 @@ public:
 
 	void SetAASampling(int nbrSample);
 
+	//Rendering
 	void RenderMeshes(RD_Camera* cam);
 	void RenderShadowMeshes();
 
@@ -86,6 +88,10 @@ public:
 	void RenderLightsDepth(vec3f camPos);
 
 	void RenderGbuff(RD_Camera*);
+
+	void RenderPostProcess();
+	void RenderBeauty();
+
 	void RecreateGbuff();
 
 	RD_Texture* GetBlankTexture();
@@ -104,11 +110,13 @@ public:
 	int AppendLight(RD_PointLight* ptLight);
 	int AppendDirLight(RD_DirLight* dirLight);
 	void RegisterMesh(RD_Mesh* mesh);
+	void AddPostProcessEffect(RD_PostProcessEffect* effect);
 
 	//Elements unregistrations
 	void UnregisterMesh(RD_Mesh*);
 	void UnregisterPointLight(RD_PointLight*);
 	void UnregisterDirLight(RD_DirLight*);
+	void RemovePostProcessEffect(RD_PostProcessEffect* effect);
 
 	void UnregisterAllMeshes();
 	void UnregisterAllPointLights();
@@ -186,12 +194,16 @@ private:
 
 	//Deffered Rendering
 	Gbuff m_g_buffer;
+
 	std::unique_ptr<RD_Quad> m_quad;
 
 	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
 
 	std::unique_ptr<RD_ShaderLoader> m_shadowShader;
 	std::unique_ptr<RD_ShaderLoader> m_light_shader;
+	std::unique_ptr<RD_ShaderLoader> m_beauty_shader;
+
+	std::vector<RD_PostProcessEffect*> m_pp_effects;
 
 	RD_ShaderLoader* m_CurrentShader;
 

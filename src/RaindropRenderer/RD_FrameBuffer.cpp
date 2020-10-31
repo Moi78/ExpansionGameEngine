@@ -12,6 +12,11 @@ RD_FrameBuffer::RD_FrameBuffer(int w, int h, unsigned int nbrAttachement) {
 }
 
 RD_FrameBuffer::~RD_FrameBuffer() {
+	for (auto attachement : m_attachments) {
+		delete attachement;
+	}
+	m_attachments.clear();
+
 	glDeleteFramebuffers(1, &m_FBO);
 }
 
@@ -30,10 +35,10 @@ void RD_FrameBuffer::CreateAttachements() {
 	unsigned int att = GL_COLOR_ATTACHMENT0;
 
 	for (int i = 0; i < m_nbrAttachement; i++) {
-		std::shared_ptr<RD_Texture> tex = std::make_shared<RD_Texture>();
+		RD_Texture* tex = new RD_Texture();
 		tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, att);
 
-		m_attachments.push_back(tex.get());
+		m_attachments.push_back(tex);
 
 		att++;
 	}
@@ -53,4 +58,19 @@ RD_Texture* RD_FrameBuffer::GetAttachementByIndex(int index) {
 
 int RD_FrameBuffer::GetNumberOfAttachements() {
 	return m_nbrAttachement;
+}
+
+void RD_FrameBuffer::ChangeFramebufferSize(int nw, int nh) {
+	for (auto attachement : m_attachments) {
+		delete attachement;
+	}
+	m_attachments.clear();
+
+	glDeleteFramebuffers(1, &m_FBO);
+
+	m_h = nh;
+	m_w = nw;
+
+	CreateFBO();
+	CreateAttachements();
 }

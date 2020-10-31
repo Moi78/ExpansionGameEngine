@@ -8,7 +8,9 @@ BD_LightDB_Write::BD_LightDB_Write() {
 }
 
 BD_LightDB_Write::~BD_LightDB_Write() {
-
+	for (auto c : m_components) {
+		free(c.ShadowMap);
+	}
 }
 
 void BD_LightDB_Write::AddComponent(BD_LDB_Comp comp) {

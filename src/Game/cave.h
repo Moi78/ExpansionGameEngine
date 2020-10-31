@@ -15,6 +15,7 @@
 #include <EXP_RigidBody.h>
 
 #include <RD_InstanciatedMesh.h>
+#include <RD_PostProcess.h>
 
 #include "Character.h"
 

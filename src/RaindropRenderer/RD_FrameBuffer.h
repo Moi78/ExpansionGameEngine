@@ -39,6 +39,8 @@ public:
 	int GetNumberOfAttachements();
 	RD_Texture* GetAttachementByIndex(int index);
 
+	void ChangeFramebufferSize(int nw, int nh);
+
 private:
 	void CreateFBO();
 	void CreateAttachements();

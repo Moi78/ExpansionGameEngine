@@ -177,6 +177,7 @@
     <ClInclude Include="RD_Materials.h" />
     <ClInclude Include="RD_Mesh.h" />
     <ClInclude Include="RD_PointLight.h" />
+    <ClInclude Include="RD_PostProcess.h" />
     <ClInclude Include="RD_Quad.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
     <ClInclude Include="RD_SizedQuad.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="RD_Materials.cpp" />
     <ClCompile Include="RD_Mesh.cpp" />
     <ClCompile Include="RD_PointLight.cpp" />
+    <ClCompile Include="RD_PostProcess.cpp" />
     <ClCompile Include="RD_Quad.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />
     <ClCompile Include="RD_SizedQuad.cpp" />

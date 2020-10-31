@@ -174,8 +174,8 @@ void EXP_Game::RenderScene() {
 	m_rndr->RenderGbuff(m_currentCamera);
 	//Rendering GUI
 	m_rndr->RenderGUI_Screen();
-	//Light pass (final pass)
-	m_rndr->RenderLightPass(CamLoc);
+	//PostProcessing
+	m_rndr->RenderPostProcess();
 
 	if (RENDER_DBG && m_currentCamera != nullptr) {
 		m_rndr->RenderDbg(m_currentCamera);

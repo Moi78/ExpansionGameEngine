@@ -1,17 +1,17 @@
 #version 410 core
 
-out vec4 FragColor;
+layout (location = 5) out vec4 LightPass;
 
 in vec2 UVcoords;
 
+//uniform sampler2D GUIscreen;
+
+//Passes
+uniform sampler2D ShadowPass;
 uniform sampler2D gPos;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gSpec;
-uniform sampler2D GUIscreen;
-
-//Passes
-uniform sampler2D ShadowPass;
 
 //Ambient
 uniform float AmbientStrength;
@@ -113,10 +113,9 @@ void main() {
 
 	vec4 gamma = vec4(1.0 / 2.2);
 
-	vec4 gui = texture(GUIscreen, UVcoords);
+	//vec4 gui = texture(GUIscreen, UVcoords);
 
 	vec4 render = clamp(pow(vec4(Diffuse, 1.0) * vec4(result, 1.0), gamma), 0.0, 1.0);
-	render.a = 1.0;
 
-	FragColor = mix(render, gui, gui.a);
+	LightPass = render;
 }

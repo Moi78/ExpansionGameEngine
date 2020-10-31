@@ -1,25 +1,25 @@
 {
-    "MapLevelCodeObjectName":"cave",
-    "nodes" : [
-        {
-            "type" : "dlight",
-            "nameTag":"sun",
+  "MapLevelCodeObjectName": "cave",
+  "nodes": [
+    {
+      "type": "dlight",
+      "nameTag": "sun",
 
-            "dir":[0.8, -0.3, -0.4],
-            "color":[1, 1, 1],
-            "brightness":2.0
-        },
+      "dir": [ 0.8, -0.3, -0.4 ],
+      "color": [ 1, 1, 1 ],
+      "brightness": 2.0
+    },
 
-        {
-            "type":"mesh",
-            "nameTag":"meshTest",
+    {
+      "type": "mesh",
+      "nameTag": "meshTest",
 
-            "ref":"/meshes/test_axis",
-            "material":"/shaders/mat_room",
+      "ref": "/meshes/test_axis",
+      "material": "/shaders/mat_room",
 
-            "pos":[-30, 0, 0],
-            "rot":[0, 0, 0],
-            "scale":[1, 1, 1]
-        }
-    ]
+      "pos": [ -30, 0, 0 ],
+      "rot": [ 0, 0, 0 ],
+      "scale": [ 1, 1, 1 ]
+    }
+  ]
 }
