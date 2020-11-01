@@ -178,6 +178,7 @@
     <ClInclude Include="EXP_MapLoader.h" />
     <ClInclude Include="EXP_PhysicsHandler.h" />
     <ClInclude Include="EXP_PointLight.h" />
+    <ClInclude Include="EXP_PostProcessEffect.h" />
     <ClInclude Include="EXP_RigidBody.h" />
     <ClInclude Include="EXP_SoundEmitter.h" />
     <ClInclude Include="EXP_StaticMesh.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="EXP_MapLoader.cpp" />
     <ClCompile Include="EXP_PhysicsHandler.cpp" />
     <ClCompile Include="EXP_PointLight.cpp" />
+    <ClCompile Include="EXP_PostProcessEffect.cpp" />
     <ClCompile Include="EXP_RigidBody.cpp" />
     <ClCompile Include="EXP_SoundEmitter.cpp" />
     <ClCompile Include="EXP_StaticMesh.cpp" />

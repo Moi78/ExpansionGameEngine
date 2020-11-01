@@ -18,13 +18,15 @@
 class RD_API RD_PostProcessEffect
 {
 public:
-	RD_PostProcessEffect(RD_ShaderLoader* shader);
+	RD_PostProcessEffect();
 	~RD_PostProcessEffect();
 
 	void RenderEffect(unsigned int screenID);
 
+	void LoadShader(RD_ShaderMaterial* shader);
+
 private:
-	RD_ShaderLoader* m_shader;
+	RD_ShaderMaterial* m_shader;
 	std::unique_ptr<RD_Quad> m_screen;
 };
 

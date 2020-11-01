@@ -115,6 +115,7 @@ void main() {
 	//vec4 gui = texture(GUIscreen, UVcoords);
 
 	vec4 render = clamp(pow(vec4(Diffuse, 1.0) * vec4(result, 1.0), gamma), 0.0, 1.0);
+	render.a = 1.0;
 
 	LightPass = render;
 }

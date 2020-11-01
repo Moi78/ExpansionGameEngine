@@ -6,16 +6,13 @@
 #include <EXP_Game.h>
 #include <EXP_MapLoader.h>
 #include <EXP_Level.h>
+#include <EXP_Callbacks.h>
+#include <EXP_RigidBody.h>
+#include <EXP_PostProcessEffect.h>
 
 #include <EXP_GUI_ColorCache.h>
 #include <EXP_GUI_ImageTexture.h>
 #include <EXP_GUI_Button.h>
-
-#include <EXP_Callbacks.h>
-#include <EXP_RigidBody.h>
-
-#include <RD_InstanciatedMesh.h>
-#include <RD_PostProcess.h>
 
 #include "Character.h"
 

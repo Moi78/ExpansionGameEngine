@@ -117,6 +117,8 @@ void RaindropRenderer::initWindow(int w, int h, std::string name) {
 	glfwSetFramebufferSizeCallback(win, glfwWinCallback);
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_ARB_clear_texture);
 	
@@ -544,9 +546,9 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 }
 
 void RaindropRenderer::RenderPostProcess() {
-	glClear(GL_DEPTH_BUFFER_BIT);
-
 	for (auto pp : m_pp_effects) {
+		glClear(GL_DEPTH_BUFFER_BIT);
+
 		pp->RenderEffect(m_g_buffer.gLight);
 	}
 }
@@ -781,6 +783,7 @@ RD_GUI_Manager* RaindropRenderer::GetGUI_Manager() {
 }
 
 void RaindropRenderer::AddPostProcessEffect(RD_PostProcessEffect* effect) {
+	std::cout << "Added new post process effect" << std::endl;
 	m_pp_effects.push_back(effect);
 }
 
@@ -788,6 +791,8 @@ void RaindropRenderer::RemovePostProcessEffect(RD_PostProcessEffect* effect) {
 	int index = GetElemIndex<RD_PostProcessEffect*>(m_pp_effects, effect);
 
 	if (index != -1) {
+		std::cout << "Removed post process effect." << std::endl;
+
 		m_pp_effects.erase(m_pp_effects.begin() + index);
 	}
 	else {

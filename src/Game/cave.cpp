@@ -7,13 +7,9 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	m_game = game;
 	m_mloader = mloader;
 
-	RD_ShaderLoader* shader = new RD_ShaderLoader();
-	shader->compileShaderFromFile("Content/shaders/pp_test.vert", "Content/shaders/pp_test.frag");
-
-	RD_PostProcessEffect* effect = new RD_PostProcessEffect(shader);
-	m_game->GetRenderer()->AddPostProcessEffect(effect);
-
 	m_character = new Character(game);
+
+	//EXP_PostProcessingEffect* m_pp = new EXP_PostProcessingEffect(game, "/shaders/test_pp.exmtl");
 
 	m_gui_cache = new EXP_GUI_ColorCache(game, vec3f(0.0, 0.5, 1.0), 0.5f, 100.0f, 100.0f, 0.0f, 0.0f);
 

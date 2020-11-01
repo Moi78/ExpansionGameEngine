@@ -116,8 +116,6 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 			EXP_DirLight* dlight = new EXP_DirLight(m_game, mdir, mcolor, node.get("brightness", "1.0").asFloat());
 			dlight->SetNameTag(node["nameTag"].asString());
 
-			std::cout << "name tag : " << node["nameTag"].asString() << std::endl;
-
 			m_dlights.push_back(dlight);
 		}
 	}
