@@ -175,7 +175,7 @@ void EXP_Game::RenderScene() {
 	//Rendering GUI
 	m_rndr->RenderGUI_Screen();
 	//PostProcessing
-	m_rndr->RenderPostProcess();
+	m_rndr->RenderBeauty();
 
 	if (RENDER_DBG && m_currentCamera != nullptr) {
 		m_rndr->RenderDbg(m_currentCamera);

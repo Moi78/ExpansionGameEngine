@@ -21,7 +21,7 @@ public:
 	RD_PostProcessEffect(RD_ShaderLoader* shader);
 	~RD_PostProcessEffect();
 
-	void RenderEffect(int screenID);
+	void RenderEffect(unsigned int screenID);
 
 private:
 	RD_ShaderLoader* m_shader;

@@ -19,4 +19,15 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Shaders\glsl\Beauty.frag" />
+    <None Include="Engine\Shaders\glsl\Beauty.vert" />
+    <None Include="Engine\Shaders\glsl\Debug.frag" />
+    <None Include="Engine\Shaders\glsl\Debug.vert" />
+    <None Include="Engine\Shaders\glsl\Gshad.vert" />
+    <None Include="Engine\Shaders\glsl\Light.frag" />
+    <None Include="Engine\Shaders\glsl\Light.vert" />
+    <None Include="Engine\Shaders\glsl\Shadow.frag" />
+    <None Include="Engine\Shaders\glsl\Shadow.vert" />
+  </ItemGroup>
 </Project>

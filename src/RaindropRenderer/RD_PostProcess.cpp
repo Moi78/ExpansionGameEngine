@@ -11,12 +11,12 @@ RD_PostProcessEffect::~RD_PostProcessEffect() {
 	delete m_shader;
 }
 
-void RD_PostProcessEffect::RenderEffect(int screenID) {
+void RD_PostProcessEffect::RenderEffect(unsigned int screenID) {
 	m_shader->useShader();
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, screenID);
-	m_shader->SetInt("screen", 0);
+	m_shader->SetInt("screen", 10);
 
 	m_screen->RenderQuad();
 }
