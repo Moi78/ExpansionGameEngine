@@ -576,10 +576,6 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
 	m_light_shader->SetInt("ShadowPass", 4);
 
-	/*glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_gui_manager->GetScreenTexture());
-	m_light_shader->SetInt("GUIscreen", 5);*/
-
 	m_light_shader->SetVec3("CamPos", CamPos);
 
 	UpdateAmbientLighting();
@@ -591,6 +587,8 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 }
 
 void RaindropRenderer::RenderBeauty() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	SwitchShader(m_beauty_shader.get());
 
 	glActiveTexture(GL_TEXTURE5);

@@ -170,12 +170,12 @@ void EXP_Game::RenderScene() {
     
 	//Process shadows
 	m_rndr->RenderLightsDepth(CamLoc);
-	//GBuff
-	m_rndr->RenderGbuff(m_currentCamera);
 	//Rendering GUI
 	m_rndr->RenderGUI_Screen();
-	//PostProcessing
-	m_rndr->RenderPostProcess();
+	//GBuff
+	m_rndr->RenderGbuff(m_currentCamera);
+	//Beauty
+	m_rndr->RenderBeauty();
 
 	if (RENDER_DBG && m_currentCamera != nullptr) {
 		m_rndr->RenderDbg(m_currentCamera);
