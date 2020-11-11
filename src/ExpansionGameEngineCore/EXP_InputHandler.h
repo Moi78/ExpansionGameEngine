@@ -14,10 +14,12 @@
 #include "EXP_Game.h"
 #include "EXP_Callbacks.h"
 
+#include "RD_RenderingAPI.h"
+
 class EXPGE_API EXP_InputHandler
 {
 public:
-	EXP_InputHandler(GLFWwindow*);
+	EXP_InputHandler(RD_WindowingSystem*);
 	~EXP_InputHandler();
 
 	void RegisterKeyboardCallback(EXP_KeyboardCallback*);
@@ -46,7 +48,9 @@ public:
 	double GetGUI_SpaceMousePosY();
 
 private:
-	GLFWwindow* m_win;
+	//GLFWwindow* m_win;
+	RD_WindowingSystem* m_win;
+
 	bool m_curHidden;
 
 	//Callbacks

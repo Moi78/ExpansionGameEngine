@@ -1,0 +1,101 @@
+#pragma once
+
+#ifdef _WIN32
+#ifdef RAINDROPRENDERER_EXPORTS
+#define RD_API __declspec(dllexport)
+#else
+#define RD_API __declspec(dllimport)
+#endif //RAINDROPRENDERER_EXPORTS
+#else
+#define RD_API
+#endif //_WIN32
+
+#include <iostream>
+#include <string>
+
+#include "RD_Texture.h"
+#include "RD_FrameBuffer.h"
+
+//MASK PROPERTY
+#define COLOR_BUFFER 1 //0b 0000 ... 0000 0001
+#define DEPTH_BUFFER 2 //0b 0000 ... 0000 0010
+
+enum DrawMode {
+	TRIANGLES,
+	TRIANGLES_STRIP,
+	QUADS
+};
+
+enum FillingMode {
+	FILLED,
+	WIREFRAME
+};
+
+enum API {
+	OPENGL,
+	VULKAN,
+	DIRECTX
+};
+
+class RD_API RD_RenderingAPI_VertexElemBuffer {
+public:
+	RD_RenderingAPI_VertexElemBuffer() {}
+	virtual ~RD_RenderingAPI_VertexElemBuffer() {}
+
+	virtual void CreateBuffer() = 0;
+	virtual void FillBufferData(float* data, int count, unsigned int* elemsData, int elemCount) = 0;
+	virtual void DeleteBuffer() = 0;
+
+	virtual void BindBuffer() = 0;
+	virtual void UnbindBuffer() = 0;
+};
+
+class RD_API RD_WindowingSystem {
+public:
+	RD_WindowingSystem() {}
+	virtual ~RD_WindowingSystem() {}
+
+	virtual bool OpenWindow(std::string name, int w, int h) = 0;
+	virtual void SetFullscreenMode(bool mode) = 0;
+
+	virtual bool GetKeyPress(int key) = 0;
+	virtual bool GetMouseButton(int button) = 0;
+
+	virtual double GetCursorPosX() = 0;
+	virtual double GetCursorPosY() = 0;
+	virtual void SetCursorPos(double x, double y) = 0;
+
+	virtual void CaptureCursor(bool mode) = 0;
+
+	virtual int GetHeight() = 0;
+	virtual int GetWidth() = 0;
+
+	virtual void SwapWindow() = 0;
+
+	virtual bool WantToClose() = 0;
+
+	virtual void PollEvents() = 0;
+
+protected:
+	int m_w, m_h;
+};
+
+class RD_API RD_RenderingAPI
+{
+public:
+	RD_RenderingAPI() {}
+	virtual ~RD_RenderingAPI() {}
+
+	virtual bool InitializeAPI(int w, int h, std::string wname) = 0;
+
+	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer() = 0;
+	virtual RD_Texture* CreateTexture() = 0;
+	virtual RD_FrameBuffer* CreateFrameBuffer() = 0;
+
+	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode) = 0;
+	virtual void SetFilledMode(FillingMode fmode) = 0;
+
+	virtual RD_WindowingSystem* GetWindowingSystem() = 0;
+
+	virtual void Clear(int masks) = 0;
+};

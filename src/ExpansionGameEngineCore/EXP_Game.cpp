@@ -101,10 +101,10 @@ void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
 	m_refreshColor = refreshColor;
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
-    
-	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, 60, false, gameinfo.RootEngineContentFolder);
+
+	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, API::OPENGL, 60, false, gameinfo.RootEngineContentFolder);
 	m_materialManager = std::make_unique<RD_MaterialLibrary>();
-	m_hinput = std::make_unique<EXP_InputHandler>(m_rndr->GetGLFWwindow());
+	m_hinput = std::make_unique<EXP_InputHandler>(m_rndr->GetRenderingAPI()->GetWindowingSystem());
 
 	InitPhysics();
 

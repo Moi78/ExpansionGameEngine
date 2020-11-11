@@ -43,6 +43,7 @@
 #include <RD_PointLight.h>
 #include <RD_Texture.h>
 #include <RD_MaterialLibrary.h>
+#include <RD_RenderingAPI_GL.h>
 
 #include <BD_StructMan.h>
 #include <BD_MatRW.h>

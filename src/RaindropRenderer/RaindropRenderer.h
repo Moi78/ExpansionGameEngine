@@ -56,19 +56,19 @@ class RD_MaterialLibrary;
 class RD_GUI_Manager;
 class RD_PostProcessEffect;
 
+class RD_RenderingAPI;
+enum API;
+
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
-	RaindropRenderer(int w, int h, std::string windowName, int maxFramerate = 60, bool minInit = false, std::string EngineDir = "Engine");
+	RaindropRenderer(int w, int h, std::string windowName, API api, int maxFramerate = 60, bool minInit = false, std::string EngineDir = "Engine");
 	~RaindropRenderer();
 
-	bool initGlad(bool minInit = false);
-	void MinInit();
-
-	void initWindow(int w, int h, std::string name);
+	/*void initWindow(int w, int h, std::string name);*/
 	void ClearWindow(vec3f refreshColor);
 	void SwapWindow();
-	GLFWwindow* GetGLFWwindow();
 	bool WantToClose();
+	RD_RenderingAPI* GetRenderingAPI();
 
 	int getWindowHeigh();
 	int getWindowWidth();
@@ -162,10 +162,7 @@ private:
 
 	void SetErrorFlag(bool val);
 
-	GLFWwindow* win;
-
-	int m_height;
-	int m_width;
+	std::unique_ptr<RD_RenderingAPI> m_api;
 
 	std::string m_engineDir;
 
@@ -224,7 +221,7 @@ int GetElemIndex(std::vector<T> array, T element) {
 	}
 }
 
-void glfwWinCallback(GLFWwindow* win, int w, int h);
+void glfwWinCallback_(GLFWwindow* win, int w, int h);
 
 RAINDROPRENDERER_API std::wstring StrToWStr(std::string str);
 

@@ -120,7 +120,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_OPENGL;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -142,7 +142,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_OPENGL;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -179,6 +179,8 @@
     <ClInclude Include="RD_PointLight.h" />
     <ClInclude Include="RD_PostProcess.h" />
     <ClInclude Include="RD_Quad.h" />
+    <ClInclude Include="RD_RenderingAPI.h" />
+    <ClInclude Include="RD_RenderingAPI_GL.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
     <ClInclude Include="RD_SizedQuad.h" />
     <ClInclude Include="RD_Texture.h" />
@@ -208,6 +210,7 @@
     <ClCompile Include="RD_PointLight.cpp" />
     <ClCompile Include="RD_PostProcess.cpp" />
     <ClCompile Include="RD_Quad.cpp" />
+    <ClCompile Include="RD_RenderingAPI_GL.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />
     <ClCompile Include="RD_SizedQuad.cpp" />
     <ClCompile Include="RD_Texture.cpp" />

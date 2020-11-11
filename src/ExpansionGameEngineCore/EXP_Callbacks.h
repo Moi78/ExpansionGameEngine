@@ -35,6 +35,8 @@ private:
 	bool m_released;
 
 	EXP_Game* m_gameinstance;
+
+	RD_WindowingSystem* m_win;
 };
 
 class EXPGE_API EXP_MouseButtonCallback : public RD_Callback {
@@ -50,6 +52,8 @@ private:
 
 	bool m_waitRelease;
 	bool m_released;
+
+	RD_WindowingSystem* m_win;
 };
 
 #endif // !_EXP_CALLBACKS_H__

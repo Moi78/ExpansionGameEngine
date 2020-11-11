@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EXP_InputHandler.h"
 
-EXP_InputHandler::EXP_InputHandler(GLFWwindow* win) {
+EXP_InputHandler::EXP_InputHandler(RD_WindowingSystem* win) {
 	m_win = win;
 	m_curHidden = false;
 }
@@ -41,12 +41,7 @@ void EXP_InputHandler::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cl
 }
 
 void EXP_InputHandler::CaptureCursor(bool state) {
-	if (state) {
-		glfwSetInputMode(m_win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-	else {
-		glfwSetInputMode(m_win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
+	m_win->CaptureCursor(state);
 
 	m_curHidden = state;
 }
@@ -68,10 +63,7 @@ double EXP_InputHandler::GetMouseXaxis() {
 		return 0;
 	}
 
-	double xaxis;
-	glfwGetCursorPos(m_win, &xaxis, NULL);
-
-	return xaxis;
+	return m_win->GetCursorPosX();
 }
 
 double EXP_InputHandler::GetMouseYaxis() {
@@ -79,10 +71,7 @@ double EXP_InputHandler::GetMouseYaxis() {
 		return 0;
 	}
 
-	double yaxis;
-	glfwGetCursorPos(m_win, NULL, &yaxis);
-
-	return yaxis;
+	return m_win->GetCursorPosY();
 }
 
 double EXP_InputHandler::GetAbsoluteMousePosX() {
@@ -90,10 +79,7 @@ double EXP_InputHandler::GetAbsoluteMousePosX() {
 		return 0;
 	}
 
-	double xaxis;
-	glfwGetCursorPos(m_win, &xaxis, NULL);
-
-	return xaxis;
+	return m_win->GetCursorPosX();
 }
 
 double EXP_InputHandler::GetAbsoluteMousePosY() {
@@ -101,29 +87,22 @@ double EXP_InputHandler::GetAbsoluteMousePosY() {
 		return 0;
 	}
 
-	double yaxis;
-	glfwGetCursorPos(m_win, NULL, &yaxis);
-
-	return yaxis;
+	return m_win->GetCursorPosY();
 }
 
 double EXP_InputHandler::GetGUI_SpaceMousePosX() {
-	int w;
-	glfwGetWindowSize(m_win, &w, NULL);
+	int w = m_win->GetWidth();
 
-	double x;
-	glfwGetCursorPos(m_win, &x, NULL);
+	double x = m_win->GetCursorPosX();
 
 	return (x * 1280) / w;
 }
 
 double EXP_InputHandler::GetGUI_SpaceMousePosY() {
-	int w;
-	int h;
-	glfwGetWindowSize(m_win, &w, &h);
+	int w = m_win->GetWidth();
+	int h = m_win->GetHeight();
 
-	double y;
-	glfwGetCursorPos(m_win, NULL, &y);
+	double y = m_win->GetCursorPosY();
 
 	float rh = 1280 / ((float)w / (float)h);
 	return (y * rh) / h;
@@ -131,7 +110,7 @@ double EXP_InputHandler::GetGUI_SpaceMousePosY() {
 
 void EXP_InputHandler::ResetPointer() {
 	if (m_curHidden) {
-		glfwSetCursorPos(m_win, 0, 0);
+		m_win->SetCursorPos(0, 0);
 	}
 }
 
@@ -152,9 +131,9 @@ void EXP_InputHandler::UnregisterAllCallbacks() {
 }
 
 bool EXP_InputHandler::GetMouseButton(int button) {
-	return glfwGetMouseButton(m_win, button) == GLFW_PRESS;
+	return m_win->GetMouseButton(button);
 }
 
 bool EXP_InputHandler::GetKey(int key) {
-	return glfwGetKey(m_win, key) == GLFW_PRESS;
+	return m_win->GetKeyPress(key);
 }

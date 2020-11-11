@@ -7,6 +7,8 @@ EXP_KeyboardCallback::EXP_KeyboardCallback(EXP_Game* gameinstance, std::function
 	m_waitRealease = waitRelease;
 	m_released = true;
 
+	m_win = gameinstance->GetRenderer()->GetRenderingAPI()->GetWindowingSystem();
+
 	m_gameinstance->RegisterKeyboardCallback(this);
 }
 
@@ -16,7 +18,7 @@ EXP_KeyboardCallback::~EXP_KeyboardCallback() {
 
 void EXP_KeyboardCallback::UpdateCallback() {
 	if (m_waitRealease) {
-		if (glfwGetKey(m_gameinstance->GetRenderer()->GetGLFWwindow(), m_key) == GLFW_PRESS) {
+		if (m_win->GetKeyPress(m_key)) {
 			if (m_released) {
 				m_released = false;
 				Call();
@@ -27,7 +29,7 @@ void EXP_KeyboardCallback::UpdateCallback() {
 		}
 	}
 	else {
-		if (glfwGetKey(m_gameinstance->GetRenderer()->GetGLFWwindow(), m_key) == GLFW_PRESS) {
+		if (m_win->GetKeyPress(m_key)) {
 			Call();
 		}
 	}
@@ -41,6 +43,7 @@ EXP_MouseButtonCallback::EXP_MouseButtonCallback(EXP_Game* game, std::function<v
 	m_released = false;
 
 	m_game = game;
+	m_win = game->GetRenderer()->GetRenderingAPI()->GetWindowingSystem();
 
 	m_game->RegisterMouseButtonCallback(this);
 }
@@ -51,7 +54,7 @@ EXP_MouseButtonCallback::~EXP_MouseButtonCallback() {
 
 void EXP_MouseButtonCallback::UpdateCallback() {
 	if (m_waitRelease) {
-		if (glfwGetMouseButton(m_game->GetRenderer()->GetGLFWwindow(), m_btn) == GLFW_PRESS) {
+		if (m_win->GetMouseButton(m_btn)) {
 			if (m_released) {
 				m_released = false;
 				Call();
@@ -62,7 +65,7 @@ void EXP_MouseButtonCallback::UpdateCallback() {
 		}
 	}
 	else {
-		if (glfwGetMouseButton(m_game->GetRenderer()->GetGLFWwindow(), m_btn) == GLFW_PRESS) {
+		if (m_win->GetMouseButton(m_btn)) {
 			Call();
 		}
 	}
