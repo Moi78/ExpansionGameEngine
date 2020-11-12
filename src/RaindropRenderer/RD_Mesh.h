@@ -20,6 +20,7 @@
 #include "RD_Materials.h"
 #include "RaindropRenderer.h"
 #include "RD_Camera.h"
+#include "RD_RenderingAPI.h"
 
 #include <mat4.h>
 
@@ -36,7 +37,7 @@
 class RAINDROPRENDERER_API RD_Mesh
 {
 public:
-	RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale);
+	RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale);
 	virtual ~RD_Mesh();
 
 	void loadMesh(std::string);
@@ -65,6 +66,8 @@ public:
 private:
 	void Bufferize();
 
+	RaindropRenderer* m_rndr;
+
 	std::vector<vec3f> m_vertices;
 	std::vector<unsigned int> m_indices;
 	std::vector<vec3f> m_normals;
@@ -82,7 +85,7 @@ protected:
 	mat4f m_parent;
 	RD_ShaderMaterial* m_mat;
 
-	unsigned int VAO, VBO, EBO;
+	RD_RenderingAPI_VertexElemBuffer* m_buffer;
 	int m_nbr_indices;
 
 	vec3f m_position;

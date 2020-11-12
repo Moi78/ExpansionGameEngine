@@ -25,7 +25,6 @@
 #include "RD_ShaderLoader.h"
 #include "RD_FrameLimiter.h"
 #include "RD_PointLight.h"
-#include "RD_Texture.h"
 #include "RD_Materials.h"
 #include "RD_Texture.h"
 
@@ -50,7 +49,7 @@
 class RD_DirLight;
 class RD_Mesh;
 class RD_Quad;
-class RD_FrameBuffer;
+//class RD_FrameBuffer;
 class RD_Camera;
 class RD_MaterialLibrary;
 class RD_GUI_Manager;
@@ -183,8 +182,8 @@ private:
 	std::unique_ptr<RD_Mesh> m_DBG_light_mdl;
 	std::unique_ptr<RD_Mesh> m_DBG_sound_emitter_mdl;
 
-	std::shared_ptr<RD_Texture> m_defTex;
-	std::shared_ptr<RD_Texture> m_blankTexture;
+	RD_Texture* m_defTex;
+	RD_Texture* m_blankTexture;
 
 	std::vector<unsigned int> m_textureGarbageCollector;
 	std::vector<unsigned int> m_framebufferGarbageCollector;

@@ -29,7 +29,7 @@ struct RD_MeshInstance {
 class RD_API RD_InstanciatedMesh : public RD_Mesh
 {
 public:
-	RD_InstanciatedMesh(RD_ShaderMaterial* material);
+	RD_InstanciatedMesh(RaindropRenderer* rndr, RD_ShaderMaterial* material);
 	~RD_InstanciatedMesh();
 
 	int AppendInstance(RD_MeshInstance inst);

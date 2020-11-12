@@ -1,22 +1,18 @@
 #include "pch.h"
 #include "RD_Mesh.h"
 
-RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale) : m_mdl(1.0f), m_parent(1.0f) {
+RD_Mesh::RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale) : m_mdl(1.0f), m_parent(1.0f) {
 	m_nbr_indices = 0;
 
-	VAO = 0;
-	EBO = 0;
-	VBO = 0;
-
 	assert(shader != nullptr && "Given material was nullptr");
-
 	m_mat = shader;
 
 	m_position = position;
 	m_rotation = rotation;
 	m_scale = scale;
 
-	//m_parent = glm::mat4(1.0);
+	m_rndr = rndr;
+	m_buffer = m_rndr->GetRenderingAPI()->CreateVertexElemBuffer();
 
 	m_shadowCaster = true;
 
@@ -24,9 +20,7 @@ RD_Mesh::RD_Mesh(RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3
 }
 
 RD_Mesh::~RD_Mesh() {
-	glDeleteBuffers(1, &VBO);
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &EBO);
+	
 }
 
 void RD_Mesh::loadMesh(std::string filepath) {
@@ -80,9 +74,9 @@ void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
 
 	m_mat->BindMaterial();
 
-	glBindVertexArray(VAO);
+	m_buffer->BindBuffer();
 	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	m_buffer->UnbindBuffer();
 
 	if (!filled) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -95,9 +89,9 @@ void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
 
 	shadowShader->SetMatrix("model", m_mdl);
 
-	glBindVertexArray(VAO);
+	m_buffer->BindBuffer();
 	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	m_buffer->UnbindBuffer();
 }
 
 void RD_Mesh::Bufferize() {
@@ -122,30 +116,9 @@ void RD_Mesh::Bufferize() {
 
 	size_t elemSize = 8;
 
-	glGenVertexArrays(1, &VAO);
+	m_buffer->CreateBuffer();
 
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glBufferData(GL_ARRAY_BUFFER, MixVertNormUV.size() * sizeof(float), &MixVertNormUV[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), &m_indices[0], GL_STATIC_DRAW);
-
-	//Vertices
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//Normals
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	//UV Coords
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	m_buffer->FillBufferData(&MixVertNormUV[0], MixVertNormUV.size(), &m_indices[0], m_indices.size());
 }
 
 void RD_Mesh::addRotation(vec3f rotation, bool update) {

@@ -29,10 +29,10 @@ template<class T>
 class mat4
 {
 public:
-	mat4(T init_val = 1) {
+	mat4(T init_val = 1, bool enableSIMD = true) {
 		memset(m_mat, 0, 16 * sizeof(T));
 
-		if (sizeof(T) == sizeof(float)) {
+		if (enableSIMD) {
 			_simd_enabled = true;
 		}
 		else {
@@ -40,7 +40,7 @@ public:
 		}
 
 		/*
-		* Making identity matrix
+		    Making identity matrix
 
 		ival,	0.0f,	0.0f,	0.0f,
 		0.0f,	ival,	0.0f,	0.0f,
@@ -54,9 +54,16 @@ public:
 		}
 	}
 
-	mat4(T mat[16]) {
+	mat4(T mat[16], bool enableSIMD = true) {
 		memset(m_mat, 0, sizeof(m_mat));
 		memcpy(m_mat, mat, 16 * sizeof(T));
+
+		if (enableSIMD) {
+			_simd_enabled = true;
+		}
+		else {
+			_simd_enabled = false;
+		}
 	}
 
 	~mat4() {

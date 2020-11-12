@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_InstanciatedMesh.h"
 
-RD_InstanciatedMesh::RD_InstanciatedMesh(RD_ShaderMaterial* mat) : RD_Mesh(mat, vec3f(), vec3f(), vec3f()) {
+RD_InstanciatedMesh::RD_InstanciatedMesh(RaindropRenderer* rndr, RD_ShaderMaterial* mat) : RD_Mesh(rndr, mat, vec3f(), vec3f(), vec3f()) {
 	m_parent = mat4f(1.0f);
 }
 
@@ -53,7 +53,7 @@ void RD_InstanciatedMesh::render(RD_Camera* cam, RenderMode rndrMode) {
 
 	m_mat->BindMaterial();
 
-	glBindVertexArray(VAO);
+	m_buffer->BindBuffer();
 
 	for (auto &mdl : m_mdls) {
 		m_mat->GetShader()->SetMatrix("model", mdl.first);
@@ -61,7 +61,7 @@ void RD_InstanciatedMesh::render(RD_Camera* cam, RenderMode rndrMode) {
 		glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
 	}
 
-	glBindVertexArray(0);
+	m_buffer->UnbindBuffer();
 
 	if (!filled) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -69,7 +69,7 @@ void RD_InstanciatedMesh::render(RD_Camera* cam, RenderMode rndrMode) {
 }
 
 void RD_InstanciatedMesh::renderShadows(RD_ShaderLoader* shadowShader) {
-	glBindVertexArray(VAO);
+	m_buffer->BindBuffer();
 
 	for (auto &mdl : m_mdls) {
 		shadowShader->SetMatrix("model", mdl.first);
@@ -77,7 +77,7 @@ void RD_InstanciatedMesh::renderShadows(RD_ShaderLoader* shadowShader) {
 		glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
 	}
 
-	glBindVertexArray(0);
+	m_buffer->UnbindBuffer();
 }
 
 void RD_InstanciatedMesh::Update() {

@@ -1,17 +1,15 @@
 #include "pch.h"
 #include "RD_FrameBuffer.h"
 
-RD_FrameBuffer::RD_FrameBuffer(int w, int h, unsigned int nbrAttachement) {
+RD_FrameBuffer_GL::RD_FrameBuffer_GL(int w, int h) : RD_FrameBuffer() {
 	m_w = w;
 	m_h = h;
 	m_FBO = 0;
-	m_nbrAttachement = nbrAttachement;
 
 	CreateFBO();
-	CreateAttachements();
 }
 
-RD_FrameBuffer::~RD_FrameBuffer() {
+RD_FrameBuffer_GL::~RD_FrameBuffer_GL() {
 	for (auto attachement : m_attachments) {
 		delete attachement;
 	}
@@ -20,47 +18,45 @@ RD_FrameBuffer::~RD_FrameBuffer() {
 	glDeleteFramebuffers(1, &m_FBO);
 }
 
-unsigned int RD_FrameBuffer::GetFBO() {
+unsigned int RD_FrameBuffer_GL::GetFBO() {
 	return m_FBO;
 }
 
-void RD_FrameBuffer::CreateFBO() {
+void RD_FrameBuffer_GL::CreateFBO() {
 	glGenFramebuffers(1, &m_FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RD_FrameBuffer::CreateAttachements() {
-	unsigned int att = GL_COLOR_ATTACHMENT0;
+void RD_FrameBuffer_GL::AddAttachement(unsigned int format) {
+	RD_Texture_GL* tex = new RD_Texture_GL();
+	tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, m_nbrAttachement, format);
 
-	for (int i = 0; i < m_nbrAttachement; i++) {
-		RD_Texture* tex = new RD_Texture();
-		tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, att);
-
-		m_attachments.push_back(tex);
-
-		att++;
-	}
+	m_nbrAttachement++;
 }
 
-void RD_FrameBuffer::BindFBO() {
+void RD_FrameBuffer_GL::BuildFBO() {
+
+}
+
+void RD_FrameBuffer_GL::BindFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 }
 
-void RD_FrameBuffer::UnbindFBO() {
+void RD_FrameBuffer_GL::UnbindFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-RD_Texture* RD_FrameBuffer::GetAttachementByIndex(int index) {
+RD_Texture* RD_FrameBuffer_GL::GetAttachementByIndex(int index) {
 	return m_attachments[index];
 }
 
-int RD_FrameBuffer::GetNumberOfAttachements() {
+int RD_FrameBuffer_GL::GetNumberOfAttachements() {
 	return m_nbrAttachement;
 }
 
-void RD_FrameBuffer::ChangeFramebufferSize(int nw, int nh) {
+void RD_FrameBuffer_GL::ChangeFramebufferSize(int nw, int nh) {
 	for (auto attachement : m_attachments) {
 		delete attachement;
 	}
@@ -72,5 +68,5 @@ void RD_FrameBuffer::ChangeFramebufferSize(int nw, int nh) {
 	m_w = nw;
 
 	CreateFBO();
-	CreateAttachements();
+	BuildFBO();
 }

@@ -14,9 +14,9 @@ EXP_GUI_Button::EXP_GUI_Button(EXP_Game* game, RD_Callback* func, EXP_ButtonImag
 	//Allocating textures
 	std::string workingDir = m_game->GetGameInfo().RootGameContentFolder;
 
-	m_normal = std::make_unique<RD_Texture>();
-	m_hover = std::make_unique<RD_Texture>();
-	m_pressed = std::make_unique<RD_Texture>();
+	m_normal = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
+	m_hover = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
+	m_pressed = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 
 	m_normal->LoadTexture(workingDir + images.texRefNormal, false);
 	m_hover->LoadTexture(workingDir + images.texRefHover, false);
@@ -54,7 +54,9 @@ EXP_GUI_Button::EXP_GUI_Button(EXP_Game* game, RD_Callback* func, EXP_ButtonImag
 }
 
 EXP_GUI_Button::~EXP_GUI_Button() {
-
+	delete m_hover;
+	delete m_normal;
+	delete m_pressed;
 }
 
 void EXP_GUI_Button::RenderElement() {

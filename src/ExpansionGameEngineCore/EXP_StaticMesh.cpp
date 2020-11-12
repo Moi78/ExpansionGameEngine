@@ -3,7 +3,7 @@
 
 EXP_StaticMesh::EXP_StaticMesh(EXP_Game* gameinstance, RD_ShaderMaterial* shader, std::string MeshRef, vec3f pos, vec3f rot, vec3f scale) :
 	EXP_Component(pos, rot, scale), m_gameinstance(gameinstance),
-	RD_Mesh(shader, pos, rot, scale)
+	RD_Mesh(gameinstance->GetRenderer(), shader, pos, rot, scale)
 {
 	LoadMesh(MeshRef);
 }

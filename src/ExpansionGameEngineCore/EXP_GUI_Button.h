@@ -51,9 +51,9 @@ private:
 	vec3f m_pos;
 	vec3f m_size;
 
-	std::unique_ptr<RD_Texture> m_normal;
-	std::unique_ptr<RD_Texture> m_hover;
-	std::unique_ptr<RD_Texture> m_pressed;
+	RD_Texture* m_normal;
+	RD_Texture* m_hover;
+	RD_Texture* m_pressed;
 
 	std::unique_ptr<RD_Quad> m_surface;
 

@@ -22,7 +22,7 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 
 	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
 
-	m_image = new RD_Texture();
+	m_image = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 
 	std::string ref = game->GetFilePathByRef(texRef);
 
@@ -55,7 +55,7 @@ EXP_GUI_ImageTexture::~EXP_GUI_ImageTexture() {
 void EXP_GUI_ImageTexture::RenderElement() {
 	m_gui_shader->useShader();
 
-	m_image->BindTexture();
+	m_image->BindTexture(0);
 	m_gui_shader->SetInt("imageTexture", 0);
 
 	m_gui_shader->SetFloat("alpha", m_opacity);

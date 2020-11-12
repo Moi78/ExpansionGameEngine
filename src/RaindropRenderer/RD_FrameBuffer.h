@@ -28,22 +28,49 @@
 class RAINDROP_RENDERER_API RD_FrameBuffer
 {
 public:
-	RD_FrameBuffer(int w, int h, unsigned int nbrAttachement);
-	~RD_FrameBuffer();
+	RD_FrameBuffer() {}
+	virtual ~RD_FrameBuffer() {};
 
-	unsigned int GetFBO();
+	virtual unsigned int GetFBO() = 0;
 
-	void BindFBO();
-	void UnbindFBO();
+	virtual void BindFBO() = 0;
+	virtual void UnbindFBO() = 0;
 
-	int GetNumberOfAttachements();
-	RD_Texture* GetAttachementByIndex(int index);
+	virtual int GetNumberOfAttachements() = 0;
+	virtual RD_Texture* GetAttachementByIndex(int index) = 0;
 
-	void ChangeFramebufferSize(int nw, int nh);
+	virtual void AddAttachement(unsigned int format) = 0;
+	virtual void BuildFBO() = 0;
+
+	virtual void ChangeFramebufferSize(int nw, int nh) = 0;
 
 private:
-	void CreateFBO();
-	void CreateAttachements();
+	virtual void CreateFBO() = 0;
+};
+
+#ifdef BUILD_OPENGL
+
+class RAINDROP_RENDERER_API RD_FrameBuffer_GL : public RD_FrameBuffer
+{
+public:
+	RD_FrameBuffer_GL(int w, int h);
+	virtual ~RD_FrameBuffer_GL();
+
+	virtual unsigned int GetFBO();
+
+	virtual void BindFBO();
+	virtual void UnbindFBO();
+
+	virtual int GetNumberOfAttachements();
+	virtual RD_Texture* GetAttachementByIndex(int index);
+
+	virtual void AddAttachement(unsigned int format);
+	virtual void BuildFBO();
+
+	virtual void ChangeFramebufferSize(int nw, int nh);
+
+private:
+	virtual void CreateFBO();
 
 	std::vector<RD_Texture*> m_attachments;
 
@@ -51,5 +78,7 @@ private:
 
 	int m_w, m_h;
 };
+
+#endif //BUILD_OPENGL
 
 #endif //_RD_FRAME_BUFFER_H__

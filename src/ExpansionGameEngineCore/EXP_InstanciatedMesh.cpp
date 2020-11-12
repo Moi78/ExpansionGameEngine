@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EXP_InstanciatedMesh.h"
 
-EXP_InstanciatedMesh::EXP_InstanciatedMesh(EXP_Game* game, RD_ShaderMaterial* shader, std::string meshRef) : EXP_Component(vec3f(), vec3f(), vec3f()), RD_InstanciatedMesh(shader), m_game(game) {
+EXP_InstanciatedMesh::EXP_InstanciatedMesh(EXP_Game* game, RD_ShaderMaterial* shader, std::string meshRef) : EXP_Component(vec3f(), vec3f(), vec3f()), RD_InstanciatedMesh(game->GetRenderer(), shader), m_game(game) {
 	LoadMesh(meshRef);
 }
 

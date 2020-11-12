@@ -14,7 +14,7 @@ EXP_PostProcessingEffect::EXP_PostProcessingEffect(EXP_Game* game, std::string s
 	LoadShader(mat);
 
 	for (int i = 0; i < sread->GetTextureCount(); i++) {
-		RD_Texture* tex = new RD_Texture();
+		RD_Texture* tex = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 		tex->LoadTexture(sread->GetTexturePath(i));
 
 		mat->AddTexture(sread->GetTextureParamName(i), tex->GetTextureID());

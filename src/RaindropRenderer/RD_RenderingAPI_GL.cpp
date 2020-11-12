@@ -163,15 +163,18 @@ RD_RenderingAPI_VertexElemBufferGL* RD_RenderingAPI_GL::CreateVertexElemBuffer()
 }
 
 RD_Texture* RD_RenderingAPI_GL::CreateTexture() {
-	return nullptr;
+	return new RD_Texture_GL();
 }
 
-RD_FrameBuffer* RD_RenderingAPI_GL::CreateFrameBuffer() {
-	return nullptr;
+
+RD_FrameBuffer* RD_RenderingAPI_GL::CreateFrameBuffer(int w, int h) {
+	return new RD_FrameBuffer_GL(w, h);
 }
 
 void RD_RenderingAPI_GL::Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode) {
-
+	vbuff->BindBuffer();
+	glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_INT, 0);
+	vbuff->UnbindBuffer();
 }
 
 void RD_RenderingAPI_GL::SetFilledMode(FillingMode fmode) {
@@ -196,6 +199,8 @@ RD_RenderingAPI_VertexElemBufferGL::RD_RenderingAPI_VertexElemBufferGL() : RD_Re
 	VAO = 0;
 	VBO = 0;
 	EBO = 0;
+
+	elem_count = 0;
 }
 
 RD_RenderingAPI_VertexElemBufferGL::~RD_RenderingAPI_VertexElemBufferGL() {
@@ -231,6 +236,8 @@ void RD_RenderingAPI_VertexElemBufferGL::FillBufferData(float* data, int count, 
 	//UV Coords
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+
+	elem_count = elemCount;
 }
 
 void RD_RenderingAPI_VertexElemBufferGL::BindBuffer() {
@@ -245,4 +252,8 @@ void RD_RenderingAPI_VertexElemBufferGL::DeleteBuffer() {
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glDeleteVertexArrays(1, &VAO);
+}
+
+unsigned int RD_RenderingAPI_VertexElemBufferGL::GetElementCount() {
+	return elem_count;
 }

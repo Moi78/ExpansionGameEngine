@@ -15,6 +15,8 @@
 #include "RD_RenderingAPI.h"
 
 #include "RaindropRenderer.h"
+#include "RD_Texture.h"
+#include "RD_FrameBuffer.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -68,8 +70,10 @@ public:
 	virtual void BindBuffer();
 	virtual void UnbindBuffer();
 
+	virtual unsigned int GetElementCount();
+
 private:
-	unsigned int VAO, VBO, EBO;
+	unsigned int VAO, VBO, EBO, elem_count;
 };
 
 
@@ -83,7 +87,7 @@ public:
 
 	virtual RD_RenderingAPI_VertexElemBufferGL* CreateVertexElemBuffer();
 	virtual RD_Texture* CreateTexture();
-	virtual RD_FrameBuffer* CreateFrameBuffer();
+	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h);
 
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode);
 	virtual void SetFilledMode(FillingMode fmode);

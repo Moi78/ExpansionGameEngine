@@ -4,7 +4,7 @@
 #include "RD_DirLight.h"
 #include "RD_Mesh.h"
 #include "RD_Quad.h"
-#include "RD_FrameBuffer.h"
+//#include "RD_FrameBuffer.h"
 #include "RD_Camera.h"
 #include "RD_MaterialLibrary.h"
 #include "RD_GUI_Manager.h"
@@ -43,10 +43,10 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 	m_CurrentShader = m_light_shader.get();
 
-	m_defTex = std::make_shared<RD_Texture>();
+	m_defTex = m_api->CreateTexture();
 	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
 
-	m_blankTexture = std::make_shared<RD_Texture>();
+	m_blankTexture = m_api->CreateTexture();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
 	if (RENDER_DEBUG_ENABLED) {
@@ -54,7 +54,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		shad->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Debug.vert", m_engineDir + "/Shaders/glsl/Debug.frag");
 		RD_ShaderMaterial* dbgmat = new RD_ShaderMaterial(shad);
 
-		m_DBG_light_mdl = std::make_unique<RD_Mesh>(dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
+		m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
 		m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
 	}
 
@@ -601,7 +601,7 @@ void RaindropRenderer::UnregisterAllDirLights() {
 }
 
 RD_Texture* RaindropRenderer::GetBlankTexture() {
-	return m_blankTexture.get();
+	return m_blankTexture;
 }
 
 void RaindropRenderer::DeleteGbuff() {
@@ -669,10 +669,10 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 
 	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader);
 	for (int i = 0; i < mread.GetTextureCount(); i++) {
-		RD_Texture tex = RD_Texture();
-		tex.LoadTexture(mread.GetTexturePath(i));
+		RD_Texture* tex = m_api->CreateTexture();
+		tex->LoadTexture(mread.GetTexturePath(i));
 
-		shdmat->AddTexture(mread.GetTextureParamName(i), tex.GetTextureID());
+		shdmat->AddTexture(mread.GetTextureParamName(i), tex->GetTextureID());
 	}
 
 	m_matlib->AddMaterialToLib(shdmat, ref);

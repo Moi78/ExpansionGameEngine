@@ -48,6 +48,8 @@ public:
 
 	virtual void BindBuffer() = 0;
 	virtual void UnbindBuffer() = 0;
+
+	virtual unsigned int GetElementCount() = 0;
 };
 
 class RD_API RD_WindowingSystem {
@@ -90,12 +92,13 @@ public:
 
 	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer() = 0;
 	virtual RD_Texture* CreateTexture() = 0;
-	virtual RD_FrameBuffer* CreateFrameBuffer() = 0;
+	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h) = 0;
 
-	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode) = 0;
 	virtual void SetFilledMode(FillingMode fmode) = 0;
 
 	virtual RD_WindowingSystem* GetWindowingSystem() = 0;
 
 	virtual void Clear(int masks) = 0;
+
+	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode) = 0;
 };

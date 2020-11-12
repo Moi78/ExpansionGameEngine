@@ -16,6 +16,11 @@
 
 #endif //_WIN32
 
+#define IMGFORMAT_R 1
+#define IMGFORMAT_RG 2
+#define IMGFORMAT_RGB 3
+#define IMGFORMAT_RGBA 4
+
 #include <glad/glad.h>
 
 #include <iostream>
@@ -27,18 +32,36 @@
 class RAINDROPRENDERER_API RD_Texture
 {
 public:
-	RD_Texture();
-	~RD_Texture();
+	RD_Texture() {}
+	virtual ~RD_Texture() {};
 
-	void LoadTexture(std::string filepath, bool flipTex = true);
-	void GenerateColorTex(vec3f color);
-	void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = GL_COLOR_ATTACHMENT0, unsigned int format = GL_RGB);
-	void BindTexture(unsigned int tex_unit = GL_TEXTURE0);
+	virtual void LoadTexture(std::string filepath, bool flipTex = true) = 0;
+	virtual void GenerateColorTex(vec3f color) = 0;
+	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement, unsigned int format) = 0;
+	virtual void BindTexture(unsigned int tex_unit) = 0;
 
-	unsigned int GetTextureID();
+	virtual unsigned int GetTextureID() = 0;
+};
+
+#ifdef BUILD_OPENGL
+
+class RAINDROPRENDERER_API RD_Texture_GL : public RD_Texture
+{
+public:
+	RD_Texture_GL();
+	virtual ~RD_Texture_GL();
+
+	virtual void LoadTexture(std::string filepath, bool flipTex = true);
+	virtual void GenerateColorTex(vec3f color);
+	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB);
+	virtual void BindTexture(unsigned int tex_unit = 0);
+
+	virtual unsigned int GetTextureID();
 
 private:
 	unsigned int m_texture;
 };
+
+#endif //BUILD_OPENGL
 
 #endif //_RD_TEXTURE_H__
