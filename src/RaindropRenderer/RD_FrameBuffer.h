@@ -17,13 +17,24 @@
 
 #endif //_WIN32
 
+#define DEPTH_ATTACHEMENT 0
+#define DEPTH24_STENCIL8_ATTACHEMENT 1
+
+#define DEPTH_COMPONENT 0
+#define DEPTH_STENCIL_COMPONENT 1
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <memory>
+#include <assert.h>
 
-#include "RaindropRenderer.h"
 #include "RD_Texture.h"
+
+struct Attachement {
+	RD_Texture* tex;
+	unsigned int format;
+};
 
 class RAINDROP_RENDERER_API RD_FrameBuffer
 {
@@ -41,6 +52,8 @@ public:
 
 	virtual void AddAttachement(unsigned int format) = 0;
 	virtual void BuildFBO() = 0;
+
+	virtual void ConfigureRenderbuffer(int storage, int attachement) = 0;
 
 	virtual void ChangeFramebufferSize(int nw, int nh) = 0;
 
@@ -67,16 +80,19 @@ public:
 	virtual void AddAttachement(unsigned int format);
 	virtual void BuildFBO();
 
+	virtual void ConfigureRenderbuffer(int storage, int attachement);
+
 	virtual void ChangeFramebufferSize(int nw, int nh);
 
 private:
 	virtual void CreateFBO();
 
-	std::vector<RD_Texture*> m_attachments;
+	std::vector<Attachement> m_attachments;
 
-	unsigned int m_FBO, m_nbrAttachement;
+	unsigned int m_FBO, m_RBO, m_nbrAttachement;
 
 	int m_w, m_h;
+	int m_storage, m_rbo_attachement;
 };
 
 #endif //BUILD_OPENGL

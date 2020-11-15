@@ -75,7 +75,7 @@ void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
 	m_mat->BindMaterial();
 
 	m_buffer->BindBuffer();
-	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
+	m_rndr->GetRenderingAPI()->Draw(m_buffer);
 	m_buffer->UnbindBuffer();
 
 	if (!filled) {
@@ -90,7 +90,7 @@ void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
 	shadowShader->SetMatrix("model", m_mdl);
 
 	m_buffer->BindBuffer();
-	glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
+	m_rndr->GetRenderingAPI()->Draw(m_buffer);
 	m_buffer->UnbindBuffer();
 }
 

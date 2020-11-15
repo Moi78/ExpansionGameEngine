@@ -100,5 +100,5 @@ public:
 
 	virtual void Clear(int masks) = 0;
 
-	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode) = 0;
+	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) = 0;
 };

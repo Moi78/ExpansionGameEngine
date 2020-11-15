@@ -4,12 +4,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#ifdef BUILD_OPENGL
+
 RD_Texture_GL::RD_Texture_GL() {
 	m_texture = 0;
 }
 
 RD_Texture_GL::~RD_Texture_GL() {
-
+	DeleteTexture();
 }
 
 void RD_Texture_GL::LoadTexture(std::string tex, bool flipTex) {
@@ -88,6 +90,8 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 
 	int formatGL;
+	int typeGL = GL_UNSIGNED_BYTE;
+
 	switch(format){
 	case IMGFORMAT_R:
 		formatGL = GL_R;
@@ -105,12 +109,32 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 		formatGL = GL_RGBA;
 		break;
 
+	case IMGFORMAT_R16F:
+		formatGL = GL_R16F;
+		typeGL = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RG16F:
+		formatGL = GL_RG16F;
+		typeGL = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RGB16F:
+		formatGL = GL_RGB16F;
+		typeGL = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RGBA16F:
+		formatGL = GL_RGBA16F;
+		typeGL = GL_FLOAT;
+		break;
+
 	default:
 		formatGL = GL_RGB;
 		break;
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, formatGL, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, formatGL, w, h, 0, GL_RGB, typeGL, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -124,3 +148,9 @@ void RD_Texture_GL::BindTexture(unsigned int tex_unit) {
 	glActiveTexture(GL_TEXTURE0 + tex_unit);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 }
+
+void RD_Texture_GL::DeleteTexture() {
+	glDeleteTextures(1, &m_texture);
+}
+
+#endif //BUILD_OPENGL

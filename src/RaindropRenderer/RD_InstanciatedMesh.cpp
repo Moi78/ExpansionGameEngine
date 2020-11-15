@@ -11,7 +11,6 @@ RD_InstanciatedMesh::~RD_InstanciatedMesh() {
 
 int RD_InstanciatedMesh::AppendInstance(RD_MeshInstance inst) {
 	mat4f mdl(1.0f);
-	//mdl.DBG_print_matrix();
 
 	mat4f translate(1.0f);
 	mat4f scale(1.0f);
@@ -58,7 +57,7 @@ void RD_InstanciatedMesh::render(RD_Camera* cam, RenderMode rndrMode) {
 	for (auto &mdl : m_mdls) {
 		m_mat->GetShader()->SetMatrix("model", mdl.first);
 
-		glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
+		m_rndr->GetRenderingAPI()->Draw(m_buffer);
 	}
 
 	m_buffer->UnbindBuffer();

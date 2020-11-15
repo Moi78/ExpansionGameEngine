@@ -257,9 +257,6 @@ void EXP_Game::PlaySimpleSound(std::string ref, float gain) {
 void EXP_Game::PlaySound3D(std::string ref, vec3f pos, float gain) {
 	std::string fullref = m_gameinfo.RootGameContentFolder + ref;
 
-	vec3f* cpos = &m_currentCamera->GetPosition();
-	vec3f* cdir = &m_currentCamera->GetSubject();
-
 	std::thread t([](PSound* engine, std::string file, vec3f pos, float gain) {
 		engine->playSound3D(file, pos, gain);
 	}, m_soundEngine.get(), fullref, pos, gain);

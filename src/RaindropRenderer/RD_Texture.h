@@ -21,6 +21,11 @@
 #define IMGFORMAT_RGB 3
 #define IMGFORMAT_RGBA 4
 
+#define IMGFORMAT_R16F 5
+#define IMGFORMAT_RG16F 6
+#define IMGFORMAT_RGB16F 7
+#define IMGFORMAT_RGBA16F 8
+
 #include <glad/glad.h>
 
 #include <iostream>
@@ -41,6 +46,8 @@ public:
 	virtual void BindTexture(unsigned int tex_unit) = 0;
 
 	virtual unsigned int GetTextureID() = 0;
+
+	virtual void DeleteTexture() = 0;
 };
 
 #ifdef BUILD_OPENGL
@@ -55,6 +62,8 @@ public:
 	virtual void GenerateColorTex(vec3f color);
 	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB);
 	virtual void BindTexture(unsigned int tex_unit = 0);
+
+	virtual void DeleteTexture();
 
 	virtual unsigned int GetTextureID();
 

@@ -118,4 +118,5 @@ void main() {
 	render.a = 1.0;
 
 	LightPass = render;
+	//LightPass = texture(gPos, UVcoords);
 }

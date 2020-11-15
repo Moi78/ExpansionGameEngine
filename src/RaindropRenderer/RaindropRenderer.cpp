@@ -66,9 +66,6 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_gui_manager = std::make_unique<RD_GUI_Manager>(this);
 	m_gui_manager->InitManager();
 
-	//m_ft_rndr = std::make_unique<RD_FontRenderer>();
-	//m_ft_rndr->InitFontRenderer();
-
 	m_quad = std::make_unique<RD_Quad>();
 	m_quad->Bufferize();
 
@@ -79,6 +76,8 @@ RaindropRenderer::~RaindropRenderer() {
 	m_pt_lights.clear();
 	m_DirLights.clear();
 	m_meshes.clear();
+
+	delete m_gbuffer;
 }
 
 RD_RenderingAPI* RaindropRenderer::GetRenderingAPI() {
@@ -202,7 +201,7 @@ void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 		else
 			rEnableLighting = false;
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_g_buffer.gBuff);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gbuffer->GetFBO());
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		glBlitFramebuffer(0, 0, getWindowWidth(), getWindowHeigh(), 0, 0, getWindowWidth(), getWindowHeigh(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -382,76 +381,34 @@ bool RaindropRenderer::CreateGbuff() {
 	int width = getWindowWidth();
     int height = getWindowHeigh();
 
-	glGenFramebuffers(1, &m_g_buffer.gBuff);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
+	m_gbuffer = m_api->CreateFrameBuffer(width, height);
 
 	//Position buff
-	glGenTextures(1, &m_g_buffer.gPos);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gPos);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_g_buffer.gPos, 0);
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
+	m_g_buffer.gPos = 0;
 
 	//Normal buff
-	glGenTextures(1, &m_g_buffer.gNorm);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gNorm);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_g_buffer.gNorm, 0);
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
+	m_g_buffer.gNorm = 1;
 
 	//Albedo buff
-	glGenTextures(1, &m_g_buffer.gAlbedo);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gAlbedo);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_g_buffer.gAlbedo, 0);
+	m_gbuffer->AddAttachement(IMGFORMAT_RGBA);
+	m_g_buffer.gAlbedo = 2;
 
 	//Specular buff
-	glGenTextures(1, &m_g_buffer.gSpec);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gSpec);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_g_buffer.gSpec, 0);
+	m_gbuffer->AddAttachement(IMGFORMAT_R16F);
+	m_g_buffer.gSpec = 3;
 
 	//Shadow buff
-	glGenTextures(1, &m_g_buffer.gShadows);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_g_buffer.gShadows, 0);
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB);
+	m_g_buffer.gShadows = 4;
 
 	//Light buff
-	glGenTextures(1, &m_g_buffer.gLight);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gLight);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, m_g_buffer.gLight, 0);
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB);
+	m_g_buffer.gLight = 5;
 
-	m_g_buffer.gAttachement[0] = GL_COLOR_ATTACHMENT0;
-	m_g_buffer.gAttachement[1] = GL_COLOR_ATTACHMENT1;
-	m_g_buffer.gAttachement[2] = GL_COLOR_ATTACHMENT2;
-	m_g_buffer.gAttachement[3] = GL_COLOR_ATTACHMENT3;
-	m_g_buffer.gAttachement[4] = GL_COLOR_ATTACHMENT4;
-	m_g_buffer.gAttachement[5] = GL_COLOR_ATTACHMENT5;
-	glDrawBuffers(6, m_g_buffer.gAttachement);
+	m_gbuffer->BuildFBO();
 
-	glGenRenderbuffers(1, &m_g_buffer.gRBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_g_buffer.gRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_g_buffer.gRBO);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		dispErrorMessageBox(StrToWStr("ERROR: Framebuffer incomplete. :/"));
-		return false;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return true;
 }
 
@@ -460,7 +417,7 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 		return;
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_g_buffer.gBuff);
+	m_gbuffer->BindFBO();
 	m_api->Clear(COLOR_BUFFER | DEPTH_BUFFER);
 
 	glCullFace(GL_BACK);
@@ -471,7 +428,7 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	RenderPostProcess();
 
 	glCullFace(GL_FRONT);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_gbuffer->UnbindFBO();
 }
 
 void RaindropRenderer::RenderPostProcess() {
@@ -488,24 +445,29 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 	SwitchShader(m_light_shader.get());
 	SendFeaturesToShader(m_light_shader.get());
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gAlbedo);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gAlbedo);
+	m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0);
 	m_light_shader->SetInt("gAlbedo", 0);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gNorm);
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gNorm);
+	m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
 	m_light_shader->SetInt("gNormal", 1);
 
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gPos);
+	//glActiveTexture(GL_TEXTURE2);
+	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gPos);
+	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(2);
 	m_light_shader->SetInt("gPos", 2);
 
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gSpec);
+	//glActiveTexture(GL_TEXTURE3);
+	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gSpec);
+	m_gbuffer->GetAttachementByIndex(m_g_buffer.gSpec)->BindTexture(3);
 	m_light_shader->SetInt("gSpec", 3);
 
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
+	//glActiveTexture(GL_TEXTURE4);
+	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
+	m_gbuffer->GetAttachementByIndex(m_g_buffer.gShadows)->BindTexture(4);
 	m_light_shader->SetInt("ShadowPass", 4);
 
 	m_light_shader->SetVec3("CamPos", CamPos);
@@ -522,8 +484,9 @@ void RaindropRenderer::RenderBeauty() {
 
 	SwitchShader(m_beauty_shader.get());
 
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_g_buffer.gLight);
+	//glActiveTexture(GL_TEXTURE5);
+	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gLight);
+	m_gbuffer->GetAttachementByIndex(m_g_buffer.gLight)->BindTexture(5);
 	m_beauty_shader->SetInt("lightpass", 5);
 
 	glActiveTexture(GL_TEXTURE6);
@@ -606,24 +569,14 @@ RD_Texture* RaindropRenderer::GetBlankTexture() {
 
 void RaindropRenderer::DeleteGbuff() {
 	//Deleting Gbuff FBO texture & Render buffer
-	glDeleteTextures(1, &m_g_buffer.gAlbedo);
-	glDeleteTextures(1, &m_g_buffer.gNorm);
-	glDeleteTextures(1, &m_g_buffer.gPos);
-	glDeleteTextures(1, &m_g_buffer.gShadows);
-	glDeleteTextures(1, &m_g_buffer.gSpec);
-
-	glDeleteRenderbuffers(1, &m_g_buffer.gRBO);
-
-	//Deleting Gbuff FBO itself
-	glDeleteFramebuffers(1, &m_g_buffer.gBuff);
+	
 }
 
 void RaindropRenderer::RecreateGbuff() {
-	DeleteGbuff();
+	int w = m_api->GetWindowingSystem()->GetWidth();
+	int h = m_api->GetWindowingSystem()->GetHeight();
 
-	if (!CreateGbuff()) {
-		dispErrorMessageBox(StrToWStr("Cannot recreate G-Buffer"));
-	}
+	m_gbuffer->ChangeFramebufferSize(w, h);
 }
 
 void RaindropRenderer::SetFullscreenMode(bool mode) {

@@ -63,10 +63,12 @@ void RD_WindowingSystemGLFW::SetFullscreenMode(bool mode) {
 }
 
 int RD_WindowingSystemGLFW::GetHeight() {
+	glfwGetWindowSize(m_win, NULL, &m_h);
 	return m_h;
 }
 
 int RD_WindowingSystemGLFW::GetWidth() {
+	glfwGetWindowSize(m_win, &m_w, NULL);
 	return m_w;
 }
 
@@ -155,6 +157,8 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 
+	//glDepthFunc(GL_ALWAYS);
+
 	return true;
 }
 
@@ -171,10 +175,10 @@ RD_FrameBuffer* RD_RenderingAPI_GL::CreateFrameBuffer(int w, int h) {
 	return new RD_FrameBuffer_GL(w, h);
 }
 
-void RD_RenderingAPI_GL::Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode) {
-	vbuff->BindBuffer();
-	glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_INT, 0);
-	vbuff->UnbindBuffer();
+void RD_RenderingAPI_GL::Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) {
+	//vbuff->BindBuffer();
+	glDrawElements(GL_TRIANGLES, vbuff->GetElementCount(), GL_UNSIGNED_INT, 0);
+	//vbuff->UnbindBuffer();
 }
 
 void RD_RenderingAPI_GL::SetFilledMode(FillingMode fmode) {

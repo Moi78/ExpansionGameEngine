@@ -24,6 +24,8 @@
 #include "RD_SizedQuad.h"
 #include "RD_GUI_Element.h"
 #include "RD_MaterialLibrary.h"
+#include "RD_FrameBuffer.h"
+#include "RD_RenderingAPI.h"
 
 #include <string>
 #include <vector>
@@ -52,13 +54,15 @@ private:
 	void DeleteFrambuffer();
 
 	RaindropRenderer* m_rndr;
+	RD_FrameBuffer* m_framebuffer;
+
 	std::unique_ptr<RD_MaterialLibrary> m_matLib;
 
 	std::vector<RD_GUI_Element*> m_gui_elements;
 
-	unsigned int m_framebuffer;
-	unsigned int m_gui_tex;
-	unsigned int m_renderbuffer;
+	//unsigned int m_framebuffer;
+	//unsigned int m_gui_tex;
+	//unsigned int m_renderbuffer;
 };
 
 class ScreenCleaner : public RD_GUI_Element {

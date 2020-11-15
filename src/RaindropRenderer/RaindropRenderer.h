@@ -27,6 +27,7 @@
 #include "RD_PointLight.h"
 #include "RD_Materials.h"
 #include "RD_Texture.h"
+#include "RD_FrameBuffer.h"
 
 #include <BD_StructMan.h>
 #include <BD_MatRW.h>
@@ -190,6 +191,7 @@ private:
 
 	//Deffered Rendering
 	Gbuff m_g_buffer;
+	RD_FrameBuffer* m_gbuffer;
 
 	std::unique_ptr<RD_Quad> m_quad;
 

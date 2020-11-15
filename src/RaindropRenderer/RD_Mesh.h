@@ -66,8 +66,6 @@ public:
 private:
 	void Bufferize();
 
-	RaindropRenderer* m_rndr;
-
 	std::vector<vec3f> m_vertices;
 	std::vector<unsigned int> m_indices;
 	std::vector<vec3f> m_normals;
@@ -81,7 +79,8 @@ private:
 	bool m_shadowCaster;
 
 protected:
-	//glm::mat4 m_parent;
+	RaindropRenderer* m_rndr;
+
 	mat4f m_parent;
 	RD_ShaderMaterial* m_mat;
 

@@ -89,7 +89,7 @@ public:
 	virtual RD_Texture* CreateTexture();
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h);
 
-	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff, DrawMode rndrMode);
+	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff);
 	virtual void SetFilledMode(FillingMode fmode);
 
 	virtual void Clear(int mask);
