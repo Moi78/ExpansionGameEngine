@@ -40,7 +40,7 @@ public:
 	void InitManager();
 
 	void RenderScreen();
-	unsigned int GetScreenTexture();
+	RD_Texture* GetScreenTexture();
 
 	void RebuildFramebuffer();
 

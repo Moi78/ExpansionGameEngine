@@ -409,6 +409,12 @@ bool RaindropRenderer::CreateGbuff() {
 
 	m_gbuffer->BuildFBO();
 
+	m_light_pprocess = m_api->CreateFrameBuffer(width, height);
+	//Light & PostProcess screen
+	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
+
+	m_light_pprocess->BuildFBO();
+
 	return true;
 }
 
@@ -424,49 +430,42 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 
 	RenderMeshes(cam);
 
+	glCullFace(GL_FRONT);
+	m_gbuffer->UnbindFBO();
+
+	m_light_pprocess->BindFBO();
+	m_api->Clear(DEPTH_BUFFER | COLOR_BUFFER);
+
 	RenderLightPass(cam->GetLocation());
 	RenderPostProcess();
 
-	glCullFace(GL_FRONT);
-	m_gbuffer->UnbindFBO();
+	m_light_pprocess->UnbindFBO();
 }
 
 void RaindropRenderer::RenderPostProcess() {
 	for (auto pp : m_pp_effects) {
 		m_api->Clear(DEPTH_BUFFER);
 
-		pp->RenderEffect(m_g_buffer.gLight);
+		pp->RenderEffect(m_light_pprocess->GetAttachementByIndex(0)->GetTextureID());
 	}
 }
 
 void RaindropRenderer::RenderLightPass(vec3f CamPos) {
-	m_api->Clear(DEPTH_BUFFER);
-
 	SwitchShader(m_light_shader.get());
 	SendFeaturesToShader(m_light_shader.get());
 
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gAlbedo);
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0);
 	m_light_shader->SetInt("gAlbedo", 0);
 
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gNorm);
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
 	m_light_shader->SetInt("gNormal", 1);
 
-	//glActiveTexture(GL_TEXTURE2);
-	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gPos);
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(2);
 	m_light_shader->SetInt("gPos", 2);
 
-	//glActiveTexture(GL_TEXTURE3);
-	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gSpec);
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gSpec)->BindTexture(3);
 	m_light_shader->SetInt("gSpec", 3);
 
-	//glActiveTexture(GL_TEXTURE4);
-	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gShadows);
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gShadows)->BindTexture(4);
 	m_light_shader->SetInt("ShadowPass", 4);
 
@@ -484,13 +483,10 @@ void RaindropRenderer::RenderBeauty() {
 
 	SwitchShader(m_beauty_shader.get());
 
-	//glActiveTexture(GL_TEXTURE5);
-	//glBindTexture(GL_TEXTURE_2D, m_g_buffer.gLight);
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gLight)->BindTexture(5);
+	m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5);
 	m_beauty_shader->SetInt("lightpass", 5);
 
-	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, m_gui_manager->GetScreenTexture());
+	m_gui_manager->GetScreenTexture()->BindTexture(6);
 	m_beauty_shader->SetInt("GUIscreen", 6);
 
 	m_quad->RenderQuad();
@@ -577,6 +573,7 @@ void RaindropRenderer::RecreateGbuff() {
 	int h = m_api->GetWindowingSystem()->GetHeight();
 
 	m_gbuffer->ChangeFramebufferSize(w, h);
+	m_light_pprocess->ChangeFramebufferSize(w, h);
 }
 
 void RaindropRenderer::SetFullscreenMode(bool mode) {

@@ -192,6 +192,7 @@ private:
 	//Deffered Rendering
 	Gbuff m_g_buffer;
 	RD_FrameBuffer* m_gbuffer;
+	RD_FrameBuffer* m_light_pprocess;
 
 	std::unique_ptr<RD_Quad> m_quad;
 

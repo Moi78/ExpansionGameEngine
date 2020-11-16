@@ -60,8 +60,8 @@ void RD_GUI_Manager::RenderScreen() {
 	m_framebuffer->UnbindFBO();
 }
 
-unsigned int RD_GUI_Manager::GetScreenTexture() {
-	return m_framebuffer->GetAttachementByIndex(0)->GetTextureID();
+RD_Texture* RD_GUI_Manager::GetScreenTexture() {
+	return m_framebuffer->GetAttachementByIndex(0);
 }
 
 void RD_GUI_Manager::RegisterElement(RD_GUI_Element* elem) {
