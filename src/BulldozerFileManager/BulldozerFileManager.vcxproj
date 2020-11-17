@@ -164,7 +164,6 @@
     <ClInclude Include="BD_LightDB_RW.h" />
     <ClInclude Include="BD_MatRW.h" />
     <ClInclude Include="BD_Reader.h" />
-    <ClInclude Include="BD_StructMan.h" />
     <ClInclude Include="BD_Writer.h" />
     <ClInclude Include="BulldozerFileManager.h" />
     <ClInclude Include="framework.h" />

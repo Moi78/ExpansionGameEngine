@@ -6,8 +6,6 @@
 #include <vector>
 #include <string>
 
-#include <BD_StructMan.h>
-
 #include "RaindropRenderer.h"
 
 class RAINDROPRENDERER_API RD_MaterialLibrary

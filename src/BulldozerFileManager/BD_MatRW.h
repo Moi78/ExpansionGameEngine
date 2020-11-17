@@ -20,11 +20,12 @@
 #endif //_WIN32
 
 #include "BulldozerFileManager.h"
-#include "BD_StructMan.h"
 
 #include <iostream>
 #include <string>
 #include <fstream>
+
+#include <vec3.h>
 
 //Write
 

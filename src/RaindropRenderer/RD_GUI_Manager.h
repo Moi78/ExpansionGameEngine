@@ -16,8 +16,6 @@
 
 #endif //_WIN32
 
-#include <BD_StructMan.h>
-
 #include "RaindropRenderer.h"
 #include "RD_ShaderLoader.h"
 #include "RD_Quad.h"
@@ -59,10 +57,6 @@ private:
 	std::unique_ptr<RD_MaterialLibrary> m_matLib;
 
 	std::vector<RD_GUI_Element*> m_gui_elements;
-
-	//unsigned int m_framebuffer;
-	//unsigned int m_gui_tex;
-	//unsigned int m_renderbuffer;
 };
 
 class ScreenCleaner : public RD_GUI_Element {

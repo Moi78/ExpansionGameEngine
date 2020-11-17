@@ -34,7 +34,7 @@ public:
 
 	int AppendInstance(RD_MeshInstance inst);
 
-	virtual void render(RD_Camera* cam, RenderMode rndrMode = RenderMode::Filled) override;
+	virtual void render(RD_Camera* cam) override;
 	virtual void renderShadows(RD_ShaderLoader* shadowShader) override;
 
 	virtual void addRotation(vec3f rotation, bool update = true) override;

@@ -30,7 +30,6 @@
 
 #include <BD_Reader.h>
 #include <BulldozerFileManager.h>
-#include <BD_StructMan.h>
 
 #include <vec3.h>
 
@@ -42,7 +41,7 @@ public:
 
 	void loadMesh(std::string);
 
-	virtual void render(RD_Camera* cam, RenderMode rndrMode = RenderMode::Filled);
+	virtual void render(RD_Camera* cam);
 	virtual void renderShadows(RD_ShaderLoader* shadowShader);
 
 	virtual void addRotation(vec3f rotation, bool update = true);

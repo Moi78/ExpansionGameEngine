@@ -28,8 +28,8 @@
 #include "RD_Materials.h"
 #include "RD_Texture.h"
 #include "RD_FrameBuffer.h"
+#include "RD_Structs.h"
 
-#include <BD_StructMan.h>
 #include <BD_MatRW.h>
 
 #include <glad/glad.h>

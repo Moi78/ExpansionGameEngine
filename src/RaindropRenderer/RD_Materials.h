@@ -21,8 +21,6 @@
 #include "vec3.h"
 #include "RD_ShaderLoader.h"
 
-#include <BD_StructMan.h>
-
 class RAINDROPRENDERER_API RD_ShaderMaterial {
 public:
 	RD_ShaderMaterial(RD_ShaderLoader*);

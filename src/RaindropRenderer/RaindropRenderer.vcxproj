@@ -183,6 +183,7 @@
     <ClInclude Include="RD_RenderingAPI_GL.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
     <ClInclude Include="RD_SizedQuad.h" />
+    <ClInclude Include="RD_Structs.h" />
     <ClInclude Include="RD_Texture.h" />
   </ItemGroup>
   <ItemGroup>

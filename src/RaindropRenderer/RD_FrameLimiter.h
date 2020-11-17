@@ -19,6 +19,7 @@
 #include <ctime>
 #include <chrono>
 #include <ratio>
+#include <iostream>
 
 #include <thread>
 
@@ -44,10 +45,10 @@ public:
 private:
 	int m_frameLimit;
 
-	high_resolution_clock::time_point m_start;
-	high_resolution_clock::time_point m_stop;
+	std::chrono::milliseconds m_start;
+	std::chrono::milliseconds m_stop;
 
-	double m_last_delta;
+	long long m_last_delta;
 };
 
 #endif

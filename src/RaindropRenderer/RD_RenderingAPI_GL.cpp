@@ -35,6 +35,8 @@ bool RD_WindowingSystemGLFW::OpenWindow(std::string name, int w, int h) {
 		const char* error;
 		glfwGetError(&error);
 
+		std::cerr << "GLFW ERROR : " << error << std::endl;
+
 		dispErrorMessageBox(StrToWStr("Cannot initialize GLFW. " + std::string(error)));
 		glfwTerminate();
 		return false;
@@ -44,6 +46,8 @@ bool RD_WindowingSystemGLFW::OpenWindow(std::string name, int w, int h) {
 
 	glfwSetWindowUserPointer(m_win, m_rndr);
 	glfwSetFramebufferSizeCallback(m_win, glfwWinCallback);
+
+	return true;
 }
 
 void RD_WindowingSystemGLFW::SetFullscreenMode(bool mode) {
@@ -157,8 +161,6 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 
-	//glDepthFunc(GL_ALWAYS);
-
 	return true;
 }
 
@@ -182,7 +184,12 @@ void RD_RenderingAPI_GL::Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) {
 }
 
 void RD_RenderingAPI_GL::SetFilledMode(FillingMode fmode) {
-
+	if (fmode == FillingMode::FILLED) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
 }
 
 RD_WindowingSystem* RD_RenderingAPI_GL::GetWindowingSystem() {

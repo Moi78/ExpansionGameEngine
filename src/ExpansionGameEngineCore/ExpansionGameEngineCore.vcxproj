@@ -183,6 +183,7 @@
     <ClInclude Include="EXP_SoundEmitter.h" />
     <ClInclude Include="EXP_StaticMesh.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="EXP_Structs.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

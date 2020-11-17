@@ -206,12 +206,16 @@ void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 		glBlitFramebuffer(0, 0, getWindowWidth(), getWindowHeigh(), 0, 0, getWindowWidth(), getWindowHeigh(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		m_api->SetFilledMode(FillingMode::WIREFRAME);
+
 		for (int i = 0; i < m_pt_lights.size(); i++) {
 			m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
 
 			m_DBG_light_mdl->SetPosition(m_pt_lights[i]->GetPosition());
-			m_DBG_light_mdl->render(cam, RenderMode::Wireframe);
+			m_DBG_light_mdl->render(cam);
 		}
+
+		m_api->SetFilledMode(FillingMode::FILLED);
 
 		if(rEnableLighting)
 			EnableFeature(RendererFeature::Lighting);

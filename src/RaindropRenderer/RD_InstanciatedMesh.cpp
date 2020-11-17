@@ -37,17 +37,7 @@ int RD_InstanciatedMesh::AppendInstance(RD_MeshInstance inst) {
 	return (int)m_mdls.size() - 1;
 }
 
-void RD_InstanciatedMesh::render(RD_Camera* cam, RenderMode rndrMode) {
-	bool filled;
-	if (rndrMode == RenderMode::Filled) {
-		filled = true;
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	else {
-		filled = false;
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-
+void RD_InstanciatedMesh::render(RD_Camera* cam) {
 	cam->UseCamera(m_mat->GetShader());
 
 	m_mat->BindMaterial();
@@ -61,10 +51,6 @@ void RD_InstanciatedMesh::render(RD_Camera* cam, RenderMode rndrMode) {
 	}
 
 	m_buffer->UnbindBuffer();
-
-	if (!filled) {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
 }
 
 void RD_InstanciatedMesh::renderShadows(RD_ShaderLoader* shadowShader) {

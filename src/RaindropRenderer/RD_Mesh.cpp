@@ -58,16 +58,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	delete reader;
 }
 
-void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
-	bool filled;
-	if (rndrMode == RenderMode::Filled) {
-		filled = true;
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	else {
-		filled = false;
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
+void RD_Mesh::render(RD_Camera* cam) {
 
 	cam->UseCamera(m_mat->GetShader());
 	m_mat->GetShader()->SetMatrix("model", m_mdl);
@@ -77,10 +68,6 @@ void RD_Mesh::render(RD_Camera* cam, RenderMode rndrMode) {
 	m_buffer->BindBuffer();
 	m_rndr->GetRenderingAPI()->Draw(m_buffer);
 	m_buffer->UnbindBuffer();
-
-	if (!filled) {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
 }
 
 void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {

@@ -45,13 +45,14 @@
 #include <RD_MaterialLibrary.h>
 #include <RD_RenderingAPI_GL.h>
 
-#include <BD_StructMan.h>
 #include <BD_MatRW.h>
 
 #include <PhysicaSound.h>
 #include <PS_Listener.h>
 
 #include <vec3.h>
+
+#include "EXP_Structs.h"
 
 //Forward Declaration
 class EXP_Actor;
@@ -69,12 +70,12 @@ class EXP_MouseButtonCallback;
 class EXPGE_API EXP_Game
 {
 public:
-	EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor);
+	EXP_Game(EXP_GameInfo gameinfo, vec3f refreshColor);
 	EXP_Game(std::string gameInfoJSON);
 
 	~EXP_Game();
 	
-	BD_GameInfo GetGameInfo();
+	EXP_GameInfo GetGameInfo();
     
 	//For internal usage only
 	void RegisterMesh(RD_Mesh*);
@@ -128,11 +129,11 @@ public:
 	bool CheckErrors();
 
 private:
-	void InitGame(vec3f refreshColor, BD_GameInfo gameinfo);
+	void InitGame(vec3f refreshColor, EXP_GameInfo gameinfo);
 	void InitPhysicaSound();
 	void InitGui();
 	void InitPhysics();
-	BD_GameInfo CreateGameInfoFromJSON(std::string gameInfo);
+	EXP_GameInfo CreateGameInfoFromJSON(std::string gameInfo);
 
 	std::unique_ptr<EXP_MapLoader> m_PlayingMap;
 
@@ -145,8 +146,8 @@ private:
 	std::unique_ptr<PSound> m_soundEngine;
 	std::shared_ptr<PS_Listener> m_listener;
 
-	BD_Resolution m_res;
-	BD_GameInfo m_gameinfo;
+	EXP_Resolution m_res;
+	EXP_GameInfo m_gameinfo;
 
 	EXP_Camera* m_currentCamera;
 

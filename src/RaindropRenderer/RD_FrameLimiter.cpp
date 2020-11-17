@@ -18,11 +18,11 @@ int RD_FrameLimiter::GetFrameLimit() {
 }
 
 void RD_FrameLimiter::start() {
-	m_start = high_resolution_clock::now();
+	m_start = std::chrono::duration_cast<std::chrono::milliseconds>(high_resolution_clock::now().time_since_epoch());
 }
 
 void RD_FrameLimiter::stop() {
-	m_stop = high_resolution_clock::now();
+	m_stop = std::chrono::duration_cast<std::chrono::milliseconds>(high_resolution_clock::now().time_since_epoch());
 
 	m_last_delta = std::chrono::duration_cast<std::chrono::milliseconds>(m_stop - m_start).count();
 }
@@ -36,7 +36,9 @@ double RD_FrameLimiter::GetElapsedTime() {
 void RD_FrameLimiter::WaitAll() {
 	float frameTime = (1.0f / GetFrameLimit()) * 1000;
 	if (m_last_delta < frameTime) {
-		double delta = frameTime - GetElapsedTime();
+		long long delta = frameTime - GetElapsedTime();
+
+		std::cout << delta << " " << frameTime << std::endl;
 
 		std::this_thread::sleep_for(std::chrono::milliseconds((long long)delta));
 	}

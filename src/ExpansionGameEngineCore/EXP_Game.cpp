@@ -11,7 +11,7 @@
 #include "EXP_Level.h"
 #include "EXP_InputHandler.h"
 
-EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
+EXP_Game::EXP_Game(EXP_GameInfo gameinfo, vec3f refreshColor) {
 	m_currentCamera = nullptr;
 	m_error_flag = false;
 
@@ -33,7 +33,7 @@ EXP_Game::EXP_Game(BD_GameInfo gameinfo, vec3f refreshColor) {
 }
 
 EXP_Game::EXP_Game(std::string gameinfo) {
-	BD_GameInfo gi = CreateGameInfoFromJSON(gameinfo);
+	EXP_GameInfo gi = CreateGameInfoFromJSON(gameinfo);
 	m_error_flag = false;
 	m_currentCamera = nullptr;
 
@@ -58,7 +58,7 @@ EXP_Game::~EXP_Game() {
 	m_soundEngine->shutdownAL();
 }
 
-BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
+EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 	Json::Value root;
 	JSONCPP_STRING errs;
 
@@ -81,11 +81,11 @@ BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 	std::string contentFolder = TargetRoot["RootGameContentFolder"].asString();
 	std::string gameName = TargetRoot["GameName"].asString();
 
-	BD_Resolution res = { TargetRoot["GameBaseResolution"][0].asInt(), TargetRoot["GameBaseResolution"][1].asInt()};
+	EXP_Resolution res = { TargetRoot["GameBaseResolution"][0].asInt(), TargetRoot["GameBaseResolution"][1].asInt()};
 
 	std::string startupMap = TargetRoot["StartupMap"].asString();
 
-	BD_GameInfo gi = {};
+	EXP_GameInfo gi = {};
 	gi.GameName = gameName;
 	gi.RootEngineContentFolder = engineFolder;
 	gi.RootGameContentFolder = contentFolder;
@@ -96,7 +96,7 @@ BD_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 	return gi;
 }
 
-void EXP_Game::InitGame(vec3f refreshColor, BD_GameInfo gameinfo) {
+void EXP_Game::InitGame(vec3f refreshColor, EXP_GameInfo gameinfo) {
 	m_res = gameinfo.GameBaseResolution;
 	m_refreshColor = refreshColor;
 	m_gameName = gameinfo.GameName;
@@ -220,7 +220,7 @@ void EXP_Game::UpdateLevel() {
 	}
 }
 
-BD_GameInfo EXP_Game::GetGameInfo() {
+EXP_GameInfo EXP_Game::GetGameInfo() {
 	return m_gameinfo;
 }
 

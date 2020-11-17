@@ -27,9 +27,6 @@
     <ClInclude Include="BD_Reader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="BD_StructMan.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="BD_Writer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
