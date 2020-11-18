@@ -5,6 +5,8 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 	m_opacity = opacity;
 	m_game = game;
 
+	m_gui_shader = m_game->GetRenderer()->GetRenderingAPI()->CreateShader();
+
 	m_pos = vec3f(posx, posy, 0);
 	m_size = vec3f(sizex, sizey, 0);
 

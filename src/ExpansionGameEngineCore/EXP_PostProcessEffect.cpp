@@ -6,7 +6,7 @@ EXP_PostProcessingEffect::EXP_PostProcessingEffect(EXP_Game* game, std::string s
 
 	m_game = game;
 
-	m_shader = new RD_ShaderLoader();
+	m_shader = game->GetRenderer()->GetRenderingAPI()->CreateShader();
 	std::string vertContent = getFileData(game->GetGameInfo().RootEngineContentFolder + "/Shaders/glsl/PostProcessing.vert");
 	m_shader->CompileShaderFromCode(vertContent, sread->GetShaderCode());
 

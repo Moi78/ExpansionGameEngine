@@ -17,8 +17,6 @@
 #define RD_GUI_ELEMENT_H__
 
 #include "RaindropRenderer.h"
-#include "RD_ShaderLoader.h"
-#include "RD_SizedQuad.h"
 
 #include <memory>
 #include <string>
@@ -31,8 +29,6 @@ public:
 
 	virtual void RenderElement() = 0;
 	virtual void RebuildElement();
-protected:
-	RD_ShaderLoader* m_gui_shader;
 };
 
 #endif //RD_GUI_ELEMENT_H__

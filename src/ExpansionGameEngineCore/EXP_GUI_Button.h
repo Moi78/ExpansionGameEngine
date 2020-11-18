@@ -56,6 +56,7 @@ private:
 	RD_Texture* m_pressed;
 
 	std::unique_ptr<RD_Quad> m_surface;
+	RD_ShaderLoader* m_gui_shader;
 
 	RD_Callback* m_func;
 

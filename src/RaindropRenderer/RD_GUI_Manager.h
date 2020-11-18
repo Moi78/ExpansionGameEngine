@@ -61,13 +61,14 @@ private:
 
 class ScreenCleaner : public RD_GUI_Element {
 public:
-	ScreenCleaner(std::string workingDir);
+	ScreenCleaner(RaindropRenderer* rndr, std::string workingDir);
 	~ScreenCleaner();
 
 	virtual void RenderElement() override;
 
 private:
 	std::unique_ptr<RD_Quad> m_surface;
+	RD_ShaderLoader* m_gui_shader;
 };
 
 #endif //_RD_GUI_H__

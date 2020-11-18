@@ -1,16 +1,18 @@
 #include "pch.h"
 #include "RD_ShaderLoader.h"
 
-RD_ShaderLoader::RD_ShaderLoader() {
+#ifdef BUILD_OPENGL
+
+RD_ShaderLoader_GL::RD_ShaderLoader_GL() {
 	m_program_id = 0;
 }
 
-RD_ShaderLoader::~RD_ShaderLoader() {
+RD_ShaderLoader_GL::~RD_ShaderLoader_GL() {
 	glUseProgram(0);
 	glDeleteProgram(m_program_id);
 }
 
-void RD_ShaderLoader::compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile) {
+void RD_ShaderLoader_GL::compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile) {
 	//Common variables
 	std::string vertexShaderData;
 	std::string fragmentShaderData;
@@ -79,7 +81,7 @@ void RD_ShaderLoader::compileShaderFromFile(std::string vertexShaderFile, std::s
 	glDeleteShader(fragmentShader);
 }
 
-void RD_ShaderLoader::CompileShaderFromCode(std::string vertexCode, std::string fragmentCode) {
+void RD_ShaderLoader_GL::CompileShaderFromCode(std::string vertexCode, std::string fragmentCode) {
 	//Common variables
 	const char* c_vertexShaderData;
 	const char* c_fragmentShaderData;
@@ -143,41 +145,43 @@ void RD_ShaderLoader::CompileShaderFromCode(std::string vertexCode, std::string 
 }
 
 
-void RD_ShaderLoader::useShader() {
+void RD_ShaderLoader_GL::useShader() {
 	glUseProgram(m_program_id);
 }
 
-void RD_ShaderLoader::SetBool(const std::string& name, bool value) {
+void RD_ShaderLoader_GL::SetBool(const std::string& name, bool value) {
 	unsigned int uniLoc = glGetUniformLocation(m_program_id, name.c_str());
 
 	glUniform1i(uniLoc, (int)value);
 }
 
-void RD_ShaderLoader::SetInt(const std::string& name, int value) {
+void RD_ShaderLoader_GL::SetInt(const std::string& name, int value) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
 	glUniform1i(uniloc, value);
 }
 
-void RD_ShaderLoader::SetFloat(const std::string& name, float value) {
+void RD_ShaderLoader_GL::SetFloat(const std::string& name, float value) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
 	glUniform1f(uniloc, value);
 }
 
-void RD_ShaderLoader::SetMatrix(const std::string& name, mat4f matrix) {
+void RD_ShaderLoader_GL::SetMatrix(const std::string& name, mat4f matrix) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
 	glUniformMatrix4fv(uniloc, 1, GL_TRUE, matrix.GetPTR());
 }
 
-void RD_ShaderLoader::SetVec3(const std::string& name, vec3f vec) {
+void RD_ShaderLoader_GL::SetVec3(const std::string& name, vec3f vec) {
 	unsigned int uniloc = glGetUniformLocation(m_program_id, name.c_str());
 
 	//glUniform3f(uniloc, vec.getX(), vec.getY(), vec.getZ());
 	glUniform3fv(uniloc, 1, vec.GetPTR());
 }
 
-unsigned int RD_ShaderLoader::GetProgID() {
+unsigned int RD_ShaderLoader_GL::GetProgID() {
 	return m_program_id;
 }
+
+#endif //BUILD_OPENGL

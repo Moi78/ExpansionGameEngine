@@ -198,9 +198,9 @@ private:
 
 	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
 
-	std::unique_ptr<RD_ShaderLoader> m_shadowShader;
-	std::unique_ptr<RD_ShaderLoader> m_light_shader;
-	std::unique_ptr<RD_ShaderLoader> m_beauty_shader;
+	RD_ShaderLoader* m_shadowShader;
+	RD_ShaderLoader* m_light_shader;
+	RD_ShaderLoader* m_beauty_shader;
 
 	std::vector<RD_PostProcessEffect*> m_pp_effects;
 

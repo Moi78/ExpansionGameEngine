@@ -13,9 +13,10 @@
 #endif
 
 #include <RaindropRenderer.h>
-#include <RD_SizedQuad.h>
+#include <RD_Quad.h>
 #include <RD_GUI_Element.h>
 #include <RD_GUI_Manager.h>
+#include <RD_ShaderLoader.h>
 
 #include <mat4.h>
 #include <vec3.h>
@@ -40,6 +41,7 @@ private:
 	EXP_Game* m_game;
 
 	std::unique_ptr<RD_Quad> m_surface;
+	RD_ShaderLoader* m_gui_shader;
 
 	mat4f m_mdl;
 	mat4f m_proj;

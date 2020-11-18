@@ -8,6 +8,8 @@ EXP_GUI_Button::EXP_GUI_Button(EXP_Game* game, RD_Callback* func, EXP_ButtonImag
 	m_size = vec3f(sizex, sizey, 0.0f);
 	m_func = func;
 
+	m_gui_shader = m_game->GetRenderer()->GetRenderingAPI()->CreateShader();
+
 	m_oneTimeButton = oneTimeBtn;
 	m_released = true;
 

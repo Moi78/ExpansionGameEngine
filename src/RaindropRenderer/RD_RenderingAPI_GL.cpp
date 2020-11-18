@@ -204,6 +204,10 @@ void RD_RenderingAPI_GL::Clear(int mask) {
 		glClear(GL_COLOR_BUFFER_BIT);
 }
 
+RD_ShaderLoader* RD_RenderingAPI_GL::CreateShader() {
+	return new RD_ShaderLoader_GL();
+}
+
 //RD_RenderingAPI_VertexElemBufferGL
 
 RD_RenderingAPI_VertexElemBufferGL::RD_RenderingAPI_VertexElemBufferGL() : RD_RenderingAPI_VertexElemBuffer() {

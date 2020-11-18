@@ -6,6 +6,8 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 	m_opacity = opacity;
 	m_game = game;
 
+	m_gui_shader = game->GetRenderer()->GetRenderingAPI()->CreateShader();
+
 	m_size = vec3f(sizex, sizey, 0);
 	m_pos = vec3f(posx, posy, 0);
 

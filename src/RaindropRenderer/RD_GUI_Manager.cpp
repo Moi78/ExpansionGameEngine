@@ -9,7 +9,7 @@ RD_GUI_Manager::RD_GUI_Manager(RaindropRenderer* rndr) {
 
 	m_matLib = std::make_unique<RD_MaterialLibrary>();
 
-	m_gui_elements.push_back(new ScreenCleaner(rndr->GetEngineDir()));
+	m_gui_elements.push_back(new ScreenCleaner(rndr, rndr->GetEngineDir()));
 }
 
 RD_GUI_Manager::~RD_GUI_Manager() {
@@ -83,7 +83,9 @@ RD_MaterialLibrary* RD_GUI_Manager::GetGUIshaderManager() {
 
 //--------------------------ScreenCleaner---------------------------------
 
-ScreenCleaner::ScreenCleaner(std::string workingDir) : RD_GUI_Element() {
+ScreenCleaner::ScreenCleaner(RaindropRenderer* rndr, std::string workingDir) : RD_GUI_Element() {
+	m_gui_shader = rndr->GetRenderingAPI()->CreateShader();
+	
 	std::cout << "Compiling GUI_Clean shader..." << std::endl;
 	m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_Clean.vert", workingDir + "/Shaders/glsl/gui/GUI_Clean.frag");
 

@@ -32,16 +32,16 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	//Shader Compiling
 	std::cout << "Compiling main shaders..." << std::endl;
 
-	m_shadowShader = std::make_unique<RD_ShaderLoader>();
+	m_shadowShader = m_api->CreateShader();
 	m_shadowShader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Shadow.vert", m_engineDir + "/Shaders/glsl/Shadow.frag");
 
-	m_light_shader = std::make_unique<RD_ShaderLoader>();
+	m_light_shader = m_api->CreateShader();
 	m_light_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Light.vert", m_engineDir + "/Shaders/glsl/Light.frag");
 
-	m_beauty_shader = std::make_unique<RD_ShaderLoader>();
+	m_beauty_shader = m_api->CreateShader();
 	m_beauty_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Beauty.vert", m_engineDir + "/Shaders/glsl/Beauty.frag");
 
-	m_CurrentShader = m_light_shader.get();
+	m_CurrentShader = m_light_shader;
 
 	m_defTex = m_api->CreateTexture();
 	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
@@ -50,7 +50,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
 	if (RENDER_DEBUG_ENABLED) {
-		RD_ShaderLoader* shad = new RD_ShaderLoader();
+		RD_ShaderLoader* shad = m_api->CreateShader();
 		shad->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Debug.vert", m_engineDir + "/Shaders/glsl/Debug.frag");
 		RD_ShaderMaterial* dbgmat = new RD_ShaderMaterial(shad);
 
@@ -78,6 +78,10 @@ RaindropRenderer::~RaindropRenderer() {
 	m_meshes.clear();
 
 	delete m_gbuffer;
+
+	delete m_shadowShader;
+	delete m_light_shader;
+	delete m_beauty_shader;
 }
 
 RD_RenderingAPI* RaindropRenderer::GetRenderingAPI() {
@@ -373,12 +377,12 @@ void RaindropRenderer::RenderShadowMeshes() {
 	}
 
 	for (int i = 0; i < m_meshes.size(); i++) {
-		m_meshes[i]->renderShadows(m_shadowShader.get());
+		m_meshes[i]->renderShadows(m_shadowShader);
 	}
 }
 
 RD_ShaderLoader* RaindropRenderer::GetShadowShader() {
-	return m_shadowShader.get();
+	return m_shadowShader;
 }
 
 bool RaindropRenderer::CreateGbuff() {
@@ -455,8 +459,8 @@ void RaindropRenderer::RenderPostProcess() {
 }
 
 void RaindropRenderer::RenderLightPass(vec3f CamPos) {
-	SwitchShader(m_light_shader.get());
-	SendFeaturesToShader(m_light_shader.get());
+	SwitchShader(m_light_shader);
+	SendFeaturesToShader(m_light_shader);
 
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0);
 	m_light_shader->SetInt("gAlbedo", 0);
@@ -485,7 +489,7 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 void RaindropRenderer::RenderBeauty() {
 	m_api->Clear(DEPTH_BUFFER | COLOR_BUFFER);
 
-	SwitchShader(m_beauty_shader.get());
+	SwitchShader(m_beauty_shader);
 
 	m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5);
 	m_beauty_shader->SetInt("lightpass", 5);
@@ -618,7 +622,7 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 	std::string fcode = mread.GetShaderCode();
 	std::string vcode = getFileData(m_engineDir + "/Shaders/glsl/Gshad.vert");
 
-	RD_ShaderLoader* shader = new RD_ShaderLoader();
+	RD_ShaderLoader* shader = m_api->CreateShader();
 	shader->CompileShaderFromCode(vcode, fcode);
 
 	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader);
