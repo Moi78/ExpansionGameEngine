@@ -56,6 +56,8 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 EXP_Game::~EXP_Game() {
 	UnloadCurrentMap();
 	m_soundEngine->shutdownAL();
+
+	m_materialManager->ClearLibrary();
 }
 
 EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {

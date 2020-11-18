@@ -20,19 +20,20 @@
 
 #include "vec3.h"
 #include "RD_ShaderLoader.h"
+#include "RD_Texture.h"
 
 class RAINDROPRENDERER_API RD_ShaderMaterial {
 public:
 	RD_ShaderMaterial(RD_ShaderLoader*);
 	~RD_ShaderMaterial();
 
-	void AddTexture(std::string param, unsigned int id);
+	void AddTexture(std::string param, RD_Texture* tex);
 
 	void BindMaterial();
 	RD_ShaderLoader* GetShader();
 private:
 	RD_ShaderLoader* m_shader;
-	std::vector < std::pair<std::string, unsigned int> > m_textures;
+	std::vector < std::pair<std::string, RD_Texture*> > m_textures;
 };
 
 #endif

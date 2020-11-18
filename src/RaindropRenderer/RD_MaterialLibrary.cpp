@@ -47,6 +47,8 @@ RD_ShaderMaterial* RD_MaterialLibrary::GetMaterialByName(std::string name) {
 }
 
 void RD_MaterialLibrary::ClearLibrary() {
+	std::cout << "Clearing Material Library" << std::endl;
+
 	for (auto mat : m_materials) {
 		delete mat.second;
 	}

@@ -17,9 +17,7 @@ EXP_PostProcessingEffect::EXP_PostProcessingEffect(EXP_Game* game, std::string s
 		RD_Texture* tex = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 		tex->LoadTexture(sread->GetTexturePath(i));
 
-		mat->AddTexture(sread->GetTextureParamName(i), tex->GetTextureID());
-
-		delete tex;
+		mat->AddTexture(sread->GetTextureParamName(i), tex);
 	}
 
 	game->GetRenderer()->AddPostProcessEffect(this);

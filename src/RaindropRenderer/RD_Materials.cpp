@@ -6,23 +6,23 @@ RD_ShaderMaterial::RD_ShaderMaterial(RD_ShaderLoader* shader) {
 }
 
 RD_ShaderMaterial::~RD_ShaderMaterial() {
+	std::cout << "Deleting shader material" << std::endl;
+
 	if(m_shader)
 		delete m_shader;
 
 	for (auto tex : m_textures) {
-		glDeleteTextures(1, &tex.second);
+		delete tex.second;
 	}
+	m_textures.clear();
 }
 
 void RD_ShaderMaterial::BindMaterial() {
 	//Textures uniforms
-	unsigned int TexID = GL_TEXTURE10;
+	unsigned int TexID = 10;
 	for (auto m : m_textures) {
-		glActiveTexture(TexID);
-		glBindTexture(GL_TEXTURE_2D, m.second);
-		m_shader->SetInt(m.first, TexID - GL_TEXTURE0);
-
-		TexID++;
+		m.second->BindTexture(TexID);
+		m_shader->SetInt(m.first, TexID);
 	}
 }
 
@@ -30,6 +30,6 @@ RD_ShaderLoader* RD_ShaderMaterial::GetShader() {
 	return m_shader;
 }
 
-void RD_ShaderMaterial::AddTexture(std::string paramName, unsigned int id) {
-	m_textures.push_back(std::pair<std::string, unsigned int>(paramName, id));
+void RD_ShaderMaterial::AddTexture(std::string paramName, RD_Texture* tex) {
+	m_textures.push_back(std::pair<std::string, RD_Texture*>(paramName, tex));
 }

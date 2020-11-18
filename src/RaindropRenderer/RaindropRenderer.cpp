@@ -630,7 +630,7 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 		RD_Texture* tex = m_api->CreateTexture();
 		tex->LoadTexture(mread.GetTexturePath(i));
 
-		shdmat->AddTexture(mread.GetTextureParamName(i), tex->GetTextureID());
+		shdmat->AddTexture(mread.GetTextureParamName(i), tex);
 	}
 
 	m_matlib->AddMaterialToLib(shdmat, ref);
