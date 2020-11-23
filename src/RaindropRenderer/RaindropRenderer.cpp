@@ -4,7 +4,6 @@
 #include "RD_DirLight.h"
 #include "RD_Mesh.h"
 #include "RD_Quad.h"
-//#include "RD_FrameBuffer.h"
 #include "RD_Camera.h"
 #include "RD_MaterialLibrary.h"
 #include "RD_GUI_Manager.h"
@@ -200,15 +199,14 @@ void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 	if (RENDER_DEBUG_ENABLED) {
 		bool rEnableLighting = true;
 
-		if(IsFeatureEnabled(RendererFeature::Lighting))
+		if (IsFeatureEnabled(RendererFeature::Lighting)) {
 			DisableFeature(RendererFeature::Lighting);
-		else
+		}
+		else {
 			rEnableLighting = false;
+		}
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gbuffer->GetFBO());
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glBlitFramebuffer(0, 0, getWindowWidth(), getWindowHeigh(), 0, 0, getWindowWidth(), getWindowHeigh(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		m_gbuffer->DebugMode();
 
 		m_api->SetFilledMode(FillingMode::WIREFRAME);
 
@@ -347,17 +345,16 @@ void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
 		shader->useShader();
 
 		if (IsFeatureEnabled(RendererFeature::Lighting)) {
-			unsigned int texUnit = GL_TEXTURE0;
+			unsigned int texUnit = 0;
 			int i = 0;
 
 			for (auto dlight : m_DirLights) {
 				if (!dlight->GetShadowCasting())
 					continue;
 
-				glActiveTexture(texUnit);
-				glBindTexture(GL_TEXTURE_2D, dlight->GetDepthTexID());
+				dlight->GetDepthTexID()->BindTexture(texUnit);
 
-				shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit - 0x84C0);
+				shader->SetInt("ShadowMap[" + std::to_string(i) + "]", texUnit);
 				shader->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
 
 				texUnit++;
@@ -593,9 +590,9 @@ void RaindropRenderer::AddToTextureGarbageCollector(unsigned int texID) {
 }
 
 void RaindropRenderer::EmptyTextureGarbageCollector() {
-	for (auto tex : m_textureGarbageCollector) {
+	/*for (auto tex : m_textureGarbageCollector) {
 		glDeleteTextures(1, &tex);
-	}
+	}*/
 }
 
 void RaindropRenderer::AddToFramebufferGarbageCollector(unsigned int fboID) {
@@ -603,9 +600,9 @@ void RaindropRenderer::AddToFramebufferGarbageCollector(unsigned int fboID) {
 }
 
 void RaindropRenderer::EmptyFramebufferGarbageCollector() {
-	for (auto fbo : m_framebufferGarbageCollector) {
+	/*for (auto fbo : m_framebufferGarbageCollector) {
 		glDeleteFramebuffers(1, &fbo);
-	}
+	}*/
 }
 
 RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {

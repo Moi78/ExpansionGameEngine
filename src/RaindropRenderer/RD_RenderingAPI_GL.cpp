@@ -208,6 +208,10 @@ RD_ShaderLoader* RD_RenderingAPI_GL::CreateShader() {
 	return new RD_ShaderLoader_GL();
 }
 
+void RD_RenderingAPI_GL::SetViewportSize(int w, int h, int x, int y) {
+	glViewport(x, y, w, h);
+}
+
 //RD_RenderingAPI_VertexElemBufferGL
 
 RD_RenderingAPI_VertexElemBufferGL::RD_RenderingAPI_VertexElemBufferGL() : RD_RenderingAPI_VertexElemBuffer() {

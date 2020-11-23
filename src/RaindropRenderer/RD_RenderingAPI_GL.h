@@ -90,6 +90,8 @@ public:
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h);
 	virtual RD_ShaderLoader* CreateShader();
 
+	virtual void SetViewportSize(int w, int h, int x, int y);
+
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff);
 	virtual void SetFilledMode(FillingMode fmode);
 

@@ -32,13 +32,14 @@ void RD_FrameBuffer_GL::CreateFBO() {
 	glGenFramebuffers(1, &m_FBO);
 }
 
-void RD_FrameBuffer_GL::AddAttachement(unsigned int format) {
+void RD_FrameBuffer_GL::AddAttachement(unsigned int format, unsigned int scaleMode) {
 	Attachement a;
 
 	RD_Texture_GL* tex = nullptr;
 
 	a.tex = tex;
 	a.format = format;
+	a.scaleMode = scaleMode;
 
 	m_attachments.push_back(a);
 }
@@ -53,20 +54,22 @@ void RD_FrameBuffer_GL::BuildFBO() {
 
 		m_attachments[i].tex = new RD_Texture_GL();
 
-		m_attachments[i].tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, i, m_attachments[i].format);
+		m_attachments[i].tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, i, m_attachments[i].format, m_attachments[i].scaleMode);
 		attach.push_back(GL_COLOR_ATTACHMENT0 + i);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 	glDrawBuffers(attach.size(), &attach[0]);
 
-	glGenRenderbuffers(1, &m_RBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_RBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, m_storage, m_w, m_h);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, m_rbo_attachement, GL_RENDERBUFFER, m_RBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	if (m_attachments.size() > 1) {
+		glGenRenderbuffers(1, &m_RBO);
+		glBindRenderbuffer(GL_RENDERBUFFER, m_RBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, m_storage, m_w, m_h);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, m_rbo_attachement, GL_RENDERBUFFER, m_RBO);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		std::cerr << "ERROR: GUI Framebuffer not complete." << std::endl;
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			std::cerr << "ERROR: GUI Framebuffer not complete." << std::endl;
+		}
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -129,6 +132,13 @@ void RD_FrameBuffer_GL::ConfigureRenderbuffer(int storage, int attachement) {
 		m_storage = GL_DEPTH_COMPONENT;
 		break;
 	}
+}
+
+void RD_FrameBuffer_GL::DebugMode() {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, GetFBO());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 #endif //BUILD_OPENGL

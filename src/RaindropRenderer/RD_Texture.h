@@ -26,6 +26,11 @@
 #define IMGFORMAT_RGB16F 7
 #define IMGFORMAT_RGBA16F 8
 
+#define IMGFORMAT_DEPTH 9
+
+#define SCALEMODE_NEAREST 0
+#define SCALEMODE_LINEAR 1
+
 #include <glad/glad.h>
 
 #include <iostream>
@@ -42,7 +47,7 @@ public:
 
 	virtual void LoadTexture(std::string filepath, bool flipTex = true) = 0;
 	virtual void GenerateColorTex(vec3f color) = 0;
-	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement, unsigned int format) = 0;
+	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB, unsigned int scaleMode = SCALEMODE_LINEAR) = 0;
 	virtual void BindTexture(unsigned int tex_unit) = 0;
 
 	virtual unsigned int GetTextureID() = 0;
@@ -60,7 +65,7 @@ public:
 
 	virtual void LoadTexture(std::string filepath, bool flipTex = true);
 	virtual void GenerateColorTex(vec3f color);
-	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB);
+	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB, unsigned int scaleMode = SCALEMODE_LINEAR);
 	virtual void BindTexture(unsigned int tex_unit = 0);
 
 	virtual void DeleteTexture();

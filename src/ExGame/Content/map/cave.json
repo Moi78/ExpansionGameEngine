@@ -20,6 +20,16 @@
       "pos": [ -30, 0, 0 ],
       "rot": [ 0, 0, 0 ],
       "scale": [ 1, 1, 1 ]
+    },
+
+    {
+      "type":"plight",
+      "nameTag": "pointTest",
+
+      "pos":[0, -1, 0],
+      "color":[1, null, 0],
+      "brightness": 5.0,
+      "radius": 10.0
     }
   ]
 }

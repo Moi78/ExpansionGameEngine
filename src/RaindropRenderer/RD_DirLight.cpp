@@ -1,14 +1,13 @@
 #include "pch.h"
 #include "RD_DirLight.h"
 
-RD_DirLight::RD_DirLight(vec3f dir, vec3f color, float brightness) : m_dir(dir), m_color(color), m_brightness(brightness), m_lspace(1.0f) {
-	SetUpShadowFB(1024);
+RD_DirLight::RD_DirLight(RaindropRenderer* rndr, vec3f dir, vec3f color, float brightness) : m_dir(dir), m_color(color), m_brightness(brightness), m_lspace(1.0f) {
+	SetUpShadowFB(rndr, 1024);
 	m_shadowCaster = true;
 }
 
 RD_DirLight::~RD_DirLight() {
-	//glDeleteTextures(1, &m_depthMapTEX);
-	//glDeleteFramebuffers(1, &m_depthMapFBO);
+	delete m_fbo;
 }
 
 void RD_DirLight::SetLightBrightness(float nBrightness) {
@@ -51,64 +50,42 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 
 	m_lspace = lightProj * lightView;
 
-	glViewport(0, 0, m_shadowQuality, m_shadowQuality);
+	rndr->GetRenderingAPI()->SetViewportSize(m_shadowQuality, m_shadowQuality, 0, 0);
 
-	glCullFace(GL_FRONT);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	m_fbo->BindFBO();
+	rndr->GetRenderingAPI()->Clear(DEPTH_BUFFER);
 
 	rndr->RenderShadowMeshes();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_fbo->UnbindFBO();
 
-	glCullFace(GL_BACK);
-
-	glViewport(0, 0, rndr->getWindowWidth(), rndr->getWindowHeigh());
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	rndr->GetRenderingAPI()->SetViewportSize(rndr->getWindowWidth(), rndr->getWindowHeigh(), 0, 0);
+	rndr->GetRenderingAPI()->Clear(DEPTH_BUFFER | COLOR_BUFFER);
 
 	rndr->GetCurrentShader()->SetMatrix("lspaceMat", m_lspace);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_depthMapTEX);
+	m_fbo->GetAttachementByIndex(0)->BindTexture(1);
 	rndr->GetCurrentShader()->SetInt("ShadowMap", 1);
 }
 
-void RD_DirLight::SetUpShadowFB(unsigned int shadowQual) {
+void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual) {
 	m_shadowQuality = shadowQual;
+	m_fbo = rndr->GetRenderingAPI()->CreateFrameBuffer(m_shadowQuality, m_shadowQuality);
 
-	//Texture and Framebuffer generation
-	glGenFramebuffers(1, &m_depthMapFBO);
-
-	glGenTextures(1, &m_depthMapTEX);
-	glBindTexture(GL_TEXTURE_2D, m_depthMapTEX);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_shadowQuality, m_shadowQuality, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	//Framebuffer config
-	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMapTEX, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_fbo->AddAttachement(IMGFORMAT_DEPTH, SCALEMODE_LINEAR);
+	m_fbo->BuildFBO();
 }
 
 mat4f RD_DirLight::GetLightSpace() {
 	return m_lspace;
 }
 
-unsigned int RD_DirLight::GetDepthTexID() {
-	return m_depthMapTEX;
+RD_Texture* RD_DirLight::GetDepthTexID() {
+	return m_fbo->GetAttachementByIndex(0);
 }
 
 void RD_DirLight::Cleanup(RaindropRenderer* rndr) {
-	rndr->AddToFramebufferGarbageCollector(m_depthMapFBO);
-	rndr->AddToTextureGarbageCollector(m_depthMapTEX);
+
 }
 
 void RD_DirLight::SetShadowCasting(bool scast) {

@@ -90,17 +90,16 @@ public:
 	virtual ~RD_RenderingAPI() {}
 
 	virtual bool InitializeAPI(int w, int h, std::string wname) = 0;
+	virtual RD_WindowingSystem* GetWindowingSystem() = 0;
 
 	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer() = 0;
 	virtual RD_Texture* CreateTexture() = 0;
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h) = 0;
 	virtual RD_ShaderLoader* CreateShader() = 0;
 
-	virtual void SetFilledMode(FillingMode fmode) = 0;
-
-	virtual RD_WindowingSystem* GetWindowingSystem() = 0;
+	virtual void SetViewportSize(int w, int h, int x, int y) = 0;
 
 	virtual void Clear(int masks) = 0;
-
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) = 0;
+	virtual void SetFilledMode(FillingMode fmode) = 0;
 };

@@ -32,9 +32,6 @@
 
 #include <BD_MatRW.h>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -222,8 +219,6 @@ int GetElemIndex(std::vector<T> array, T element) {
 		return -1;
 	}
 }
-
-void glfwWinCallback_(GLFWwindow* win, int w, int h);
 
 RAINDROPRENDERER_API std::wstring StrToWStr(std::string str);
 

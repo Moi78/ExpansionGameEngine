@@ -34,6 +34,7 @@
 struct Attachement {
 	RD_Texture* tex;
 	unsigned int format;
+	unsigned int scaleMode;
 };
 
 class RAINDROP_RENDERER_API RD_FrameBuffer
@@ -50,12 +51,14 @@ public:
 	virtual int GetNumberOfAttachements() = 0;
 	virtual RD_Texture* GetAttachementByIndex(int index) = 0;
 
-	virtual void AddAttachement(unsigned int format) = 0;
+	virtual void AddAttachement(unsigned int format, unsigned int scaleMode = SCALEMODE_LINEAR) = 0;
 	virtual void BuildFBO() = 0;
 
 	virtual void ConfigureRenderbuffer(int storage, int attachement) = 0;
 
 	virtual void ChangeFramebufferSize(int nw, int nh) = 0;
+
+	virtual void DebugMode() = 0;
 
 private:
 	virtual void CreateFBO() = 0;
@@ -77,12 +80,14 @@ public:
 	virtual int GetNumberOfAttachements();
 	virtual RD_Texture* GetAttachementByIndex(int index);
 
-	virtual void AddAttachement(unsigned int format);
+	virtual void AddAttachement(unsigned int format, unsigned int scaleMode = SCALEMODE_LINEAR);
 	virtual void BuildFBO();
 
 	virtual void ConfigureRenderbuffer(int storage, int attachement);
 
 	virtual void ChangeFramebufferSize(int nw, int nh);
+
+	virtual void DebugMode();
 
 private:
 	virtual void CreateFBO();

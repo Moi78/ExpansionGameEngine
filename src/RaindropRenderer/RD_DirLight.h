@@ -21,11 +21,13 @@
 #include <vec3.h>
 
 #include "RaindropRenderer.h"
+#include "RD_FrameBuffer.h"
+#include "RD_RenderingAPI.h"
 
 class RAINDROPRENDERER_API RD_DirLight
 {
 public:
-	RD_DirLight(vec3f dir, vec3f color, float brightness);
+	RD_DirLight(RaindropRenderer* rndr, vec3f dir, vec3f color, float brightness);
 	virtual ~RD_DirLight();
 
 	void SetLightDir(vec3f nDir);
@@ -41,9 +43,9 @@ public:
 	bool GetShadowCasting();
 
 	void DepthRender(RaindropRenderer*, vec3f CamPos);
-	void SetUpShadowFB(unsigned int shadowQual);
+	void SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual);
 	mat4f GetLightSpace();
-	unsigned int GetDepthTexID();
+	RD_Texture* GetDepthTexID();
 
 	void Cleanup(RaindropRenderer* rndr);
 private:
@@ -53,6 +55,9 @@ private:
 
 	unsigned int m_depthMapTEX;
 	unsigned int m_depthMapFBO;
+
+	RD_FrameBuffer* m_fbo;
+
 	unsigned int m_shadowQuality;
 
 	bool m_shadowCaster;
