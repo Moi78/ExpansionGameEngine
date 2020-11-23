@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EXP_PostProcessEffect.h"
 
-EXP_PostProcessingEffect::EXP_PostProcessingEffect(EXP_Game* game, std::string shader) : RD_PostProcessEffect() {
+EXP_PostProcessingEffect::EXP_PostProcessingEffect(EXP_Game* game, std::string shader) : RD_PostProcessEffect(game->GetRenderer()) {
 	BD_MatCustomShaderRead* sread = new BD_MatCustomShaderRead(game->GetFilePathByRef(shader));
 
 	m_game = game;

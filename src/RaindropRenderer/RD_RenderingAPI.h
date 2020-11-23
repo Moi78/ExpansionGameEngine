@@ -22,9 +22,8 @@
 #define DEPTH_BUFFER 2 //0b 0000 ... 0000 0010
 
 enum DrawMode {
-	TRIANGLES,
-	TRIANGLES_STRIP,
-	QUADS
+	TRIANGLES = 0,
+	TRIANGLES_STRIP = 1
 };
 
 enum FillingMode {
@@ -51,6 +50,21 @@ public:
 	virtual void UnbindBuffer() = 0;
 
 	virtual unsigned int GetElementCount() = 0;
+};
+
+class RD_API RD_RenderingAPI_VertexBuffer {
+public:
+	RD_RenderingAPI_VertexBuffer() {}
+	virtual ~RD_RenderingAPI_VertexBuffer() {}
+
+	virtual void CreateBuffer() = 0;
+	virtual void FillBufferData(float* data, int count) = 0;
+	virtual void DeleteBuffer() = 0;
+
+	virtual void BindBuffer() = 0;
+	virtual void UnbindBuffer() = 0;
+
+	virtual unsigned int GetFloatCount() = 0;
 };
 
 class RD_API RD_WindowingSystem {
@@ -93,6 +107,7 @@ public:
 	virtual RD_WindowingSystem* GetWindowingSystem() = 0;
 
 	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer() = 0;
+	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer() = 0;
 	virtual RD_Texture* CreateTexture() = 0;
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h) = 0;
 	virtual RD_ShaderLoader* CreateShader() = 0;
@@ -101,5 +116,6 @@ public:
 
 	virtual void Clear(int masks) = 0;
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) = 0;
+	virtual void DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm) = 0;
 	virtual void SetFilledMode(FillingMode fmode) = 0;
 };

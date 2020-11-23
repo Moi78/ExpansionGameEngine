@@ -182,7 +182,6 @@
     <ClInclude Include="RD_RenderingAPI.h" />
     <ClInclude Include="RD_RenderingAPI_GL.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
-    <ClInclude Include="RD_SizedQuad.h" />
     <ClInclude Include="RD_Structs.h" />
     <ClInclude Include="RD_Texture.h" />
   </ItemGroup>
@@ -213,7 +212,6 @@
     <ClCompile Include="RD_Quad.cpp" />
     <ClCompile Include="RD_RenderingAPI_GL.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />
-    <ClCompile Include="RD_SizedQuad.cpp" />
     <ClCompile Include="RD_Texture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

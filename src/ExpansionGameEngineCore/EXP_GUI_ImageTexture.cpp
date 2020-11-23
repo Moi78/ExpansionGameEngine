@@ -30,7 +30,7 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 
 	m_image->LoadTexture(ref, false);
 
-	m_surface = std::make_unique<RD_Quad>();
+	m_surface = std::make_unique<RD_Quad>(game->GetRenderer());
 	m_surface->Bufferize();
 
 	RD_GUI_Manager* m_manager = game->GetRenderer()->GetGUI_Manager();

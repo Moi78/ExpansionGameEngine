@@ -3,7 +3,8 @@
 
 #include "RD_GUI_Manager.h"
 
-//RD_WindowingSystemGLFW
+//---------------------------------------------  RD_WindowingSystemGLFW  ---------------------------------------------
+
 RD_WindowingSystemGLFW::RD_WindowingSystemGLFW(RaindropRenderer* rndr) : RD_WindowingSystem() {
 	m_rndr = rndr;
 }
@@ -136,7 +137,8 @@ void glfwWinCallback(GLFWwindow* win, int w, int h) {
 	rndr->GetGUI_Manager()->RebuildFramebuffer();
 }
 
-//RD_Rendering_API_GL
+//---------------------------------------------  RD_Rendering_API_GL ---------------------------------------------
+
 RD_RenderingAPI_GL::RD_RenderingAPI_GL(RaindropRenderer* rndr) : RD_RenderingAPI() {
 	m_win_sys = new RD_WindowingSystemGLFW(rndr);
 }
@@ -178,9 +180,7 @@ RD_FrameBuffer* RD_RenderingAPI_GL::CreateFrameBuffer(int w, int h) {
 }
 
 void RD_RenderingAPI_GL::Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) {
-	//vbuff->BindBuffer();
 	glDrawElements(GL_TRIANGLES, vbuff->GetElementCount(), GL_UNSIGNED_INT, 0);
-	//vbuff->UnbindBuffer();
 }
 
 void RD_RenderingAPI_GL::SetFilledMode(FillingMode fmode) {
@@ -212,7 +212,15 @@ void RD_RenderingAPI_GL::SetViewportSize(int w, int h, int x, int y) {
 	glViewport(x, y, w, h);
 }
 
-//RD_RenderingAPI_VertexElemBufferGL
+RD_RenderingAPI_VertexBuffer* RD_RenderingAPI_GL::CreateVertexBuffer() {
+	return new RD_RenderingAPI_VertexBufferGL();
+}
+
+void RD_RenderingAPI_GL::DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm) {
+	glDrawArrays(dm + 4, 0, vbuff->GetFloatCount() / 8);
+}
+
+//---------------------------------------------  RD_RenderingAPI_VertexElemBufferGL  ---------------------------------------------
 
 RD_RenderingAPI_VertexElemBufferGL::RD_RenderingAPI_VertexElemBufferGL() : RD_RenderingAPI_VertexElemBuffer() {
 	VAO = 0;
@@ -275,4 +283,63 @@ void RD_RenderingAPI_VertexElemBufferGL::DeleteBuffer() {
 
 unsigned int RD_RenderingAPI_VertexElemBufferGL::GetElementCount() {
 	return elem_count;
+}
+
+//---------------------------------------------  RD_RenderingAPI_VertexBufferGL  ---------------------------------------------
+
+RD_RenderingAPI_VertexBufferGL::RD_RenderingAPI_VertexBufferGL() : RD_RenderingAPI_VertexBuffer() {
+	VAO = 0;
+	VBO = 0;
+
+	float_count = 0;
+}
+
+RD_RenderingAPI_VertexBufferGL::~RD_RenderingAPI_VertexBufferGL() {
+	DeleteBuffer();
+}
+
+void RD_RenderingAPI_VertexBufferGL::CreateBuffer() {
+	glGenVertexArrays(1, &VAO);
+
+	glGenBuffers(1, &VBO);
+}
+
+void RD_RenderingAPI_VertexBufferGL::FillBufferData(float* data, int count) {
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), data, GL_STATIC_DRAW);
+
+	size_t elemSize = 8;
+
+	//Vertices
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//Normals
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//UV Coords
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, elemSize * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	float_count = count;
+}
+
+void RD_RenderingAPI_VertexBufferGL::BindBuffer() {
+	glBindVertexArray(VAO);
+}
+
+void RD_RenderingAPI_VertexBufferGL::UnbindBuffer() {
+	glBindVertexArray(0);
+}
+
+void RD_RenderingAPI_VertexBufferGL::DeleteBuffer() {
+	glDeleteBuffers(1, &VBO);
+	glDeleteVertexArrays(1, &VAO);
+}
+
+unsigned int RD_RenderingAPI_VertexBufferGL::GetFloatCount() {
+	return float_count;
 }

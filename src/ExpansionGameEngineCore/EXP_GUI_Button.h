@@ -17,6 +17,8 @@
 #include <RD_GUI_Manager.h>
 #include <RD_Callback.h>
 
+#include <GLFW/glfw3.h>
+
 #include "EXP_Game.h"
 #include "EXP_InputHandler.h"
 #include "EXP_Callbacks.h"

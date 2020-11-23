@@ -35,7 +35,7 @@ EXP_GUI_Button::EXP_GUI_Button(EXP_Game* game, RD_Callback* func, EXP_ButtonImag
 	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
 
 	//Creating surface to draw on
-	m_surface = std::make_unique<RD_Quad>();
+	m_surface = std::make_unique<RD_Quad>(game->GetRenderer());
 	m_surface->Bufferize();
 
 	//Getting shader

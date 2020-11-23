@@ -65,7 +65,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_gui_manager = std::make_unique<RD_GUI_Manager>(this);
 	m_gui_manager->InitManager();
 
-	m_quad = std::make_unique<RD_Quad>();
+	m_quad = std::make_unique<RD_Quad>(this);
 	m_quad->Bufferize();
 
 	m_matlib = std::make_unique<RD_MaterialLibrary>();
@@ -451,7 +451,7 @@ void RaindropRenderer::RenderPostProcess() {
 	for (auto pp : m_pp_effects) {
 		m_api->Clear(DEPTH_BUFFER);
 
-		pp->RenderEffect(m_light_pprocess->GetAttachementByIndex(0)->GetTextureID());
+		pp->RenderEffect(m_light_pprocess->GetAttachementByIndex(0));
 	}
 }
 

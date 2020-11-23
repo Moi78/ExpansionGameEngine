@@ -7,6 +7,8 @@
 #include <EXP_Callbacks.h>
 #include <EXP_InstanciatedMesh.h>
 
+#include <GLFW/glfw3.h>
+
 class Character : public EXP_Actor
 {
 public:

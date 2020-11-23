@@ -18,10 +18,10 @@
 class RD_API RD_PostProcessEffect
 {
 public:
-	RD_PostProcessEffect();
+	RD_PostProcessEffect(RaindropRenderer* rndr);
 	~RD_PostProcessEffect();
 
-	void RenderEffect(unsigned int screenID);
+	void RenderEffect(RD_Texture* screen);
 
 	void LoadShader(RD_ShaderMaterial* shader);
 

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "RD_PostProcess.h"
 
-RD_PostProcessEffect::RD_PostProcessEffect() {
+RD_PostProcessEffect::RD_PostProcessEffect(RaindropRenderer* rndr) {
 	m_shader = nullptr;
-	m_screen = std::make_unique<RD_Quad>();
+	m_screen = std::make_unique<RD_Quad>(rndr);
 	m_screen->Bufferize();
 }
 
@@ -11,12 +11,11 @@ RD_PostProcessEffect::~RD_PostProcessEffect() {
 	delete m_shader;
 }
 
-void RD_PostProcessEffect::RenderEffect(unsigned int screenID) {
+void RD_PostProcessEffect::RenderEffect(RD_Texture* screen) {
 	m_shader->GetShader()->useShader();
 	m_shader->BindMaterial();
 
-	glActiveTexture(GL_TEXTURE9);
-	glBindTexture(GL_TEXTURE_2D, screenID);
+	screen->BindTexture(9);
 	m_shader->GetShader()->SetInt("screen", 9);
 
 	m_screen->RenderQuad();

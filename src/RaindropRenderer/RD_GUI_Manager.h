@@ -19,7 +19,6 @@
 #include "RaindropRenderer.h"
 #include "RD_ShaderLoader.h"
 #include "RD_Quad.h"
-#include "RD_SizedQuad.h"
 #include "RD_GUI_Element.h"
 #include "RD_MaterialLibrary.h"
 #include "RD_FrameBuffer.h"

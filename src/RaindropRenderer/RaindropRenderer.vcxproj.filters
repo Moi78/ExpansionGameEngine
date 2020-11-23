@@ -66,9 +66,6 @@
     <ClInclude Include="RD_ShaderLoader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="RD_SizedQuad.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="RD_Texture.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -141,9 +138,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_ShaderLoader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="RD_SizedQuad.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_Texture.cpp">

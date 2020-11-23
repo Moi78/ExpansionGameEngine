@@ -10,7 +10,7 @@
 #define RD_API
 #endif //_WIN32
 
-//#ifdef BUILD_OPENGL
+#ifdef BUILD_OPENGL
 
 #include "RD_RenderingAPI.h"
 
@@ -76,6 +76,22 @@ private:
 	unsigned int VAO, VBO, EBO, elem_count;
 };
 
+class RD_API RD_RenderingAPI_VertexBufferGL : public RD_RenderingAPI_VertexBuffer {
+public:
+	RD_RenderingAPI_VertexBufferGL();
+	virtual ~RD_RenderingAPI_VertexBufferGL();
+
+	virtual void CreateBuffer();
+	virtual void FillBufferData(float* data, int count);
+	virtual void DeleteBuffer();
+
+	virtual void BindBuffer();
+	virtual void UnbindBuffer();
+
+	virtual unsigned int GetFloatCount();
+private:
+	unsigned int VAO, VBO, float_count;
+};
 
 class RD_API RD_RenderingAPI_GL : public RD_RenderingAPI {
 public:
@@ -86,6 +102,7 @@ public:
 	virtual RD_WindowingSystem* GetWindowingSystem();
 
 	virtual RD_RenderingAPI_VertexElemBufferGL* CreateVertexElemBuffer();
+	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer();
 	virtual RD_Texture* CreateTexture();
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h);
 	virtual RD_ShaderLoader* CreateShader();
@@ -93,6 +110,7 @@ public:
 	virtual void SetViewportSize(int w, int h, int x, int y);
 
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff);
+	virtual void DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm);
 	virtual void SetFilledMode(FillingMode fmode);
 
 	virtual void Clear(int mask);
@@ -100,4 +118,5 @@ public:
 private:
 	RD_WindowingSystemGLFW* m_win_sys;
 };
-//#endif //BUILD_OPENGL
+
+#endif //BUILD_OPENGL

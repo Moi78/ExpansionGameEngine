@@ -23,7 +23,7 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 
 	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
 
-	m_surface = std::make_unique<RD_Quad>();
+	m_surface = std::make_unique<RD_Quad>(game->GetRenderer());
 	m_surface->Bufferize();
 
 	if (!m_manager->GetGUIshaderManager()->DoMaterialExists("/Shaders/glsl/gui/GUI_ColorCache.frag")) {

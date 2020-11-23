@@ -89,7 +89,7 @@ ScreenCleaner::ScreenCleaner(RaindropRenderer* rndr, std::string workingDir) : R
 	std::cout << "Compiling GUI_Clean shader..." << std::endl;
 	m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_Clean.vert", workingDir + "/Shaders/glsl/gui/GUI_Clean.frag");
 
-	m_surface = std::make_unique<RD_Quad>();
+	m_surface = std::make_unique<RD_Quad>(rndr);
 	m_surface->Bufferize();
 }
 
