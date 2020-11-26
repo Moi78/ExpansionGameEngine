@@ -31,12 +31,6 @@ enum FillingMode {
 	WIREFRAME
 };
 
-enum API {
-	OPENGL,
-	VULKAN,
-	DIRECTX
-};
-
 class RD_API RD_RenderingAPI_VertexElemBuffer {
 public:
 	RD_RenderingAPI_VertexElemBuffer() {}

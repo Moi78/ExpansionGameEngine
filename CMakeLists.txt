@@ -17,6 +17,8 @@ endif()
 add_definitions(${UBUNTU})
 add_definitions("-std=c++17")
 
+add_compile_definitions(BUILD_OPENGL)
+
 add_subdirectory(src/ExpansionMath)
 add_subdirectory(src/BulldozerFileManager)
 add_subdirectory(src/PhysicaSound)

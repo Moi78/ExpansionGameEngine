@@ -5,6 +5,8 @@
 
 //---------------------------------------------  RD_WindowingSystemGLFW  ---------------------------------------------
 
+#ifdef BUILD_OPENGL
+
 RD_WindowingSystemGLFW::RD_WindowingSystemGLFW(RaindropRenderer* rndr) : RD_WindowingSystem() {
 	m_rndr = rndr;
 }
@@ -343,3 +345,5 @@ void RD_RenderingAPI_VertexBufferGL::DeleteBuffer() {
 unsigned int RD_RenderingAPI_VertexBufferGL::GetFloatCount() {
 	return float_count;
 }
+
+#endif //BUILD_OPENGL

@@ -16,6 +16,7 @@
 #include <vector>
 #include <filesystem>
 #include <assert.h>
+#include <cstring>
 
 /*
 * 

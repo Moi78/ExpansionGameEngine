@@ -41,7 +41,8 @@ private:
 class Float4 {
 public:
 	Float4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) {
-		m_vec = { x, y, z,w };
+		__m128 vec = { x, y, z, w };
+		m_vec = __m128(vec);
 	}
 
 	Float4(__m128 vec) {
@@ -53,7 +54,7 @@ public:
 	}
 
 	float* GetPointer() {
-		return &m_vec.m128_f32[0];
+		return &m_vec[0];
 	}
 
 	Float4 operator*(const Float4& a) {

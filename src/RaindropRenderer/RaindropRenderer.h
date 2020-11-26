@@ -54,7 +54,12 @@ class RD_GUI_Manager;
 class RD_PostProcessEffect;
 
 class RD_RenderingAPI;
-enum API;
+
+enum API {
+	OPENGL,
+	VULKAN,
+	DIRECTX
+};
 
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
