@@ -19,11 +19,13 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <vector>
 #include <immintrin.h>
 
 #include "vec4.h"
 #include "vec3.h"
 #include "basic_math.h"
+#include "SIMD_Utils.h"
 
 template<class T>
 class mat4
@@ -33,10 +35,12 @@ public:
 		memset(m_mat, 0, 16 * sizeof(T));
 
 		if (enableSIMD) {
-			_simd_enabled = true;
-		}
-		else {
-			_simd_enabled = false;
+			if (sizeof(T) == sizeof(float)) {
+				_simd_enabled = true;
+			}
+			else {
+				_simd_enabled = false;
+			}
 		}
 
 		/*
@@ -59,10 +63,12 @@ public:
 		memcpy(m_mat, mat, 16 * sizeof(T));
 
 		if (enableSIMD) {
-			_simd_enabled = true;
-		}
-		else {
-			_simd_enabled = false;
+			if (sizeof(T) == sizeof(float)) {
+				_simd_enabled = true;
+			}
+			else {
+				_simd_enabled = false;
+			}
 		}
 	}
 
@@ -86,14 +92,14 @@ public:
 
 	vec4<T> operator*(vec4<T> a) {
 		if (_simd_enabled) {
-			__m128 vec = { a.GetX(), a.GetY(), a.GetZ(), a.GetW() };
+			Float4 vec(a.GetX(), a.GetY(), a.GetZ(), a.GetW());
 
 			T XYZW[4];
 			for (int i = 0; i < 16; i += 4) {
-				__m128 mat_row = { m_mat[i] , m_mat[i + 1], m_mat[i + 2], m_mat[i + 3] };
-				__m128 vec_new = _mm_mul_ps(mat_row, vec);
+				Float4 mat_row(m_mat[i] , m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
+				Float4 vec_new = mat_row * vec;
 
-				XYZW[i / 4] = vec_new.m128_f32[0] + vec_new.m128_f32[1] + vec_new.m128_f32[2] + vec_new.m128_f32[3];
+				XYZW[i / 4] = vec_new.Get(0) + vec_new.Get(1) + vec_new.Get(2) + vec_new.Get(3);
 			}
 
 			return vec4<T>(XYZW[0], XYZW[1], XYZW[2], XYZW[3]);
@@ -113,12 +119,12 @@ public:
 		memset(nMat, 0, 16 * sizeof(T));
 
 		if (_simd_enabled) {
-			__m128 scalar = _mm_load_ss(&a);
+			Float4 scalar(a);
 			for (int i = 0; i < 16; i += 4) {
-				__m128 m = { m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3] };
-				__m128 mmultiplied = _mm_mul_ps(m, scalar);
+				Float4 m(m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
+				Float4 mmultiplied = m * scalar;
 
-				memcpy(&nMat[i], mmultiplied.m128_f32, 4 * sizeof(float));
+				memcpy(&nMat[i], mmultiplied.GetPointer(), 4 * sizeof(float));
 			}
 		}
 		else {
@@ -135,9 +141,9 @@ public:
 			//SIMD Impl.
 
 			//Allocating matrix in XMM registers
-			__m128 mat_1_rows[4];
+			std::vector<Float4> mat_1_rows;
 			for (int i = 0; i < 16; i += 4) {
-				mat_1_rows[i / 4] = { m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3] };
+				mat_1_rows.push_back(Float4(m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]));
 			}
 
 			//Declaring result mat
@@ -146,15 +152,15 @@ public:
 			for (int i = 0; i < 4; i++) {
 				for (int c = 0; c < 4; c++) {
 					//Getting column of the second matrix
-					__m128 col = { a.m_mat[c], a.m_mat[c + 4], a.m_mat[c + 8], a.m_mat[c + 12] };
+					Float4 col(a.m_mat[c], a.m_mat[c + 4], a.m_mat[c + 8], a.m_mat[c + 12]);
 
 					//Multiplying & storing results
-					__m128 result = _mm_mul_ps(mat_1_rows[i], col);
+					Float4 result = mat_1_rows[i] * col;
 
 					//Sum up everything
 					T comp = 0;
 					for (int s = 0; s < 4; s++) {
-						comp += result.m128_f32[s];
+						comp += result.Get(s);
 					}
 
 					nMat[4 * i + c] = comp;
@@ -193,14 +199,14 @@ public:
 		return &m_mat[0];
 	}
 
+	bool _simd_enabled;
+
 private:
 	T m_mat[16];
-
-	bool _simd_enabled;
 };
 
 template<class T>
-mat4<T> TranslateMatrix(mat4<T> srcMat, vec3f trans) {
+mat4<T> TranslateMatrix(mat4<T> srcMat, vec3<T> trans) {
 	T transMat[16] = {
 		1, 0, 0, trans.getX(),
 		0, 1, 0, trans.getY(),

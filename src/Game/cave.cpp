@@ -30,11 +30,18 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	vec4f vtest(a, 1.0f);
 
 	mat4f t(1.0f);
-	t = TranslateMatrix(t, vec3f(2.0f, 4.0f, 8.0f));
-	t = ScaleMatrix(t, vec3f(1.0f, 4.0f, 5.0f));
-	t = RotateMatrix(t, vec3f(50.0f, 20.0f, 80.0f));
+	t = TranslateMatrix<float>(t, vec3f(2.0f, 4.0f, 8.0f));
+	t.DBG_print_matrix();
 
-	//t.DBG_print_matrix();
+	t = ScaleMatrix<float>(t, vec3f(1.0f, 4.0f, 5.0f));
+	t = RotateMatrix<float>(t, vec3f(50.0f, 20.0f, 80.0f));
+
+	/*mat4<double> t2(1.0);
+	t2 = TranslateMatrix<double>(t2, vec3<double>(2.0, 4.0, 8.0));
+	t2.DBG_print_matrix();*/
+
+	//t2 = ScaleMatrix(t, vec3f(1.0f, 4.0f, 5.0f));
+	//t2 = RotateMatrix(t, vec3f(50.0f, 20.0f, 80.0f));
 	//svtest.DBGPrint();
 }
 
