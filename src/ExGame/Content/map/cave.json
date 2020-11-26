@@ -7,7 +7,7 @@
 
       "dir": [ 0.8, -0.3, -0.4 ],
       "color": [ 1, 1, 1 ],
-      "brightness": 2.0
+      "brightness": 0.0
     },
 
     {
@@ -26,10 +26,10 @@
       "type":"plight",
       "nameTag": "pointTest",
 
-      "pos":[0, -1, 0],
-      "color":[1, null, 0],
-      "brightness": 5.0,
-      "radius": 10.0
-    }
+      "pos":[-15, 10, 8],
+      "color":[1, 1, 1],
+      "brightness": 150.0,
+      "radius": 100.0
+    },
   ]
 }

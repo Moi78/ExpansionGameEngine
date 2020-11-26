@@ -11,9 +11,9 @@ cave::cave(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 
 	//EXP_PostProcessingEffect* m_pp = new EXP_PostProcessingEffect(game, "/shaders/test_pp.exmtl");
 
-	m_gui_cache = new EXP_GUI_ColorCache(game, vec3f(0.0, 0.5, 1.0), 0.5f, 100.0f, 100.0f, 0.0f, 0.0f);
+	//m_gui_cache = new EXP_GUI_ColorCache(game, vec3f(0.0, 0.5, 1.0), 0.5f, 100.0f, 100.0f, 0.0f, 0.0f);
 
-	m_gui_tex = new EXP_GUI_ImageTexture(game, "/noice.png", 0.5f, 200.0f, 200.0f, 100.0f, 100.0f);
+	//m_gui_tex = new EXP_GUI_ImageTexture(game, "/noice.png", 0.5f, 200.0f, 200.0f, 100.0f, 100.0f);
 
 	m_meshes = new EXP_InstanciatedMesh(game, game->GetShaderByFileRef("/shaders/mat_room.exmtl"), "/meshes/sphere");
 
@@ -41,7 +41,7 @@ void cave::OnStart() {
 	std::cout << "Game started" << std::endl;
 	//m_mloader->GetDirLightByName("sun")->SetLightColor(vec3f(1.0f, 0.0f, 0.0f));
 
-	m_game->GetRenderer()->SetAmbientStrength(0.2f);
+	m_game->GetRenderer()->SetAmbientStrength(0.002f);
 }
 
 void cave::OnTick() {

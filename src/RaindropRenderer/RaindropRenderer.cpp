@@ -12,7 +12,7 @@
 #include "RD_RenderingAPI.h"
 #include "RD_RenderingAPI_GL.h"
 
-RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api, int maxFramerate, bool minInit, std::string engineDir) {
+RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api, Pipeline pline, int maxFramerate, bool minInit, std::string engineDir) {
 	FillFeaturesStringArray();
 	FillFeatureStateArray();
 
@@ -29,20 +29,41 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_api->InitializeAPI(w, h, windowName);
 
 	m_frmLmt = std::make_unique<RD_FrameLimiter>(maxFramerate);
+	m_pipeline = pline;
 
 	//Shader Compiling
-	std::cout << "Compiling main shaders..." << std::endl;
+	if (m_pipeline == Pipeline::LAMBERT_ENGINE) {
+		std::cout << "Compiling main shaders, lambert shading model..." << std::endl;
 
-	m_shadowShader = m_api->CreateShader();
-	m_shadowShader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Shadow.vert", m_engineDir + "/Shaders/glsl/Shadow.frag");
+		m_shadowShader = m_api->CreateShader();
+		m_shadowShader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Shadow.vert", m_engineDir + "/Shaders/glsl/Shadow.frag");
 
-	m_light_shader = m_api->CreateShader();
-	m_light_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Light.vert", m_engineDir + "/Shaders/glsl/Light.frag");
+		m_light_shader = m_api->CreateShader();
+		m_light_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Light.vert", m_engineDir + "/Shaders/glsl/Light.frag");
 
-	m_beauty_shader = m_api->CreateShader();
-	m_beauty_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Beauty.vert", m_engineDir + "/Shaders/glsl/Beauty.frag");
+		m_beauty_shader = m_api->CreateShader();
+		m_beauty_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Beauty.vert", m_engineDir + "/Shaders/glsl/Beauty.frag");
 
-	m_CurrentShader = m_light_shader;
+		m_CurrentShader = m_light_shader;
+
+		ambientStrength = 1.0f;
+	}
+	else {
+		std::cout << "Compiling main shaders, PBR shading model..." << std::endl;
+
+		m_shadowShader = m_api->CreateShader();
+		m_shadowShader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Shadow.vert", m_engineDir + "/Shaders/glsl/Shadow.frag");
+
+		m_light_shader = m_api->CreateShader();
+		m_light_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/pbr/Light.vert", m_engineDir + "/Shaders/glsl/pbr/Light.frag");
+
+		m_beauty_shader = m_api->CreateShader();
+		m_beauty_shader->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Beauty.vert", m_engineDir + "/Shaders/glsl/Beauty.frag");
+
+		m_CurrentShader = m_light_shader;
+
+		ambientStrength = 0.001f;
+	}
 
 	m_defTex = m_api->CreateTexture();
 	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
@@ -59,10 +80,14 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
 	}
 
-	ambientStrength = 1.0f;
 	ambientColor = vec3f(1.0f, 1.0f, 1.0f);
 
-	CreateGbuff();
+	if (m_pipeline == Pipeline::LAMBERT_ENGINE) {
+		CreateGbuff();
+	}
+	else {
+		CreateGbuff_PBR();
+	}
 
 	m_gui_manager = std::make_unique<RD_GUI_Manager>(this);
 	m_gui_manager->InitManager();
@@ -415,6 +440,51 @@ bool RaindropRenderer::CreateGbuff() {
 	return true;
 }
 
+bool RaindropRenderer::CreateGbuff_PBR() {
+	int width = getWindowWidth();
+	int height = getWindowHeigh();
+
+	m_gbuffer = m_api->CreateFrameBuffer(width, height);
+
+	//Position buff
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
+	m_g_buffer.gPos = 0;
+
+	//Normal buff
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
+	m_g_buffer.gNorm = 1;
+
+	//Albedo buff
+	m_gbuffer->AddAttachement(IMGFORMAT_RGBA);
+	m_g_buffer.gAlbedo = 2;
+
+	//Specular buff
+	m_gbuffer->AddAttachement(IMGFORMAT_R16F);
+	m_g_buffer.gSpec = 3;
+
+	//Shadow buff
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB);
+	m_g_buffer.gShadows = 4;
+
+	//Light buff
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB);
+	m_g_buffer.gLight = 5;
+
+	//Metallic/Roughness/AO
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
+	m_g_buffer.gMetRoughAO = 6;
+
+	m_gbuffer->BuildFBO();
+
+	m_light_pprocess = m_api->CreateFrameBuffer(width, height);
+	//Light & PostProcess screen
+	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
+
+	m_light_pprocess->BuildFBO();
+
+	return true;
+}
+
 void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	if (!cam) {
 		return;
@@ -423,11 +493,8 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	m_gbuffer->BindFBO();
 	m_api->Clear(COLOR_BUFFER | DEPTH_BUFFER);
 
-	glCullFace(GL_BACK);
-
 	RenderMeshes(cam);
 
-	glCullFace(GL_FRONT);
 	m_gbuffer->UnbindFBO();
 
 	m_light_pprocess->BindFBO();
@@ -465,6 +532,11 @@ void RaindropRenderer::RenderLightPass(vec3f CamPos) {
 
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gShadows)->BindTexture(4);
 	m_light_shader->SetInt("ShadowPass", 4);
+
+	if (m_pipeline == Pipeline::PBR_ENGINE) {
+		m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(5);
+		m_light_shader->SetInt("gMetRoughAO", 5);
+	}
 
 	m_light_shader->SetVec3("CamPos", CamPos);
 

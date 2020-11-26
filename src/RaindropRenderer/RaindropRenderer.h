@@ -61,9 +61,14 @@ enum API {
 	DIRECTX
 };
 
+enum Pipeline {
+	PBR_ENGINE,
+	LAMBERT_ENGINE
+};
+
 class RAINDROPRENDERER_API RaindropRenderer {
 public:
-	RaindropRenderer(int w, int h, std::string windowName, API api, int maxFramerate = 60, bool minInit = false, std::string EngineDir = "Engine");
+	RaindropRenderer(int w, int h, std::string windowName, API api, Pipeline pline = Pipeline::LAMBERT_ENGINE, int maxFramerate = 60, bool minInit = false, std::string EngineDir = "Engine");
 	~RaindropRenderer();
 
 	/*void initWindow(int w, int h, std::string name);*/
@@ -102,7 +107,7 @@ public:
 	void AddToFramebufferGarbageCollector(unsigned int fboID);
 	void EmptyFramebufferGarbageCollector();
 
-	//Ambient Lighting
+	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(vec3f nColor);
 
@@ -158,11 +163,14 @@ private:
 	void EnableAllFeatures();
 
 	bool CreateGbuff();
+	bool CreateGbuff_PBR();
 	void DeleteGbuff();
 
 	void SetErrorFlag(bool val);
 
 	std::unique_ptr<RD_RenderingAPI> m_api;
+
+	Pipeline m_pipeline;
 
 	std::string m_engineDir;
 

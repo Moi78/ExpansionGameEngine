@@ -22,11 +22,14 @@ struct RD_API Gbuff {
 	unsigned int gRBO;
 
 	unsigned int gPos;
+	unsigned int gNorm;
 	unsigned int gAlbedo;
 	unsigned int gSpec;
 	unsigned int gShadows;
+	
+	//PBR Stuff
+	unsigned int gMetRoughAO;
 
-	unsigned int gNorm;
-
-	unsigned int gLight; //Special tex, not used at the same time.
+	//Special tex, not used at the same time.
+	unsigned int gLight;
 };

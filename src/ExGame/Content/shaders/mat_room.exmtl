@@ -14,6 +14,7 @@ layout (location = 1) out vec3 gNorm;
 layout (location = 2) out vec4 gAlbedo;
 layout (location = 3) out float gSpec;
 layout (location = 4) out float gShadow;
+layout (location = 6) out vec3 gMetRoughAO;
 
 in vec3 Normal;
 in vec3 Tan;
@@ -63,6 +64,8 @@ void main() {
     gAlbedo.rgb = vec3(0.0, 0.5, 0.5);
     gAlbedo.a = 0.8;
     gSpec = 16.0;
+
+	gMetRoughAO = vec3(1.0, 0.6, 1.0);
 
     float shadow = 0.0;
     for(int i = 0; i < NbrDirLights; i++) {
