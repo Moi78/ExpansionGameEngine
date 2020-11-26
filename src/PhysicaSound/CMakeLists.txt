@@ -1,25 +1,18 @@
-cmake_minimum_required(VERSION 3.0)
+file(GLOB SRCS "*.cpp")
+file(GLOB HEADERS "*.h")
 
-include_directories(../ExpansionMath)
+add_library(PhysicaSound SHARED ${SRCS} ${HEADERS})
 
-project(PhysicaSound)
-
-file(GLOB SRC "*.cpp" "*.h")
-
-add_library(PhysicaSound SHARED ${SRC})
+target_include_directories(PhysicaSound PUBLIC "../ExpansionMath" "../BulldozerFileManager")
+target_link_libraries(PhysicaSound PUBLIC ExpansionMath BulldozerFileManager)
 
 find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(SNDFILE IMPORTED_TARGET sndfile)
-
-target_link_libraries(PhysicaSound PkgConfig::SNDFILE)
+pkg_check_modules(SNDFILE sndfile)
+target_include_directories(PhysicaSound PUBLIC ${SNDFILE_INCLUDE_DIRS})
+target_link_libraries(PhysicaSound PUBLIC ${SNDFILE_LIBRARIES})
 
 find_package(OpenAL REQUIRED)
 if(OPENAL_FOUND)
-    message("OPENAL FOUND!")
-
-	include_directories(${OPENAL_INCLUDE_DIRS})
-	target_link_libraries(PhysicaSound ${OPENAL_LIBRARY})
+    target_include_directories(PhysicaSound PUBLIC ${OPENAL_INCLUDE_DIRS})
+    target_link_libraries(PhysicaSound PUBLIC ${OPENAL_LIBRARY})
 endif(OPENAL_FOUND)
-
-target_link_libraries(PhysicaSound ExpansionMath)

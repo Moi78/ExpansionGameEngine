@@ -1,33 +1,7 @@
-cmake_minimum_required(VERSION 3.0)
+file(GLOB SRC "*.cpp")
+file(GLOB HEADERS "*.h")
 
-include_directories(../BulldozerFileManager/ ../ExpansionMath/ ../ExpansionGameEngineCore/ ../RaindropRenderer/ ../PhysicaSound/)
+add_library(Game SHARED ${SRC} ${HEADERS})
 
-include_directories(../libs/GL/include/)
-
-project(Game)
-
-file(GLOB src "*.cpp" "*.h")
-
-add_library(Game SHARED ${src})
-
-SET(GCC_ARGS "--std=c++17 -rdynamic -fPIC")
-add_definitions(${GCC_PERM})
-
-SET(PREPOC "-D GLM_ENABLE_EXPERIMENTAL")
-add_definitions(${PREPOC})
-
-find_package(Bullet REQUIRED)
-if(BULLET_FOUND)
-	include_directories(${BULLET_INCLUDE_DIRS})
-	target_link_libraries(Game ${BULLET_DYNAMICS_LIBRARY} ${BULLET_COLLISION_LIBRARY} ${BULLET_MATH_LIBRARY})
-endif(BULLET_FOUND)
-
-find_package(FreeType REQUIRED)
-include_directories("../libs/freetype/include/freetype2/")
-target_link_libraries(Game ${FREETYPE_LIBS})
-
-target_link_libraries(Game BulldozerFileManager)
-target_link_libraries(Game ExpansionMath)
-target_link_libraries(Game ExpansionGameEngineCore)
-target_link_libraries(Game RaindropRenderer)
-target_link_libraries(Game PhysicaSound)
+target_include_directories(Game PUBLIC "../ExpansionMath" "../BulldozerFileManager" "../RaindropRenderer" "../ExpansionGameEngineCore" "../PhysicaSound" "../libs/GL/include")
+target_link_libraries(Game PUBLIC ExpansionMath BulldozerFileManager RaindropRenderer PhysicaSound ExpansionGameEngineCore)

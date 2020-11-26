@@ -1,10 +1,14 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.7...3.16)
 
-project(EXPGE)
+if(${CMAKE_VERSION} VERSION_LESS 3.12)
+    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+else()
+    cmake_policy(VERSION 3.16)
+endif()
 
-#FOR DEBUG
-#SET(GCC_ARGS "-g3")
-#add_definitions(${GCC_ARGS})
+project(EXPGE VERSION 0.1
+              DESCRIPTION "Expansion Game Engine"
+              LANGUAGES CXX)
 
 set(BUILDTARGET "ubuntu" CACHE STRING "")
 
@@ -14,15 +18,22 @@ if(${BUILDTARGET} STREQUAL "ubuntu")
 else()
     set(UBUNTU "")
 endif()
+
 add_definitions(${UBUNTU})
 add_definitions("-std=c++17")
+add_definitions("-fpermissive")
 
 add_compile_definitions(BUILD_OPENGL)
 
-add_subdirectory(src/ExpansionMath)
-add_subdirectory(src/BulldozerFileManager)
-add_subdirectory(src/PhysicaSound)
-add_subdirectory(src/RaindropRenderer)
-add_subdirectory(src/ExpansionGameEngineCore)
-add_subdirectory(src/ExGame)
-add_subdirectory(src/Game)
+#file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
+#if(EXISTS "${LOC_PATH}")
+#    message(FATAL_ERROR "You cannot build in a source directory")
+#endif()
+
+add_subdirectory("src/ExpansionMath")
+add_subdirectory("src/BulldozerFileManager")
+add_subdirectory("src/PhysicaSound")
+add_subdirectory("src/RaindropRenderer")
+add_subdirectory("src/ExpansionGameEngineCore")
+add_subdirectory("src/ExGame")
+add_subdirectory("src/Game")

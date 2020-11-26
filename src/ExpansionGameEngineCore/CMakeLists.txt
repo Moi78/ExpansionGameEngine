@@ -1,48 +1,19 @@
-cmake_minimum_required(VERSION 3.0)
+file(GLOB SRCS "*.cpp")
+file(GLOB HEADERS "*.h")
 
-include_directories(../BulldozerFileManager/ ../ExpansionMath/ ../RaindropRenderer/ ../PhysicaSound)
+add_library(ExpansionGameEngineCore SHARED ${SRCS} ${HEADERS})
 
-include_directories(../libs/GL/include/)
-
-project(ExpansionGameEngineCore)
-
-file(GLOB SRC "*.cpp" "*.h")
-
-add_library(ExpansionGameEngineCore SHARED ${SRC})
-
-SET(GCC_PERM "-fpermissive --std=c++17 -pthread")
-add_definitions(${GCC_PERM})
-
-if(${BUILDTARGET} EQUAL "ubuntu")
-    set(UBUNTU "-D UBUNTU")
-else()
-    set(UBUNTU "")
-endif()
-
-SET(PREPOC "-D GLM_ENABLE_EXPERIMENTAL ${UBUNTU}")
-add_definitions(${PREPOC})
+target_include_directories(ExpansionGameEngineCore PUBLIC "../ExpansionMath" "../BulldozerFileManager" "../RaindropRenderer" "../PhysicaSound" "../libs/GL/include")
+target_link_libraries(ExpansionGameEngineCore PUBLIC ExpansionMath BulldozerFileManager RaindropRenderer PhysicaSound)
 
 find_package(Bullet REQUIRED)
 if(BULLET_FOUND)
-	include_directories(${BULLET_INCLUDE_DIRS})
-	target_link_libraries(ExpansionGameEngineCore ${BULLET_DYNAMICS_LIBRARY} ${BULLET_COLLISION_LIBRARY} ${BULLET_MATH_LIBRARY})
+	target_include_directories(ExpansionGameEngineCore PUBLIC ${BULLET_INCLUDE_DIRS})
+	target_link_libraries(ExpansionGameEngineCore PUBLIC ${BULLET_DYNAMICS_LIBRARY} ${BULLET_COLLISION_LIBRARY} ${BULLET_MATH_LIBRARY})
 endif(BULLET_FOUND)
-
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)
-link_libraries(${JSONCPP_LIBRARIES})
-target_link_libraries(ExpansionGameEngineCore ${JSONCPP_LIBRARIES})
-include_directories(${JSONCPP_INCLUDE_DIRS})
+target_link_libraries(ExpansionGameEngineCore PUBLIC ${JSONCPP_LIBRARIES})
+target_include_directories(ExpansionGameEngineCore PUBLIC ${JSONCPP_INCLUDE_DIRS})
 
-find_package(FreeType REQUIRED)
-include_directories("../libs/freetype/include/freetype2/")
-target_link_libraries(ExpansionGameEngineCore ${FREETYPE_LIBRARIES})
-
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-target_link_libraries(ExpansionGameEngineCore Threads::Threads)
-
-target_link_libraries(ExpansionGameEngineCore ExpansionMath)
-target_link_libraries(ExpansionGameEngineCore RaindropRenderer)
-target_link_libraries(ExpansionGameEngineCore BulldozerFileManager)
