@@ -24,6 +24,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 	m_error_flag = false;
 
+	assert(m_api != nullptr && "ERROR: No 3D-API selected.");
+
 	m_api->InitializeAPI(w, h, windowName);
 
 	m_frmLmt = std::make_unique<RD_FrameLimiter>(maxFramerate);
@@ -154,8 +156,6 @@ int RaindropRenderer::AppendLight(RD_PointLight* ptLight) {
 int RaindropRenderer::AppendDirLight(RD_DirLight* dirLight) {
 	m_DirLights.push_back(dirLight);
 
-	//UpdateDirLighting();
-
 	return 1;
 }
 
@@ -251,10 +251,6 @@ void RaindropRenderer::FillPtLightIndice(int index) {
 	m_CurrentShader->SetFloat("LightRadius[" + indexSTR + "]", m_pt_lights[index]->GetLightRadius());
 }
 
-//GLFWwindow* RaindropRenderer::GetGLFWwindow() {
-//	return win;
-//}
-
 void RaindropRenderer::FillFeaturesStringArray() {
 	m_features_string[0] = "ftr_specular";
 	m_features_string[1] = "ftr_lighting";
@@ -319,10 +315,6 @@ double RaindropRenderer::GetLastDeltaTime() {
 
 int RaindropRenderer::GetFrameLimit() {
 	return m_frmLmt->GetFrameLimit();
-}
-
-void RaindropRenderer::SetAASampling(int nbs) {
-	glfwWindowHint(GLFW_SAMPLES, nbs);
 }
 
 void RaindropRenderer::RenderLightsDepth(vec3f camPos) {

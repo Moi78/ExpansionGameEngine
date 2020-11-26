@@ -80,8 +80,6 @@ public:
 
 	double GetLastDeltaTime();
 
-	void SetAASampling(int nbrSample);
-
 	//Rendering
 	void RenderMeshes(RD_Camera* cam);
 	void RenderShadowMeshes();
