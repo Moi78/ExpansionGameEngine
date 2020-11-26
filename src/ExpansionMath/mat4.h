@@ -31,17 +31,8 @@ template<class T>
 class mat4
 {
 public:
-	mat4(T init_val = 1, bool enableSIMD = true) {
+	mat4(T init_val = 1) {
 		memset(m_mat, 0, 16 * sizeof(T));
-
-		if (enableSIMD) {
-			if (sizeof(T) == sizeof(float)) {
-				_simd_enabled = true;
-			}
-			else {
-				_simd_enabled = false;
-			}
-		}
 
 		/*
 		    Making identity matrix
@@ -58,18 +49,9 @@ public:
 		}
 	}
 
-	mat4(T mat[16], bool enableSIMD = true) {
+	mat4(T mat[16]) {
 		memset(m_mat, 0, sizeof(m_mat));
 		memcpy(m_mat, mat, 16 * sizeof(T));
-
-		if (enableSIMD) {
-			if (sizeof(T) == sizeof(float)) {
-				_simd_enabled = true;
-			}
-			else {
-				_simd_enabled = false;
-			}
-		}
 	}
 
 	~mat4() {
@@ -91,7 +73,7 @@ public:
 	}
 
 	vec4<T> operator*(vec4<T> a) {
-		if (_simd_enabled) {
+		if constexpr(sizeof(T) == sizeof(float)) {
 			Float4 vec(a.GetX(), a.GetY(), a.GetZ(), a.GetW());
 
 			T XYZW[4];
@@ -118,8 +100,9 @@ public:
 		T nMat[16];
 		memset(nMat, 0, 16 * sizeof(T));
 
-		if (_simd_enabled) {
-			Float4 scalar(a);
+		if constexpr (sizeof(T) == sizeof(float)) {
+			Float4 scalar;
+			scalar.LoadConstant(a);
 			for (int i = 0; i < 16; i += 4) {
 				Float4 m(m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
 				Float4 mmultiplied = m * scalar;
@@ -137,7 +120,7 @@ public:
 	}
 
 	mat4<T> operator*(mat4<T> const& a) {
-		if (_simd_enabled) {
+		if constexpr (sizeof(T) == sizeof(float)) {
 			//SIMD Impl.
 
 			//Allocating matrix in XMM registers
@@ -188,6 +171,8 @@ public:
 					for (int s = 0; s < 4; s++) {
 						comp += results[s];
 					}
+
+					nMat[4 * i + c] = comp;
 				}
 			}
 
@@ -198,8 +183,6 @@ public:
 	T* GetPTR() {
 		return &m_mat[0];
 	}
-
-	bool _simd_enabled;
 
 private:
 	T m_mat[16];

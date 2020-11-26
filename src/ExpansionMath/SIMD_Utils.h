@@ -14,7 +14,7 @@ public:
 		m_vec = vec;
 	}
 
-	Float4(float a = 0.0f) {
+	void LoadConstant(float a) {
 		m_vec = _mm_load_ss(&a);
 	}
 
@@ -41,15 +41,14 @@ private:
 class Float4 {
 public:
 	Float4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) {
-		__m128 vec = { x, y, z, w };
-		m_vec = __m128(vec);
+		m_vec = { x, y, z,w };
 	}
 
 	Float4(__m128 vec) {
 		m_vec = vec;
 	}
 
-	Float4(float a = 0.0f) {
+	void LoadConstant(float a) {
 		m_vec = _mm_load_ss(&a);
 	}
 
