@@ -1,0 +1,117 @@
+{
+  "MapLevelCodeObjectName": "MainLevel",
+  "nodes": [
+    {
+      "type": "dlight",
+      "nameTag": "sun",
+
+      "dir": [ 0.8, -0.3, -0.4 ],
+      "color": [ 1, 1, 1 ],
+      "brightness": 10.0
+    },
+
+    {
+      "type": "mesh",
+      "nameTag": "meshTest",
+
+      "ref": "/meshes/Piedestal",
+      "material": "/shaders/mat_pied",
+
+      "pos": [ 0, 0, 0 ],
+      "rot": [ 0, 0, 0 ],
+      "scale": [ 1, 1, 1 ]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"suzanne",
+
+      "ref":"/meshes/Suzanne",
+      "material":"/shaders/mat_suzanne",
+
+      "pos": [0, 0, 7.6],
+      "rot": [0, 0, -90],
+      "scale": [1, 1, 1]
+    },
+
+    {
+      "type":"plight",
+      "nameTag": "pointTest",
+
+      "pos":[-5, 5, 8],
+      "color":[1, 0, 1],
+      "brightness": 150.0,
+      "radius": 100.0
+    },
+
+    {
+      "type":"plight",
+      "nameTag": "pointTest2",
+
+      "pos":[5, -5, 8],
+      "color":[0, 1, 1],
+      "brightness": 150.0,
+      "radius": 100.0
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"floor",
+
+      "ref":"/meshes/Plane",
+      "material":"/shaders/mat_floor",
+
+      "pos":[0, 0, 0],
+      "rot":[0, 0, 0],
+      "scale":[3, 3, 3]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"wall1",
+
+      "ref":"/meshes/Plane",
+      "material":"/shaders/mat_wall",
+
+      "pos":[15, 0, 0],
+      "rot":[0, -90, 90],
+      "scale":[3, 3, 3]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"wall2",
+
+      "ref":"/meshes/Plane",
+      "material":"/shaders/mat_wall",
+
+      "pos":[-15, 0, 0],
+      "rot":[0, 90, 90],
+      "scale":[3, 3, 3]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"wall3",
+
+      "ref":"/meshes/Plane",
+      "material":"/shaders/mat_wall",
+
+      "pos":[0, 15, 0],
+      "rot":[90, 0, 0],
+      "scale":[3, 3, 3]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"wall4",
+
+      "ref":"/meshes/Plane",
+      "material":"/shaders/mat_wall",
+
+      "pos":[0, -15, 0],
+      "rot":[-90, 0, 0],
+      "scale":[3, 3, 3]
+    }
+  ]
+}

@@ -85,6 +85,16 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 
 	EXP_Resolution res = { TargetRoot["GameBaseResolution"][0].asInt(), TargetRoot["GameBaseResolution"][1].asInt()};
 
+	Pipeline pline;
+	if (TargetRoot["RenderingPipeline"].asString() == "pbr") {
+		std::cout << "Loading PBR engine." << std::endl;
+		pline = Pipeline::PBR_ENGINE;
+	}
+	else {
+		std::cout << "Loading Lambert engine." << std::endl;
+		pline = Pipeline::LAMBERT_ENGINE;
+	}
+
 	std::string startupMap = TargetRoot["StartupMap"].asString();
 
 	EXP_GameInfo gi = {};
@@ -94,6 +104,7 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 	gi.GameBaseResolution = res;
 	gi.GameLib = GameLib;
 	gi.StartupMap = startupMap;
+	gi.RenderingPipeline = pline;
 
 	return gi;
 }
@@ -104,7 +115,13 @@ void EXP_Game::InitGame(vec3f refreshColor, EXP_GameInfo gameinfo) {
 	m_gameName = gameinfo.GameName;
 	m_gameinfo = gameinfo;
 
-	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y, gameinfo.GameName, API::OPENGL, Pipeline::PBR_ENGINE, 60, false, gameinfo.RootEngineContentFolder);
+	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y,
+												gameinfo.GameName,
+												API::OPENGL, gameinfo.RenderingPipeline,
+												60,
+												false,
+												gameinfo.RootEngineContentFolder);
+
 	m_materialManager = std::make_unique<RD_MaterialLibrary>();
 	m_hinput = std::make_unique<EXP_InputHandler>(m_rndr->GetRenderingAPI()->GetWindowingSystem());
 

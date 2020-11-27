@@ -93,23 +93,46 @@ float GeomSmith(vec3 N, vec3 V, vec3 L, float roughness) {
 }
 
 vec3 CalcDirLight(int index) {
-	vec3 dir = normalize(vec3(-DirLightDir[index]));
+	float dist = 100000.0;
+
+	vec3 ColPow = DirLightColor[index] * DirLightBrightness[index];
+
+	vec3 L = normalize(vec3(-DirLightDir[index]));
+	vec3 H = normalize(viewDir + L);
+
+	vec3 radiance = ColPow;
+
+	float NDF = DistributionGGX(norm, H, Rness);
+	float G = GeomSmith(norm, viewDir, L, Rness);
+	vec3 F = FresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+
+	vec3 kS = F;
+	vec3 kD = vec3(1.0) - kS;
+	kD *= 1.0 - Metllc;
+
+	vec3 numerator = NDF * G * F;
+	float denominator = 4.0 * max(dot(norm, viewDir), 0.0) * max(dot(norm, L), 0.0);
+	vec3 specular = numerator / denominator;
+
+	float NdotL = max(dot(norm, L), 0.0);
+
+	return (kD * Diffuse / PI + specular) * radiance * NdotL;
 
 	//Diffuse
-	float diff = max(0.0, dot(norm, dir));
-	vec3 diffuse = (diff * DirLightBrightness[index] * DirLightColor[index]);
+	//float diff = max(0.0, dot(norm, dir));
+	//vec3 diffuse = (diff * DirLightBrightness[index] * DirLightColor[index]);
 
 	//Specular
-	vec3 d_specular = vec3(0.0);
-	if(ftr_specular) {
-		vec3 reflectDir = reflect(-dir, norm);
+	//vec3 d_specular = vec3(0.0);
+	//if(ftr_specular) {
+	//	vec3 reflectDir = reflect(-dir, norm);
 
-		float spec = pow(max(0.0, dot(viewDir, reflectDir)), SpecularExp);
+	//	float spec = pow(max(0.0, dot(viewDir, reflectDir)), SpecularExp);
 
-		d_specular = spec * DirLightColor[index] * DirLightBrightness[index] * Specular;
-	}
+	//	d_specular = spec * DirLightColor[index] * DirLightBrightness[index] * Specular;
+	//}
 
-	return diffuse + d_specular;
+	//return diffuse + d_specular;
 }
 
 vec3 CalcPointLight(int lightIndex) {
@@ -150,11 +173,11 @@ void main() {
 
 	if(ftr_lighting) {
 		for(int i = 0; i < nbrDirLight; i++) {
-			diffSpec += CalcDirLight(i) * shadow;
+			diffSpec += max(CalcDirLight(i), 0.0) * shadow;
 		}
 
 		for(int i = 0; i < nbrPointLight; i++) {
-			diffSpec += CalcPointLight(i);
+			diffSpec += max(CalcPointLight(i), 0.0);
 		}
 	}
 

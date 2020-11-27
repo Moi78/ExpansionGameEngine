@@ -20,7 +20,10 @@ struct EXPGE_API EXP_Resolution {
 struct EXPGE_API EXP_GameInfo {
 	std::string RootGameContentFolder = "Engine";
 	std::string RootEngineContentFolder = "Content";
+
 	EXP_Resolution GameBaseResolution = { 1280, 720 };
+	Pipeline RenderingPipeline = Pipeline::LAMBERT_ENGINE;
+
 	std::string GameLib = "Game.dll";
 
 	std::string GameName = "Default Game";

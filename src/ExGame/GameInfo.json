@@ -3,21 +3,23 @@
         "RootEngineContentFolder":"Engine",
         "RootGameContentFolder":"Content",
         "GameBaseResolution":[1280, 720],
+        "RenderingPipeline":"pbr",
 
         "GameBin":"../x64/Debug/Game.dll",
 
         "GameName":"Donut Mmh",
-        "StartupMap":"/map/cave.json"
+        "StartupMap":"/map/MainLevel.json"
     },
     
     "linux" : {
         "RootEngineContentFolder":"Engine",
         "RootGameContentFolder":"Content",
         "GameBaseResolution":[1280, 720],
+        "RenderingPipeline":"pbr",
 
         "GameBin":"../Game/libGame.so",
 
         "GameName":"Donut Mmh",
-        "StartupMap":"/map/cave.json"
+        "StartupMap":"/map/MainLevel.json"
     }
 }

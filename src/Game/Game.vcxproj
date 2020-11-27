@@ -19,15 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cave.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="MainLevel.cpp" />
     <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cave.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="MainLevel.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

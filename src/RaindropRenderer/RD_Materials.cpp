@@ -23,6 +23,8 @@ void RD_ShaderMaterial::BindMaterial() {
 	for (auto m : m_textures) {
 		m.second->BindTexture(TexID);
 		m_shader->SetInt(m.first, TexID);
+
+		TexID++;
 	}
 }
 

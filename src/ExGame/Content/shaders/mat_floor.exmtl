@@ -1,8 +1,18 @@
 {
     "textures" : [
 		{
-			"path":"Content/noice.png",
-			"param":"test"
+			"path":"Content/textures/floor_diff.jpg",
+			"param":"diff"
+		},
+
+		{
+			"path":"Content/textures/floor_norm.jpg",
+			"param":"normMap"
+		},
+
+		{
+			"path":"Content/textures/floor_roughness.jpg",
+			"param":"roughMap"
 		}
 	],
 
@@ -55,17 +65,37 @@ float ProcessShadows(sampler2D SMap, vec4 FPLS) {
 	
 }
 
-uniform sampler2D test;
+vec3 GetNormFromMap(sampler2D NMap, vec3 n, vec3 FPos, vec2 UV) {
+    vec3 tanNorm = texture(NMap, UV).xyz * 2.0 - 1.0;
+    
+    vec3 Q1 = dFdx(FPos);
+    vec3 Q2 = dFdy(FPos);
+    vec2 st1 = dFdx(UV);
+    vec2 st2 = dFdy(UV);
+    
+    vec3 Nm = normalize(n);
+    vec3 T = normalize(Q1 * st2.t - Q2 * st1.t);
+    vec3 B = -normalize(cross(Nm, T));
+    mat3 TBN = mat3(T, B, Nm);
+
+    return normalize(TBN * tanNorm);
+}
+
+uniform sampler2D diff;
+uniform sampler2D normMap;
+uniform sampler2D roughMap;
 
 void main() {
-    gPos = FragPos;
-    gNorm = normalize(Normal);
+	vec2 UVs = UVcoord * 4;
 
-    gAlbedo.rgb = vec3(0.0, 0.5, 0.5);
+    gPos = FragPos;
+    gNorm = GetNormFromMap(normMap, Normal, FragPos, UVs);
+
+	gAlbedo.rgb = texture(diff, UVs).rgb;
     gAlbedo.a = 0.8;
     gSpec = 16.0;
 
-	gMetRoughAO = vec3(1.0, 0.6, 1.0);
+	gMetRoughAO = vec3(0.2, texture(roughMap, UVs).r, 1.0);
 
     float shadow = 0.0;
     for(int i = 0; i < NbrDirLights; i++) {
