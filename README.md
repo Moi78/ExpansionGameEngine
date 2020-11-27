@@ -7,7 +7,7 @@ Expansion Game Engine is a 3D game engine under development.
    - [x] OpenGL 3/4
    - [ ] Vulkan (In priority to D3D, soon to be started)
    - [ ] Direct3D
- - [ ] Going PBR
+ - [x] Going PBR
  - [x] Lightweight build (<30MB for all engine files) & SDK (<300MB for the whole sdk)
  - [x] Light and Shadow fully realtime
  - [x] Deffered rendering
@@ -18,6 +18,7 @@ Expansion Game Engine is a 3D game engine under development.
      - [ ] Switch
      - [ ] PS4
      - [ ] XBox
+   - [ ] Android
    - [ ] MacOS (last priority)
  - [ ] Optimise as f\*ck -> I want to have a very well optimised engine to run everywhere
  - [ ] An easy to understand & easy to use engine
@@ -27,17 +28,27 @@ Expansion Game Engine is a 3D game engine under development.
 
 ## Screenshots
 Here you have some screenshots I took from the last demo I've made.
+
 ![alt text](screenshots/EXPGE_Screen_1.PNG)
 ![alt text](screenshots/EXPGE_Screen_2.PNG)
-Some tests on instanciated meshes, rotations issues (now solved =° ), and GUI System
+
+Some tests on instanciated meshes and rotations issues (now solved =° ), and GUI System
+
 ![alt text](screenshots/EXPGE_Screen_3.PNG)
+
 A little Maze Generator I've built with EXPGE
+
 ![alt text](screenshots/EXPGE_Screen_4.PNG)
 ![alt text](screenshots/EXPGE_Screen_5.PNG)
 ![alt text](screenshots/EXPGE_Screen_6.PNG)
+
 FBX to MSH convertion tool
 
 ![alt text](screenshots/EXPGE_Screen_7.PNG)
+
+First demo of my PBR impl
+
+![alt_text](screenshots/EXPGE_Screen_8.PNG)
 
 ## TODO List
 
