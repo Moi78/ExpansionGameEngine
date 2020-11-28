@@ -38,8 +38,6 @@ void RD_FrameLimiter::WaitAll() {
 	if (m_last_delta < frameTime) {
 		long long delta = frameTime - GetElapsedTime();
 
-		std::cout << delta << " " << frameTime << std::endl;
-
 		std::this_thread::sleep_for(std::chrono::milliseconds((long long)delta));
 	}
 }
