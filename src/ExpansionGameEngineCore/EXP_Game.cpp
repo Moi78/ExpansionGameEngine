@@ -90,6 +90,10 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 		std::cout << "Loading PBR engine." << std::endl;
 		pline = Pipeline::PBR_ENGINE;
 	}
+	else if(TargetRoot["RenderingPipeline"].asString() == "lambert") {
+		std::cout << "Loading Lambert engine." << std::endl;
+		pline = Pipeline::LAMBERT_ENGINE;
+	}
 	else {
 		std::cout << "Loading Lambert engine." << std::endl;
 		pline = Pipeline::LAMBERT_ENGINE;

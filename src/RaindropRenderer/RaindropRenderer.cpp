@@ -672,6 +672,7 @@ void RaindropRenderer::EmptyFramebufferGarbageCollector() {
 RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(std::string ref) {
 	if (!std::filesystem::exists(ref)) {
 		std::cerr << "Shader file " << ref << " does not exist." << std::endl;
+		dispErrorMessageBox(StrToWStr("Shader file " + ref + " does not exists"));
 		return nullptr;
 	}
 
@@ -734,22 +735,4 @@ void RaindropRenderer::RemovePostProcessEffect(RD_PostProcessEffect* effect) {
 	else {
 		std::cerr << "ERROR: Element does not exists" << std::endl;
 	}
-}
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------
-
-void glfwWinCallback_(GLFWwindow* win, int w, int h) {
-	RaindropRenderer* rndr = (RaindropRenderer*)glfwGetWindowUserPointer(win);
-	rndr->RecreateGbuff();
-	
-	glViewport(0, 0, w, h);
-
-	rndr->GetGUI_Manager()->RebuildFramebuffer();
-}
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------
-
-std::wstring StrToWStr(std::string str) {
-	std::wstring wstr(str.begin(), str.end());
-	return wstr;
 }

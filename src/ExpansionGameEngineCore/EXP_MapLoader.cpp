@@ -14,6 +14,7 @@ EXP_MapLoader::~EXP_MapLoader() {
 bool EXP_MapLoader::LoadMap(std::string map) {
 	if (!std::filesystem::exists(map)) {
 		std::cerr << "Cannot load map file, file " << map << " does not exists" << std::endl;
+		dispErrorMessageBox(StrToWStr("Cannot load map file " + map + " path does not exists."));
 		return false;
 	}
 

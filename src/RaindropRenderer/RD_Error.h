@@ -17,12 +17,14 @@
 
 //Error displayer
 extern "C" void RAINDROPRENDERER_API dispErrorMessageBox(std::wstring Message);
+RAINDROPRENDERER_API std::wstring StrToWStr(std::string str);
 
 #else
 
 #include <iostream>
 
 void dispErrorMessageBox(std::wstring message);
+std::wstring StrToWStr(std::string str);
 
 #endif //_WIN32
 

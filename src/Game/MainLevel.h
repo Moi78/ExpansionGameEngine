@@ -4,6 +4,8 @@
 #include <EXP_MapLoader.h>
 #include <EXP_Level.h>
 
+#include <RD_MeshBuilder.h>
+
 #include "Character.h"
 
 class MainLevel : public EXP_Level

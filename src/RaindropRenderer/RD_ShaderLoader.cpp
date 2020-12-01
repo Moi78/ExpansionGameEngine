@@ -13,6 +13,16 @@ RD_ShaderLoader_GL::~RD_ShaderLoader_GL() {
 }
 
 void RD_ShaderLoader_GL::compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile) {
+	if (!std::filesystem::exists(vertexShaderFile)) {
+		dispErrorMessageBox(StrToWStr("Cannot open " + vertexShaderFile + " path does not exists."));
+		return;
+	}
+
+	if (!std::filesystem::exists(fragmentShaderFile)) {
+		dispErrorMessageBox(StrToWStr("Cannot open " + fragmentShaderFile + " path does not exists."));
+		return;
+	}
+
 	//Common variables
 	std::string vertexShaderData;
 	std::string fragmentShaderData;

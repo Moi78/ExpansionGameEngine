@@ -231,6 +231,4 @@ int GetElemIndex(std::vector<T> array, T element) {
 	}
 }
 
-RAINDROPRENDERER_API std::wstring StrToWStr(std::string str);
-
 #endif // !_RAINDROP_RENDERER_H__

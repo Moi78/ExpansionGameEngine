@@ -30,6 +30,8 @@
 #include "EXP_DirLight.h"
 #include "EXP_HotLoad.h"
 
+#include <RD_Error.h>
+
 class EXP_Level;
 
 TYPEDEF(EXP_Level*, LEVELCODEHANDLER, EXP_Game*, EXP_MapLoader*);

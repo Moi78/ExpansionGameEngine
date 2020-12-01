@@ -63,16 +63,6 @@ public:
 	RD_ShaderMaterial* GetMaterial();
 	
 private:
-	void Bufferize();
-
-	std::vector<vec3f> m_vertices;
-	std::vector<unsigned int> m_indices;
-	std::vector<vec3f> m_normals;
-	std::vector<vec2f> m_uv;
-
-	std::vector<float> MixVertNormUV;
-
-	//glm::mat4 m_mdl;
 	mat4f m_mdl;
 
 	bool m_shadowCaster;
@@ -89,6 +79,15 @@ protected:
 	vec3f m_position;
 	vec3f m_rotation;
 	vec3f m_scale;
+
+	void Bufferize();
+
+	std::vector<vec3f> m_vertices;
+	std::vector<unsigned int> m_indices;
+	std::vector<vec3f> m_normals;
+	std::vector<vec2f> m_uv;
+
+	std::vector<float> MixVertNormUV;
 };
 
 #endif
