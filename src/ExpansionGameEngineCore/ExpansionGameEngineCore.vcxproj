@@ -176,6 +176,7 @@
     <ClInclude Include="EXP_InstanciatedMesh.h" />
     <ClInclude Include="EXP_Level.h" />
     <ClInclude Include="EXP_MapLoader.h" />
+    <ClInclude Include="EXP_MeshBuilder.h" />
     <ClInclude Include="EXP_PhysicsHandler.h" />
     <ClInclude Include="EXP_PointLight.h" />
     <ClInclude Include="EXP_PostProcessEffect.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="EXP_InstanciatedMesh.cpp" />
     <ClCompile Include="EXP_Level.cpp" />
     <ClCompile Include="EXP_MapLoader.cpp" />
+    <ClCompile Include="EXP_MeshBuilder.cpp" />
     <ClCompile Include="EXP_PhysicsHandler.cpp" />
     <ClCompile Include="EXP_PointLight.cpp" />
     <ClCompile Include="EXP_PostProcessEffect.cpp" />
