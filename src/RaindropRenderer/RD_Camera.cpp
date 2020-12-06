@@ -8,9 +8,7 @@ RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, 
 	m_subject = vec3f(); //Camera center of view
 	m_yawPitchRoll = YawPitchRoll;
 
-	m_subject.setX(cos(DEG_TO_RAD(YawPitchRoll.getX())) * cos(DEG_TO_RAD(YawPitchRoll.getY())));
-	m_subject.setY(sin(DEG_TO_RAD(YawPitchRoll.getY())));
-	m_subject.setZ(sin(DEG_TO_RAD(YawPitchRoll.getX())) * cos(DEG_TO_RAD(YawPitchRoll.getY())));
+	ComputeYPR();
 
 	FOV = FOVinDegrees;
 	m_near = CamNear;
