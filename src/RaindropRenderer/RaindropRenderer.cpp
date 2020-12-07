@@ -600,7 +600,8 @@ void RaindropRenderer::UnregisterAllMeshes() {
 		std::cout << "Unregistering Mesh" << std::endl;
 
 		UnregisterMesh(msh);
-		delete msh;
+		if(msh)
+			delete msh;
 	}
 
 	m_meshes.clear();
@@ -611,7 +612,8 @@ void RaindropRenderer::UnregisterAllPointLights() {
 		std::cout << "Unregistering Point Light" << std::endl;
 
 		UnregisterPointLight(plight);
-		delete plight;
+		if(plight)
+			delete plight;
 	}
 
 	m_pt_lights.clear();
@@ -622,7 +624,8 @@ void RaindropRenderer::UnregisterAllDirLights() {
 		std::cout << "Unregistering Dir Light" << std::endl;
 
 		UnregisterDirLight(dlight);
-		delete dlight;
+		if(dlight)
+			delete dlight;
 	}
 
 	m_DirLights.clear();
