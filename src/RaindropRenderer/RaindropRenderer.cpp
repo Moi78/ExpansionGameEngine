@@ -99,6 +99,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 }
 
 RaindropRenderer::~RaindropRenderer() {
+	m_matlib->ClearLibrary();
+
 	m_pt_lights.clear();
 	m_DirLights.clear();
 	m_meshes.clear();
@@ -735,4 +737,8 @@ void RaindropRenderer::RemovePostProcessEffect(RD_PostProcessEffect* effect) {
 	else {
 		std::cerr << "ERROR: Element does not exists" << std::endl;
 	}
+}
+
+RD_MaterialLibrary* RaindropRenderer::GetMaterialLibrary() {
+	return m_matlib.get();
 }

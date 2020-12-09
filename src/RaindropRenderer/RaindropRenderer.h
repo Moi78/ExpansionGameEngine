@@ -132,6 +132,7 @@ public:
 	RD_ShaderLoader* GetShadowShader();
 	RD_ShaderLoader* GetCurrentShader();
 	RD_ShaderMaterial* FetchShaderFromFile(std::string ref);
+	RD_MaterialLibrary* GetMaterialLibrary();
 
 	//Debug
 	void RenderDbg(RD_Camera*);

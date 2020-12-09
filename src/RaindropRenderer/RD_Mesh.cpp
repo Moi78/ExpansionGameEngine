@@ -188,3 +188,7 @@ void RD_Mesh::SetParentMatrix(mat4f parent) {
 void RD_Mesh::SetShadowCasting(bool scasting) {
 	m_shadowCaster = scasting;
 }
+
+void RD_Mesh::SetMaterial(RD_ShaderMaterial* mat) {
+	m_mat = mat;
+}

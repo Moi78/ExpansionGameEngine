@@ -1,0 +1,26 @@
+float ProcessShadows(sampler2D SMap, vec4 FPLS) {
+	vec3 projCoords = FPLS.xyz / FPLS.w;
+	projCoords = projCoords * 0.5 + 0.5;
+
+	if(projCoords.z > 1.0) {
+		return 0.0;
+	}
+
+	float closestDepth = texture(SMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+	float bias = 0.0015;
+
+	float shadow = 0.0;
+
+	vec2 texelSize = 1.0 / textureSize(SMap, 0);
+	for(int x = -1; x <= 1; x++) {
+		for(int y = -1; y <= 1; y++) {
+			float pcfDepth = texture(SMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+		}
+	}
+
+	return shadow / 9;
+	
+}

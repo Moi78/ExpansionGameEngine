@@ -98,6 +98,7 @@ public:
 
 	void UnloadCurrentMap();
 	void LoadMap(std::string map);
+	EXP_MapLoader* GetCurrentMap();
 
 	//Rendering
 	RaindropRenderer* GetRenderer();
@@ -138,7 +139,6 @@ private:
 	std::unique_ptr<EXP_MapLoader> m_PlayingMap;
 
 	std::shared_ptr<RaindropRenderer> m_rndr;
-	std::unique_ptr<RD_MaterialLibrary> m_materialManager;
 
 	vec3f m_refreshColor;
 	std::string m_gameName;

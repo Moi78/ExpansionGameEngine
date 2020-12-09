@@ -1,0 +1,25 @@
+{
+    "MapLevelCodeObjectName":"MaterialEditor",
+    "nodes":[
+        {
+            "type":"mesh",
+            "nameTag":"floor",
+
+            "ref":"/meshes/floor",
+            "material":"/def_shader",
+
+            "pos":[0, 0, -1.0],
+            "rot":[0, 0, 0],
+            "scale":[1, 1, 1]
+        },
+
+        {
+            "type":"dlight",
+            "nameTag":"sun",
+
+            "dir":[1.0, -0.8, -0.6],
+            "color":[1.0, 1.0, 1.0],
+            "brightness":5.0
+        }
+    ]
+}

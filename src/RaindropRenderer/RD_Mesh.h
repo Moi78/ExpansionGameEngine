@@ -61,6 +61,7 @@ public:
 	virtual vec3f GetLocation();
 
 	RD_ShaderMaterial* GetMaterial();
+	void SetMaterial(RD_ShaderMaterial* mat);
 	
 private:
 	mat4f m_mdl;

@@ -56,8 +56,6 @@ EXP_Game::EXP_Game(std::string gameinfo) {
 EXP_Game::~EXP_Game() {
 	UnloadCurrentMap();
 	m_soundEngine->shutdownAL();
-
-	m_materialManager->ClearLibrary();
 }
 
 EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
@@ -126,7 +124,6 @@ void EXP_Game::InitGame(vec3f refreshColor, EXP_GameInfo gameinfo) {
 												false,
 												gameinfo.RootEngineContentFolder);
 
-	m_materialManager = std::make_unique<RD_MaterialLibrary>();
 	m_hinput = std::make_unique<EXP_InputHandler>(m_rndr->GetRenderingAPI()->GetWindowingSystem());
 
 	InitPhysics();
@@ -214,7 +211,7 @@ void EXP_Game::EndFrame() {
 
 void EXP_Game::ProcessSignals() {
 	if (m_sigClearMatMan) {
-		m_materialManager->ClearLibrary();
+		m_rndr->GetMaterialLibrary()->ClearLibrary();
 
 		m_sigClearMatMan = false;
 	}
@@ -445,4 +442,8 @@ RD_ShaderMaterial* EXP_Game::GetShaderByFileRef(std::string ref) {
 	std::string absPath = m_gameinfo.RootGameContentFolder + ref;
 
 	return m_rndr->FetchShaderFromFile(absPath);
+}
+
+EXP_MapLoader* EXP_Game::GetCurrentMap() {
+	return m_PlayingMap.get();
 }

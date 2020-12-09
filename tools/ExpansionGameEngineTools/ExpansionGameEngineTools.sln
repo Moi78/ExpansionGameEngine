@@ -9,6 +9,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LightCompiler", "LightCompi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LightCompilerLookup", "LightCompilerLookup\LightCompilerLookup.vcxproj", "{F6AE4E9F-61E7-4FE0-BD4A-AA1F61F5DF27}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MaterialEditor", "MaterialEditor\MaterialEditor.vcxproj", "{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{809CFB6A-6FA0-466C-927E-031DCC46083E} = {809CFB6A-6FA0-466C-927E-031DCC46083E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MatEditorDLL", "MatEditorDLL\MatEditorDLL.vcxproj", "{809CFB6A-6FA0-466C-927E-031DCC46083E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +46,22 @@ Global
 		{F6AE4E9F-61E7-4FE0-BD4A-AA1F61F5DF27}.Release|x64.Build.0 = Release|x64
 		{F6AE4E9F-61E7-4FE0-BD4A-AA1F61F5DF27}.Release|x86.ActiveCfg = Release|Win32
 		{F6AE4E9F-61E7-4FE0-BD4A-AA1F61F5DF27}.Release|x86.Build.0 = Release|Win32
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Debug|x64.ActiveCfg = Debug|x64
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Debug|x64.Build.0 = Debug|x64
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Debug|x86.ActiveCfg = Debug|Win32
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Debug|x86.Build.0 = Debug|Win32
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Release|x64.ActiveCfg = Release|x64
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Release|x64.Build.0 = Release|x64
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Release|x86.ActiveCfg = Release|Win32
+		{CDEDC662-3E0F-42DF-9D42-4D28A543CEC3}.Release|x86.Build.0 = Release|Win32
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Debug|x64.ActiveCfg = Debug|x64
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Debug|x64.Build.0 = Debug|x64
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Debug|x86.ActiveCfg = Debug|Win32
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Debug|x86.Build.0 = Debug|Win32
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Release|x64.ActiveCfg = Release|x64
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Release|x64.Build.0 = Release|x64
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Release|x86.ActiveCfg = Release|Win32
+		{809CFB6A-6FA0-466C-927E-031DCC46083E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

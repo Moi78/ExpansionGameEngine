@@ -30,7 +30,7 @@
 class RAINDROPRENDERER_API RD_Camera
 {
 public:
-	RD_Camera(RaindropRenderer* rndr , float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f lookingAt);
+	RD_Camera(RaindropRenderer* rndr , float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll);
 	~RD_Camera();
 
 	void UseCamera(RD_ShaderLoader* shader);
