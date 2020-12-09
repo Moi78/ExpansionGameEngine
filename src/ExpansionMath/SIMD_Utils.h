@@ -41,7 +41,10 @@ private:
 class Float4 {
 public:
 	Float4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) {
-		m_vec = { x, y, z,w };
+		m_vec[0] = x;
+		m_vec[1] = y;
+		m_vec[2] = z;
+		m_vec[3] = w;
 	}
 
 	Float4(__m128 vec) {
