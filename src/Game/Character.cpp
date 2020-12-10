@@ -8,6 +8,8 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 	m_move = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::MoveForward), GLFW_KEY_W);
 	m_destroy = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::DestroyActor), GLFW_KEY_H, true);
 
+	m_bound = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(), vec3f(1.0f, 1.0f, 3.0f), 40.0f);
+
 	EXP_MeshBuilder* mb = new EXP_MeshBuilder(game, game->GetShaderByFileRef("/shaders/mat_suzanne.exmtl"), vec3f(-1.0f, 0.0f, 1.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
 
 	std::vector<vec3f> positions = {
@@ -50,12 +52,17 @@ void Character::Start() {
 }
 
 void Character::Tick() {
+	SetWorldPos(m_bound->GetWorldPosition());
+
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 	m_cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
+
+	AddWorldRot(vec3f(m_game->GetInputHandler()->GetMouseYaxis() / -10.0f, 0.0f, m_game->GetInputHandler()->GetMouseXaxis() / -10.0f));
 }
 
 void Character::MoveForward() {
-	AddWorldPos(m_cam->GetForwardVector() * 0.1);
+	//AddWorldPos(m_cam->GetForwardVector() * 0.5f);
+	m_bound->AddMovementInput(m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 0.0f), 10.0f);
 }
 
 void Character::DestroyActor() {

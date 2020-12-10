@@ -3,8 +3,12 @@
 #include <EXP_Game.h>
 #include <EXP_Level.h>
 #include <EXP_MapLoader.h>
+#include <EXP_InputHandler.h>
 
 #include <EXP_Camera.h>
+#include <EXP_Callbacks.h>
+
+#include <GLFW/glfw3.h>
 
 class MaterialEditor : 
 	public EXP_Level
@@ -19,6 +23,8 @@ public:
 private:
 	EXP_Game* m_game;
 	EXP_MapLoader* m_loader;
+
+	EXP_MouseButtonCallback* m_clickev;
 
 	EXP_Camera* m_cam;
 };

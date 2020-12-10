@@ -59,7 +59,7 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 
 	m_fbo->UnbindFBO();
 
-	rndr->GetRenderingAPI()->SetViewportSize(rndr->getWindowWidth(), rndr->getWindowHeigh(), 0, 0);
+	rndr->GetRenderingAPI()->SetViewportSize(rndr->GetViewportSize().getX(), rndr->GetViewportSize().getY(), 0, 0);
 	rndr->GetRenderingAPI()->Clear(DEPTH_BUFFER | COLOR_BUFFER);
 
 	rndr->GetCurrentShader()->SetMatrix("lspaceMat", m_lspace);

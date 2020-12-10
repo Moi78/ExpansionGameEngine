@@ -31,7 +31,7 @@ void RD_Camera::UpdateView() {
 }
 
 void RD_Camera::UpdateProj() {
-	projection = ProjPersp<float>(DEG_TO_RAD(FOV), (float)m_rndr->getWindowWidth() / m_rndr->getWindowHeigh(), m_near, m_far);
+	projection = ProjPersp<float>(DEG_TO_RAD(FOV), (float)m_rndr->GetViewportSize().getX() / m_rndr->GetViewportSize().getY(), m_near, m_far);
 }
 
 void RD_Camera::UseCamera(RD_ShaderLoader* shader) {

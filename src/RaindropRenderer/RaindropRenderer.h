@@ -38,6 +38,7 @@
 #include <memory>
 
 #include <vec3.h>
+#include <vec2.h>
 
 #ifdef _WIN32
 	#include <Windows.h>
@@ -98,6 +99,12 @@ public:
 	void RenderBeauty();
 
 	void RecreateGbuff();
+
+	void ResizeViewport(vec2f pos, vec2f size);
+	void DisableResizeOverride();
+	bool GetResizeOverrideState();
+	vec2f GetViewportSize();
+	vec2f GetViewportPos();
 
 	RD_Texture* GetBlankTexture();
 	
@@ -172,10 +179,10 @@ private:
 	std::unique_ptr<RD_RenderingAPI> m_api;
 
 	Pipeline m_pipeline;
-
 	std::string m_engineDir;
 
 	bool m_error_flag;
+	bool m_resize_override;
 
 	std::string m_features_string[3];
 	bool m_features_state[3];
@@ -214,6 +221,8 @@ private:
 	std::vector<RD_PostProcessEffect*> m_pp_effects;
 
 	RD_ShaderLoader* m_CurrentShader;
+
+	vec2f m_vp_size, m_vp_pos;
 
 	//Materials
 	std::unique_ptr<RD_MaterialLibrary> m_matlib;

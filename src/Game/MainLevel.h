@@ -4,6 +4,7 @@
 #include <EXP_MapLoader.h>
 #include <EXP_Level.h>
 #include <EXP_Callbacks.h>
+#include <EXP_RigidBody.h>
 
 #include <RD_MeshBuilder.h>
 
@@ -23,6 +24,7 @@ public:
 private:
 	EXP_Game* m_game;
 
+	EXP_RB_Box* m_floor;
 	EXP_KeyboardCallback* m_ch_lvl;
 
 	Character* m_player;

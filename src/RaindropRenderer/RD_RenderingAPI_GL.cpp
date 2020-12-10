@@ -132,11 +132,10 @@ void RD_WindowingSystemGLFW::PollEvents() {
 
 void glfwWinCallback(GLFWwindow* win, int w, int h) {
 	RaindropRenderer* rndr = (RaindropRenderer*)glfwGetWindowUserPointer(win);
-	rndr->RecreateGbuff();
-
-	glViewport(0, 0, w, h);
-
-	rndr->GetGUI_Manager()->RebuildFramebuffer();
+	if (!rndr->GetResizeOverrideState()) {
+		rndr->ResizeViewport(vec2f(0.0f, 0.0f), vec2f(w, h));
+		rndr->GetGUI_Manager()->RebuildFramebuffer();
+	}
 }
 
 //---------------------------------------------  RD_Rendering_API_GL ---------------------------------------------

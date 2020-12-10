@@ -17,5 +17,5 @@ void MaterialEditor::OnStart() {
 }
 
 void MaterialEditor::OnTick() {
-
+	m_game->GetRenderer()->ResizeViewport(vec2f(0, 0), vec2f(m_game->GetRenderer()->getWindowWidth() / 2, m_game->GetRenderer()->getWindowHeigh()));
 }

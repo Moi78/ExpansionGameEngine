@@ -7,6 +7,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "imnodes.h"
 
 #include <glad/glad.h>
 
@@ -43,69 +44,94 @@ int main(int argc, char* argv[]) {
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	imnodes::Initialize();
+
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplGlfw_InitForOpenGL(winsys->GetWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 410");
 
+	float albedo[3] = { 0.0f, 0.0f, 0.0f };
+	float met = 0.0f;
+	float t = 0.0f;
+
 	while (!game->GetRenderer()->WantToClose()) {
 		game->RenderScene();
 		game->ExecCallbacks();
+
+		int w = game->GetRenderer()->getWindowWidth();
+		int h = game->GetRenderer()->getWindowHeigh();
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		{
-			ImGui::Begin("Light Configuration");
+			ImGui::SetNextWindowPos(ImVec2(w / 2, 0));
+			ImGui::SetNextWindowSize(ImVec2(w / 2, h));
+			ImGui::Begin("Material", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
-			if (ImGui::SliderFloat("Light direction X", &lightDirX, -1.0f, 1.0f)) {
-				EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
-				if (dlight) {
-					dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+			{
+				ImGui::BeginChild("Light Configaration", ImVec2((w / 2) - 30, 105), true);
+
+				if (ImGui::SliderFloat("Light direction X", &lightDirX, -1.0f, 1.0f)) {
+					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
+					if (dlight) {
+						dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+					}
 				}
+
+				if (ImGui::SliderFloat("Light direction Y", &lightDirY, -1.0f, 1.0f)) {
+					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
+					if (dlight) {
+						dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+					}
+				}
+
+				if (ImGui::SliderFloat("Light direction Z", &lightDirZ, -1.0f, 1.0f)) {
+					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
+					if (dlight) {
+						dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+					}
+				}
+
+				if (ImGui::InputFloat("Light Brightness", &lightBrtn, 0.1f, 1.0f)) {
+					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
+					if (dlight) {
+						dlight->SetLightBrightness(lightBrtn);
+					}
+				}
+
+				ImGui::EndChild();
 			}
 
-			if (ImGui::SliderFloat("Light direction Y", &lightDirY, -1.0f, 1.0f)) {
-				EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
-				if (dlight) {
-					dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+			{
+				ImGui::BeginChild("Material Configuration", ImVec2((w / 2) - 30, 100), true);
+
+				if (ImGui::Button("Reload Material", ImVec2(150.0f, 20.0f))) {
+					if (matlib->DoMaterialExists("mat_editor/def_shader.exmtl")) {
+						//delete matlib->GetMaterialByName("mat_editor/def_shader.exmtl");
+						matlib->RemoveMaterialFromLib("mat_editor/def_shader.exmtl");
+					}
+
+					RD_ShaderMaterial* mat2 = game->GetRenderer()->FetchShaderFromFile("mat_editor/def_shader.exmtl");
+					msh->SetMaterial(mat2);
 				}
+
+				ImGui::EndChild();
 			}
 
-			if (ImGui::SliderFloat("Light direction Z", &lightDirZ, -1.0f, 1.0f)) {
-				EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
-				if (dlight) {
-					dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
-				}
-			}
+			{
+				ImGui::BeginChild("Node Graph", ImVec2((w / 2) - 30, 800), true);
+				imnodes::BeginNodeEditor();
 
-			if (ImGui::InputFloat("Light Brightness", &lightBrtn, 0.1f, 1.0f)) {
-				EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
-				if (dlight) {
-					dlight->SetLightBrightness(lightBrtn);
-				}
+				imnodes::EndNodeEditor();
+				ImGui::EndChild();
 			}
-
-			ImGui::End();
 		}
 
-		{
-			ImGui::Begin("Material");
-
-			if (ImGui::Button("Reload Material", ImVec2(100.0f, 20.0f))) {
-				if (matlib->DoMaterialExists("mat_editor/def_shader.exmtl")) {
-					delete matlib->GetMaterialByName("mat_editor/def_shader.exmtl");
-					matlib->RemoveMaterialFromLib("mat_editor/def_shader.exmtl");
-				}
-
-				RD_ShaderMaterial* mat2 = game->GetRenderer()->FetchShaderFromFile("mat_editor/def_shader.exmtl");
-				msh->SetMaterial(mat2);
-			}
-
-			ImGui::End();
-		}
+		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

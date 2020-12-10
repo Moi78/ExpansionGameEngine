@@ -8,6 +8,8 @@
 #include <EXP_InstanciatedMesh.h>
 #include <EXP_MeshBuilder.h>
 
+#include <EXP_RigidBody.h>
+
 #include <GLFW/glfw3.h>
 
 class Character : public EXP_Actor
@@ -25,6 +27,8 @@ public:
 
 private:
 	EXP_Camera* m_cam;
+
+	EXP_RB_Box* m_bound;
 
 	EXP_KeyboardCallback* m_move;
 	EXP_KeyboardCallback* m_destroy;

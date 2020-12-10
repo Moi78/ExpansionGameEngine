@@ -12,7 +12,7 @@
 #include "RD_RenderingAPI.h"
 #include "RD_RenderingAPI_GL.h"
 
-RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api, Pipeline pline, int maxFramerate, bool minInit, std::string engineDir) {
+RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api, Pipeline pline, int maxFramerate, bool minInit, std::string engineDir) : m_vp_size(w, h), m_vp_pos(0.0f, 0.0f) {
 	FillFeaturesStringArray();
 	FillFeatureStateArray();
 
@@ -23,6 +23,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	}
 
 	m_error_flag = false;
+	m_resize_override = false;
 
 	assert(m_api != nullptr && "ERROR: No 3D-API selected.");
 
@@ -741,4 +742,32 @@ void RaindropRenderer::RemovePostProcessEffect(RD_PostProcessEffect* effect) {
 
 RD_MaterialLibrary* RaindropRenderer::GetMaterialLibrary() {
 	return m_matlib.get();
+}
+
+void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
+	m_api->SetViewportSize(size.getX(), size.getY(), pos.getX(), pos.getY());
+
+	m_gbuffer->ChangeFramebufferSize(size.getX(), size.getY());
+	m_light_pprocess->ChangeFramebufferSize(size.getX(), size.getY());
+
+	m_vp_pos = pos;
+	m_vp_size = size;
+
+	m_resize_override = true;
+}
+
+void RaindropRenderer::DisableResizeOverride() {
+	m_resize_override = false;
+}
+
+bool RaindropRenderer::GetResizeOverrideState() {
+	return m_resize_override;
+}
+
+vec2f RaindropRenderer::GetViewportSize() {
+	return m_vp_size;
+}
+
+vec2f RaindropRenderer::GetViewportPos() {
+	return m_vp_pos;
 }
