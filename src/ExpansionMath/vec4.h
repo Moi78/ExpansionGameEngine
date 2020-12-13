@@ -88,6 +88,10 @@ public:
 		return vec3<T>(m_xyzw[0], m_xyzw[1], m_xyzw[2]);
 	}
 
+	float* GetPTR() {
+		return m_xyzw;
+	}
+
 	void DBGPrint() {
 		std::cout << "X : " << m_xyzw[0] << " Y : " << m_xyzw[1] << " Z : " << m_xyzw[2] << " W : " << m_xyzw[3] << std::endl;
 	}

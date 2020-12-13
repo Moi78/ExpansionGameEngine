@@ -9,6 +9,8 @@
 #include "imgui_impl_opengl3.h"
 #include "imnodes.h"
 
+#include "Node_Editor.h"
+
 #include <glad/glad.h>
 
 float lightDirX = 1.0f;
@@ -17,6 +19,7 @@ float lightDirZ = -0.6f;
 float lightBrtn = 5.0f;
 
 int main(int argc, char* argv[]) {
+	//EXPGE Renderer
 	EXP_GameInfo gi;
 	gi.GameBaseResolution = { 1280, 720 };
 	gi.GameName = "Material Editor";
@@ -40,6 +43,7 @@ int main(int argc, char* argv[]) {
 											 vec3f(),
 											 vec3f(1.0f, 1.0f, 1.0f));
 
+	//ImGui
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	IMGUI_CHECKVERSION();
@@ -52,13 +56,19 @@ int main(int argc, char* argv[]) {
 	ImGui_ImplGlfw_InitForOpenGL(winsys->GetWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 410");
 
-	float albedo[3] = { 0.0f, 0.0f, 0.0f };
-	float met = 0.0f;
-	float t = 0.0f;
+	//Node Editing
+	Node_Editor* editor = new Node_Editor(game);
+
+	std::vector<std::pair<int, int>> links;
+
+	ShaderNode* snode = new ShaderNode(0, 0);
+	editor->AddNode(snode);
+
+	ShaderInputs* inode = new ShaderInputs(1, 8);
+	editor->AddNode(inode);
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->RenderScene();
-		game->ExecCallbacks();
 
 		int w = game->GetRenderer()->getWindowWidth();
 		int h = game->GetRenderer()->getWindowHeigh();
@@ -109,7 +119,9 @@ int main(int argc, char* argv[]) {
 			{
 				ImGui::BeginChild("Material Configuration", ImVec2((w / 2) - 30, 100), true);
 
-				if (ImGui::Button("Reload Material", ImVec2(150.0f, 20.0f))) {
+				ImGui::Columns(2, nullptr, false);
+
+				if (ImGui::Button("Reload Material", ImVec2(ImGui::GetColumnWidth(), 20.0f))) {
 					if (matlib->DoMaterialExists("mat_editor/def_shader.exmtl")) {
 						//delete matlib->GetMaterialByName("mat_editor/def_shader.exmtl");
 						matlib->RemoveMaterialFromLib("mat_editor/def_shader.exmtl");
@@ -119,6 +131,26 @@ int main(int argc, char* argv[]) {
 					msh->SetMaterial(mat2);
 				}
 
+				ImGui::NextColumn();
+
+				if (ImGui::Button("Compile Material", ImVec2(ImGui::GetColumnWidth(), 20.0f))) {
+					std::string FragCode = editor->EvalNodes();
+
+					std::string VertCode = "";
+					std::ifstream vertFile;
+					vertFile.open("Engine/ShaderFragments/VertShader.vert", std::ios::beg);
+					while (!vertFile.eof()) {
+						char buf[100];
+						vertFile.getline(buf, 100);
+						VertCode += std::string(buf) + "\n";
+					}
+
+					RD_ShaderLoader* sl = game->GetRenderer()->GetRenderingAPI()->CreateShader();
+					sl->CompileShaderFromCode(VertCode, FragCode);
+					RD_ShaderMaterial* shmat = new RD_ShaderMaterial(sl);
+					msh->SetMaterial(shmat);
+				}
+
 				ImGui::EndChild();
 			}
 
@@ -126,10 +158,17 @@ int main(int argc, char* argv[]) {
 				ImGui::BeginChild("Node Graph", ImVec2((w / 2) - 30, 800), true);
 				imnodes::BeginNodeEditor();
 
+				editor->RenderNodes();
+
 				imnodes::EndNodeEditor();
+
+				editor->MakeLinks();
+
 				ImGui::EndChild();
 			}
 		}
+
+		game->ExecCallbacks();
 
 		ImGui::End();
 
@@ -138,6 +177,12 @@ int main(int argc, char* argv[]) {
 
 		game->EndFrame();
 	}
+
+	ImGui::DestroyContext();
+	imnodes::Shutdown();
+
+	delete editor;
+	delete game;
 
 	return 0;
 }

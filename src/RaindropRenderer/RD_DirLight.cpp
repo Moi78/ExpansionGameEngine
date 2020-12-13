@@ -2,7 +2,7 @@
 #include "RD_DirLight.h"
 
 RD_DirLight::RD_DirLight(RaindropRenderer* rndr, vec3f dir, vec3f color, float brightness) : m_dir(dir), m_color(color), m_brightness(brightness), m_lspace(1.0f) {
-	SetUpShadowFB(rndr, 1024);
+	SetUpShadowFB(rndr, 4096);
 	m_shadowCaster = true;
 }
 

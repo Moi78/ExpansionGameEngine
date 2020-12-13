@@ -118,6 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\src\ExpansionMath;..\..\..\src\RaindropRenderer;..\..\..\src\ExpansionGameEngineCore;..\..\..\src\PhysicaSound;..\..\..\src\BulldozerFileManager;..\..\..\src\libs\JSONCPP\include;..\..\..\src\libs\GL\include;..\..\..\src\libs\BULLET\include;..\..\..\src\libs\libsndfile\include;..\..\..\src\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +137,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\src\ExpansionMath;..\..\..\src\RaindropRenderer;..\..\..\src\ExpansionGameEngineCore;..\..\..\src\PhysicaSound;..\..\..\src\BulldozerFileManager;..\..\..\src\libs\JSONCPP\include;..\..\..\src\libs\GL\include;..\..\..\src\libs\BULLET\include;..\..\..\src\libs\libsndfile\include;..\..\..\src\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
