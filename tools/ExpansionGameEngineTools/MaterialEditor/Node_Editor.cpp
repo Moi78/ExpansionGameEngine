@@ -97,6 +97,15 @@ void Node_Editor::DeleteLink() {
 							}
 						}
 
+						if (node->GetNodeType() == NodeType::TSampler2D) {
+							std::string texid = "tex" + std::to_string(node->GetId());
+							for (int tex = 0; tex < m_textures.size(); tex++) {
+								if (m_textures[tex].second == texid) {
+									m_textures.erase(m_textures.begin() + tex);
+								}
+							}
+						}
+
 						m_nodes.erase(m_nodes.begin() + i);
 						break;
 					}
@@ -146,16 +155,8 @@ void Node_Editor::AddNodeCallback() {
 		ImGui::Text("Add Node");
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Normalize")) {
-			AddNode(new Normalize(m_currentId + 1, m_currentIndex));
-		}
-
 		if (ImGui::MenuItem("Add")) {
 			AddNode(new Add(m_currentId + 1, m_currentIndex));
-		}
-
-		if (ImGui::MenuItem("Multiply")) {
-			AddNode(new Multiply(m_currentId + 1, m_currentIndex));
 		}
 
 		if (ImGui::MenuItem("Constant Float")) {
@@ -170,6 +171,18 @@ void Node_Editor::AddNodeCallback() {
 			AddNode(new ConstVec4(m_currentId + 1, m_currentIndex));
 		}
 
+		if (ImGui::MenuItem("Multiply")) {
+			AddNode(new Multiply(m_currentId + 1, m_currentIndex));
+		}
+
+		if (ImGui::MenuItem("Normalize")) {
+			AddNode(new Normalize(m_currentId + 1, m_currentIndex));
+		}
+
+		if (ImGui::MenuItem("TextureSampler")) {
+			AddNode(new TextureSampler(m_currentId + 1, m_currentIndex));
+		}
+
 		ImGui::EndPopup();
 	}
 }
@@ -177,6 +190,10 @@ void Node_Editor::AddNodeCallback() {
 std::string Node_Editor::EvalNodes() {
 	std::string outCode;
 
+	//Clearing old trash
+	m_textures.clear();
+
+	//Copying Fragment Shader Head
 	std::ifstream head;
 	head.open("Engine/ShaderFragments/FragHead_PBR.txt", std::ios::beg);
 	if (!head) {
@@ -185,23 +202,43 @@ std::string Node_Editor::EvalNodes() {
 	}
 
 	while (!head.eof()) {
-			char line[100];
-			head.getline(line, 100);
-			outCode += line;
-			outCode += "\n";
+		char line[100];
+		head.getline(line, 100);
+		outCode += line;
+		outCode += "\n";
+	}
+
+	//Pre-Scan of nodes
+	for (auto n : m_nodes) {
+		if (n->GetNodeType() == NodeType::TSampler2D) {
+			outCode += "uniform sampler2D tex" + std::to_string(n->GetId()) + ";\n";
+
+			TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
+			m_textures.push_back(std::pair<std::string, std::string>(s->GetTexPath(), "tex" + std::to_string(s->GetId())));
 		}
+	}
 
-		outCode += "void main() {\n";
+	outCode += "void main() {\n";
+	
+	outCode += m_nodes[0]->Stringifize(this, 0);
 
-		outCode += m_nodes[0]->Stringifize(this);
+	outCode += "}";
 
-		outCode += "}";
+	std::cout << outCode << std::endl;
 
-		std::cout << outCode << std::endl;
+	head.close();
 
-		head.close();
+	return outCode;
+}
 
-		return outCode;
+int Node_Editor::GetTextureCount() {
+	return m_textures.size();
+}
+
+std::pair<std::string, std::string> Node_Editor::GetTextureRefByIndex(int index) {
+	assert(index < GetTextureCount() && "Given index too high");
+
+	return m_textures[index];
 }
 
 ShaderNode::ShaderNode(int id, int index) : Node(id) {
@@ -258,19 +295,13 @@ void ShaderNode::render() {
 	imnodes::EndNode();
 }
 
-std::string ShaderNode::Stringifize(Node_Editor* nedit) {
+std::string ShaderNode::Stringifize(Node_Editor* nedit, int start_id) {
 	std::string outCode = "";
 
 	//Albedo
 	Node* nColor = nedit->GetNodeLinkedTo(m_index + 0);
 	if (nColor) {
-		if (nColor->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nColor);
-			outCode += "gAlbedo = " + in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0)) + ";\n";
-		}
-		else {
-			outCode += "gAlbedo = vec4(" + nColor->Stringifize(nedit) + ", 0.0);\n";
-		}
+		outCode += "gAlbedo = vec4(" + nColor->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0)) + ", 0.0);\n";
 	}
 	else {
 		outCode += "gAlbedo = vec4(0.0, 0.0, 0.0, 0.0);\n";
@@ -279,13 +310,7 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit) {
 	//Pos
 	Node* nPos = nedit->GetNodeLinkedTo(m_index + 1);
 	if (nPos) {
-		if (nPos->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nPos);
-			outCode += "gPos = " + in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1)) + ";\n";
-		}
-		else {
-			outCode += "gPos = " + nPos->Stringifize(nedit) + ";\n";
-		}
+		outCode += "gPos = " + nPos->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1)) + ";\n";
 	}
 	else {
 		outCode += "gPos = vec3(0.0, 0.0, 0.0);\n";
@@ -294,13 +319,7 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit) {
 	//Norm
 	Node* nNorm = nedit->GetNodeLinkedTo(m_index + 2);
 	if (nNorm) {
-		if (nNorm->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nNorm);
-			outCode += "gNorm = " + in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 2)) + ";\n";
-		}
-		else {
-			outCode += "gNorm = " + nNorm->Stringifize(nedit) + ";\n";
-		}
+		outCode += "gNorm = " + nNorm->Stringifize(nedit, nedit->GetLinkStartId(m_index + 2)) + ";\n";
 	}
 	else {
 		outCode += "gNorm = vec3(0.0, 0.0, 0.0);\n";
@@ -309,13 +328,7 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit) {
 	//Specular
 	Node* nSpec = nedit->GetNodeLinkedTo(m_index + 3);
 	if (nSpec) {
-		if (nSpec->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nSpec);
-			outCode += "gSpec = " + in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 3)) + ";\n";
-		}
-		else {
-			outCode += "gSpec = " + nSpec->Stringifize(nedit) + ";\n";
-		}
+		outCode += "gSpec = " + nSpec->Stringifize(nedit, nedit->GetLinkStartId(m_index + 3)) + ";\n";
 	}
 	else {
 		outCode += "gSpec = 0.0;\n";
@@ -328,13 +341,7 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit) {
 	outCode += "gMetRoughAO = vec3(";
 
 	if (nMet) {
-		if (nMet->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nMet);
-			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 5));
-		}
-		else {
-			outCode += nMet->Stringifize(nedit);
-		}
+		outCode += nMet->Stringifize(nedit, nedit->GetLinkStartId(m_index + 5));
 	}
 	else {
 		outCode += "0.0";
@@ -343,13 +350,7 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit) {
 	outCode += ",";
 
 	if (nRoughness) {
-		if (nRoughness->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nRoughness);
-			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 4));
-		}
-		else {
-			outCode += nRoughness->Stringifize(nedit);
-		}
+		outCode += nRoughness->Stringifize(nedit, nedit->GetLinkStartId(m_index + 4));
 	}
 	else {
 		outCode += "0.0";
@@ -358,13 +359,7 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit) {
 	outCode += ",";
 
 	if (nAO) {
-		if (nAO->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nAO);
-			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 6));
-		}
-		else {
-			outCode += nAO->Stringifize(nedit);
-		}
+		outCode += nAO->Stringifize(nedit, nedit->GetLinkStartId(m_index + 6));
 	}
 	else {
 		outCode += "0.0";
@@ -375,13 +370,7 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit) {
 	//Shadow
 	Node* nShadow = nedit->GetNodeLinkedTo(m_index + 7);
 	if (nShadow) {
-		if (nShadow->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(nShadow);
-			outCode += "gShadow = " + in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 7)) + ";\n";
-		}
-		else {
-			outCode += "gShadow = " + nShadow->Stringifize(nedit) + ";\n";
-		}
+		outCode += "gShadow = " + nShadow->Stringifize(nedit, nedit->GetLinkStartId(m_index + 7)) + ";\n";
 	}
 	else {
 		outCode += "gShadow = 1.0;\n";
@@ -433,7 +422,7 @@ void ShaderInputs::render() {
 }
 
 std::string ShaderInputs::Stringifize(Node_Editor* nedit, int index_id) {
-	std::cout << "Index ID : " << index_id << " Relative ID : " << index_id - m_index << std::endl;
+	//std::cout << "Index ID : " << index_id << " Relative ID : " << index_id - m_index << std::endl;
 	switch (index_id - m_index) {
 	case 0:
 		return "Normal";
@@ -487,18 +476,12 @@ void Normalize::render() {
 	imnodes::EndNode();
 }
 
-std::string Normalize::Stringifize(Node_Editor* nedit) {
+std::string Normalize::Stringifize(Node_Editor* nedit, int start_id) {
 	std::string outCode = "";
 
 	Node* vec = nedit->GetNodeLinkedTo(m_index + 0);
 	if (vec) {
-		if (vec->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(vec);
-			outCode += "normalize(" + in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0)) + ")";
-		}
-		else {
-			outCode += "normalize(" + vec->Stringifize(nedit) + ")";
-		}
+		outCode += "normalize(" + vec->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0)) + ")";
 	}
 	else {
 		outCode += "normalize(vec3(0.0, 0.0, 0.0))";
@@ -543,20 +526,14 @@ void Add::render() {
 	imnodes::EndNode();
 }
 
-std::string Add::Stringifize(Node_Editor* nedit) {
+std::string Add::Stringifize(Node_Editor* nedit, int start_id) {
 	std::string outCode = "(";
 
 	Node* a = nedit->GetNodeLinkedTo(m_index + 0);
 	Node* b = nedit->GetNodeLinkedTo(m_index + 1);
 
 	if(a) {
-		if (a->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(a);
-			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
-		}
-		else {
-			outCode += a->Stringifize(nedit);
-		}
+		outCode += a->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
 	}
 	else {
 		outCode += "0.0";
@@ -565,13 +542,7 @@ std::string Add::Stringifize(Node_Editor* nedit) {
 	outCode += "+";
 
 	if (b) {
-		if (b->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(b);
-			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1));
-		}
-		else {
-			outCode += b->Stringifize(nedit);
-		}
+			outCode += b->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1));
 	}
 	else {
 		outCode += "0.0";
@@ -615,7 +586,7 @@ void ConstVec3::render() {
 	imnodes::EndNode();
 }
 
-std::string ConstVec3::Stringifize(Node_Editor* nedit) {
+std::string ConstVec3::Stringifize(Node_Editor* nedit, int start_id) {
 	return "vec3(" + std::to_string(m_value.getX()) + "," + std::to_string(m_value.getY()) + "," + std::to_string(m_value.getZ()) + ")";
 }
 
@@ -653,7 +624,7 @@ void ConstVec4::render() {
 	imnodes::EndNode();
 }
 
-std::string ConstVec4::Stringifize(Node_Editor* nedit) {
+std::string ConstVec4::Stringifize(Node_Editor* nedit, int start_id) {
 	return "vec4(" + std::to_string(m_value.GetX()) + ","
 				   + std::to_string(m_value.GetY()) + ","
 				   + std::to_string(m_value.GetZ()) + ","
@@ -690,7 +661,7 @@ void ConstFloat::render() {
 	imnodes::EndNode();
 }
 
-std::string ConstFloat::Stringifize(Node_Editor* nedit) {
+std::string ConstFloat::Stringifize(Node_Editor* nedit, int start_id) {
 	return "(" + std::to_string(m_value) + ")";
 }
 
@@ -728,20 +699,14 @@ void Multiply::render() {
 	imnodes::EndNode();
 }
 
-std::string Multiply::Stringifize(Node_Editor* nedit) {
+std::string Multiply::Stringifize(Node_Editor* nedit, int start_id) {
 	std::string outCode = "(";
 
 	Node* a = nedit->GetNodeLinkedTo(m_index + 0);
 	Node* b = nedit->GetNodeLinkedTo(m_index + 1);
 
 	if (a) {
-		if (a->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(a);
-			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
-		}
-		else {
-			outCode += a->Stringifize(nedit);
-		}
+		outCode += a->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
 	}
 	else {
 		outCode += "0.0";
@@ -750,19 +715,106 @@ std::string Multiply::Stringifize(Node_Editor* nedit) {
 	outCode += "*";
 
 	if (b) {
-		if (b->GetNodeType() == NodeType::TShaderInput) {
-			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(b);
-			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1));
-		}
-		else {
-			outCode += b->Stringifize(nedit);
-		}
+		outCode += b->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1));
 	}
 	else {
 		outCode += "0.0";
 	}
 
 	outCode += ")";
+
+	return outCode;
+}
+
+TextureSampler::TextureSampler(int id, int index) : Node(id) {
+	m_index = index;
+	memset(m_tex_path, 0, 300);
+}
+
+TextureSampler::~TextureSampler() {}
+
+void TextureSampler::render() {
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBar, IM_COL32(255, 119, 0, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarHovered, IM_COL32(200, 100, 0, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarSelected, IM_COL32(200, 100, 0, 255));
+
+	imnodes::BeginNode(m_id);
+
+	imnodes::BeginNodeTitleBar();
+	ImGui::Text("TextureSampler");
+	imnodes::EndNodeTitleBar();
+
+	imnodes::BeginInputAttribute(m_index + 0);
+	ImGui::Text("UV Coords");
+	imnodes::EndInputAttribute();
+
+	ImGui::InputText("Texture Path", m_tex_path, 300);
+
+	imnodes::BeginOutputAttribute(m_index + 1);
+	ImGui::Text("RGBA");
+	imnodes::EndOutputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 2);
+	ImGui::Text("RGB");
+	imnodes::EndOutputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 3);
+	ImGui::Text("R");
+	imnodes::EndOutputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 4);
+	ImGui::Text("G");
+	imnodes::EndOutputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 5);
+	ImGui::Text("B");
+	imnodes::EndOutputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 6);
+	ImGui::Text("A");
+	imnodes::EndOutputAttribute();
+
+	imnodes::EndNode();
+}
+
+std::string TextureSampler::Stringifize(Node_Editor* nedit, int start_id) {
+	std::string outCode = "";
+
+	outCode += "texture(tex" + std::to_string(m_id) + ",";
+
+	Node* UV = nedit->GetNodeLinkedTo(m_index + 0);
+	if (UV) {
+		outCode += UV->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
+	}
+	else {
+		outCode += "UVcoord";
+	}
+
+	outCode += ")";
+
+	switch (start_id - m_index) {
+	case 1:
+		outCode += ".rgba";
+		break;
+	case 2:
+		outCode += ".rgb";
+		break;
+	case 3:
+		outCode += ".r";
+		break;
+	case 4:
+		outCode += ".g";
+		break;
+	case 5:
+		outCode += ".b";
+		break;
+	case 6:
+		outCode += ".a";
+		break;
+	default:
+		outCode += ".rgb";
+		break;
+	}
 
 	return outCode;
 }

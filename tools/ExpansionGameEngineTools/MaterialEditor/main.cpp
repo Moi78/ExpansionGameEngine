@@ -33,6 +33,14 @@ RD_ShaderMaterial* CompileMat(EXP_Game* game, Node_Editor* editor) {
 	RD_ShaderLoader* sl = game->GetRenderer()->GetRenderingAPI()->CreateShader();
 	sl->CompileShaderFromCode(VertCode, FragCode);
 	RD_ShaderMaterial* shmat = new RD_ShaderMaterial(sl);
+	
+	for (int i = 0; i < editor->GetTextureCount(); i++) {
+		RD_Texture* tex = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
+		tex->LoadTexture(editor->GetTextureRefByIndex(i).first);
+
+		shmat->AddTexture(editor->GetTextureRefByIndex(i).second, tex);
+	}
+
 	return shmat;
 }
 

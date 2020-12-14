@@ -17,7 +17,8 @@ enum NodeType {
 	TOp,
 	TConstVec3,
 	TConstVec4,
-	TConstFloat
+	TConstFloat,
+	TSampler2D
 };
 
 class Node_Editor;
@@ -34,7 +35,7 @@ public:
 	virtual int GetId() = 0;
 	virtual int GetIndex() = 0;
 
-	virtual std::string Stringifize(Node_Editor* nedit) { return ""; };
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id) { return ""; };
 
 protected:
 	int m_id;
@@ -58,6 +59,9 @@ public:
 
 	std::string EvalNodes();
 
+	int GetTextureCount();
+	std::pair<std::string, std::string> GetTextureRefByIndex(int index);
+
 	void RenderNodes();
 
 private:
@@ -70,6 +74,7 @@ private:
 
 	std::vector<Node*> m_nodes;
 	std::vector<std::pair<int, int>> m_links;
+	std::vector<std::pair<std::string, std::string>> m_textures;
 };
 
 class ShaderNode :
@@ -85,7 +90,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit);
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
 
 private:
 	int m_index;
@@ -123,7 +128,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit);
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
 
 private:
 	int m_index;
@@ -142,7 +147,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit);
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
 
 private:
 	int m_index;
@@ -161,7 +166,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit);
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
 
 private:
 	int m_index;
@@ -182,7 +187,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit);
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
 private:
 	int m_index;
 
@@ -202,7 +207,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit);
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
 
 private:
 	int m_index;
@@ -223,8 +228,30 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit);
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
 
 private:
 	int m_index;
+};
+
+class TextureSampler :
+	public Node {
+public:
+	TextureSampler(int id, int index);
+	~TextureSampler();
+
+	virtual void render();
+
+	virtual NodeType GetNodeType() { return NodeType::TSampler2D; }
+	virtual int GetNodeSize() { return 7; }
+	virtual int GetId() { return m_id; }
+	virtual int GetIndex() { return m_index; }
+
+	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+
+	std::string GetTexPath() { return std::string(m_tex_path); }
+
+private:
+	int m_index;
+	char m_tex_path[300];
 };
