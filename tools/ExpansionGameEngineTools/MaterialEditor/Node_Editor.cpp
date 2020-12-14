@@ -90,14 +90,13 @@ void Node_Editor::DeleteLink() {
 					if (node->GetId() == id) {
 						for (int ind = node->GetIndex(); ind < node->GetIndex() + node->GetNodeSize(); ind++) {
 
-							for (int a = 0; a < m_links.size(); a++) {
+							for (int a = m_links.size() - 1; a >= 0; a--) {
 								if ((ind == m_links[a].first) || (ind == m_links[a].second)) {
 									m_links.erase(m_links.begin() + a);
 								}
 							}
 						}
 
-						//m_currentIndex -= m_nodes[i]->GetNodeSize();
 						m_nodes.erase(m_nodes.begin() + i);
 						break;
 					}
@@ -153,6 +152,10 @@ void Node_Editor::AddNodeCallback() {
 
 		if (ImGui::MenuItem("Add")) {
 			AddNode(new Add(m_currentId + 1, m_currentIndex));
+		}
+
+		if (ImGui::MenuItem("Multiply")) {
+			AddNode(new Multiply(m_currentId + 1, m_currentIndex));
 		}
 
 		if (ImGui::MenuItem("Constant Float")) {
@@ -689,4 +692,77 @@ void ConstFloat::render() {
 
 std::string ConstFloat::Stringifize(Node_Editor* nedit) {
 	return "(" + std::to_string(m_value) + ")";
+}
+
+Multiply::Multiply(int id, int index) : Node(id) {
+	m_index = index;
+}
+
+Multiply::~Multiply() {
+
+}
+
+void Multiply::render() {
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBar, IM_COL32(255, 119, 0, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarHovered, IM_COL32(200, 100, 0, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarSelected, IM_COL32(200, 100, 0, 255));
+
+	imnodes::BeginNode(m_id);
+	
+	imnodes::BeginNodeTitleBar();
+	ImGui::Text("Multiply");
+	imnodes::EndNodeTitleBar();
+
+	imnodes::BeginInputAttribute(m_index + 0);
+	ImGui::Text("a");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginInputAttribute(m_index + 1);
+	ImGui::Text("b");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 2);
+	ImGui::Text("Result");
+	imnodes::EndOutputAttribute();
+
+	imnodes::EndNode();
+}
+
+std::string Multiply::Stringifize(Node_Editor* nedit) {
+	std::string outCode = "(";
+
+	Node* a = nedit->GetNodeLinkedTo(m_index + 0);
+	Node* b = nedit->GetNodeLinkedTo(m_index + 1);
+
+	if (a) {
+		if (a->GetNodeType() == NodeType::TShaderInput) {
+			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(a);
+			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
+		}
+		else {
+			outCode += a->Stringifize(nedit);
+		}
+	}
+	else {
+		outCode += "0.0";
+	}
+
+	outCode += "*";
+
+	if (b) {
+		if (b->GetNodeType() == NodeType::TShaderInput) {
+			ShaderInputs* in = reinterpret_cast<ShaderInputs*>(b);
+			outCode += in->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1));
+		}
+		else {
+			outCode += b->Stringifize(nedit);
+		}
+	}
+	else {
+		outCode += "0.0";
+	}
+
+	outCode += ")";
+
+	return outCode;
 }

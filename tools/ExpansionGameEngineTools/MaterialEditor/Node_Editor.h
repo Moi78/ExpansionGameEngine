@@ -209,3 +209,22 @@ private:
 
 	float m_value;
 };
+
+class Multiply :
+	public Node {
+public:
+	Multiply(int id, int index);
+	~Multiply();
+
+	virtual void render();
+
+	virtual NodeType GetNodeType() { return NodeType::TOp; }
+	virtual int GetNodeSize() { return 3; }
+	virtual int GetId() { return m_id; }
+	virtual int GetIndex() { return m_index; }
+
+	virtual std::string Stringifize(Node_Editor* nedit);
+
+private:
+	int m_index;
+};

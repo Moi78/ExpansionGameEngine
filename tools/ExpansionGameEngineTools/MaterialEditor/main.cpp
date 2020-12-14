@@ -18,6 +18,24 @@ float lightDirY = -0.8f;
 float lightDirZ = -0.6f;
 float lightBrtn = 5.0f;
 
+RD_ShaderMaterial* CompileMat(EXP_Game* game, Node_Editor* editor) {
+	std::string FragCode = editor->EvalNodes();
+
+	std::string VertCode = "";
+	std::ifstream vertFile;
+	vertFile.open("Engine/ShaderFragments/VertShader.vert", std::ios::beg);
+	while (!vertFile.eof()) {
+		char buf[100];
+		vertFile.getline(buf, 100);
+		VertCode += std::string(buf) + "\n";
+	}
+
+	RD_ShaderLoader* sl = game->GetRenderer()->GetRenderingAPI()->CreateShader();
+	sl->CompileShaderFromCode(VertCode, FragCode);
+	RD_ShaderMaterial* shmat = new RD_ShaderMaterial(sl);
+	return shmat;
+}
+
 int main(int argc, char* argv[]) {
 	//EXPGE Renderer
 	EXP_GameInfo gi;
@@ -34,14 +52,6 @@ int main(int argc, char* argv[]) {
 	RD_WindowingSystemGLFW* winsys = reinterpret_cast<RD_WindowingSystemGLFW*>(game->GetRenderer()->GetRenderingAPI()->GetWindowingSystem());
 
 	RD_MaterialLibrary* matlib = game->GetRenderer()->GetMaterialLibrary();
-
-	RD_ShaderMaterial* mat = game->GetRenderer()->FetchShaderFromFile("mat_editor/def_shader.exmtl");
-	EXP_StaticMesh* msh = new EXP_StaticMesh(game,
-											 mat,
-											 "/meshes/sphere",
-											 vec3f(),
-											 vec3f(),
-											 vec3f(1.0f, 1.0f, 1.0f));
 
 	//ImGui
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -66,6 +76,14 @@ int main(int argc, char* argv[]) {
 
 	ShaderInputs* inode = new ShaderInputs(1, 8);
 	editor->AddNode(inode);
+
+	RD_ShaderMaterial* mat = CompileMat(game, editor);
+	EXP_StaticMesh* msh = new EXP_StaticMesh(game,
+		mat,
+		"/meshes/sphere",
+		vec3f(),
+		vec3f(),
+		vec3f(1.0f, 1.0f, 1.0f));
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->RenderScene();
@@ -119,36 +137,10 @@ int main(int argc, char* argv[]) {
 			{
 				ImGui::BeginChild("Material Configuration", ImVec2((w / 2) - 30, 100), true);
 
-				ImGui::Columns(2, nullptr, false);
-
-				if (ImGui::Button("Reload Material", ImVec2(ImGui::GetColumnWidth(), 20.0f))) {
-					if (matlib->DoMaterialExists("mat_editor/def_shader.exmtl")) {
-						//delete matlib->GetMaterialByName("mat_editor/def_shader.exmtl");
-						matlib->RemoveMaterialFromLib("mat_editor/def_shader.exmtl");
-					}
-
-					RD_ShaderMaterial* mat2 = game->GetRenderer()->FetchShaderFromFile("mat_editor/def_shader.exmtl");
-					msh->SetMaterial(mat2);
-				}
-
-				ImGui::NextColumn();
-
 				if (ImGui::Button("Compile Material", ImVec2(ImGui::GetColumnWidth(), 20.0f))) {
-					std::string FragCode = editor->EvalNodes();
-
-					std::string VertCode = "";
-					std::ifstream vertFile;
-					vertFile.open("Engine/ShaderFragments/VertShader.vert", std::ios::beg);
-					while (!vertFile.eof()) {
-						char buf[100];
-						vertFile.getline(buf, 100);
-						VertCode += std::string(buf) + "\n";
-					}
-
-					RD_ShaderLoader* sl = game->GetRenderer()->GetRenderingAPI()->CreateShader();
-					sl->CompileShaderFromCode(VertCode, FragCode);
-					RD_ShaderMaterial* shmat = new RD_ShaderMaterial(sl);
-					msh->SetMaterial(shmat);
+					delete mat;
+					mat = CompileMat(game, editor);
+					msh->SetMaterial(mat);
 				}
 
 				ImGui::EndChild();
