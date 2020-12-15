@@ -175,8 +175,20 @@ void Node_Editor::AddNodeCallback() {
 			AddNode(new Multiply(m_currentId + 1, m_currentIndex));
 		}
 
+		if (ImGui::MenuItem("NormalFromMap")) {
+			AddNode(new NormalFromMap(m_currentId + 1, m_currentIndex));
+		}
+
 		if (ImGui::MenuItem("Normalize")) {
 			AddNode(new Normalize(m_currentId + 1, m_currentIndex));
+		}
+
+		if (ImGui::MenuItem("Process Shadows")) {
+			AddNode(new ProcessShadows(m_currentId + 1, m_currentIndex));
+		}
+
+		if (ImGui::MenuItem("Subtract")) {
+			AddNode(new Subtract(m_currentId + 1, m_currentIndex));
 		}
 
 		if (ImGui::MenuItem("TextureSampler")) {
@@ -209,12 +221,46 @@ std::string Node_Editor::EvalNodes() {
 	}
 
 	//Pre-Scan of nodes
+	bool linkedShadowProcess = false;
+	bool linkedNormalMapProcess = false;
 	for (auto n : m_nodes) {
 		if (n->GetNodeType() == NodeType::TSampler2D) {
 			outCode += "uniform sampler2D tex" + std::to_string(n->GetId()) + ";\n";
 
 			TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
 			m_textures.push_back(std::pair<std::string, std::string>(s->GetTexPath(), "tex" + std::to_string(s->GetId())));
+		}
+
+		if (n->GetNodeType() == NodeType::TShadowProcess && (!linkedShadowProcess)) {
+			std::ifstream shadowFunc;
+			shadowFunc.open("Engine/ShaderFragments/ProcessShadows.txt", std::ios::beg);
+			if (!shadowFunc) {
+				return "";
+			}
+
+			while (!shadowFunc.eof()) {
+				char line[200];
+				shadowFunc.getline(line, 200);
+				outCode += std::string(line) + "\n";
+			}
+
+			linkedShadowProcess = true;
+		}
+
+		if (n->GetNodeType() == NodeType::TNormalProcess && (!linkedNormalMapProcess)) {
+			std::ifstream bumpFunc;
+			bumpFunc.open("Engine/ShaderFragments/BumpMap.txt", std::ios::beg);
+			if (!bumpFunc) {
+				return "";
+			}
+
+			while (!bumpFunc.eof()) {
+				char line[200];
+				bumpFunc.getline(line, 200);
+				outCode += std::string(line) + "\n";
+			}
+
+			linkedNormalMapProcess = true;
 		}
 	}
 
@@ -815,6 +861,185 @@ std::string TextureSampler::Stringifize(Node_Editor* nedit, int start_id) {
 		outCode += ".rgb";
 		break;
 	}
+
+	return outCode;
+}
+
+Subtract::Subtract(int id, int index) : Node(id) {
+	m_index = index;
+}
+
+Subtract::~Subtract() {
+
+}
+
+void Subtract::render() {
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBar, IM_COL32(255, 119, 0, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarHovered, IM_COL32(200, 100, 0, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarSelected, IM_COL32(200, 100, 0, 255));
+
+	imnodes::BeginNode(m_id);
+
+	imnodes::BeginNodeTitleBar();
+	ImGui::Text("Subtract");
+	imnodes::EndNodeTitleBar();
+
+	imnodes::BeginInputAttribute(m_index + 0);
+	ImGui::Text("a");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginInputAttribute(m_index + 1);
+	ImGui::Text("b");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 2);
+	ImGui::Text("Result");
+	imnodes::EndOutputAttribute();
+
+	imnodes::EndNode();
+}
+
+std::string Subtract::Stringifize(Node_Editor* nedit, int end_id) {
+	std::string outCode = "(";
+
+	Node* a = nedit->GetNodeLinkedTo(m_index + 0);
+	Node* b = nedit->GetNodeLinkedTo(m_index + 1);
+
+	if (a) {
+		outCode += a->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
+	}
+	else {
+		outCode += "0.0";
+	}
+
+	outCode += "-";
+
+	if (b) {
+		outCode += b->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1));
+	}
+	else {
+		outCode += "0.0";
+	}
+
+	outCode += ")";
+
+	return outCode;
+}
+
+ProcessShadows::ProcessShadows(int id, int index) : Node(id) {
+	m_index = index;
+}
+
+ProcessShadows::~ProcessShadows() {
+
+}
+
+void ProcessShadows::render() {
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBar, IM_COL32(0, 213, 255, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarHovered, IM_COL32(0, 183, 219, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarSelected, IM_COL32(0, 183, 219, 255));
+
+	imnodes::BeginNode(m_id);
+
+	imnodes::BeginNodeTitleBar();
+	ImGui::Text("Process Shadow");
+	imnodes::EndNodeTitleBar();
+
+	imnodes::BeginOutputAttribute(m_index + 0);
+	ImGui::Text("Shadow Mapping Data");
+	imnodes::EndOutputAttribute();
+
+	imnodes::EndNode();
+}
+
+std::string ProcessShadows::Stringifize(Node_Editor* nedit, int start_id) {
+	return "ProcessShadows()";
+}
+
+NormalFromMap::NormalFromMap(int id, int index) : Node(id) {
+	m_index = index;
+}
+
+NormalFromMap::~NormalFromMap() {
+
+}
+
+void NormalFromMap::render() {
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBar, IM_COL32(0, 213, 255, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarHovered, IM_COL32(0, 183, 219, 255));
+	imnodes::PushColorStyle(imnodes::ColorStyle_TitleBarSelected, IM_COL32(0, 183, 219, 255));
+
+	imnodes::BeginNode(m_id);
+
+	imnodes::BeginNodeTitleBar();
+	ImGui::Text("NormalFromMap");
+	imnodes::EndNodeTitleBar();
+
+	imnodes::BeginInputAttribute(m_index + 0);
+	ImGui::Text("RGB Texture");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginInputAttribute(m_index + 1);
+	ImGui::Text("Normal");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginInputAttribute(m_index + 2);
+	ImGui::Text("Position");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginInputAttribute(m_index + 3);
+	ImGui::Text("UV Coords");
+	imnodes::EndInputAttribute();
+
+	imnodes::BeginOutputAttribute(m_index + 4);
+	ImGui::Text("Normal Data");
+	imnodes::EndOutputAttribute();
+
+	imnodes::EndNode();
+}
+
+std::string NormalFromMap::Stringifize(Node_Editor* nedit, int start_id) {
+	std::string outCode = "GetNormFromMap(";
+
+	Node* nmap = nedit->GetNodeLinkedTo(m_index + 0);
+	if (nmap) {
+		outCode += nmap->Stringifize(nedit, nedit->GetLinkStartId(m_index + 0));
+	}
+	else {
+		outCode += "vec3(0.0, 0.0, 0.0)";
+	}
+
+	outCode += ",";
+
+	Node* norm = nedit->GetNodeLinkedTo(m_index + 1);
+	if (norm) {
+		outCode += norm->Stringifize(nedit, nedit->GetLinkStartId(m_index + 1));
+	}
+	else {
+		outCode += "Normal";
+	}
+
+	outCode += ",";
+
+	Node* fpos = nedit->GetNodeLinkedTo(m_index + 2);
+	if (fpos) {
+		outCode += norm->Stringifize(nedit, nedit->GetLinkStartId(m_index + 2));
+	}
+	else {
+		outCode += "FragPos";
+	}
+
+	outCode += ",";
+
+	Node* uv = nedit->GetNodeLinkedTo(m_index + 3);
+	if (uv) {
+		outCode += uv->Stringifize(nedit, nedit->GetLinkStartId(m_index + 3));
+	}
+	else {
+		outCode += "UVcoord";
+	}
+
+	outCode += ")";
 
 	return outCode;
 }

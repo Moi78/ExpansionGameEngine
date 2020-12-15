@@ -18,7 +18,9 @@ enum NodeType {
 	TConstVec3,
 	TConstVec4,
 	TConstFloat,
-	TSampler2D
+	TSampler2D,
+	TShadowProcess,
+	TNormalProcess
 };
 
 class Node_Editor;
@@ -35,7 +37,7 @@ public:
 	virtual int GetId() = 0;
 	virtual int GetIndex() = 0;
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id) { return ""; };
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id) { return ""; };
 
 protected:
 	int m_id;
@@ -90,7 +92,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
 	int m_index;
@@ -109,7 +111,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int index_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
 	int m_index;
@@ -128,7 +130,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
 	int m_index;
@@ -147,7 +149,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
 	int m_index;
@@ -166,7 +168,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
 	int m_index;
@@ -187,7 +189,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 private:
 	int m_index;
 
@@ -207,7 +209,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
 	int m_index;
@@ -228,7 +230,7 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
 	int m_index;
@@ -247,11 +249,68 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
-	virtual std::string Stringifize(Node_Editor* nedit, int end_id);
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 	std::string GetTexPath() { return std::string(m_tex_path); }
 
 private:
 	int m_index;
 	char m_tex_path[300];
+};
+
+class Subtract :
+	public Node {
+public:
+	Subtract(int id, int index);
+	virtual ~Subtract();
+
+	virtual void render();
+
+	virtual NodeType GetNodeType() { return NodeType::TOp; }
+	virtual int GetNodeSize() { return 3; }
+	virtual int GetId() { return m_id; }
+	virtual int GetIndex() { return m_index; }
+
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
+
+private:
+	int m_index;
+};
+
+class ProcessShadows :
+	public Node {
+public:
+	ProcessShadows(int id, int index);
+	~ProcessShadows();
+
+	virtual void render();
+
+	virtual NodeType GetNodeType() { return NodeType::TShadowProcess; }
+	virtual int GetNodeSize() { return 1; }
+	virtual int GetId() { return m_id; }
+	virtual int GetIndex() { return m_index; }
+
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
+
+private:
+	int m_index;
+};
+
+class NormalFromMap :
+	public Node {
+public:
+	NormalFromMap(int id, int index);
+	virtual ~NormalFromMap();
+
+	virtual void render();
+	
+	virtual NodeType GetNodeType() { return NodeType::TNormalProcess; }
+	virtual int GetNodeSize() { return 5; }
+	virtual int GetId() { return m_id; }
+	virtual int GetIndex() { return m_index; }
+
+	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
+
+private:
+	int m_index;
 };

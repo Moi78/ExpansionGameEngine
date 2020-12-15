@@ -348,3 +348,6 @@ healthchecksdb
 /src/libs/GLFW/glfw-3.3.2/tests
 /src/libs/GLFW
 /srclibs/PA112RSER
+/tools/ExpansionGameEngineTools/MaterialEditor/mat_editor/wall_diff.jpg
+/tools/ExpansionGameEngineTools/MaterialEditor/mat_editor/wall_norm.jpg
+/tools/ExpansionGameEngineTools/MaterialEditor/mat_editor/wall_rough.jpg
