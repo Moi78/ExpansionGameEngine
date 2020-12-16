@@ -151,3 +151,45 @@ std::string BD_MatCustomShaderRead::GetTextureParamName(int index) {
 std::string BD_MatCustomShaderRead::GetTexturePath(int index) {
 	return m_root["textures"][index]["path"].asString();
 }
+
+// BD_MatCustomShaderWrite
+
+BD_MatCustomShaderWrite::BD_MatCustomShaderWrite() {
+
+}
+
+BD_MatCustomShaderWrite::~BD_MatCustomShaderWrite() {
+
+}
+
+void BD_MatCustomShaderWrite::AddTextureRef(std::string ref, std::string param) {
+	m_texs.push_back(std::pair<std::string, std::string>(ref, param));
+}
+
+void BD_MatCustomShaderWrite::SetShaderCode(std::string shadercode) {
+	m_shader_code = shadercode;
+}
+
+bool BD_MatCustomShaderWrite::WriteMaterialFile(std::string path) {
+	std::ofstream file;
+	file.open(path, std::ios::binary);
+	if (!file) {
+		std::cerr << "Cannot create the file " << path << std::endl;
+		dispErrorMessageBox(TEXT("Cannot open a file, see console for details..."));
+		return false;
+	}
+
+	Json::Value root;
+
+	int index = 0;
+	for (auto tex : m_texs) {
+		root["textures"][index]["path"] = tex.first;
+		root["textures"][index]["param"] = tex.second;
+	}
+
+	root["glsl"] = m_shader_code;
+
+	file << root;
+
+	return true;
+}

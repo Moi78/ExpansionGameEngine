@@ -78,4 +78,19 @@ private:
 	Json::Value m_root;
 };
 
+class BULLDOZERFILEMANAGER_API BD_MatCustomShaderWrite {
+public:
+	BD_MatCustomShaderWrite();
+	~BD_MatCustomShaderWrite();
+
+	void SetShaderCode(std::string code);
+	void AddTextureRef(std::string ref, std::string param);
+
+	bool WriteMaterialFile(std::string path);
+
+private:
+	std::vector<std::pair<std::string, std::string>> m_texs;
+	std::string m_shader_code;
+};
+
 #endif //_BD_MAT_RW_H__

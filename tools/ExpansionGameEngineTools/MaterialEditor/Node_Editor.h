@@ -9,12 +9,17 @@
 #include <EXP_Game.h>
 #include <EXP_Callbacks.h>
 
+#include <BD_MatRW.h>
+
 #include <vec3.h>
 
 enum NodeType {
 	TShaderNode,
 	TShaderInput,
-	TOp,
+	TNormalize,
+	TAdd,
+	TSub,
+	TMul,
 	TConstVec3,
 	TConstVec4,
 	TConstFloat,
@@ -41,6 +46,7 @@ public:
 
 protected:
 	int m_id;
+	int m_index;
 };
 
 class Node_Editor
@@ -63,6 +69,10 @@ public:
 
 	int GetTextureCount();
 	std::pair<std::string, std::string> GetTextureRefByIndex(int index);
+
+	void SaveFinalMaterial(std::string path);
+	void SaveMaterialDraft(std::string path);
+	void OpenMaterialDraft(std::string path);
 
 	void RenderNodes();
 
@@ -93,9 +103,6 @@ public:
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };
 
 class ShaderInputs :
@@ -112,9 +119,6 @@ public:
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };
 
 class Normalize : 
@@ -125,15 +129,12 @@ public:
 
 	virtual void render();
 
-	virtual NodeType GetNodeType() { return NodeType::TOp; }
+	virtual NodeType GetNodeType() { return NodeType::TNormalize; }
 	virtual int GetNodeSize() { return 2; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };
 
 class Add :
@@ -144,15 +145,12 @@ public:
 
 	virtual void render();
 
-	virtual NodeType GetNodeType() { return NodeType::TOp; }
+	virtual NodeType GetNodeType() { return NodeType::TAdd; }
 	virtual int GetNodeSize() { return 3; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };
 
 class ConstVec3 :
@@ -171,8 +169,6 @@ public:
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
-	int m_index;
-
 	vec3f m_value;
 };
 
@@ -191,8 +187,6 @@ public:
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 private:
-	int m_index;
-
 	vec4f m_value;
 };
 
@@ -212,8 +206,6 @@ public:
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 private:
-	int m_index;
-
 	float m_value;
 };
 
@@ -225,15 +217,12 @@ public:
 
 	virtual void render();
 
-	virtual NodeType GetNodeType() { return NodeType::TOp; }
+	virtual NodeType GetNodeType() { return NodeType::TMul; }
 	virtual int GetNodeSize() { return 3; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };
 
 class TextureSampler :
@@ -254,7 +243,6 @@ public:
 	std::string GetTexPath() { return std::string(m_tex_path); }
 
 private:
-	int m_index;
 	char m_tex_path[300];
 };
 
@@ -266,15 +254,12 @@ public:
 
 	virtual void render();
 
-	virtual NodeType GetNodeType() { return NodeType::TOp; }
+	virtual NodeType GetNodeType() { return NodeType::TSub; }
 	virtual int GetNodeSize() { return 3; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };
 
 class ProcessShadows :
@@ -291,9 +276,6 @@ public:
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };
 
 class NormalFromMap :
@@ -310,7 +292,4 @@ public:
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
-
-private:
-	int m_index;
 };

@@ -17,6 +17,90 @@ Node_Editor::~Node_Editor() {
 	m_nodes.clear();
 }
 
+void Node_Editor::SaveFinalMaterial(std::string matPath) {
+	BD_MatCustomShaderWrite* mw = new BD_MatCustomShaderWrite();
+
+	for (auto tex : m_textures) {
+		mw->AddTextureRef(tex.first, tex.second);
+	}
+
+	mw->SetShaderCode(EvalNodes());
+
+	mw->WriteMaterialFile(matPath);
+
+	delete mw;
+}
+
+void Node_Editor::SaveMaterialDraft(std::string path) {
+	std::ofstream file;
+	file.open(path, std::ios::binary);
+	if (!file) {
+		std::cerr << "ERROR: Cannot create file " << path << "." << std::endl;
+		dispErrorMessageBox(StrToWStr("ERROR: Cannot create file " + path + "."));
+		return;
+	}
+
+	// 1 - Nombre de nodes (int)
+	// 2 - Nombre de links (int)
+	// 3 - Nodes (n --> Nodes)
+	// 4 - Links (2n --> int, int)
+
+	int nbrNodes = m_nodes.size();
+	int nbrLinks = m_links.size();
+
+	file.write(reinterpret_cast<const char*>(&nbrNodes), sizeof(int));
+	file.write(reinterpret_cast<const char*>(&nbrLinks), sizeof(int));
+
+	for (auto n : m_nodes) {
+		Node* n_buff = n;
+		file.write(reinterpret_cast<const char*>(n_buff), sizeof(Node));
+
+		ImVec2 p = imnodes::GetNodeGridSpacePos(n->GetId());
+		file.write(reinterpret_cast<const char*>(&p), sizeof(ImVec2));
+	}
+
+	for (auto l : m_links) {
+		file.write(reinterpret_cast<const char*>(&l.first), sizeof(int));
+		file.write(reinterpret_cast<const char*>(&l.second), sizeof(int));
+	}
+}
+
+void Node_Editor::OpenMaterialDraft(std::string path) {
+	std::ifstream file;
+	file.open(path, std::ios::binary);
+
+	int nbrNodes = 0;
+	int nbrLinks = 0;
+
+	file.read(reinterpret_cast<char*>(&nbrNodes), sizeof(int));
+	file.read(reinterpret_cast<char*>(&nbrLinks), sizeof(int));
+
+	m_nodes.clear();
+	m_links.clear();
+	for (int i = 0; i < nbrNodes; i++) {
+		Node* buff = (Node*)malloc(sizeof(Node));
+		file.read(reinterpret_cast<char*>(buff), sizeof(Node));
+
+		ImVec2 pos(0.0f, 0.0f);
+		file.read(reinterpret_cast<char*>(&pos), sizeof(ImVec2));
+
+		imnodes::SetNodeGridSpacePos(buff->GetId(), pos);
+
+		//AddNode(buff);
+		m_nodes.push_back(buff);
+	}
+
+	for (int i = 0; i < nbrLinks; i++) {
+		int ls = 0; //Link Start
+		int le = 0; //Link Stop
+
+		file.read(reinterpret_cast<char*>(&ls), sizeof(int));
+		file.read(reinterpret_cast<char*>(&le), sizeof(int));
+
+		m_links.push_back(std::pair<int, int>(ls, le));
+	}
+}
+
 void Node_Editor::RenderNodes() {
 	for (auto n : m_nodes) {
 		n->render();
@@ -155,44 +239,56 @@ void Node_Editor::AddNodeCallback() {
 		ImGui::Text("Add Node");
 		ImGui::Separator();
 
+		ImVec2 pos = ImGui::GetMousePosOnOpeningCurrentPopup();
+
 		if (ImGui::MenuItem("Add")) {
 			AddNode(new Add(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("Constant Float")) {
 			AddNode(new ConstFloat(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("Constant Vec 3")) {
 			AddNode(new ConstVec3(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("Constant Vec 4")) {
 			AddNode(new ConstVec4(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("Multiply")) {
 			AddNode(new Multiply(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("NormalFromMap")) {
 			AddNode(new NormalFromMap(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("Normalize")) {
 			AddNode(new Normalize(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("Process Shadows")) {
 			AddNode(new ProcessShadows(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("Subtract")) {
 			AddNode(new Subtract(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		if (ImGui::MenuItem("TextureSampler")) {
 			AddNode(new TextureSampler(m_currentId + 1, m_currentIndex));
+			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
 		ImGui::EndPopup();

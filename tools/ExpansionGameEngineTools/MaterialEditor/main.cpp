@@ -85,6 +85,8 @@ int main(int argc, char* argv[]) {
 	ShaderInputs* inode = new ShaderInputs(1, 8);
 	editor->AddNode(inode);
 
+	imnodes::SetNodeEditorSpacePos(snode->GetId(), ImVec2(450.0f, 50.0f));
+
 	RD_ShaderMaterial* mat = CompileMat(game, editor);
 	EXP_StaticMesh* msh = new EXP_StaticMesh(game,
 		mat,
@@ -92,6 +94,10 @@ int main(int argc, char* argv[]) {
 		vec3f(),
 		vec3f(),
 		vec3f(1.0f, 1.0f, 1.0f));
+
+	char saveFinalPath[300] = { 0 };
+	char saveDraftPath[300] = { 0 };
+	char openPath[300] = { 0 };
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->RenderScene();
@@ -145,11 +151,35 @@ int main(int argc, char* argv[]) {
 			{
 				ImGui::BeginChild("Material Configuration", ImVec2((w / 2) - 30, 100), true);
 
-				if (ImGui::Button("Compile Material", ImVec2(ImGui::GetColumnWidth(), 20.0f))) {
+				if (ImGui::Button("Compile Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
 					delete mat;
 					mat = CompileMat(game, editor);
 					msh->SetMaterial(mat);
 				}
+
+				ImGui::Columns(2, nullptr, false);
+				if (ImGui::Button("Save Final Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
+					editor->SaveFinalMaterial(std::string(saveFinalPath));
+				}
+
+				ImGui::NextColumn();
+				ImGui::InputText("Save Final Path", saveFinalPath, 300);
+
+				ImGui::NextColumn();
+				if (ImGui::Button("Save Draft Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
+					editor->SaveMaterialDraft(std::string(saveDraftPath));
+				}
+
+				ImGui::NextColumn();
+				ImGui::InputText("Save Draft Path", saveDraftPath, 300);
+
+				ImGui::NextColumn();
+				if (ImGui::Button("Open Draft Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
+					editor->OpenMaterialDraft(std::string(openPath));
+				}
+
+				ImGui::NextColumn();
+				ImGui::InputText("Open File", openPath, 300);
 
 				ImGui::EndChild();
 			}

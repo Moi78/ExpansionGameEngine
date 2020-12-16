@@ -27,7 +27,7 @@
       "nameTag":"suzanne",
 
       "ref":"/meshes/Suzanne",
-      "material":"/shaders/mat_suzanne",
+      "material":"/shaders/test_mat",
 
       "pos": [1, 0, 7.6],
       "rot": [0, 0, -90],
