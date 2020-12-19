@@ -73,7 +73,9 @@ First demo of my PBR impl
  - [ ] Font Rendering on GUI System
  
 ## Dependencies
-#Main Engine deps
+
+### Main Engine deps
+
   - OpenAL Soft (by @Kcat)
   - GLFW3
   - OpenGL
@@ -82,7 +84,9 @@ First demo of my PBR impl
   - libsndfile1
   - Bullet Physics
   - Jsoncpp
-#Tool deps
+ 
+### Tool deps
+
   - ASSIMP (For tools)
   - Qt (For tools)
   - imgui
