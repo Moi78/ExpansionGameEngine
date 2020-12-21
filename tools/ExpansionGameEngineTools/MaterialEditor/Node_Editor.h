@@ -13,6 +13,8 @@
 
 #include <vec3.h>
 
+class ConstVec3;
+
 enum NodeType {
 	TShaderNode,
 	TShaderInput,
@@ -32,7 +34,7 @@ class Node_Editor;
 
 class Node {
 public:
-	Node(int id) { m_id = id; }
+	Node(int id) { m_id = id; m_index = 0; }
 	virtual ~Node() {};
 
 	virtual void render() = 0;
@@ -42,51 +44,13 @@ public:
 	virtual int GetId() = 0;
 	virtual int GetIndex() = 0;
 
+	virtual void WriteNodeData(std::ofstream* file) {};
+
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id) { return ""; };
 
 protected:
 	int m_id;
 	int m_index;
-};
-
-class Node_Editor
-{
-public:
-	Node_Editor(EXP_Game* game);
-	~Node_Editor();
-
-	void AddNode(Node* n);
-	void AddNodeCallback();
-
-	void MakeLinks();
-	void DeleteLink();
-	bool IsAlreadyLinked(int id);
-
-	Node* GetNodeLinkedTo(int id_end);
-	int GetLinkStartId(int end_id);
-
-	std::string EvalNodes();
-
-	int GetTextureCount();
-	std::pair<std::string, std::string> GetTextureRefByIndex(int index);
-
-	void SaveFinalMaterial(std::string path);
-	void SaveMaterialDraft(std::string path);
-	void OpenMaterialDraft(std::string path);
-
-	void RenderNodes();
-
-private:
-	EXP_Game* m_game;
-	EXP_KeyboardCallback* m_suppr;
-	EXP_MouseButtonCallback* m_add;
-
-	int m_currentIndex;
-	int m_currentId;
-
-	std::vector<Node*> m_nodes;
-	std::vector<std::pair<int, int>> m_links;
-	std::vector<std::pair<std::string, std::string>> m_textures;
 };
 
 class ShaderNode :
@@ -168,6 +132,9 @@ public:
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
+	virtual void WriteNodeData(std::ofstream* file) override;
+	void LoadNodeData(vec3f val) { m_value = val; }
+
 private:
 	vec3f m_value;
 };
@@ -186,6 +153,9 @@ public:
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
+
+	virtual void WriteNodeData(std::ofstream* file) override;
+	void LoadNodeData(vec4f val) { m_value = val; }
 private:
 	vec4f m_value;
 };
@@ -204,6 +174,9 @@ public:
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
+
+	virtual void WriteNodeData(std::ofstream* file) override;
+	void LoadNodeData(float val) { m_value = val; }
 
 private:
 	float m_value;
@@ -241,6 +214,11 @@ public:
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 	std::string GetTexPath() { return std::string(m_tex_path); }
+
+	virtual void WriteNodeData(std::ofstream* file) override;
+	void LoadNodeData(std::string data) {
+		memcpy(m_tex_path, data.c_str(), 300);
+	}
 
 private:
 	char m_tex_path[300];
@@ -292,4 +270,83 @@ public:
 	virtual int GetIndex() { return m_index; }
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
+};
+
+class Node_Editor
+{
+public:
+	Node_Editor(EXP_Game* game, std::string projectRoot, std::string contentPath);
+	~Node_Editor();
+
+	void AddNode(Node* n);
+	void AddNodeCallback();
+
+	void MakeLinks();
+	void DeleteLink();
+	bool IsAlreadyLinked(int id);
+
+	Node* GetNodeLinkedTo(int id_end);
+	int GetLinkStartId(int end_id);
+
+	std::string EvalNodes();
+
+	int GetTextureCount();
+	std::pair<std::string, std::string> GetTextureRefByIndex(int index);
+
+	void SaveFinalMaterial(std::string path);
+	void SaveMaterialDraft(std::string path);
+	void OpenMaterialDraft(std::string path);
+
+	void InitConstVec3(std::ifstream* file, int id, int index) {
+		ConstVec3* n = new ConstVec3(id, index);
+		vec3f data(0.0f, 0.0f, 0.0f);
+		file->read(reinterpret_cast<char*>(&data), sizeof(vec3f));
+
+		n->LoadNodeData(data);
+		AddNode(n);
+	}
+
+	void InitConstVec4(std::ifstream* file, int id, int index) {
+		ConstVec4* n4 = new ConstVec4(id, index);
+		vec4f data4(0.0f, 0.0f, 0.0f, 0.0f);
+		file->read(reinterpret_cast<char*>(&data4), sizeof(vec4f));
+
+		n4->LoadNodeData(data4);
+		AddNode(n4);
+	}
+
+	void InitConstFloat(std::ifstream* file, int id, int index) {
+		ConstFloat* nf = new ConstFloat(id, index);
+		float dataf = 0.0f;
+		file->read(reinterpret_cast<char*>(&dataf), sizeof(float));
+
+		nf->LoadNodeData(dataf);
+		AddNode(nf);
+	}
+
+	void InitTextureSampler(std::ifstream* file, int id, int index) {
+		TextureSampler* nts = new TextureSampler(id, index);
+		char datac[300];
+		file->read(reinterpret_cast<char*>(&datac), 300);
+
+		nts->LoadNodeData(std::string(datac));
+		AddNode(nts);
+	}
+
+	void RenderNodes();
+
+private:
+	EXP_Game* m_game;
+	EXP_KeyboardCallback* m_suppr;
+	EXP_MouseButtonCallback* m_add;
+
+	int m_currentIndex;
+	int m_currentId;
+
+	std::vector<Node*> m_nodes;
+	std::vector<std::pair<int, int>> m_links;
+	std::vector<std::pair<std::string, std::string>> m_textures;
+
+	std::string m_projectRoot;
+	std::string m_contentPath;
 };

@@ -161,6 +161,7 @@
     <ClCompile Include="Node_Editor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Filebrowser.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />

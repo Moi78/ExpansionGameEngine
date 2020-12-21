@@ -10,6 +10,7 @@
 #include "imnodes.h"
 
 #include "Node_Editor.h"
+#include "Filebrowser.h"
 
 #include <glad/glad.h>
 
@@ -74,8 +75,42 @@ int main(int argc, char* argv[]) {
 	ImGui_ImplGlfw_InitForOpenGL(winsys->GetWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 410");
 
+	std::string projRoot = "C:/";
+
+	std::vector<std::string> args;
+	for (int i = 0; i < argc; i++) {
+		args.push_back(argv[i]);
+	}
+
+	//Arg Parsing I
+	std::string contentPath;
+	for (int i = 0; i < args.size(); i++) {
+		if (args[i] == "-p") {
+			if (i + 1 < args.size()) {
+				projRoot = args[i + 1];
+			}
+			else {
+				std::cerr << "No args for -p" << std::endl;
+			}
+		}
+
+		if(args[i] == "-c") {
+			if (i + 1 < args.size()) {
+				contentPath = args[i + 1];
+			}
+			else {
+				std::cerr << "No args for -c" << std::endl;
+			}
+		}
+	}
+
+	if (!std::filesystem::exists(projRoot + contentPath)) {
+		std::cerr << "Bad args for -p; Using C:/ as project root." << std::endl;
+		projRoot = "C:/";
+	}
+	
 	//Node Editing
-	Node_Editor* editor = new Node_Editor(game);
+	Node_Editor* editor = new Node_Editor(game, projRoot, contentPath);
 
 	std::vector<std::pair<int, int>> links;
 
@@ -95,9 +130,31 @@ int main(int argc, char* argv[]) {
 		vec3f(),
 		vec3f(1.0f, 1.0f, 1.0f));
 
-	char saveFinalPath[300] = { 0 };
-	char saveDraftPath[300] = { 0 };
-	char openPath[300] = { 0 };
+	//Arg parsing II
+	for (int i = 0; i < args.size(); i++) {
+		if (args[i] == "-o") {
+			if (i + 1 < args.size()) {
+				std::string fullPath = projRoot + contentPath + args[i + 1];
+				if (std::filesystem::exists(fullPath)) {
+					editor->OpenMaterialDraft(fullPath);
+					delete mat;
+					mat = CompileMat(game, editor);
+					msh->SetMaterial(mat);
+				} else {
+					std::cerr << args[i + 1] << " : Files does not exists." << std::endl;
+				}
+			}
+		}
+	}
+
+	Filebrowser openBrowser(projRoot + contentPath);
+	openBrowser.AddFilter("draft");
+
+	Filebrowser saveBrowserDraft(projRoot + contentPath);
+	saveBrowserDraft.AddFilter("draft");
+
+	Filebrowser saveFinalMaterial(projRoot + contentPath);
+	saveFinalMaterial.AddFilter("exmtl");
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->RenderScene();
@@ -110,12 +167,12 @@ int main(int argc, char* argv[]) {
 		ImGui::NewFrame();
 
 		{
-			ImGui::SetNextWindowPos(ImVec2(w / 2, 0));
+			ImGui::SetNextWindowPos(ImVec2((float)(w / 2), 0));
 			ImGui::SetNextWindowSize(ImVec2(w / 2, h));
-			ImGui::Begin("Material", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+			ImGui::Begin("Material", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 			{
-				ImGui::BeginChild("Light Configaration", ImVec2((w / 2) - 30, 105), true);
+				ImGui::BeginChild("Light Configaration", ImVec2((w / 2.0f) - 30, 105), true);
 
 				if (ImGui::SliderFloat("Light direction X", &lightDirX, -1.0f, 1.0f)) {
 					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
@@ -157,29 +214,22 @@ int main(int argc, char* argv[]) {
 					msh->SetMaterial(mat);
 				}
 
-				ImGui::Columns(2, nullptr, false);
+				ImGui::Columns(1, nullptr, false);
+				
 				if (ImGui::Button("Save Final Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
-					editor->SaveFinalMaterial(std::string(saveFinalPath));
+					saveFinalMaterial.Open();
 				}
-
-				ImGui::NextColumn();
-				ImGui::InputText("Save Final Path", saveFinalPath, 300);
-
-				ImGui::NextColumn();
+				
 				if (ImGui::Button("Save Draft Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
-					editor->SaveMaterialDraft(std::string(saveDraftPath));
+					saveBrowserDraft.Open();
 				}
 
-				ImGui::NextColumn();
-				ImGui::InputText("Save Draft Path", saveDraftPath, 300);
-
-				ImGui::NextColumn();
 				if (ImGui::Button("Open Draft Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
-					editor->OpenMaterialDraft(std::string(openPath));
+					openBrowser.Open();
+					delete mat;
+					mat = CompileMat(game, editor);
+					msh->SetMaterial(mat);
 				}
-
-				ImGui::NextColumn();
-				ImGui::InputText("Open File", openPath, 300);
 
 				ImGui::EndChild();
 			}
@@ -196,6 +246,10 @@ int main(int argc, char* argv[]) {
 
 				ImGui::EndChild();
 			}
+
+			openBrowser.Render(game->GetRenderer());
+			saveBrowserDraft.Render(game->GetRenderer());
+			saveFinalMaterial.Render(game->GetRenderer());
 		}
 
 		game->ExecCallbacks();
@@ -204,6 +258,21 @@ int main(int argc, char* argv[]) {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (openBrowser.HasSelected()) {
+			editor->OpenMaterialDraft(openBrowser.GetSelectedFile());
+			openBrowser.ResetBools();
+		}
+
+		if (saveBrowserDraft.OkPressed()) {
+			editor->SaveMaterialDraft(saveBrowserDraft.GetFileNameBuffer());
+			saveBrowserDraft.ResetBools();
+		}
+
+		if(saveFinalMaterial.OkPressed()) {
+			editor->SaveFinalMaterial(saveFinalMaterial.GetFileNameBuffer());
+			saveFinalMaterial.ResetBools();
+		}
 
 		game->EndFrame();
 	}

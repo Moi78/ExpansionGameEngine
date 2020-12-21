@@ -1,11 +1,14 @@
 #include "Node_Editor.h"
 #include <algorithm>
 
-Node_Editor::Node_Editor(EXP_Game* game) {
+Node_Editor::Node_Editor(EXP_Game* game, std::string projectRoot, std::string contentPath) {
 	m_game = game;
 	m_suppr = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Node_Editor::DeleteLink), GLFW_KEY_DELETE, true);
 	m_add = new EXP_MouseButtonCallback(game, CL_VDFUNCPTR(Node_Editor::AddNodeCallback), GLFW_MOUSE_BUTTON_RIGHT, false);
 
+	m_projectRoot = projectRoot;
+	m_contentPath = contentPath;
+	
 	m_currentIndex = 13;
 	m_currentId = 1;
 }
@@ -20,6 +23,15 @@ Node_Editor::~Node_Editor() {
 void Node_Editor::SaveFinalMaterial(std::string matPath) {
 	BD_MatCustomShaderWrite* mw = new BD_MatCustomShaderWrite();
 
+	m_textures.clear();
+	for(auto* n : m_nodes)
+	{
+		if (n->GetNodeType() == NodeType::TSampler2D) {
+			TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
+			m_textures.push_back(std::pair<std::string, std::string>(m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
+		}
+	}
+	
 	for (auto tex : m_textures) {
 		mw->AddTextureRef(tex.first, tex.second);
 	}
@@ -51,23 +63,36 @@ void Node_Editor::SaveMaterialDraft(std::string path) {
 	file.write(reinterpret_cast<const char*>(&nbrNodes), sizeof(int));
 	file.write(reinterpret_cast<const char*>(&nbrLinks), sizeof(int));
 
-	for (auto n : m_nodes) {
-		Node* n_buff = n;
-		file.write(reinterpret_cast<const char*>(n_buff), sizeof(Node));
+	for (auto* n : m_nodes) {
+		NodeType nt = n->GetNodeType();
+		file.write(reinterpret_cast<char*>(&nt), sizeof(NodeType));
+		int id = n->GetId();
+		file.write(reinterpret_cast<char*>(&id), sizeof(int));
+		int index = n->GetIndex();
+		file.write(reinterpret_cast<char*>(&index), sizeof(int));
 
 		ImVec2 p = imnodes::GetNodeGridSpacePos(n->GetId());
 		file.write(reinterpret_cast<const char*>(&p), sizeof(ImVec2));
+
+		n->WriteNodeData(&file);
 	}
 
 	for (auto l : m_links) {
 		file.write(reinterpret_cast<const char*>(&l.first), sizeof(int));
 		file.write(reinterpret_cast<const char*>(&l.second), sizeof(int));
 	}
+
+	file.close();
+	std::cout << "Wrote " << path << std::endl;
 }
 
 void Node_Editor::OpenMaterialDraft(std::string path) {
 	std::ifstream file;
 	file.open(path, std::ios::binary);
+	if (!file) {
+		std::cerr << "Cannot open file" << std::endl;
+		return;
+	}
 
 	int nbrNodes = 0;
 	int nbrLinks = 0;
@@ -75,19 +100,70 @@ void Node_Editor::OpenMaterialDraft(std::string path) {
 	file.read(reinterpret_cast<char*>(&nbrNodes), sizeof(int));
 	file.read(reinterpret_cast<char*>(&nbrLinks), sizeof(int));
 
+	for (auto* n : m_nodes) {
+		delete n;
+	}
 	m_nodes.clear();
 	m_links.clear();
+
 	for (int i = 0; i < nbrNodes; i++) {
-		Node* buff = (Node*)malloc(sizeof(Node));
-		file.read(reinterpret_cast<char*>(buff), sizeof(Node));
+		NodeType t = NodeType::TNormalize;
+		file.read(reinterpret_cast<char*>(&t), sizeof(NodeType));
+
+		int id = 0;
+		int index = 0;
+		file.read(reinterpret_cast<char*>(&id), sizeof(int));
+		file.read(reinterpret_cast<char*>(&index), sizeof(int));
 
 		ImVec2 pos(0.0f, 0.0f);
 		file.read(reinterpret_cast<char*>(&pos), sizeof(ImVec2));
 
-		imnodes::SetNodeGridSpacePos(buff->GetId(), pos);
+		switch (t)
+		{
+		case TShaderNode:
+			AddNode(new ShaderNode(id, index));
+			break;
+		case TShaderInput:
+			AddNode(new ShaderInputs(id, index));
+			break;
+		case TNormalize:
+			AddNode(new Normalize(id, index));
+			break;
+		case TAdd:
+			AddNode(new Add(id, index));
+			break;
+		case TSub:
+			AddNode(new Subtract(id, index));
+			break;
+		case TMul:
+			AddNode(new Multiply(id, index));
+			break;
+		case TConstVec3:
+			InitConstVec3(&file, id, index);
+			break;
+		case TConstVec4:
+			InitConstVec4(&file, id, index);
+			break;
+		case TConstFloat:
+			InitConstFloat(&file, id, index);
+			break;
+		case TSampler2D:
+			InitTextureSampler(&file, id, index);
+			break;
+		case TShadowProcess:
+			AddNode(new ProcessShadows(id, index));
+			break;
+		case TNormalProcess:
+			AddNode(new NormalFromMap(id, index));
+			break;
+		default:
+			break;
+		}
 
-		//AddNode(buff);
-		m_nodes.push_back(buff);
+		imnodes::SetNodeEditorSpacePos(id, pos);
+
+		m_currentId = m_nodes.back()->GetId() + 1;
+		m_currentIndex = m_nodes.back()->GetIndex() + m_nodes.back()->GetNodeSize();
 	}
 
 	for (int i = 0; i < nbrLinks; i++) {
@@ -99,6 +175,8 @@ void Node_Editor::OpenMaterialDraft(std::string path) {
 
 		m_links.push_back(std::pair<int, int>(ls, le));
 	}
+
+	file.close();
 }
 
 void Node_Editor::RenderNodes() {
@@ -203,8 +281,8 @@ void Node_Editor::DeleteLink() {
 	}
 }
 
-Node* Node_Editor::GetNodeLinkedTo(int end_id) {
-	int start_id = GetLinkStartId(end_id);
+Node* Node_Editor::GetNodeLinkedTo(int id_end) {
+	int start_id = GetLinkStartId(id_end);
 
 	if (start_id == -1) {
 		return nullptr;
@@ -324,7 +402,7 @@ std::string Node_Editor::EvalNodes() {
 			outCode += "uniform sampler2D tex" + std::to_string(n->GetId()) + ";\n";
 
 			TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
-			m_textures.push_back(std::pair<std::string, std::string>(s->GetTexPath(), "tex" + std::to_string(s->GetId())));
+			m_textures.push_back(std::pair<std::string, std::string>(m_projectRoot + m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
 		}
 
 		if (n->GetNodeType() == NodeType::TShadowProcess && (!linkedShadowProcess)) {
@@ -732,6 +810,10 @@ std::string ConstVec3::Stringifize(Node_Editor* nedit, int start_id) {
 	return "vec3(" + std::to_string(m_value.getX()) + "," + std::to_string(m_value.getY()) + "," + std::to_string(m_value.getZ()) + ")";
 }
 
+void ConstVec3::WriteNodeData(std::ofstream* file) {
+	file->write(reinterpret_cast<char*>(&m_value), sizeof(vec3f));
+}
+
 ConstVec4::ConstVec4(int id, int index) : Node(id) {
 	m_index = index;
 }
@@ -773,6 +855,11 @@ std::string ConstVec4::Stringifize(Node_Editor* nedit, int start_id) {
 				   + std::to_string(m_value.GetW()) + ")";
 }
 
+void ConstVec4::WriteNodeData(std::ofstream* file) {
+	file->write(reinterpret_cast<char*>(&m_value), sizeof(vec4f));
+}
+
+
 ConstFloat::ConstFloat(int id, int index) : Node(id) {
 	m_index = index;
 
@@ -805,6 +892,10 @@ void ConstFloat::render() {
 
 std::string ConstFloat::Stringifize(Node_Editor* nedit, int start_id) {
 	return "(" + std::to_string(m_value) + ")";
+}
+
+void ConstFloat::WriteNodeData(std::ofstream* file) {
+	file->write(reinterpret_cast<char*>(&m_value), sizeof(float));
 }
 
 Multiply::Multiply(int id, int index) : Node(id) {
@@ -959,6 +1050,10 @@ std::string TextureSampler::Stringifize(Node_Editor* nedit, int start_id) {
 	}
 
 	return outCode;
+}
+
+void TextureSampler::WriteNodeData(std::ofstream* file) {
+	file->write(m_tex_path, 300);
 }
 
 Subtract::Subtract(int id, int index) : Node(id) {
