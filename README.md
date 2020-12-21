@@ -73,6 +73,9 @@ First demo of my PBR impl
  - [ ] Font Rendering on GUI System
  
 ## Dependencies
+
+### Main Engine deps
+
   - OpenAL Soft (by @Kcat)
   - GLFW3
   - OpenGL
@@ -80,10 +83,15 @@ First demo of my PBR impl
   - GLEW
   - libsndfile1
   - Bullet Physics
+  - Jsoncpp
+ 
+### Tool deps
+
   - ASSIMP (For tools)
   - Qt (For tools)
-  - Jsoncpp
-  - FreeType2
+  - imgui
+  - imnodes (by Johann Muszynski)
+  - imgui-filebrowser (by Zhuang Guan)
  
 NB1 : All libs that are precompiled and in this repo are compiled for Windows x64. If you want to compile this engine for Windows x86 you need to do it yourself. If you want to compile this engine for linux you'll need to install all the dependencies using your package manager.
  
