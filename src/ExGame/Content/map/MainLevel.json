@@ -39,7 +39,7 @@
       "nameTag":"nullite",
 
       "ref":"/meshes/nullite",
-      "material":"/shaders/mat_suzanne",
+      "material":"/shaders/mat_violet",
 
       "pos": [0, 0, 12],
       "rot": [0, 0, -90],

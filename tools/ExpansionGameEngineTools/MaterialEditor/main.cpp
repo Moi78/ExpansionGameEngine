@@ -55,8 +55,11 @@ int main(int argc, char* argv[]) {
 	gi.RootEngineContentFolder = "Engine";
 	gi.RootGameContentFolder = "mat_editor";
 	gi.StartupMap = "/map/startup.json";
+#ifdef _DEBUG
 	gi.GameLib = "../Debug/MatEditorDLL.dll";
-
+#else
+	gi.GameLib = "MatEditorDLL.dll";
+#endif
 	EXP_Game* game = new EXP_Game(gi, vec3f());
 	RD_WindowingSystemGLFW* winsys = reinterpret_cast<RD_WindowingSystemGLFW*>(game->GetRenderer()->GetRenderingAPI()->GetWindowingSystem());
 

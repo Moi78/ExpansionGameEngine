@@ -4,6 +4,7 @@ EXPGE_LEVEL_CODE(MainLevel);
 
 MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, true) {
 	m_game = game;
+	m_mloader = mloader;
 
 	m_player = new Character(game);
 

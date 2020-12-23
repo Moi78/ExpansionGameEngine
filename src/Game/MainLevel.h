@@ -23,6 +23,7 @@ public:
 
 private:
 	EXP_Game* m_game;
+	EXP_MapLoader* m_mloader;
 
 	EXP_RB_Box* m_floor;
 	EXP_KeyboardCallback* m_ch_lvl;

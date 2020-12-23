@@ -3,19 +3,6 @@
 #ifndef _MAT4_H__
 #define _MAT4_H__
 
-#ifdef _WIN32
-#ifdef EXPANSIONMATH_EXPORTS
-#define EXPANSIONMATH_API __declspec(dllexport)
-#else
-#define EXPANSIONMATH_API __declspec(dllimport)
-#endif
-
-#else
-
-#define EXPANSIONMATH_API
-
-#endif //_WIN32
-
 #include <iostream>
 #include <algorithm>
 #include <cstring>
@@ -73,7 +60,7 @@ public:
 	}
 
 	vec4<T> operator*(vec4<T> a) {
-		if constexpr(sizeof(T) == sizeof(float)) {
+		if constexpr(std::is_same_v<T, float>) {
 			Float4 vec(a.GetX(), a.GetY(), a.GetZ(), a.GetW());
 
 			T XYZW[4];
@@ -100,7 +87,7 @@ public:
 		T nMat[16];
 		memset(nMat, 0, 16 * sizeof(T));
 
-		if constexpr (sizeof(T) == sizeof(float)) {
+		if constexpr (std::is_same_v<T, float>) {
 			Float4 scalar;
 			scalar.LoadConstant(a);
 			for (int i = 0; i < 16; i += 4) {
@@ -120,7 +107,7 @@ public:
 	}
 
 	mat4<T> operator*(mat4<T> const& a) {
-		if constexpr (sizeof(T) == sizeof(float)) {
+		if constexpr (std::is_same_v<T, float>) {
 			//SIMD Impl.
 
 			//Allocating matrix in XMM registers
@@ -297,10 +284,10 @@ mat4<T> LookAt(vec3<T> pos, vec3<T> target, vec3<T> up) {
 template<class T>
 mat4<T> ProjPersp(float FOV, float ImageRatio, float nearv = 0.1f, float farv = 1000.0f) {
 	T mat[16] = {
-		1 / (ImageRatio * tan(FOV / 2)),				0,									   0,  0,
-									  0, 1 / tan(FOV / 2),									   0,  0,
-									  0,				0,    -((farv + nearv) / (farv - nearv)), -((2 * (farv * nearv)) / (farv - nearv)),
-									  0,				0, -1,  0
+		1 / (ImageRatio * tan(FOV / 2)),	0,  0,  0,
+		0, 1 / tan(FOV / 2), 0,  0,
+		0, 0, -((farv + nearv) / (farv - nearv)), -((2 * (farv * nearv)) / (farv - nearv)),
+		0, 0, -1,  0
 	};
 
 	return mat4<T>(mat);

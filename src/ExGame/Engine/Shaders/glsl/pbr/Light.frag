@@ -48,16 +48,17 @@ vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
 float Specular = texture(gAlbedo, UVcoords).a;
 float SpecularExp = texture(gSpec, UVcoords).r;
 
-float Rness = texture(gMetRoughAO, UVcoords).g;
-float Metllc = texture(gMetRoughAO, UVcoords).r;
-float AO = texture(gMetRoughAO, UVcoords).b;
+vec4 metrao = texture(gMetRoughAO, UVcoords);
+float Rness = metrao.g;
+float Metllc = metrao.r;
+float AO = metrao.b;
 
 vec3 viewDir = normalize(CamPos - FragPos);
 
 vec3 F0 = mix(vec3(0.04), Diffuse, Metllc);
 
 vec3 FresnelSchlick(float cosTheta, vec3 F0) {
-	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+	return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -111,7 +112,7 @@ vec3 CalcDirLight(int index) {
 	kD *= 1.0 - Metllc;
 
 	vec3 numerator = NDF * G * F;
-	float denominator = 4.0 * max(dot(norm, viewDir), 0.0) * max(dot(norm, L), 0.0);
+	float denominator = 4.0 * max(dot(norm, viewDir), 0.0) * max(dot(norm, L), 0.0) + 0.001;
 	vec3 specular = numerator / denominator;
 
 	float NdotL = max(dot(norm, L), 0.0);
@@ -144,7 +145,7 @@ vec3 CalcPointLight(int lightIndex) {
 		vec3 L = normalize(LightPos[lightIndex] - FragPos);
 		vec3 H = normalize(viewDir + L);
 
-		float attenuation = 1.0 / (1.0 + 0.7 * (dist * dist));
+		float attenuation = 1.0 / ((dist * dist));
 		vec3 radiance = ColPow * attenuation;
 
 		float NDF = DistributionGGX(norm, H, Rness);
@@ -156,7 +157,7 @@ vec3 CalcPointLight(int lightIndex) {
 		kD *= 1.0 - Metllc;
 
 		vec3 numerator = NDF * G * F;
-		float denominator = 4.0 * max(dot(norm, viewDir), 0.0) * max(dot(norm, L), 0.0);
+		float denominator = 4.0 * max(dot(norm, viewDir), 0.0) * max(dot(norm, L), 0.0) + 0.001;
 		vec3 specular = numerator / denominator;
 
 		float NdotL = max(dot(norm, L), 0.0);
@@ -181,7 +182,7 @@ void main() {
 		}
 	}
 
-	vec3 ambient = (AmbientColor * AmbientStrength) * Diffuse * AO;
+	vec3 ambient = (AmbientColor * 0.01) * Diffuse * AO;
 	vec3 result = (diffSpec + ambient);
 
 	//Gamma
