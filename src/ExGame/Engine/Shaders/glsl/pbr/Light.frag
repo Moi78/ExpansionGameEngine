@@ -14,6 +14,7 @@ uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gSpec;
 uniform sampler2D gMetRoughAO;
+uniform sampler2D ssao;
 
 //Ambient
 uniform float AmbientStrength;
@@ -182,8 +183,9 @@ void main() {
 		}
 	}
 
-	vec3 ambient = (AmbientColor * 0.01) * Diffuse * AO;
-	vec3 result = (diffSpec + ambient);
+	float SSAO = texture(ssao, UVcoords).r;
+	vec3 ambient = (AmbientColor * AmbientStrength) * Diffuse * AO;
+	vec3 result = (diffSpec + ambient) * SSAO;
 
 	//Gamma
 	result = result / (result + vec3(1.0));

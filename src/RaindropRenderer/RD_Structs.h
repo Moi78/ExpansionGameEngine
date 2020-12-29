@@ -26,6 +26,7 @@ struct RD_API Gbuff {
 	unsigned int gAlbedo;
 	unsigned int gSpec;
 	unsigned int gShadows;
+	unsigned int gDepth;
 	
 	//PBR Stuff
 	unsigned int gMetRoughAO;

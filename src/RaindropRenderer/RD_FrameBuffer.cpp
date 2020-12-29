@@ -46,21 +46,24 @@ void RD_FrameBuffer_GL::AddAttachement(unsigned int format, unsigned int scaleMo
 
 void RD_FrameBuffer_GL::BuildFBO() {
 	std::vector<unsigned int> attach;
+	bool renderBufferDepth = true;
 
 	for (int i = 0; i < m_attachments.size(); i++) {
-		if (m_attachments[i].tex) {
-			delete m_attachments[i].tex;
-		}
+		delete m_attachments[i].tex;
 
 		m_attachments[i].tex = new RD_Texture_GL();
 
 		m_attachments[i].tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, i, m_attachments[i].format, m_attachments[i].scaleMode);
 		attach.push_back(GL_COLOR_ATTACHMENT0 + i);
+
+		if(m_attachments[i].format == IMGFORMAT_DEPTH) {
+			renderBufferDepth = false;
+		}
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 	glDrawBuffers(attach.size(), &attach[0]);
 
-	if (m_attachments.size() > 1) {
+	if (renderBufferDepth) {
 		glGenRenderbuffers(1, &m_RBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_RBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, m_storage, m_w, m_h);

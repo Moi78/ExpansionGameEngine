@@ -36,6 +36,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <random>
 
 #include <vec3.h>
 #include <vec2.h>
@@ -80,7 +81,7 @@ public:
 
 	int getWindowHeigh();
 	int getWindowWidth();
-	void SetFullscreenMode(bool fullscr);
+	void SetFullscreenMode(const bool fullscr);
 	
 	std::string GetEngineDir();
 
@@ -93,6 +94,12 @@ public:
 	void RenderLightPass(vec3f camPos);
 	void RenderLightsDepth(vec3f camPos);
 
+	void RenderSSR(RD_Camera* cam);
+
+	void RenderSSAO(RD_Camera* cam);
+	void GenerateSSAOKernels();
+	void GenerateSSAONoise();
+	
 	void RenderGbuff(RD_Camera*);
 
 	void RenderPostProcess();
@@ -138,7 +145,7 @@ public:
 	void SwitchShader(RD_ShaderLoader*);
 	RD_ShaderLoader* GetShadowShader();
 	RD_ShaderLoader* GetCurrentShader();
-	RD_ShaderMaterial* FetchShaderFromFile(std::string ref);
+	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref);
 	RD_MaterialLibrary* GetMaterialLibrary();
 
 	//Debug
@@ -210,13 +217,26 @@ private:
 	RD_FrameBuffer* m_gbuffer;
 	RD_FrameBuffer* m_light_pprocess;
 
+	//PBR-Only stuff
+	RD_FrameBuffer* m_ssao_buffer;
+
 	std::unique_ptr<RD_Quad> m_quad;
 
 	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
 
+	//Internals shaders (some are'nt use and compiled if Pipeline is not PBR)
 	RD_ShaderLoader* m_shadowShader;
+
 	RD_ShaderLoader* m_light_shader;
 	RD_ShaderLoader* m_beauty_shader;
+
+	RD_ShaderLoader* m_ssr_shader;
+	
+	RD_ShaderLoader* m_ssao_shader;
+	RD_ShaderLoader* m_ssao_blur_shader;
+
+	std::vector<vec3f> m_ssao_kernels;
+	RD_Texture* m_ssao_noise_tex;
 
 	std::vector<RD_PostProcessEffect*> m_pp_effects;
 

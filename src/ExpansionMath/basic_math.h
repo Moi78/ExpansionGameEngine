@@ -22,4 +22,8 @@
 bool EXPANSIONMATH_API isBetweenf(float inf, float toCompare, float sup);
 bool EXPANSIONMATH_API isBetweeni(int inf, int toCompare, int sup);
 
+inline float lerp(float a, float b, float f) {
+	return a + f * (b - a);
+}
+
 #endif

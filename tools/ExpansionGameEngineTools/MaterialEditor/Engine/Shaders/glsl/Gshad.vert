@@ -18,7 +18,9 @@ uniform int NbrDirLights;
 
 void main()
 {
-    Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
+    //Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
+    Normal = normalize((model * vec4(aNormal, 0.0)).xyz);
+
     FragPos = vec3(model * vec4(aPos, 1.0));
     UVcoord = aUV;
 

@@ -47,6 +47,7 @@ public:
 
 	virtual void LoadTexture(std::string filepath, bool flipTex = true) = 0;
 	virtual void GenerateColorTex(vec3f color) = 0;
+	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned int format = IMGFORMAT_RGB) = 0;
 	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB, unsigned int scaleMode = SCALEMODE_LINEAR) = 0;
 	virtual void BindTexture(unsigned int tex_unit) = 0;
 
@@ -65,6 +66,7 @@ public:
 
 	virtual void LoadTexture(std::string filepath, bool flipTex = true);
 	virtual void GenerateColorTex(vec3f color);
+	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned format) override;
 	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB, unsigned int scaleMode = SCALEMODE_LINEAR);
 	virtual void BindTexture(unsigned int tex_unit = 0);
 

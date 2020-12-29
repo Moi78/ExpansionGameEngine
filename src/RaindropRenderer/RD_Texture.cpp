@@ -180,4 +180,69 @@ void RD_Texture_GL::DeleteTexture() {
 	glDeleteTextures(1, &m_texture);
 }
 
+void RD_Texture_GL::CreateTextureFromPixels(void* pixels, int w, int h, unsigned format) {
+	int formatGL;
+	int typeGL = GL_UNSIGNED_BYTE;
+
+	switch (format) {
+	case IMGFORMAT_R:
+		formatGL = GL_R;
+		break;
+
+	case IMGFORMAT_RG:
+		formatGL = GL_RG;
+		break;
+
+	case IMGFORMAT_RGB:
+		formatGL = GL_RGB;
+		break;
+
+	case IMGFORMAT_RGBA:
+		formatGL = GL_RGBA;
+		break;
+
+	case IMGFORMAT_R16F:
+		formatGL = GL_R16F;
+		typeGL = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RG16F:
+		formatGL = GL_RG16F;
+		typeGL = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RGB16F:
+		formatGL = GL_RGB16F;
+		typeGL = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RGBA16F:
+		formatGL = GL_RGBA16F;
+		typeGL = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_DEPTH:
+		formatGL = GL_DEPTH_COMPONENT;
+		typeGL = GL_FLOAT;
+		break;
+
+	default:
+		formatGL = GL_RGB;
+		typeGL = GL_FLOAT;
+		break;
+	}
+
+	glGenTextures(1, &m_texture);
+
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, formatGL, w, h, 0, GL_RGB, typeGL, pixels);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+
 #endif //BUILD_OPENGL

@@ -9,7 +9,7 @@ layout (location = 1) out vec3 gNorm;
 layout (location = 2) out vec4 gAlbedo;
 layout (location = 3) out float gSpec;
 layout (location = 4) out float gShadow;
-layout (location = 6) out vec3 gMetRoughAO;
+layout (location = 5) out vec3 gMetRoughAO;
 
 in vec3 Normal;
 in vec3 Tan;
