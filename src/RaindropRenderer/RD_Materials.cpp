@@ -8,8 +8,7 @@ RD_ShaderMaterial::RD_ShaderMaterial(RD_ShaderLoader* shader) {
 RD_ShaderMaterial::~RD_ShaderMaterial() {
 	std::cout << "Deleting shader material" << std::endl;
 
-	if(m_shader)
-		delete m_shader;
+	delete m_shader;
 
 	for (auto tex : m_textures) {
 		delete tex.second;

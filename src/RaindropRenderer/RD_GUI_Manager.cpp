@@ -16,7 +16,7 @@ RD_GUI_Manager::~RD_GUI_Manager() {
 	DeleteFrambuffer();
 	std::cout << "GUI Framebuffer deleted." << std::endl;
 
-	for (auto elem : m_gui_elements) {
+	for (auto* elem : m_gui_elements) {
 		delete elem;
 	}
 	m_gui_elements.clear();
@@ -94,7 +94,7 @@ ScreenCleaner::ScreenCleaner(RaindropRenderer* rndr, std::string workingDir) : R
 }
 
 ScreenCleaner::~ScreenCleaner() {
-
+	delete m_gui_shader;
 }
 
 void ScreenCleaner::RenderElement() {

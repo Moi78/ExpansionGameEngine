@@ -13,5 +13,9 @@ out vec4 FragColor;
 void main() {
     vec4 gui = texture(GUIscreen, UVcoords);
 
-    FragColor = mix(texture(lightpass, UVcoords), gui, gui.a);
+    //FragColor = mix(texture(lightpass, UVcoords), gui, gui.a);
+
+    vec4 lightSSR = texture(SSR, UVcoords);
+
+    FragColor = mix(lightSSR, gui, gui.a);
 }

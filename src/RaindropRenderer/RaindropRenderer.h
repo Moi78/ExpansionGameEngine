@@ -235,6 +235,8 @@ private:
 	RD_ShaderLoader* m_ssao_shader;
 	RD_ShaderLoader* m_ssao_blur_shader;
 
+	RD_ShaderMaterial* m_dbgMat;
+
 	std::vector<vec3f> m_ssao_kernels;
 	RD_Texture* m_ssao_noise_tex;
 

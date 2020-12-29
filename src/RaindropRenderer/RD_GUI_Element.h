@@ -25,7 +25,7 @@ class RAINDROPRENDERER_API RD_GUI_Element
 {
 public:
 	RD_GUI_Element();
-	~RD_GUI_Element();
+	virtual ~RD_GUI_Element();
 
 	virtual void RenderElement() = 0;
 	virtual void RebuildElement();

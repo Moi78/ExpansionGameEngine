@@ -110,9 +110,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	if constexpr (RENDER_DEBUG_ENABLED) {
 		RD_ShaderLoader* shad = m_api->CreateShader();
 		shad->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Debug.vert", m_engineDir + "/Shaders/glsl/Debug.frag");
-		RD_ShaderMaterial* dbgmat = new RD_ShaderMaterial(shad);
+		m_dbgMat = new RD_ShaderMaterial(shad);
 
-		m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, dbgmat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
+		m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, m_dbgMat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
 		m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
 	}
 
