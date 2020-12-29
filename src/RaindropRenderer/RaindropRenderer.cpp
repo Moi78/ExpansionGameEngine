@@ -152,6 +152,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_ssr_shader;
 	delete m_ssao_shader;
 	delete m_ssao_blur_shader;
+	delete m_dbgMat;
 
 	//Deleting textures
 	delete m_defTex;
