@@ -66,7 +66,7 @@ public:
 
 	void Conjugate() {
 		for(int i = 0; i < 3; i++) {
-			m_quat[i] * -1.0f;
+			m_quat[i] *= -1.0f;
 		}
 	}
 
