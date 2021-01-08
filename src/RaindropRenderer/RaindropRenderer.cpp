@@ -450,8 +450,8 @@ RD_ShaderLoader* RaindropRenderer::GetShadowShader() {
 }
 
 bool RaindropRenderer::CreateGbuff() {
-	const int width = getWindowWidth();
-    const int height = getWindowHeigh();
+	const int width = GetViewportSize().getX();
+    const int height = GetViewportSize().getY();
 
 	m_gbuffer = m_api->CreateFrameBuffer(width, height);
 
@@ -491,8 +491,8 @@ bool RaindropRenderer::CreateGbuff() {
 }
 
 bool RaindropRenderer::CreateGbuff_PBR() {
-	const int width = getWindowWidth();
-	const int height = getWindowHeigh();
+	const int width = GetViewportSize().getX();
+	const int height = GetViewportSize().getY();
 
 	m_gbuffer = m_api->CreateFrameBuffer(width, height);
 
@@ -655,8 +655,8 @@ void RaindropRenderer::RenderSSAO(RD_Camera* cam) {
 
 	m_api->Clear(DEPTH_BUFFER);
 
-	m_ssao_shader->SetInt("scr_w", getWindowWidth());
-	m_ssao_shader->SetInt("scr_h", getWindowHeigh());
+	m_ssao_shader->SetInt("scr_w", GetViewportSize().getX());
+	m_ssao_shader->SetInt("scr_h", GetViewportSize().getY());
 
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
 	m_ssao_shader->SetInt("gPos", 0);
@@ -934,6 +934,7 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 
 	m_gbuffer->ChangeFramebufferSize(size.getX(), size.getY());
 	m_light_pprocess->ChangeFramebufferSize(size.getX(), size.getY());
+	m_ssao_buffer->ChangeFramebufferSize(size.getX(), size.getY());
 
 	m_vp_pos = pos;
 	m_vp_size = size;

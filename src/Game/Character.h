@@ -22,6 +22,7 @@ public:
 	virtual void Tick() override;
 
 	void MoveForward();
+	void Roll();
 
 	void DestroyActor();
 
@@ -32,5 +33,6 @@ private:
 
 	EXP_KeyboardCallback* m_move;
 	EXP_KeyboardCallback* m_destroy;
+	EXP_KeyboardCallback* m_roll;
 };
 

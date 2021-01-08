@@ -51,7 +51,7 @@ public:
         std::valarray<T> fa = { m_xyz[0], m_xyz[1], m_xyz[2] };
         std::valarray<T> fb = {(double) a.getX(),(double) a.getY(),(double) a.getZ() };
 
-        float result = (fa * fb).sum();
+        const float result = (fa * fb).sum();
 
         return result;
     }

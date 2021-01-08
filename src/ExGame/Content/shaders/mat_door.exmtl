@@ -1,0 +1,14 @@
+{
+	"glsl" : "#version 410 core\nlayout (location = 0) out vec3 gPos;\nlayout (location = 1) out vec3 gNorm;\nlayout (location = 2) out vec4 gAlbedo;\nlayout (location = 3) out float gSpec;\nlayout (location = 4) out float gShadow;\nlayout (location = 5) out vec3 gMetRoughAO;\n\nin vec3 Normal;\nin vec3 Tan;\nin vec3 Bitan;\n\nin vec3 FragPos;\nin vec2 UVcoord;\n\nin vec4 FragPosLightSpace[10];\n\nuniform sampler2D ShadowMap[10];\nuniform int NbrDirLights;\n\nuniform sampler2D tex5;\nuniform sampler2D tex8;\nvoid main() {\ngAlbedo = vec4(texture(tex5,UVcoord).rgb, 0.0);\ngPos = FragPos;\ngNorm = normalize(Normal);\ngSpec = 0.0;\ngMetRoughAO = vec3((0.300000),texture(tex8,UVcoord).r,0.0);\ngShadow = 1.0;\n}",
+	"textures" : 
+	[
+		{
+			"param" : "tex5",
+			"path" : "Content/textures/door_tex.jpg"
+		},
+		{
+			"param" : "tex8",
+			"path" : "Content/textures/door_tex_rough.jpg"
+		}
+	]
+}

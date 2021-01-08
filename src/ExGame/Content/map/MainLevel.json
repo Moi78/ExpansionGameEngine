@@ -2,128 +2,85 @@
   "MapLevelCodeObjectName": "MainLevel",
   "nodes": [
     {
-      "type": "dlight",
-      "nameTag": "sun",
+      "type": "plight",
+      "nameTag": "mainlight",
 
-      "dir": [ 0.8, -0.3, -0.4 ],
-      "color": [ 1, 1, 1 ],
-      "brightness": 10.0
-    },
-
-    {
-      "type": "mesh",
-      "nameTag": "meshTest",
-
-      "ref": "/meshes/Piedestal",
-      "material": "/shaders/mat_pied",
-
-      "pos": [ 0, 0, 0 ],
-      "rot": [ 0, 0, 0 ],
-      "scale": [ 1, 1, 1 ]
+      "pos": [ 0, 0, 0.2 ],
+      "color": [ 1, 0.7, 0.5 ],
+      "brightness": 10.0,
+      "radius": 50.0
     },
 
     {
       "type":"mesh",
-      "nameTag":"suzanne",
+      "nameTag": "room",
 
-      "ref":"/meshes/Suzanne",
-      "material":"/shaders/test_mat",
-
-      "pos": [0, 0, 7.6],
-      "rot": [0, 0, -90],
-      "scale": [1, 1, 1]
-    },
-
-    {
-      "type":"mesh",
-      "nameTag":"nullite",
-
-      "ref":"/meshes/nullite",
-      "material":"/shaders/mat_violet",
-
-      "pos": [0, 0, 12],
-      "rot": [0, 0, -90],
-      "scale": [1, 1, 1]
-    },
-
-    {
-      "type":"plight",
-      "nameTag": "pointTest",
-
-      "pos":[-5, 5, 8],
-      "color":[1, 0, 1],
-      "brightness": 150.0,
-      "radius": 100.0
-    },
-
-    {
-      "type":"plight",
-      "nameTag": "pointTest2",
-
-      "pos":[5, -5, 8],
-      "color":[0, 1, 1],
-      "brightness": 150.0,
-      "radius": 100.0
-    },
-
-    {
-      "type":"mesh",
-      "nameTag":"floor",
-
-      "ref":"/meshes/Plane",
-      "material":"/shaders/mat_floor",
+      "ref":"/meshes/room",
+      "material":"/shaders/mat_beton",
 
       "pos":[0, 0, 0],
       "rot":[0, 0, 0],
-      "scale":[3, 3, 3]
+      "scale":[1, 1, 0.5]
     },
 
     {
       "type":"mesh",
-      "nameTag":"wall1",
+      "nameTag":"encolurePorte",
 
-      "ref":"/meshes/Plane",
-      "material":"/shaders/mat_wall",
+      "ref":"/meshes/encolure",
+      "material":"/shaders/mat_paint",
 
-      "pos":[15, 0, 0],
-      "rot":[0, -90, 90],
-      "scale":[3, 3, 3]
+      "pos":[-3.95, 0, -0.55],
+      "rot":[0, 0, 0],
+      "scale":[0.3, 0.3, 0.3]
     },
 
     {
       "type":"mesh",
-      "nameTag":"wall2",
+      "nameTag":"porte",
 
-      "ref":"/meshes/Plane",
-      "material":"/shaders/mat_wall",
+      "ref":"/meshes/porte",
+      "material":"/shaders/mat_door",
 
-      "pos":[-15, 0, 0],
-      "rot":[0, 90, 90],
-      "scale":[3, 3, 3]
+      "pos":[-3.95, -0.1, -0.65],
+      "rot":[0, 0, 0],
+      "scale":[0.3, 0.3, 0.3]
     },
 
     {
       "type":"mesh",
-      "nameTag":"wall3",
+      "nameTag":"poignee",
 
-      "ref":"/meshes/Plane",
-      "material":"/shaders/mat_wall",
+      "ref":"/meshes/poignee",
+      "material":"/shaders/mat_handle",
 
-      "pos":[0, 15, 0],
-      "rot":[90, 0, 0],
-      "scale":[3, 3, 3]
+      "pos":[-3.8, -0.08, -0.65],
+      "rot":[0, 0, 180],
+      "scale":[0.3, 0.3, 0.3]
     },
 
     {
       "type":"mesh",
-      "nameTag":"wall4",
+      "nameTag":"chaise",
+      
+      "ref":"/meshes/chaise",
+      "material":"/shaders/mat_wood",
 
-      "ref":"/meshes/Plane",
-      "material":"/shaders/mat_wall",
+      "pos":[-1, 1.5, -1],
+      "rot":[0, 0, 180],
+      "scale":[0.3, 0.3, 0.3]
+    },
 
-      "pos":[0, -15, 0],
-      "rot":[-90, 0, 0],
-      "scale":[3, 3, 3]
+    {
+      "type":"mesh",
+      "nameTag":"chaines",
+
+      "ref":"/meshes/chaines",
+      "material":"/shaders/mat_metal",
+
+      "pos":[-0.75, 1.5, -0.855],
+      "rot":[0, 0, 180],
+      "scale":[0.3, 0.3, 0.3]
     }
   ]
 }

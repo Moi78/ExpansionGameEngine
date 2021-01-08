@@ -20,12 +20,12 @@
 #include "RD_ShaderLoader.h"
 
 #include <mat4.h>
+#include <quat.h>
+#include <vec3.h>
 
 #include <iostream>
 #include <string>
 #include <algorithm>
-
-#include <vec3.h>
 
 class RAINDROPRENDERER_API RD_Camera
 {
@@ -73,6 +73,7 @@ private:
 
 	vec3f m_pos;
 	vec3f m_subject;
+	vec3f m_up;
 
 	vec3f m_yawPitchRoll;
 };

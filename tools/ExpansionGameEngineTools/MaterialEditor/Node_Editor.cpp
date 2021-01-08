@@ -24,6 +24,7 @@ void Node_Editor::SaveFinalMaterial(std::string matPath) {
 	BD_MatCustomShaderWrite* mw = new BD_MatCustomShaderWrite();
 
 	m_textures.clear();
+	m_contentPath.erase(m_contentPath.begin());
 	for(auto* n : m_nodes)
 	{
 		if (n->GetNodeType() == NodeType::TSampler2D) {
@@ -31,6 +32,7 @@ void Node_Editor::SaveFinalMaterial(std::string matPath) {
 			m_textures.push_back(std::pair<std::string, std::string>(m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
 		}
 	}
+	m_contentPath = "/" + m_contentPath;
 	
 	for (auto tex : m_textures) {
 		mw->AddTextureRef(tex.first, tex.second);

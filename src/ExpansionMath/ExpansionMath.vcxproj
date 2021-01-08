@@ -154,6 +154,7 @@
     <ClInclude Include="basic_math.h" />
     <ClInclude Include="BoxVol.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="quat.h" />
     <ClInclude Include="mat4.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SIMD_Utils.h" />

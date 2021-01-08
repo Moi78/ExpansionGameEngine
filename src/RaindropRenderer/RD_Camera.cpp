@@ -6,6 +6,7 @@ RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, 
 
 	m_pos = position; //Camera position
 	m_subject = vec3f(); //Camera center of view
+	m_up = vec3f(0.0, 0.0, 1.0); //Up default
 	m_yawPitchRoll = YawPitchRoll;
 
 	ComputeYPR();
@@ -27,7 +28,7 @@ void RD_Camera::UpdateCamera() {
 }
 
 void RD_Camera::UpdateView() {
-	view = LookAt(m_pos, m_pos + m_subject, vec3f(0.0f, 0.0f, 1.0f)); //View matrix
+	view = LookAt(m_pos, m_pos + m_subject, m_up); //View matrix
 }
 
 void RD_Camera::UpdateProj() {
@@ -112,9 +113,30 @@ void RD_Camera::AddRoll(float roll) {
 }
 
 void RD_Camera::ComputeYPR() {
-	m_subject.setX(cos(DEG_TO_RAD(m_yawPitchRoll.getX())) * cos(DEG_TO_RAD(m_yawPitchRoll.getY())));
-	m_subject.setZ(sin(DEG_TO_RAD(m_yawPitchRoll.getY())));
-	m_subject.setY(sin(DEG_TO_RAD(m_yawPitchRoll.getX())) * cos(DEG_TO_RAD(m_yawPitchRoll.getY())));
+	const float yaw = DEG_TO_RAD(m_yawPitchRoll.getX());
+	const float pitch = DEG_TO_RAD(m_yawPitchRoll.getY());
+
+	const float roll2 = DEG_TO_RAD(m_yawPitchRoll.getZ()) / 2;
+	
+	m_subject.setAll(
+		(float)cos((double)yaw) * (float)cos((double)pitch),
+		(float)sin((double)yaw) * (float)cos((double)pitch),
+		(float)sin((double)pitch)
+	);
+
+	//Cam rot around fwd vec
+	vec3f fwd = GetForwardVector();
+	const float sRoll2 = sin(roll2);
+
+	Quat rotator(cos(roll2), sin(roll2) * fwd.getX(), sin(roll2) * fwd.getY(), sin(roll2) * fwd.getZ());
+	const Quat rotatorConj = rotator.GetConjugate();
+	
+	const Quat vector(0.0f, 0, 0, 1);
+
+	Quat up_rot = (rotator * vector) * rotatorConj;
+	m_up = up_rot.GetImagPart();
+
+	UpdateView();
 }
 
 vec3f RD_Camera::GetYPR() {

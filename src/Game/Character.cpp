@@ -7,35 +7,9 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 
 	m_move = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::MoveForward), GLFW_KEY_W);
 	m_destroy = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::DestroyActor), GLFW_KEY_H, true);
+	m_roll = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::Roll), GLFW_KEY_R, false);
 
 	m_bound = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(), vec3f(1.0f, 1.0f, 3.0f), 40.0f);
-
-	EXP_MeshBuilder* mb = new EXP_MeshBuilder(game, game->GetShaderByFileRef("/shaders/mat_suzanne.exmtl"), vec3f(-1.0f, 0.0f, 1.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
-
-	std::vector<vec3f> positions = {
-		vec3f(0.0f, 1.0f, 0.0f),
-		vec3f(1.0f, -1.0f, 0.0f),
-		vec3f(-1.0f, -1.0f, 0.0f)
-	};
-
-	std::vector<vec3f> normals = {
-		vec3f(0.0f, 0.0f, 1.0f),
-		vec3f(0.0f, 0.0f, 1.0f),
-		vec3f(0.0f, 0.0f, 1.0f)
-	};
-
-	std::vector<vec2f> UVs = {
-		vec2f(0.0f, 0.0f),
-		vec2f(0.0f, 0.0f),
-		vec2f(0.0f, 0.0f)
-	};
-
-	std::vector<unsigned int> ind = {
-		0, 1, 2
-	};
-
-	mb->LoadMeshBuffer(positions, normals, UVs, ind);
-	LinkComponent(mb);
 }
 
 Character::~Character() {
@@ -61,10 +35,14 @@ void Character::Tick() {
 }
 
 void Character::MoveForward() {
-	AddWorldPos(m_cam->GetForwardVector() * 0.5f);
+	AddWorldPos(m_cam->GetForwardVector() * 0.1f);
 	//m_bound->AddMovementInput(m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 0.0f), 10.0f);
 }
 
 void Character::DestroyActor() {
 	m_game->UnregisterActor(this);
+}
+
+void Character::Roll() {
+	m_cam->AddRoll(0.1f);
 }
