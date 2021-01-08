@@ -64,10 +64,10 @@ Material Node Editor
  - [x] Fix window resize
  - [x] Proprer input manager
  - [x] Custom shaders
- - [ ] ExpansionMath Cleanup
+ - [x] ExpansionMath Cleanup
    - [x] Rewrite vectors (vec3X & vec2X)
    - [x] Add matrices support
-   - [ ] Add Quaternion support
+   - [x] Add Quaternion support
    - [x] Use SIMD operations
  - [x] Use smartptr when possible
  - [ ] Consistent error handling
