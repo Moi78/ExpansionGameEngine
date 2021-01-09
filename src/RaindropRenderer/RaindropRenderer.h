@@ -74,13 +74,13 @@ public:
 	~RaindropRenderer();
 
 	/*void initWindow(int w, int h, std::string name);*/
-	void ClearWindow(vec3f refreshColor);
+	void ClearWindow(vec3f refreshColor) const;
 	void SwapWindow();
-	bool WantToClose();
-	RD_RenderingAPI* GetRenderingAPI();
+	bool WantToClose() const;
+	RD_RenderingAPI* GetRenderingAPI() const;
 
-	int getWindowHeigh();
-	int getWindowWidth();
+	int getWindowHeigh() const;
+	int getWindowWidth() const;
 	void SetFullscreenMode(const bool fullscr);
 	
 	std::string GetEngineDir();
@@ -93,6 +93,7 @@ public:
 
 	void RenderLightPass(vec3f camPos);
 	void RenderLightsDepth(vec3f camPos);
+	void RenderShadows();
 
 	void RenderSSR(RD_Camera* cam);
 
@@ -109,9 +110,9 @@ public:
 
 	void ResizeViewport(vec2f pos, vec2f size);
 	void DisableResizeOverride();
-	bool GetResizeOverrideState();
-	vec2f GetViewportSize();
-	vec2f GetViewportPos();
+	bool GetResizeOverrideState() const;
+	vec2f GetViewportSize() const;
+	vec2f GetViewportPos() const;
 
 	RD_Texture* GetBlankTexture();
 	
@@ -143,7 +144,7 @@ public:
 
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);
-	RD_ShaderLoader* GetShadowShader();
+	RD_ShaderLoader* GetShadowShader() const;
 	RD_ShaderLoader* GetCurrentShader();
 	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref);
 	RD_MaterialLibrary* GetMaterialLibrary();
@@ -216,6 +217,7 @@ private:
 	Gbuff m_g_buffer;
 	RD_FrameBuffer* m_gbuffer;
 	RD_FrameBuffer* m_light_pprocess;
+	RD_FrameBuffer* m_shadows_buffer;
 
 	//PBR-Only stuff
 	RD_FrameBuffer* m_ssao_buffer;
@@ -229,7 +231,8 @@ private:
 
 	RD_ShaderLoader* m_light_shader;
 	RD_ShaderLoader* m_beauty_shader;
-
+	RD_ShaderLoader* m_shadowCalc;
+	
 	RD_ShaderLoader* m_ssr_shader;
 	
 	RD_ShaderLoader* m_ssao_shader;

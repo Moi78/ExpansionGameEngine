@@ -112,4 +112,6 @@ public:
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) = 0;
 	virtual void DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm) = 0;
 	virtual void SetFilledMode(FillingMode fmode) = 0;
+
+	virtual int GetMaxTextureCount() = 0;
 };

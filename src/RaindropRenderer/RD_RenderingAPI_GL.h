@@ -115,6 +115,8 @@ public:
 
 	virtual void Clear(int mask);
 
+	virtual int GetMaxTextureCount();
+
 private:
 	RD_WindowingSystemGLFW* m_win_sys;
 };

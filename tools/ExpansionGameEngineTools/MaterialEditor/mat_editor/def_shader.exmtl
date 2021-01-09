@@ -8,8 +8,7 @@ layout (location = 0) out vec3 gPos;
 layout (location = 1) out vec3 gNorm;
 layout (location = 2) out vec4 gAlbedo;
 layout (location = 3) out float gSpec;
-layout (location = 4) out float gShadow;
-layout (location = 5) out vec3 gMetRoughAO;
+layout (location = 4) out vec3 gMetRoughAO;
 
 in vec3 Normal;
 in vec3 Tan;
@@ -18,52 +17,12 @@ in vec3 Bitan;
 in vec3 FragPos;
 in vec2 UVcoord;
 
-in vec4 FragPosLightSpace[10];
-
-uniform sampler2D ShadowMap[10];
-uniform int NbrDirLights;
-
-float ProcessShadows() {
-	float finalShadow = 0.0;
-
-	for(int i = 0; i < NbrDirLights; i++) {
-		vec3 projCoords = FragPosLightSpace[i].xyz / FragPosLightSpace[i].w;
-		projCoords = projCoords * 0.5 + 0.5;
-
-		if(projCoords.z > 1.0) {
-			return 0.0;
-		}
-
-		float closestDepth = texture(ShadowMap[i], projCoords.xy).r;
-		float currentDepth = projCoords.z;
-
-		float bias = 0.0015;
-
-		float shadow = 0.0;
-
-		vec2 texelSize = 1.0 / textureSize(ShadowMap[i], 0);
-		for(int x = -1; x <= 1; x++) {
-			for(int y = -1; y <= 1; y++) {
-				float pcfDepth = texture(ShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
-				shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
-			}
-		}
-
-		finalShadow += shadow / 9;
-	}
-
-	return finalShadow;
-}
-
 void main() {
     gPos = FragPos;
     gNorm = normalize(Normal);
     gAlbedo = vec4(1.0, 1.0, 1.0, 1.0);
     gSpec = 0.0;
     gMetRoughAO = vec3(0.0, 1.0, 1.0);
-
-    gShadow = 1.0 - clamp(ProcessShadows(), 0.0, 1.0);
-
 }
 "
 }

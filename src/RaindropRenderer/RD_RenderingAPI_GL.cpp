@@ -219,6 +219,13 @@ void RD_RenderingAPI_GL::DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm
 	glDrawArrays(dm + 4, 0, vbuff->GetFloatCount() / 8);
 }
 
+int RD_RenderingAPI_GL::GetMaxTextureCount() {
+	int rdata = 0;
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &rdata);
+
+	return rdata;
+}
+
 //---------------------------------------------  RD_RenderingAPI_VertexElemBufferGL  ---------------------------------------------
 
 RD_RenderingAPI_VertexElemBufferGL::RD_RenderingAPI_VertexElemBufferGL() : RD_RenderingAPI_VertexElemBuffer() {

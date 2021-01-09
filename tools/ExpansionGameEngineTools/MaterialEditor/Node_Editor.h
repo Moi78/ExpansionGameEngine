@@ -62,7 +62,7 @@ public:
 	virtual void render();
 
 	virtual NodeType GetNodeType() { return NodeType::TShaderNode; }
-	virtual int GetNodeSize() { return 8; }
+	virtual int GetNodeSize() { return 7; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
@@ -290,7 +290,7 @@ public:
 
 	std::string EvalNodes();
 
-	int GetTextureCount();
+	int GetTextureCount() const;
 	std::pair<std::string, std::string> GetTextureRefByIndex(int index);
 
 	void SaveFinalMaterial(std::string path);

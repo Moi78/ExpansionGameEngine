@@ -407,22 +407,6 @@ std::string Node_Editor::EvalNodes() {
 			m_textures.push_back(std::pair<std::string, std::string>(m_projectRoot + m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
 		}
 
-		if (n->GetNodeType() == NodeType::TShadowProcess && (!linkedShadowProcess)) {
-			std::ifstream shadowFunc;
-			shadowFunc.open("Engine/ShaderFragments/ProcessShadows.txt", std::ios::beg);
-			if (!shadowFunc) {
-				return "";
-			}
-
-			while (!shadowFunc.eof()) {
-				char line[200];
-				shadowFunc.getline(line, 200);
-				outCode += std::string(line) + "\n";
-			}
-
-			linkedShadowProcess = true;
-		}
-
 		if (n->GetNodeType() == NodeType::TNormalProcess && (!linkedNormalMapProcess)) {
 			std::ifstream bumpFunc;
 			bumpFunc.open("Engine/ShaderFragments/BumpMap.txt", std::ios::beg);
@@ -453,7 +437,7 @@ std::string Node_Editor::EvalNodes() {
 	return outCode;
 }
 
-int Node_Editor::GetTextureCount() {
+int Node_Editor::GetTextureCount() const {
 	return m_textures.size();
 }
 
@@ -510,15 +494,11 @@ void ShaderNode::render() {
 	ImGui::Text("Ambient Occlusion");
 	imnodes::EndInputAttribute();
 
-	imnodes::BeginInputAttribute(m_index + 7);
-	ImGui::Text("Shadow");
-	imnodes::EndInputAttribute();
-
 	imnodes::EndNode();
 }
 
 std::string ShaderNode::Stringifize(Node_Editor* nedit, int start_id) {
-	std::string outCode = "";
+	std::string outCode;
 
 	//Albedo
 	Node* nColor = nedit->GetNodeLinkedTo(m_index + 0);
@@ -588,15 +568,6 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit, int start_id) {
 	}
 
 	outCode += ");\n";
-
-	//Shadow
-	Node* nShadow = nedit->GetNodeLinkedTo(m_index + 7);
-	if (nShadow) {
-		outCode += "gShadow = " + nShadow->Stringifize(nedit, nedit->GetLinkStartId(m_index + 7)) + ";\n";
-	}
-	else {
-		outCode += "gShadow = 1.0;\n";
-	}
 
 	return outCode;
 }

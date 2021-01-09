@@ -55,7 +55,7 @@ public:
 		return mat_a * mat_b;
 	}
 	
-	Quat operator*(const Quat q) {
+	Quat operator*(const Quat& q) {
 		const float w = (m_quat[0] * q.m_quat[0]) - (m_quat[1] * q.m_quat[1]) - (m_quat[2] * q.m_quat[2]) - (m_quat[3] * q.m_quat[3]);
 		const float x = (m_quat[1] * q.m_quat[0]) + (m_quat[0] * q.m_quat[1]) + (m_quat[2] * q.m_quat[3]) - (m_quat[3] * q.m_quat[2]);
 		const float y = (m_quat[0] * q.m_quat[2]) - (m_quat[1] * q.m_quat[3]) + (m_quat[2] * q.m_quat[0]) + (m_quat[3] * q.m_quat[1]);

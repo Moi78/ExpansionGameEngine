@@ -12,6 +12,15 @@
     },
 
     {
+      "type": "dlight",
+      "nameTag": "sun",
+
+      "dir": [ -0.4, -0.8, -0.2 ],
+      "color": [ 1, 0.7, 0.5 ],
+      "brightness": 10.0
+    },
+
+    {
       "type":"mesh",
       "nameTag": "room",
 
@@ -66,7 +75,7 @@
       "ref":"/meshes/chaise",
       "material":"/shaders/mat_wood",
 
-      "pos":[-1, 1.5, -1],
+      "pos":[-1, 1.5, 3],
       "rot":[0, 0, 180],
       "scale":[0.3, 0.3, 0.3]
     },
