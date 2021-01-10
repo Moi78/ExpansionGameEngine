@@ -81,18 +81,18 @@ public:
 
 	int getWindowHeigh() const;
 	int getWindowWidth() const;
-	void SetFullscreenMode(const bool fullscr);
+	void SetFullscreenMode(const bool fullscr) const;
 	
-	std::string GetEngineDir();
+	std::string GetEngineDir() const;
 
-	double GetLastDeltaTime();
+	double GetLastDeltaTime() const;
 
 	//Rendering
 	void RenderMeshes(RD_Camera* cam);
 	void RenderShadowMeshes();
 
-	void RenderLightPass(vec3f camPos);
-	void RenderLightsDepth(vec3f camPos);
+	void RenderLightPass(const vec3f& camPos);
+	void RenderLightsDepth(const vec3f& camPos);
 	void RenderShadows();
 
 	void RenderSSR(RD_Camera* cam);
@@ -106,7 +106,7 @@ public:
 	void RenderPostProcess();
 	void RenderBeauty();
 
-	void RecreateGbuff();
+	void RecreateGbuff() const;
 
 	void ResizeViewport(vec2f pos, vec2f size);
 	void DisableResizeOverride();
@@ -114,7 +114,7 @@ public:
 	vec2f GetViewportSize() const;
 	vec2f GetViewportPos() const;
 
-	RD_Texture* GetBlankTexture();
+	RD_Texture* GetBlankTexture() const;
 	
 	void AddToTextureGarbageCollector(unsigned int texID);
 	void EmptyTextureGarbageCollector();
@@ -145,28 +145,28 @@ public:
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);
 	RD_ShaderLoader* GetShadowShader() const;
-	RD_ShaderLoader* GetCurrentShader();
-	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref);
-	RD_MaterialLibrary* GetMaterialLibrary();
+	RD_ShaderLoader* GetCurrentShader() const;
+	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref) const;
+	RD_MaterialLibrary* GetMaterialLibrary() const;
 
 	//Debug
 	void RenderDbg(RD_Camera*);
-	float GetFramerate();
+	float GetFramerate() const;
 
 	//Renderer Feature
 	void EnableFeature(RendererFeature ftr);
 	void DisableFeature(RendererFeature ftr);
 	bool IsFeatureEnabled(RendererFeature ftr);
-	void SendFeaturesToShader(RD_ShaderLoader* shader);
+	void SendFeatureToShader(RD_ShaderLoader* shader, RendererFeature feature);
 
 	void UpdatePointsLighting();
 
 	//GUI
-	void RenderGUI_Screen();
-	RD_GUI_Manager* GetGUI_Manager();
+	void RenderGUI_Screen() const;
+	RD_GUI_Manager* GetGUI_Manager() const;
 
-	int GetFrameLimit();
-	bool GetErrorFlag();
+	int GetFrameLimit() const;
+	bool GetErrorFlag() const;
 private:
 	void UpdateAmbientLighting();
 	void UpdateDirLighting();
@@ -174,8 +174,7 @@ private:
 	void FillPtLightIndice(int index);
 	void FillDirLightIndice(int index);
 
-	void FillFeaturesStringArray();
-	void FillFeatureStateArray();
+	void FillFeaturesArray();
 	void EnableAllFeatures();
 
 	bool CreateGbuff();
@@ -192,8 +191,7 @@ private:
 	bool m_error_flag;
 	bool m_resize_override;
 
-	std::string m_features_string[3];
-	bool m_features_state[3];
+	std::array<std::pair<std::string, bool>, 4> m_renderer_feature;
 
 	float ambientStrength;
 	vec3f ambientColor;

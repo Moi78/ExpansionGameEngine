@@ -113,7 +113,7 @@ public:
 	void ProcessSignals();
 
 	//Sounds
-	void UpdateSound();
+	void UpdateSound() const;
 	PSound* GetSoundEngine();
 	void RegisterSoundEmitter(EXP_SoundEmitter*);
 	void PlaySimpleSound(std::string ref, float gain);

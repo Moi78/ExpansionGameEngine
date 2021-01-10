@@ -32,9 +32,9 @@ uniform float DirLightBrightness[10];
 
 uniform vec3 CamPos;
 
-uniform bool ftr_lighting = true;
-uniform bool ftr_specular = true;
-uniform bool ftr_ambient = true;
+uniform bool ftr_lighting;
+uniform bool ftr_specular;
+uniform bool ftr_ambient;
 
 vec3 norm = normalize(texture(gNormal, UVcoords).rgb);
 vec3 FragPos = texture(gPos, UVcoords).rgb;
@@ -93,18 +93,21 @@ vec3 CalcPointLight(int lightIndex) {
 }
 
 void main() {
+	if(!ftr_lighting) {
+		LightPass = texture(gAlbedo, UVcoords);
+		return;
+	}
+
 	vec3 diffSpec = vec3(0.0);
 
 	float shadow = texture(ShadowPass, UVcoords).r;
 
-	if(ftr_lighting) {
-		for(int i = 0; i < nbrDirLight; i++) {
-			diffSpec += CalcDirLight(i) * shadow;
-		}
+	for(int i = 0; i < nbrDirLight; i++) {
+		diffSpec += CalcDirLight(i) * shadow;
+	}
 
-		for(int i = 0; i < nbrPointLight; i++) {
-			diffSpec += CalcPointLight(i);
-		}
+	for(int i = 0; i < nbrPointLight; i++) {
+		diffSpec += CalcPointLight(i);
 	}
 
 	vec3 ambient = AmbientColor * AmbientStrength;
@@ -112,11 +115,8 @@ void main() {
 
 	vec4 gamma = vec4(1.0 / 2.2);
 
-	//vec4 gui = texture(GUIscreen, UVcoords);
-
 	vec4 render = clamp(pow(vec4(Diffuse, 1.0) * vec4(result, 1.0), gamma), 0.0, 1.0);
 	render.a = 1.0;
 
 	LightPass = render;
-	//LightPass = texture(gPos, UVcoords);
 }

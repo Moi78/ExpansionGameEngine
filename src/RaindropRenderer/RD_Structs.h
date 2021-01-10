@@ -11,7 +11,7 @@
 #endif //_WIN32
 
 enum RD_API RendererFeature {
-	Specular, Lighting, Ambient
+	Specular, Lighting, Ambient, SSAO
 };
 
 enum class RD_API RenderMode {
@@ -25,7 +25,7 @@ struct RD_API Gbuff {
 	unsigned int gNorm;
 	unsigned int gAlbedo;
 	unsigned int gSpec;
-	unsigned int gShadows;
+	unsigned int gShadows; //Deprecated
 	unsigned int gDepth;
 	
 	//PBR Stuff

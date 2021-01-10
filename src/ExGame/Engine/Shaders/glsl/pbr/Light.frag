@@ -119,22 +119,6 @@ vec3 CalcDirLight(int index) {
 	float NdotL = max(dot(norm, L), 0.0);
 
 	return (kD * Diffuse / PI + specular) * radiance * NdotL;
-
-	//Diffuse
-	//float diff = max(0.0, dot(norm, dir));
-	//vec3 diffuse = (diff * DirLightBrightness[index] * DirLightColor[index]);
-
-	//Specular
-	//vec3 d_specular = vec3(0.0);
-	//if(ftr_specular) {
-	//	vec3 reflectDir = reflect(-dir, norm);
-
-	//	float spec = pow(max(0.0, dot(viewDir, reflectDir)), SpecularExp);
-
-	//	d_specular = spec * DirLightColor[index] * DirLightBrightness[index] * Specular;
-	//}
-
-	//return diffuse + d_specular;
 }
 
 vec3 CalcPointLight(int lightIndex) {
@@ -173,14 +157,12 @@ void main() {
 
 	float shadow = texture(ShadowPass, UVcoords).r;
 
-	if(ftr_lighting) {
-		for(int i = 0; i < nbrDirLight; i++) {
-			diffSpec += max(CalcDirLight(i), 0.0) * shadow;
-		}
+	for(int i = 0; i < nbrDirLight; i++) {
+		diffSpec += max(CalcDirLight(i), 0.0) * shadow;
+	}
 
-		for(int i = 0; i < nbrPointLight; i++) {
-			diffSpec += max(CalcPointLight(i), 0.0);
-		}
+	for(int i = 0; i < nbrPointLight; i++) {
+		diffSpec += max(CalcPointLight(i), 0.0);
 	}
 
 	float SSAO = texture(ssao, UVcoords).r;

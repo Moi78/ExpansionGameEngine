@@ -69,7 +69,7 @@ private:
 class RAINDROP_RENDERER_API RD_FrameBuffer_GL : public RD_FrameBuffer
 {
 public:
-	RD_FrameBuffer_GL(int w, int h);
+	RD_FrameBuffer_GL(int w, int h, bool nodepth = false);
 	virtual ~RD_FrameBuffer_GL();
 
 	virtual unsigned int GetFBO();
@@ -98,6 +98,7 @@ private:
 
 	int m_w, m_h;
 	int m_storage, m_rbo_attachement;
+	bool m_nodepth;
 };
 
 #endif //BUILD_OPENGL

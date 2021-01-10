@@ -70,17 +70,17 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 
 void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual) {
 	m_shadowQuality = shadowQual;
-	m_fbo = rndr->GetRenderingAPI()->CreateFrameBuffer(m_shadowQuality, m_shadowQuality);
+	m_fbo = rndr->GetRenderingAPI()->CreateFrameBuffer(m_shadowQuality, m_shadowQuality, false);
 
 	m_fbo->AddAttachement(IMGFORMAT_DEPTH, SCALEMODE_LINEAR);
 	m_fbo->BuildFBO();
 }
 
-mat4f RD_DirLight::GetLightSpace() {
+mat4f RD_DirLight::GetLightSpace() const {
 	return m_lspace;
 }
 
-RD_Texture* RD_DirLight::GetDepthTexID() {
+RD_Texture* RD_DirLight::GetDepthTexID() const {
 	return m_fbo->GetAttachementByIndex(0);
 }
 
@@ -92,6 +92,6 @@ void RD_DirLight::SetShadowCasting(bool scast) {
 	m_shadowCaster = scast;
 }
 
-bool RD_DirLight::GetShadowCasting() {
+bool RD_DirLight::GetShadowCasting() const {
 	return m_shadowCaster;
 }

@@ -103,12 +103,13 @@ public:
 	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer() = 0;
 	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer() = 0;
 	virtual RD_Texture* CreateTexture() = 0;
-	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h) = 0;
+	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h, bool nodepth) = 0;
 	virtual RD_ShaderLoader* CreateShader() = 0;
 
 	virtual void SetViewportSize(int w, int h, int x, int y) = 0;
 
 	virtual void Clear(int masks) = 0;
+	virtual void SetClearColor(const vec3f& color = vec3f()) = 0;
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) = 0;
 	virtual void DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm) = 0;
 	virtual void SetFilledMode(FillingMode fmode) = 0;

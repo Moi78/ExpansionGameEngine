@@ -3,10 +3,11 @@
 
 #ifdef BUILD_OPENGL
 
-RD_FrameBuffer_GL::RD_FrameBuffer_GL(int w, int h) : RD_FrameBuffer() {
+RD_FrameBuffer_GL::RD_FrameBuffer_GL(int w, int h, bool nodepth) : RD_FrameBuffer() {
 	m_w = w;
 	m_h = h;
 	m_FBO = 0;
+	m_nodepth = nodepth;
 
 	m_storage = GL_DEPTH_COMPONENT;
 	m_rbo_attachement = GL_DEPTH_ATTACHMENT;
@@ -46,7 +47,7 @@ void RD_FrameBuffer_GL::AddAttachement(unsigned int format, unsigned int scaleMo
 
 void RD_FrameBuffer_GL::BuildFBO() {
 	std::vector<unsigned int> attach;
-	bool renderBufferDepth = true;
+	bool renderBufferDepth = !m_nodepth;
 
 	for (int i = 0; i < m_attachments.size(); i++) {
 		delete m_attachments[i].tex;

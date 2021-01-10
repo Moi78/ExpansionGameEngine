@@ -104,7 +104,7 @@ public:
 	virtual RD_RenderingAPI_VertexElemBufferGL* CreateVertexElemBuffer();
 	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer();
 	virtual RD_Texture* CreateTexture();
-	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h);
+	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h, bool nodepth = false);
 	virtual RD_ShaderLoader* CreateShader();
 
 	virtual void SetViewportSize(int w, int h, int x, int y);
@@ -114,6 +114,7 @@ public:
 	virtual void SetFilledMode(FillingMode fmode);
 
 	virtual void Clear(int mask);
+	virtual void SetClearColor(const vec3f& color);
 
 	virtual int GetMaxTextureCount();
 

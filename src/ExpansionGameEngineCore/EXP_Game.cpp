@@ -164,7 +164,7 @@ void EXP_Game::InitPhysics() {
 	m_physicsHandler->InitWorld();
 }
 
-void EXP_Game::UpdateSound() {
+void EXP_Game::UpdateSound() const {
 	if (m_listener && m_currentCamera) {	//nullptr security with threads
 		m_listener->setPosition(m_currentCamera->GetPosition());
 		m_listener->setOrientation(m_currentCamera->GetSubject());
@@ -180,13 +180,13 @@ void EXP_Game::InitGui() {
 }
 
 void EXP_Game::RenderScene() {
+	if (!m_currentCamera)
+		return;
+	
 	m_rndr->ClearWindow(m_refreshColor);
 
-	vec3f CamLoc = vec3f();
-	if (m_currentCamera != nullptr) {
-		CamLoc = m_currentCamera->GetLocation();
-		m_currentCamera->UpdateCamera();
-	}
+	vec3f CamLoc = CamLoc = m_currentCamera->GetLocation();
+	m_currentCamera->UpdateCamera();
     
 	//Process shadows
 	m_rndr->RenderLightsDepth(CamLoc);

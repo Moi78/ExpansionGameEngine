@@ -40,12 +40,12 @@ public:
 	float GetBrightness();
 
 	void SetShadowCasting(bool scast);
-	bool GetShadowCasting();
+	bool GetShadowCasting() const;
 
 	void DepthRender(RaindropRenderer*, vec3f CamPos);
 	void SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual);
-	mat4f GetLightSpace();
-	RD_Texture* GetDepthTexID();
+	mat4f GetLightSpace() const;
+	RD_Texture* GetDepthTexID() const;
 
 	void Cleanup(RaindropRenderer* rndr);
 private:

@@ -32,9 +32,9 @@ public:
 
     ~vec3() {}
 
-    T getX() { return m_xyz[0]; }
-    T getY() { return m_xyz[1]; }
-    T getZ() { return m_xyz[2]; }
+    T getX() const { return m_xyz[0]; }
+    T getY() const { return m_xyz[1]; }
+    T getZ() const { return m_xyz[2]; }
     
     
     void setX(T x) { m_xyz[0] = x; }

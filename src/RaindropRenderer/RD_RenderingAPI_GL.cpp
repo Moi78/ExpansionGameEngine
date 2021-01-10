@@ -174,8 +174,8 @@ RD_Texture* RD_RenderingAPI_GL::CreateTexture() {
 }
 
 
-RD_FrameBuffer* RD_RenderingAPI_GL::CreateFrameBuffer(int w, int h) {
-	return new RD_FrameBuffer_GL(w, h);
+RD_FrameBuffer* RD_RenderingAPI_GL::CreateFrameBuffer(int w, int h, bool nodepth) {
+	return new RD_FrameBuffer_GL(w, h, nodepth);
 }
 
 void RD_RenderingAPI_GL::Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) {
@@ -202,6 +202,11 @@ void RD_RenderingAPI_GL::Clear(int mask) {
 	if (mask & COLOR_BUFFER)
 		glClear(GL_COLOR_BUFFER_BIT);
 }
+
+void RD_RenderingAPI_GL::SetClearColor(const vec3f& color) {
+	glClearColor(color.getX(), color.getY(), color.getZ(), 1.0f);
+}
+
 
 RD_ShaderLoader* RD_RenderingAPI_GL::CreateShader() {
 	return new RD_ShaderLoader_GL();
