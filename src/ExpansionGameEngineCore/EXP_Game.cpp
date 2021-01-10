@@ -11,7 +11,7 @@
 #include "EXP_Level.h"
 #include "EXP_InputHandler.h"
 
-EXP_Game::EXP_Game(EXP_GameInfo gameinfo, vec3f refreshColor) {
+EXP_Game::EXP_Game(const EXP_GameInfo& gameinfo, const vec3f& refreshColor) {
 	m_currentCamera = nullptr;
 	m_error_flag = false;
 
@@ -58,7 +58,7 @@ EXP_Game::~EXP_Game() {
 	m_soundEngine->shutdownAL();
 }
 
-EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
+EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 	Json::Value root;
 	JSONCPP_STRING errs;
 
@@ -111,7 +111,7 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(std::string file) {
 	return gi;
 }
 
-void EXP_Game::InitGame(vec3f refreshColor, EXP_GameInfo gameinfo) {
+void EXP_Game::InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo) {
 	m_res = gameinfo.GameBaseResolution;
 	m_refreshColor = refreshColor;
 	m_gameName = gameinfo.GameName;
@@ -205,7 +205,7 @@ void EXP_Game::RenderScene() {
 	ProcessSignals();
 }
 
-void EXP_Game::EndFrame() {
+void EXP_Game::EndFrame() const {
 	m_rndr->SwapWindow();
 }
 
@@ -231,7 +231,7 @@ void EXP_Game::ExecCallbacks() {
 	m_hinput->ResetPointer();
 }
 
-void EXP_Game::UpdateLevel() {
+void EXP_Game::UpdateLevel() const {
 	if (m_PlayingMap != nullptr) {
 		EXP_Level* lvl = m_PlayingMap->GetLevelCode();
 		if (lvl) {
@@ -240,31 +240,31 @@ void EXP_Game::UpdateLevel() {
 	}
 }
 
-EXP_GameInfo EXP_Game::GetGameInfo() {
+EXP_GameInfo EXP_Game::GetGameInfo() const {
 	return m_gameinfo;
 }
 
-RaindropRenderer* EXP_Game::GetRenderer() {
+RaindropRenderer* EXP_Game::GetRenderer() const {
 	return m_rndr.get();
 }
 
-void EXP_Game::RegisterMesh(RD_Mesh* mesh) {
+void EXP_Game::RegisterMesh(RD_Mesh* mesh) const {
 	m_rndr->RegisterMesh(mesh);
 }
 
-void EXP_Game::RegisterPointLight(RD_PointLight* ptlight) {
+void EXP_Game::RegisterPointLight(RD_PointLight* ptlight) const {
 	m_rndr->AppendLight(ptlight);
 }
 
-vec3f EXP_Game::GetRefreshColor() {
+vec3f EXP_Game::GetRefreshColor() const {
 	return m_refreshColor;
 }
 
-PSound* EXP_Game::GetSoundEngine() {
+PSound* EXP_Game::GetSoundEngine() const {
 	return m_soundEngine.get();
 }
 
-void EXP_Game::PlaySimpleSound(std::string ref, float gain) {
+void EXP_Game::PlaySimpleSound(const std::string& ref, float gain) const {
 	std::string fullref = m_gameinfo.RootGameContentFolder + ref;
 
 	std::thread t([](PSound* engine, std::string file, float gain) {
@@ -274,12 +274,12 @@ void EXP_Game::PlaySimpleSound(std::string ref, float gain) {
 	t.detach();
 }
 
-void EXP_Game::PlaySound3D(std::string ref, vec3f pos, float gain) {
+void EXP_Game::PlaySound3D(const std::string& ref, const vec3f& pos, float gain) {
 	std::string fullref = m_gameinfo.RootGameContentFolder + ref;
 
-	std::thread t([](PSound* engine, std::string file, vec3f pos, float gain) {
+	std::thread t([](PSound* engine, const std::string& file, vec3f pos, float gain) {
 		engine->playSound3D(file, pos, gain);
-	}, m_soundEngine.get(), fullref, pos, gain);
+	}, m_soundEngine.get(), std::ref(fullref), pos, gain);
 
 	t.detach();
 }
@@ -290,29 +290,29 @@ void EXP_Game::RegisterCamera(EXP_Camera* cam) {
 	m_listener->setOrientation(cam->GetSubject());
 }
 
-void EXP_Game::RegisterSoundEmitter(EXP_SoundEmitter* sm) {
+void EXP_Game::RegisterSoundEmitter(EXP_SoundEmitter* sm) const {
 	m_soundEngine->RegisterEmitter(sm, false);
 }
 
-std::string EXP_Game::GetFilePathByRef(std::string ref) {
+std::string EXP_Game::GetFilePathByRef(const std::string& ref) const {
 	return m_gameinfo.RootGameContentFolder + ref;
 }
 
-void EXP_Game::UpdatePhysics() {
+void EXP_Game::UpdatePhysics() const {
     if(m_physicsHandler)
         m_physicsHandler->UpdateWorld();
 }
 
-EXP_PhysicsHandler* EXP_Game::GetPhysicsHandler() {
+EXP_PhysicsHandler* EXP_Game::GetPhysicsHandler() const {
 	return m_physicsHandler.get();
 }
 
-void EXP_Game::RegisterKeyboardCallback(EXP_KeyboardCallback* callback) {
+void EXP_Game::RegisterKeyboardCallback(EXP_KeyboardCallback* callback) const {
 	std::cout << "Registering Keyboard Callback" << std::endl;
 	m_hinput->RegisterKeyboardCallback(callback);
 }
 
-void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck, bool nodelete) {
+void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck, bool nodelete) const {
 	std::cout << "Unregistering Keyboard Callback" << std::endl;
 	m_hinput->UnregisterKeyboardCallback(kbcllbck);
 
@@ -324,7 +324,7 @@ void EXP_Game::UpdateCallbacks() {
 	m_hinput->UpdateKeyboardInput();
 	m_hinput->UpdateMouseInput();
 
-	for (auto act : m_actors) {
+	for (auto* act : m_actors) {
 		act->Tick();
 	}
 }
@@ -335,7 +335,7 @@ void EXP_Game::RegisterActor(EXP_Actor* act) {
 	m_actors.push_back(act);
 }
 
-void EXP_Game::UnregisterMesh(RD_Mesh* mesh, bool nodelete) {
+void EXP_Game::UnregisterMesh(RD_Mesh* mesh, bool nodelete) const {
 	std::cout << "Unregistering mesh." << std::endl;
 	m_rndr->UnregisterMesh(mesh);
 
@@ -343,7 +343,7 @@ void EXP_Game::UnregisterMesh(RD_Mesh* mesh, bool nodelete) {
 		delete mesh;
 }
 
-void EXP_Game::UnregisterDirLight(RD_DirLight* dlight, bool nodelete) {
+void EXP_Game::UnregisterDirLight(RD_DirLight* dlight, bool nodelete) const {
 	std::cout << "Unregistering DirLight." << std::endl;
 	m_rndr->UnregisterDirLight(dlight);
 
@@ -351,7 +351,7 @@ void EXP_Game::UnregisterDirLight(RD_DirLight* dlight, bool nodelete) {
 		delete dlight;
 }
 
-void EXP_Game::UnregisterPointLight(RD_PointLight* plight, bool nodelete) {
+void EXP_Game::UnregisterPointLight(RD_PointLight* plight, bool nodelete) const {
 	std::cout << "Unregistering PointLight" << std::endl;
 	m_rndr->UnregisterPointLight(plight);
 
@@ -361,7 +361,7 @@ void EXP_Game::UnregisterPointLight(RD_PointLight* plight, bool nodelete) {
 
 void EXP_Game::UnregisterActor(EXP_Actor* actor, bool nodelete) {
 	std::cout << "Unregistering Actor" << std::endl;
-	int index = GetElemIndex<EXP_Actor*>(m_actors, actor);
+	const int index = GetElemIndex<EXP_Actor*>(m_actors, actor);
 
 	if (index != -1) {
 		m_actors.erase(m_actors.begin() + index);
@@ -375,15 +375,15 @@ void EXP_Game::UnregisterActor(EXP_Actor* actor, bool nodelete) {
 	}
 }
 
-EXP_HotLoad* EXP_Game::GetGameLib() {
+EXP_HotLoad* EXP_Game::GetGameLib() const {
 	return m_GameLib.get();
 }
 
 void EXP_Game::UnloadCurrentMap() {
-	for (int i = 0; i < m_actors.size(); i++) {
-		if (m_actors[i]) {
-			m_actors[i]->Unregister();
-			delete m_actors[i];
+	for (auto* actor : m_actors) {
+		if (actor) {
+			actor->Unregister();
+			delete actor;
 		}
 	}
 
@@ -403,21 +403,21 @@ void EXP_Game::UnloadCurrentMap() {
 	m_sigLevelFinalCleanup = true;
 }
 
-void EXP_Game::LoadMap(std::string map) {
+void EXP_Game::LoadMap(const std::string& map) {
 	UnloadCurrentMap();
 	m_PlayingMap->LoadMap(m_gameinfo.RootGameContentFolder + map);
 
 	m_PlayingMap->GetLevelCode()->OnStart();
-	for (auto actor : m_actors) {
+	for (auto* actor : m_actors) {
 		actor->Start();
 	}
 }
 
-EXP_InputHandler* EXP_Game::GetInputHandler() {
+EXP_InputHandler* EXP_Game::GetInputHandler() const {
 	return m_hinput.get();
 }
 
-bool EXP_Game::CheckErrors() {
+bool EXP_Game::CheckErrors() const {
 	if (m_rndr->GetErrorFlag() && m_error_flag) {
 		return true;
 	}
@@ -425,12 +425,12 @@ bool EXP_Game::CheckErrors() {
 	return false;
 }
 
-void EXP_Game::RegisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) {
+void EXP_Game::RegisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck) const {
 	std::cout << "Registering Mouse Button Callback" << std::endl;
 	m_hinput->RegisterMouseButtonCallback(cllbck);
 }
 
-void EXP_Game::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck, bool nodelete) {
+void EXP_Game::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck, bool nodelete) const {
 	std::cout << "Unregistering Mouse Button Callback" << std::endl;
 	m_hinput->UnregisterMouseButtonCallback(cllbck);
 
@@ -438,12 +438,12 @@ void EXP_Game::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck, bo
 		delete cllbck;
 }
 
-RD_ShaderMaterial* EXP_Game::GetShaderByFileRef(std::string ref) {
-	std::string absPath = m_gameinfo.RootGameContentFolder + ref;
+RD_ShaderMaterial* EXP_Game::GetShaderByFileRef(const std::string& ref) const {
+	const std::string absPath = m_gameinfo.RootGameContentFolder + ref;
 
 	return m_rndr->FetchShaderFromFile(absPath);
 }
 
-EXP_MapLoader* EXP_Game::GetCurrentMap() {
+EXP_MapLoader* EXP_Game::GetCurrentMap() const {
 	return m_PlayingMap.get();
 }

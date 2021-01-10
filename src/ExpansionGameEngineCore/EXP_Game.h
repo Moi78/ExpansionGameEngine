@@ -70,71 +70,71 @@ class EXP_MouseButtonCallback;
 class EXPGE_API EXP_Game
 {
 public:
-	EXP_Game(EXP_GameInfo gameinfo, vec3f refreshColor);
+	EXP_Game(const EXP_GameInfo& gameinfo, const vec3f& refreshColor);
 	EXP_Game(std::string gameInfoJSON);
 
 	~EXP_Game();
 	
-	EXP_GameInfo GetGameInfo();
+	EXP_GameInfo GetGameInfo() const;
     
 	//For internal usage only
-	void RegisterMesh(RD_Mesh*);
-	void RegisterPointLight(RD_PointLight*);
+	void RegisterMesh(RD_Mesh*) const;
+	void RegisterPointLight(RD_PointLight*) const;
 	void RegisterCamera(EXP_Camera*);
-	void RegisterKeyboardCallback(EXP_KeyboardCallback*);
+	void RegisterKeyboardCallback(EXP_KeyboardCallback*) const;
 	void RegisterActor(EXP_Actor*);
-	void RegisterMouseButtonCallback(EXP_MouseButtonCallback*);
+	void RegisterMouseButtonCallback(EXP_MouseButtonCallback*) const;
 
-	void UnregisterKeyboardCallback(EXP_KeyboardCallback*, bool nodelete = false);
+	void UnregisterKeyboardCallback(EXP_KeyboardCallback*, bool nodelete = false) const;
 	void UnregisterActor(EXP_Actor*, bool nodelete = false);
-	void UnregisterMesh(RD_Mesh*, bool nodelete = false);
-	void UnregisterDirLight(RD_DirLight*, bool nodelete = false);
-	void UnregisterPointLight(RD_PointLight*, bool nodelete = false);
-	void UnregisterMouseButtonCallback(EXP_MouseButtonCallback*, bool nodelete = false);
+	void UnregisterMesh(RD_Mesh*, bool nodelete = false) const;
+	void UnregisterDirLight(RD_DirLight*, bool nodelete = false) const;
+	void UnregisterPointLight(RD_PointLight*, bool nodelete = false) const;
+	void UnregisterMouseButtonCallback(EXP_MouseButtonCallback*, bool nodelete = false) const;
 
-	EXP_HotLoad* GetGameLib();
+	EXP_HotLoad* GetGameLib() const;
 
-	EXP_InputHandler* GetInputHandler();
+	EXP_InputHandler* GetInputHandler() const;
 
 	void UnloadCurrentMap();
-	void LoadMap(std::string map);
-	EXP_MapLoader* GetCurrentMap();
+	void LoadMap(const std::string& map);
+	EXP_MapLoader* GetCurrentMap() const;
 
 	//Rendering
-	RaindropRenderer* GetRenderer();
-	vec3f GetRefreshColor();
+	RaindropRenderer* GetRenderer() const;
+	vec3f GetRefreshColor() const;
 
 	void RenderScene();
 	void ExecCallbacks();
-	void EndFrame();
+	void EndFrame() const;
 	
 	void UpdateCallbacks();
-	void UpdateLevel();
+	void UpdateLevel() const;
 	void ProcessSignals();
 
 	//Sounds
 	void UpdateSound() const;
-	PSound* GetSoundEngine();
-	void RegisterSoundEmitter(EXP_SoundEmitter*);
-	void PlaySimpleSound(std::string ref, float gain);
-	void PlaySound3D(std::string ref, vec3f pos, float gain);
+	PSound* GetSoundEngine() const;
+	void RegisterSoundEmitter(EXP_SoundEmitter*) const;
+	void PlaySimpleSound(const std::string& ref, float gain) const;
+	void PlaySound3D(const std::string& ref, const vec3f& pos, float gain);
 
 	//Files
-	std::string GetFilePathByRef(std::string ref);
-	RD_ShaderMaterial* GetShaderByFileRef(std::string ref);
+	std::string GetFilePathByRef(const std::string& ref) const;
+	RD_ShaderMaterial* GetShaderByFileRef(const std::string& ref) const;
 
 	//Physics
-	void UpdatePhysics();
-	EXP_PhysicsHandler* GetPhysicsHandler();
+	void UpdatePhysics() const;
+	EXP_PhysicsHandler* GetPhysicsHandler() const;
 
-	bool CheckErrors();
+	bool CheckErrors() const;
 
 private:
-	void InitGame(vec3f refreshColor, EXP_GameInfo gameinfo);
+	void InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo);
 	void InitPhysicaSound();
 	void InitGui();
 	void InitPhysics();
-	EXP_GameInfo CreateGameInfoFromJSON(std::string gameInfo);
+	EXP_GameInfo CreateGameInfoFromJSON(const std::string& gameInfo);
 
 	std::unique_ptr<EXP_MapLoader> m_PlayingMap;
 
