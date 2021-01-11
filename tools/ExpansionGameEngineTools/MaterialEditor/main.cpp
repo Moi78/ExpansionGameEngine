@@ -229,9 +229,6 @@ int main(int argc, char* argv[]) {
 
 				if (ImGui::Button("Open Draft Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
 					openBrowser.Open();
-					delete mat;
-					mat = CompileMat(game, editor);
-					msh->SetMaterial(mat);
 				}
 
 				ImGui::EndChild();
@@ -265,6 +262,10 @@ int main(int argc, char* argv[]) {
 		if (openBrowser.HasSelected()) {
 			editor->OpenMaterialDraft(openBrowser.GetSelectedFile());
 			openBrowser.ResetBools();
+
+			delete mat;
+			mat = CompileMat(game, editor);
+			msh->SetMaterial(mat);
 		}
 
 		if (saveBrowserDraft.OkPressed()) {

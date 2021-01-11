@@ -25,7 +25,7 @@ struct RD_API Gbuff {
 	unsigned int gNorm;
 	unsigned int gAlbedo;
 	unsigned int gSpec;
-	unsigned int gShadows; //Deprecated
+	unsigned int gEmissive; 
 	unsigned int gDepth;
 	
 	//PBR Stuff

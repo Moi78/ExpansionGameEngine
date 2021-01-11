@@ -14,6 +14,7 @@ uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gSpec;
 uniform sampler2D gMetRoughAO;
+uniform sampler2D gEmissive;
 uniform sampler2D ssao;
 
 //Ambient
@@ -172,6 +173,9 @@ void main() {
 	//Gamma
 	result = result / (result + vec3(1.0));
 	result = pow(result, vec3(1.0 / 2.2));
+
+	//Emissive color
+	result += texture(gEmissive, UVcoords).rgb;
 
 	LightPass = vec4(result, 1.0);
 }

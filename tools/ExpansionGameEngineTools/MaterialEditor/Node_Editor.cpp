@@ -203,6 +203,15 @@ void Node_Editor::AddNode(Node* n) {
 void Node_Editor::MakeLinks() {
 	int ls, le;
 	if (imnodes::IsLinkCreated(&ls, &le)) {
+		Node* a = GetNodeFromPin(ls);
+		Node* b = GetNodeFromPin(le);
+
+		//std::cout << "Node a : " << a->GetNodeType() << " Node b : " << b->GetNodeType() << std::endl;
+		
+		if((a->GetPinType(ls) != b->GetPinType(le)) && (a->GetPinType(ls) != PinType::TAny) && (b->GetPinType(le) != PinType::TAny)) {
+			return;
+		}
+		
 		for (auto l : m_links) {
 			if ((le == l.second)) {
 				return;
@@ -269,7 +278,7 @@ void Node_Editor::DeleteLink() {
 								}
 							}
 						}
-
+						
 						m_nodes.erase(m_nodes.begin() + i);
 						break;
 					}
@@ -283,7 +292,7 @@ void Node_Editor::DeleteLink() {
 	}
 }
 
-Node* Node_Editor::GetNodeLinkedTo(int id_end) {
+Node* Node_Editor::GetNodeLinkedTo(const int id_end) {
 	int start_id = GetLinkStartId(id_end);
 
 	if (start_id == -1) {
@@ -300,6 +309,19 @@ Node* Node_Editor::GetNodeLinkedTo(int id_end) {
 
 	return nullptr;
 }
+
+Node* Node_Editor::GetNodeFromPin(const int id) {
+	for (auto n : m_nodes) {
+		for (int i = n->GetIndex(); i < n->GetIndex() + n->GetNodeSize(); i++) {
+			if (id == i) {
+				return n;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 
 int Node_Editor::GetLinkStartId(int end_id) {
 	int start_id = -1;
@@ -353,11 +375,6 @@ void Node_Editor::AddNodeCallback() {
 
 		if (ImGui::MenuItem("Normalize")) {
 			AddNode(new Normalize(m_currentId + 1, m_currentIndex));
-			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
-		}
-
-		if (ImGui::MenuItem("Process Shadows")) {
-			AddNode(new ProcessShadows(m_currentId + 1, m_currentIndex));
 			imnodes::SetNodeScreenSpacePos(m_currentId, pos);
 		}
 
@@ -466,6 +483,8 @@ void ShaderNode::render() {
 	ImGui::Text("Shader Output");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC3);
+	
 	imnodes::BeginInputAttribute(m_index + 0);
 	ImGui::Text("Base Color");
 	imnodes::EndInputAttribute();
@@ -478,6 +497,8 @@ void ShaderNode::render() {
 	ImGui::Text("Normal");
 	imnodes::EndInputAttribute();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_FLOAT);
+	
 	imnodes::BeginInputAttribute(m_index + 3);
 	ImGui::Text("Specular");
 	imnodes::EndInputAttribute();
@@ -492,6 +513,12 @@ void ShaderNode::render() {
 
 	imnodes::BeginInputAttribute(m_index + 6);
 	ImGui::Text("Ambient Occlusion");
+	imnodes::EndInputAttribute();
+
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC3);
+	
+	imnodes::BeginInputAttribute(m_index + 7);
+	ImGui::Text("Emissive Color");
 	imnodes::EndInputAttribute();
 
 	imnodes::EndNode();
@@ -569,6 +596,14 @@ std::string ShaderNode::Stringifize(Node_Editor* nedit, int start_id) {
 
 	outCode += ");\n";
 
+	//Emissive
+	Node* emissive = nedit->GetNodeLinkedTo(m_index + 7);
+	if(emissive) {
+		outCode += "gEmissive = " + emissive->Stringifize(nedit, nedit->GetLinkStartId(m_index + 7)) + ";\n";
+	}  else {
+		outCode += "gEmissive = vec3(0.0, 0.0, 0.0);\n";
+	}
+
 	return outCode;
 }
 
@@ -591,6 +626,8 @@ void ShaderInputs::render() {
 	ImGui::Text("Shader Inputs");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC3);
+	
 	imnodes::BeginOutputAttribute(m_index + 0);
 	ImGui::Text("Normal");
 	imnodes::EndOutputAttribute();
@@ -607,6 +644,8 @@ void ShaderInputs::render() {
 	ImGui::Text("Fragment Position");
 	imnodes::EndOutputAttribute();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC2);
+	
 	imnodes::BeginOutputAttribute(m_index + 4);
 	ImGui::Text("UV Coords");
 	imnodes::EndOutputAttribute();
@@ -658,6 +697,8 @@ void Normalize::render() {
 	ImGui::Text("Normalize");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_ANY);
+	
 	imnodes::BeginInputAttribute(m_index + 0);
 	ImGui::Text("Vector");
 	imnodes::EndInputAttribute();
@@ -704,6 +745,8 @@ void Add::render() {
 	ImGui::Text("Add");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_ANY);
+	
 	imnodes::BeginInputAttribute(m_index + 0);
 	ImGui::Text("a");
 	imnodes::EndInputAttribute();
@@ -772,6 +815,8 @@ void ConstVec3::render() {
 	ImGui::Text("ConstVec3");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC3);
+	
 	imnodes::BeginOutputAttribute(m_index + 0);
 	ImGui::InputFloat3("Vec3", m_value.GetPTR());
 	imnodes::EndOutputAttribute();
@@ -814,6 +859,8 @@ void ConstVec4::render() {
 	ImGui::Text("ConstVec4");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC4);
+	
 	imnodes::BeginOutputAttribute(m_index + 0);
 	ImGui::InputFloat4("Vec4", m_value.GetPTR());
 	imnodes::EndOutputAttribute();
@@ -857,6 +904,8 @@ void ConstFloat::render() {
 	ImGui::Text("ConstFloat");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_FLOAT);
+	
 	imnodes::BeginOutputAttribute(m_index + 0);
 	ImGui::InputFloat("Float", &m_value);
 	imnodes::EndOutputAttribute();
@@ -890,6 +939,8 @@ void Multiply::render() {
 	ImGui::Text("Multiply");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_ANY);
+	
 	imnodes::BeginInputAttribute(m_index + 0);
 	ImGui::Text("a");
 	imnodes::EndInputAttribute();
@@ -950,20 +1001,28 @@ void TextureSampler::render() {
 	ImGui::Text("TextureSampler");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC2);
+	
 	imnodes::BeginInputAttribute(m_index + 0);
 	ImGui::Text("UV Coords");
 	imnodes::EndInputAttribute();
 
 	ImGui::InputText("Texture Path", m_tex_path, 300);
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC4);
+	
 	imnodes::BeginOutputAttribute(m_index + 1);
 	ImGui::Text("RGBA");
 	imnodes::EndOutputAttribute();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC3);
+	
 	imnodes::BeginOutputAttribute(m_index + 2);
 	ImGui::Text("RGB");
 	imnodes::EndOutputAttribute();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_FLOAT);
+	
 	imnodes::BeginOutputAttribute(m_index + 3);
 	ImGui::Text("R");
 	imnodes::EndOutputAttribute();
@@ -1048,6 +1107,8 @@ void Subtract::render() {
 	ImGui::Text("Subtract");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_ANY);
+	
 	imnodes::BeginInputAttribute(m_index + 0);
 	ImGui::Text("a");
 	imnodes::EndInputAttribute();
@@ -1109,6 +1170,8 @@ void ProcessShadows::render() {
 	ImGui::Text("Process Shadow");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_FLOAT);
+
 	imnodes::BeginOutputAttribute(m_index + 0);
 	ImGui::Text("Shadow Mapping Data");
 	imnodes::EndOutputAttribute();
@@ -1139,6 +1202,8 @@ void NormalFromMap::render() {
 	ImGui::Text("NormalFromMap");
 	imnodes::EndNodeTitleBar();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC3);
+	
 	imnodes::BeginInputAttribute(m_index + 0);
 	ImGui::Text("RGB Texture");
 	imnodes::EndInputAttribute();
@@ -1151,10 +1216,14 @@ void NormalFromMap::render() {
 	ImGui::Text("Position");
 	imnodes::EndInputAttribute();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC2);
+	
 	imnodes::BeginInputAttribute(m_index + 3);
 	ImGui::Text("UV Coords");
 	imnodes::EndInputAttribute();
 
+	imnodes::PushColorStyle(imnodes::ColorStyle_Pin, PIN_VEC3);
+	
 	imnodes::BeginOutputAttribute(m_index + 4);
 	ImGui::Text("Normal Data");
 	imnodes::EndOutputAttribute();

@@ -13,6 +13,12 @@
 
 #include <vec3.h>
 
+#define PIN_VEC3 IM_COL32(219, 135, 0, 255)
+#define PIN_VEC4 IM_COL32(146, 219, 0, 255)
+#define PIN_VEC2 IM_COL32(0, 219, 197, 255)
+#define PIN_FLOAT IM_COL32(162, 56, 255, 255)
+#define PIN_ANY IM_COL32(255, 255, 255, 255)
+
 class ConstVec3;
 
 enum NodeType {
@@ -30,6 +36,14 @@ enum NodeType {
 	TNormalProcess
 };
 
+enum PinType {
+	TFloat,
+	TVec2,
+	TVec3,
+	TVec4,
+	TAny
+};
+
 class Node_Editor;
 
 class Node {
@@ -43,6 +57,8 @@ public:
 	virtual int GetNodeSize() = 0;
 	virtual int GetId() = 0;
 	virtual int GetIndex() = 0;
+
+	virtual PinType GetPinType(const int index) = 0;
 
 	virtual void WriteNodeData(std::ofstream* file) {};
 
@@ -62,9 +78,13 @@ public:
 	virtual void render();
 
 	virtual NodeType GetNodeType() { return NodeType::TShaderNode; }
-	virtual int GetNodeSize() { return 7; }
+	virtual int GetNodeSize() { return 8; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
+
+	virtual PinType GetPinType(const int index) {
+		return (index - m_index > 2) && (index - m_index < 7) ? PinType::TFloat : PinType::TVec3;
+	}
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
@@ -82,6 +102,10 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
+	virtual PinType GetPinType(const int index) {
+		return index - m_index < 4 ? PinType::TVec3 : PinType::TVec2;
+	}
+
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
 
@@ -98,6 +122,10 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
+	virtual PinType GetPinType(const int index) {
+		return PinType::TAny;
+	}
+	
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
 
@@ -113,6 +141,10 @@ public:
 	virtual int GetNodeSize() { return 3; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
+
+	virtual PinType GetPinType(const int index) {
+		return PinType::TAny;
+	}
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
@@ -130,6 +162,10 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
+	virtual PinType GetPinType(const int index) {
+		return PinType::TVec3;
+	}
+	
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 	virtual void WriteNodeData(std::ofstream* file) override;
@@ -152,6 +188,10 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
+	virtual PinType GetPinType(const int index) {
+		return PinType::TVec4;
+	}
+
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
 	virtual void WriteNodeData(std::ofstream* file) override;
@@ -172,6 +212,10 @@ public:
 	virtual int GetNodeSize() { return 1; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
+
+	virtual PinType GetPinType(const int index) {
+		return PinType::TFloat;
+	}
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
@@ -195,6 +239,10 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
+	virtual PinType GetPinType(const int index) {
+		return PinType::TAny;
+	}
+
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
 
@@ -210,6 +258,19 @@ public:
 	virtual int GetNodeSize() { return 7; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
+
+	virtual PinType GetPinType(const int index) {
+		const int id = index - m_index;
+		if(id == 0) {
+			return PinType::TVec2;
+		} else if(id == 1) {
+			return PinType::TVec4;
+		} else if(id == 2) {
+			return PinType::TVec3;
+		} else {
+			return PinType::TFloat;
+		}
+	}
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 
@@ -237,6 +298,10 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
+	virtual PinType GetPinType(const int index) {
+		return PinType::TAny;
+	}
+	
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
 
@@ -252,6 +317,10 @@ public:
 	virtual int GetNodeSize() { return 1; }
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
+
+	virtual PinType GetPinType(const int index) {
+		return PinType::TFloat;
+	}
 
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
@@ -269,6 +338,10 @@ public:
 	virtual int GetId() { return m_id; }
 	virtual int GetIndex() { return m_index; }
 
+	virtual PinType GetPinType(const int index) {
+		return index - m_index != 3 ? PinType::TVec3 : PinType::TVec2;
+	}
+
 	virtual std::string Stringifize(Node_Editor* nedit, int start_id);
 };
 
@@ -285,7 +358,8 @@ public:
 	void DeleteLink();
 	bool IsAlreadyLinked(int id);
 
-	Node* GetNodeLinkedTo(int id_end);
+	Node* GetNodeLinkedTo(const int id_end);
+	Node* GetNodeFromPin(const int id);
 	int GetLinkStartId(int end_id);
 
 	std::string EvalNodes();

@@ -463,7 +463,7 @@ bool RaindropRenderer::CreateGbuff() {
 	//Specular buff
 	m_gbuffer->AddAttachement(IMGFORMAT_R16F);
 	m_g_buffer.gSpec = 3;
-
+	
 	//Depth
 	m_gbuffer->AddAttachement(IMGFORMAT_DEPTH);
 	m_g_buffer.gDepth = 4;
@@ -505,9 +505,13 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
 	m_g_buffer.gMetRoughAO = 4;
 
+	//Emissive
+	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
+	m_g_buffer.gEmissive = 5;
+	
 	//Depth
 	m_gbuffer->AddAttachement(IMGFORMAT_DEPTH, SCALEMODE_LINEAR);
-	m_g_buffer.gDepth = 5;
+	m_g_buffer.gDepth = 6;
 
 	m_gbuffer->BuildFBO();
 
@@ -629,6 +633,9 @@ void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 
 		m_ssao_buffer->GetAttachementByIndex(1)->BindTexture(6); //Blurred SSAO pass
 		m_light_shader->SetInt("ssao", 6);
+
+		m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(7);
+		m_light_shader->SetInt("gEmissive", 7);
 	}
 
 	m_light_shader->SetVec3("CamPos", CamPos);
