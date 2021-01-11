@@ -32,7 +32,7 @@ EXP_Game::EXP_Game(const EXP_GameInfo& gameinfo, const vec3f& refreshColor) {
 	InitGui();
 }
 
-EXP_Game::EXP_Game(std::string gameinfo) {
+EXP_Game::EXP_Game(const std::string& gameinfo) {
 	EXP_GameInfo gi = CreateGameInfoFromJSON(gameinfo);
 	m_error_flag = false;
 	m_currentCamera = nullptr;
@@ -267,19 +267,19 @@ PSound* EXP_Game::GetSoundEngine() const {
 void EXP_Game::PlaySimpleSound(const std::string& ref, float gain) const {
 	std::string fullref = m_gameinfo.RootGameContentFolder + ref;
 
-	std::thread t([](PSound* engine, std::string file, float gain) {
-		engine->playSimpleSound(file, gain);
-	}, m_soundEngine.get(), fullref, gain);
+	std::thread t([](PSound* engine, const std::string& file, const float tgain) {
+		engine->playSimpleSound(file, tgain);
+	}, m_soundEngine.get(), std::ref(fullref), gain);
 
 	t.detach();
 }
 
-void EXP_Game::PlaySound3D(const std::string& ref, const vec3f& pos, float gain) {
+void EXP_Game::PlaySound3D(const std::string& ref, const vec3f& pos, float gain) const {
 	std::string fullref = m_gameinfo.RootGameContentFolder + ref;
 
-	std::thread t([](PSound* engine, const std::string& file, vec3f pos, float gain) {
-		engine->playSound3D(file, pos, gain);
-	}, m_soundEngine.get(), std::ref(fullref), pos, gain);
+	std::thread t([](PSound* engine, const std::string& file, const vec3f& tpos, const float tgain) {
+		engine->playSound3D(file, tpos, tgain);
+	}, m_soundEngine.get(), std::ref(fullref), std::ref(pos), gain);
 
 	t.detach();
 }

@@ -16,6 +16,7 @@
 #include "RD_Texture.h"
 #include "RD_FrameBuffer.h"
 #include "RD_ShaderLoader.h"
+#include "RD_Cubemap.h"
 
 //MASK PROPERTY
 #define COLOR_BUFFER 1 //0b 0000 ... 0000 0001
@@ -105,6 +106,7 @@ public:
 	virtual RD_Texture* CreateTexture() = 0;
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h, bool nodepth) = 0;
 	virtual RD_ShaderLoader* CreateShader() = 0;
+	virtual RD_Cubemap* CreateCubemap() = 0;
 
 	virtual void SetViewportSize(int w, int h, int x, int y) = 0;
 

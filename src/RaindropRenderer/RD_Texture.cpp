@@ -14,7 +14,7 @@ RD_Texture_GL::~RD_Texture_GL() {
 	DeleteTexture();
 }
 
-void RD_Texture_GL::LoadTexture(std::string tex, bool flipTex) {
+void RD_Texture_GL::LoadTexture(const std::string& tex, const bool flipTex) {
 	int w, h, nbrC;
 
 	stbi_set_flip_vertically_on_load(flipTex);
@@ -83,73 +83,13 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 
-	int formatGL;
-	int typeGL = GL_UNSIGNED_BYTE;
-	int scaleMde;
+	unsigned int formatGL = GL_RGB;
+	unsigned int typeGL = GL_UNSIGNED_BYTE;
+	unsigned int scaleMde = GL_LINEAR;
 
-	switch(format){
-	case IMGFORMAT_R:
-		formatGL = GL_R;
-		break;
+	GetGLformat(format, scaleMode, &formatGL, &typeGL, &scaleMde);
 
-	case IMGFORMAT_RG:
-		formatGL = GL_RG;
-		break;
-	
-	case IMGFORMAT_RGB:
-		formatGL = GL_RGB;
-		break;
-
-	case IMGFORMAT_RGBA:
-		formatGL = GL_RGBA;
-		break;
-
-	case IMGFORMAT_R16F:
-		formatGL = GL_R16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_RG16F:
-		formatGL = GL_RG16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_RGB16F:
-		formatGL = GL_RGB16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_RGBA16F:
-		formatGL = GL_RGBA16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_DEPTH:
-		formatGL = GL_DEPTH_COMPONENT;
-		typeGL = GL_FLOAT;
-		break;
-
-	default:
-		formatGL = GL_RGB;
-		typeGL = GL_FLOAT;
-		break;
-	}
-
-	switch (scaleMode) {
-	case SCALEMODE_LINEAR:
-		scaleMde = GL_LINEAR;
-		break;
-
-	case SCALEMODE_NEAREST:
-		scaleMde = GL_NEAREST;
-		break;
-
-	default:
-		scaleMde = GL_LINEAR;
-		break;
-	}
-
-	int format2 = format == IMGFORMAT_DEPTH ? GL_DEPTH_COMPONENT : GL_RGB;
+	const int format2 = format == IMGFORMAT_DEPTH ? GL_DEPTH_COMPONENT : GL_RGB;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, formatGL, w, h, 0, format2, typeGL, NULL);
 
@@ -181,56 +121,10 @@ void RD_Texture_GL::DeleteTexture() {
 }
 
 void RD_Texture_GL::CreateTextureFromPixels(void* pixels, int w, int h, unsigned format) {
-	int formatGL;
-	int typeGL = GL_UNSIGNED_BYTE;
+	unsigned int formatGL = GL_RGB;
+	unsigned int typeGL = GL_UNSIGNED_BYTE;
 
-	switch (format) {
-	case IMGFORMAT_R:
-		formatGL = GL_R;
-		break;
-
-	case IMGFORMAT_RG:
-		formatGL = GL_RG;
-		break;
-
-	case IMGFORMAT_RGB:
-		formatGL = GL_RGB;
-		break;
-
-	case IMGFORMAT_RGBA:
-		formatGL = GL_RGBA;
-		break;
-
-	case IMGFORMAT_R16F:
-		formatGL = GL_R16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_RG16F:
-		formatGL = GL_RG16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_RGB16F:
-		formatGL = GL_RGB16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_RGBA16F:
-		formatGL = GL_RGBA16F;
-		typeGL = GL_FLOAT;
-		break;
-
-	case IMGFORMAT_DEPTH:
-		formatGL = GL_DEPTH_COMPONENT;
-		typeGL = GL_FLOAT;
-		break;
-
-	default:
-		formatGL = GL_RGB;
-		typeGL = GL_FLOAT;
-		break;
-	}
+	GetGLformat(format, NULL, &formatGL, &typeGL, NULL);
 
 	glGenTextures(1, &m_texture);
 
@@ -242,6 +136,89 @@ void RD_Texture_GL::CreateTextureFromPixels(void* pixels, int w, int h, unsigned
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+void RD_Texture_GL::GetGLformat(
+	unsigned int format,
+	unsigned int scaleMode,
+	unsigned int* formatgl,
+	unsigned int* typeGL,
+	unsigned int* scaleModegl) {
+
+	unsigned int fgl = GL_RGB;
+	unsigned int tgl = GL_UNSIGNED_BYTE;
+	unsigned int scaleMde = GL_LINEAR;
+	
+	switch (format) {
+	case IMGFORMAT_R:
+		fgl = GL_R;
+		break;
+
+	case IMGFORMAT_RG:
+		fgl = GL_RG;
+		break;
+
+	case IMGFORMAT_RGB:
+		fgl = GL_RGB;
+		break;
+
+	case IMGFORMAT_RGBA:
+		fgl = GL_RGBA;
+		break;
+
+	case IMGFORMAT_R16F:
+		fgl = GL_R16F;
+		tgl = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RG16F:
+		fgl = GL_RG16F;
+		tgl = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RGB16F:
+		fgl = GL_RGB16F;
+		tgl = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_RGBA16F:
+		fgl = GL_RGBA16F;
+		tgl = GL_FLOAT;
+		break;
+
+	case IMGFORMAT_DEPTH:
+		fgl = GL_DEPTH_COMPONENT;
+		tgl = GL_FLOAT;
+		break;
+
+	default:
+		fgl = GL_RGB;
+		tgl = GL_FLOAT;
+		break;
+	}
+
+	switch (scaleMode) {
+	case SCALEMODE_LINEAR:
+		scaleMde = GL_LINEAR;
+		break;
+
+	case SCALEMODE_NEAREST:
+		scaleMde = GL_NEAREST;
+		break;
+
+	default:
+		scaleMde = GL_LINEAR;
+		break;
+	}
+
+	if(formatgl)
+		*formatgl = fgl;
+
+	if(typeGL)
+		*typeGL = tgl;
+
+	if(scaleModegl)
+		*scaleModegl = scaleMde;
 }
 
 

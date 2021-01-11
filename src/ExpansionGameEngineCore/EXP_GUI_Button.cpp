@@ -20,9 +20,9 @@ EXP_GUI_Button::EXP_GUI_Button(EXP_Game* game, RD_Callback* func, EXP_ButtonImag
 	m_hover = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 	m_pressed = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 
-	m_normal->LoadTexture(workingDir + images.texRefNormal, false);
-	m_hover->LoadTexture(workingDir + images.texRefHover, false);
-	m_pressed->LoadTexture(workingDir + images.texRefPressed, false);
+	m_normal->LoadTexture(images.texRefNormal, false);
+	m_hover->LoadTexture(images.texRefHover, false);
+	m_pressed->LoadTexture(images.texRefPressed, false);
 
 	//Making matrices
 	m_mdl = mat4f(1.0f);

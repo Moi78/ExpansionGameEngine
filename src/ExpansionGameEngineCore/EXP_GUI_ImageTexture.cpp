@@ -26,9 +26,9 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 
 	m_image = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 
-	std::string ref = game->GetFilePathByRef(texRef);
+	const std::string ref = game->GetFilePathByRef(texRef);
 
-	m_image->LoadTexture(ref, false);
+	m_image->LoadTexture(ref , false);
 
 	m_surface = std::make_unique<RD_Quad>(game->GetRenderer());
 	m_surface->Bufferize();

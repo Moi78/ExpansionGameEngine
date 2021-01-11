@@ -212,6 +212,10 @@ RD_ShaderLoader* RD_RenderingAPI_GL::CreateShader() {
 	return new RD_ShaderLoader_GL();
 }
 
+RD_Cubemap* RD_RenderingAPI_GL::CreateCubemap() {
+	return new RD_Cubemap_GL();
+}
+
 void RD_RenderingAPI_GL::SetViewportSize(int w, int h, int x, int y) {
 	glViewport(x, y, w, h);
 }

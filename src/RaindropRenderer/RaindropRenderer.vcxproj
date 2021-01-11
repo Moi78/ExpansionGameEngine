@@ -135,7 +135,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;glew32.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -168,6 +168,7 @@
     <ClInclude Include="RaindropRenderer.h" />
     <ClInclude Include="RD_Callback.h" />
     <ClInclude Include="RD_Camera.h" />
+    <ClInclude Include="RD_Cubemap.h" />
     <ClInclude Include="RD_DirLight.h" />
     <ClInclude Include="RD_Error.h" />
     <ClInclude Include="RD_FrameBuffer.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="RaindropRenderer.cpp" />
     <ClCompile Include="RD_Callback.cpp" />
     <ClCompile Include="RD_Camera.cpp" />
+    <ClCompile Include="RD_Cubemap.cpp" />
     <ClCompile Include="RD_DirLight.cpp" />
     <ClCompile Include="RD_Error.cpp" />
     <ClCompile Include="RD_FrameBuffer.cpp" />

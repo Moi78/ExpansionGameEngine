@@ -113,7 +113,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_shadows_buffer->BuildFBO();
 	
 	m_defTex = m_api->CreateTexture();
-	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
+	m_defTex->LoadTexture(m_engineDir + "defTex.png");
 
 	m_blankTexture = m_api->CreateTexture();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
@@ -220,7 +220,7 @@ void RaindropRenderer::SetAmbientStrength(float strength) {
 	UpdateAmbientLighting();
 }
 
-void RaindropRenderer::SetAmbientColor(vec3f nColor) {
+void RaindropRenderer::SetAmbientColor(const vec3f& nColor) {
 	ambientColor = nColor;
 
 	UpdateAmbientLighting();
@@ -289,7 +289,7 @@ void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
 }
 
 void RaindropRenderer::RenderDbg(RD_Camera* cam) {
-	if (RENDER_DEBUG_ENABLED) {
+	if constexpr (RENDER_DEBUG_ENABLED) {
 		bool rEnableLighting = true;
 
 		if (IsFeatureEnabled(RendererFeature::Lighting)) {
@@ -303,7 +303,7 @@ void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 
 		m_api->SetFilledMode(FillingMode::WIREFRAME);
 
-		for (auto plight : m_pt_lights) {
+		for (auto* plight : m_pt_lights) {
 			m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
 
 			m_DBG_light_mdl->SetPosition(plight->GetPosition());
@@ -328,7 +328,7 @@ void RaindropRenderer::UpdatePointsLighting() {
 	m_CurrentShader->SetInt("nbrPointLight", (int) m_pt_lights.size());
 }
 
-void RaindropRenderer::FillPtLightIndice(int index) {
+void RaindropRenderer::FillPtLightIndice(const int index) {
 	if (m_pt_lights.size() < index) {
 		std::cerr << "Can't add point light : Index out of range." << std::endl;
 	}
@@ -596,7 +596,7 @@ void RaindropRenderer::RenderShadows() {
 }
 
 void RaindropRenderer::RenderPostProcess() {
-	for (auto pp : m_pp_effects) {
+	for (auto* pp : m_pp_effects) {
 		pp->RenderEffect(m_light_pprocess->GetAttachementByIndex(0));
 	}
 }
@@ -803,7 +803,7 @@ void RaindropRenderer::UnregisterPointLight(RD_PointLight* ptLight) {
 }
 
 void RaindropRenderer::UnregisterAllMeshes() {
-	for (auto msh : m_meshes) {
+	for (auto* msh : m_meshes) {
 		std::cout << "Unregistering Mesh" << std::endl;
 
 		delete msh;
@@ -813,7 +813,7 @@ void RaindropRenderer::UnregisterAllMeshes() {
 }
 
 void RaindropRenderer::UnregisterAllPointLights() {
-	for (auto plight : m_pt_lights) {
+	for (auto* plight : m_pt_lights) {
 		std::cout << "Unregistering Point Light" << std::endl;
 
 		delete plight;
@@ -823,7 +823,7 @@ void RaindropRenderer::UnregisterAllPointLights() {
 }
 
 void RaindropRenderer::UnregisterAllDirLights() {
-	for (auto dlight : m_DirLights) {
+	for (auto* dlight : m_DirLights) {
 		std::cout << "Unregistering Dir Light" << std::endl;
 
 		delete dlight;

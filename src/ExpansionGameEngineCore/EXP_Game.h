@@ -71,7 +71,7 @@ class EXPGE_API EXP_Game
 {
 public:
 	EXP_Game(const EXP_GameInfo& gameinfo, const vec3f& refreshColor);
-	EXP_Game(std::string gameInfoJSON);
+	EXP_Game(const std::string& gameInfoJSON);
 
 	~EXP_Game();
 	
@@ -117,7 +117,7 @@ public:
 	PSound* GetSoundEngine() const;
 	void RegisterSoundEmitter(EXP_SoundEmitter*) const;
 	void PlaySimpleSound(const std::string& ref, float gain) const;
-	void PlaySound3D(const std::string& ref, const vec3f& pos, float gain);
+	void PlaySound3D(const std::string& ref, const vec3f& pos, float gain) const;
 
 	//Files
 	std::string GetFilePathByRef(const std::string& ref) const;

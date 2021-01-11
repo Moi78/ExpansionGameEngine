@@ -124,7 +124,7 @@ public:
 
 	//Lighting
 	void SetAmbientStrength(float strength);
-	void SetAmbientColor(vec3f nColor);
+	void SetAmbientColor(const vec3f& nColor);
 
 	//Elements registrations
 	int AppendLight(RD_PointLight* ptLight);

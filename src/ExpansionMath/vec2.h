@@ -30,7 +30,7 @@ public:
 
     }
 
-    T getX() {
+    T getX() const {
         return m_x;
     }
 
@@ -38,7 +38,7 @@ public:
         m_x = x;
     }
 
-    T getY() {
+    T getY() const {
         return m_y;
     }
 
@@ -52,10 +52,10 @@ public:
     }
 
     float dotProduct(vec2<T> const& a) {
-        std::valarray<double> fa = { m_x, m_y };
-        std::valarray<double> fb = { (double)a.getX(),(double)a.getY() };
+        const std::valarray<double> fa = { m_x, m_y };
+        const std::valarray<double> fb = { (double)a.getX(),(double)a.getY() };
 
-        float result = (fa * fb).sum();
+        const float result = (fa * fb).sum();
 
         return result;
     }

@@ -31,9 +31,6 @@
 #define SCALEMODE_NEAREST 0
 #define SCALEMODE_LINEAR 1
 
-#include <glad/glad.h>
-
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -45,10 +42,17 @@ public:
 	RD_Texture() {}
 	virtual ~RD_Texture() {};
 
-	virtual void LoadTexture(std::string filepath, bool flipTex = true) = 0;
+	virtual void LoadTexture(const std::string& tex, bool flipTex = true) = 0;
 	virtual void GenerateColorTex(vec3f color) = 0;
 	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned int format = IMGFORMAT_RGB) = 0;
-	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB, unsigned int scaleMode = SCALEMODE_LINEAR) = 0;
+
+	virtual void CreateAndAttachToFramebuffer(
+		int w, int h,
+		unsigned int FBO,
+		unsigned int attachement = 0,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int scaleMode = SCALEMODE_LINEAR) = 0;
+	
 	virtual void BindTexture(unsigned int tex_unit) = 0;
 
 	virtual unsigned int GetTextureID() = 0;
@@ -58,16 +62,24 @@ public:
 
 #ifdef BUILD_OPENGL
 
+#include <glad/glad.h>
+
 class RAINDROPRENDERER_API RD_Texture_GL : public RD_Texture
 {
 public:
 	RD_Texture_GL();
 	virtual ~RD_Texture_GL();
 
-	virtual void LoadTexture(std::string filepath, bool flipTex = true);
+	virtual void LoadTexture(const std::string& tex, bool flipTex = true);
 	virtual void GenerateColorTex(vec3f color);
 	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned format) override;
-	virtual void CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement = 0, unsigned int format = IMGFORMAT_RGB, unsigned int scaleMode = SCALEMODE_LINEAR);
+	virtual void CreateAndAttachToFramebuffer(
+		int w, int h,
+		unsigned int FBO, 
+		unsigned int attachement = 0,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int scaleMode = SCALEMODE_LINEAR);
+	
 	virtual void BindTexture(unsigned int tex_unit = 0);
 
 	virtual void DeleteTexture();
@@ -75,6 +87,13 @@ public:
 	virtual unsigned int GetTextureID();
 
 private:
+	void GetGLformat(
+		unsigned int format,
+		unsigned int scaleMode,
+		unsigned int* formatgl,
+		unsigned int* typeGL,
+		unsigned int* scaleModegl); //I KNOW THAT IS C-STYLE >:)
+	
 	unsigned int m_texture;
 };
 

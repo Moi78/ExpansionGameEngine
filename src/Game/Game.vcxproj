@@ -148,7 +148,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>..\libs\libsndfile\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExpansionGameEngineCore.lib;RaindropRenderer.lib;BulldozerFileManager.lib;ExpansionMath.lib;PhysicaSound.lib;OpenAL32.lib;glfw3dll.lib;glew32.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

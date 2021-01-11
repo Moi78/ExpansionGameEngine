@@ -135,7 +135,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>..\libs\JSONCPP\lib\$(Configuration);..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ExpansionMath.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

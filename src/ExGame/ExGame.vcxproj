@@ -144,7 +144,7 @@
       <AdditionalDependencies>BulldozerFileManager.lib;ExpansionGameEngineCore.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;libsndfile-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
