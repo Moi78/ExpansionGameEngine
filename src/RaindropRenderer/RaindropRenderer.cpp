@@ -113,7 +113,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_shadows_buffer->BuildFBO();
 	
 	m_defTex = m_api->CreateTexture();
-	m_defTex->LoadTexture(m_engineDir + "defTex.png");
+	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
 
 	m_blankTexture = m_api->CreateTexture();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
@@ -595,7 +595,7 @@ void RaindropRenderer::RenderShadows() {
 	m_shadowCalc->SetInt("gPos", texID);
 
 	m_quad->RenderQuad();
-
+	
 	m_shadows_buffer->UnbindFBO();
 }
 
