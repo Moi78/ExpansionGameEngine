@@ -2,97 +2,60 @@
   "MapLevelCodeObjectName": "MainLevel",
   "nodes": [
     {
-      "type": "plight",
-      "nameTag": "mainlight",
-
-      "pos": [ 0, 0, 0.2 ],
-      "color": [ 1, 0.7, 0.5 ],
-      "brightness": 10.0,
-      "radius": 50.0
-    },
-
-    {
-      "type":"mesh",
-      "nameTag": "room",
-
-      "ref":"/meshes/room",
-      "material":"/shaders/mat_beton",
-
-      "pos":[0, 0, 0],
-      "rot":[0, 0, 0],
-      "scale":[1, 1, 0.5]
-    },
-
-    {
-      "type":"mesh",
-      "nameTag":"encolurePorte",
-
-      "ref":"/meshes/encolure",
-      "material":"/shaders/mat_paint",
-
-      "pos":[-3.95, 0, -0.55],
-      "rot":[0, 0, 0],
-      "scale":[0.3, 0.3, 0.3]
-    },
-
-    {
-      "type":"mesh",
-      "nameTag":"porte",
-
-      "ref":"/meshes/porte",
-      "material":"/shaders/mat_door",
-
-      "pos":[-3.95, -0.1, -0.65],
-      "rot":[0, 0, 0],
-      "scale":[0.3, 0.3, 0.3]
-    },
-
-    {
-      "type":"mesh",
-      "nameTag":"poignee",
-
-      "ref":"/meshes/poignee",
-      "material":"/shaders/mat_handle",
-
-      "pos":[-3.8, -0.08, -0.65],
-      "rot":[0, 0, 180],
-      "scale":[0.3, 0.3, 0.3]
-    },
-
-    {
-      "type":"mesh",
-      "nameTag":"chaise",
-      
-      "ref":"/meshes/chaise",
-      "material":"/shaders/mat_wood",
-
-      "pos":[-1, 1.5, 3],
-      "rot":[0, 0, 180],
-      "scale":[0.3, 0.3, -1]
-    },
-
-    {
-      "type":"mesh",
-      "nameTag":"chaines",
-
-      "ref":"/meshes/chaines",
-      "material":"/shaders/mat_metal",
-
-      "pos":[-0.75, 1.5, -0.855],
-      "rot":[0, 0, 180],
-      "scale":[0.3, 0.3, 0.3]
-    },
-
-    {
       "type":"mesh",
       "nameTag":"skydome",
 
-      "ref":"/meshes/test_dome",
+      "ref":"/test_dome",
       "material":"/shaders/mat_hdri",
 
       "pos":[0.0, 0.0, 0.0],
       "rot":[0.0, 0.0, 0.0],
       "scale":[500, 500, 500]
+    },
+
+    {
+      "type":"dlight",
+      "nameTag":"sun",
+
+      "dir":[-1, -1, -1],
+      "color":[1, 1, 1],
+      "brightness":10.0
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"sphere1",
+
+      "ref":"/sphere",
+      "material":"/shaders/mat_met_blue",
+
+      "pos":[0, 0, 0],
+      "rot":[0, 0, 0],
+      "scale":[1, 1, 1]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"sphere2",
+
+      "ref":"/sphere",
+      "material":"/shaders/mat_glow_green",
+
+      "pos":[0, -2.5, 0],
+      "rot":[0, 0, 0],
+      "scale":[1, 1, 1]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"plane",
+
+      "ref":"/plane",
+      "material":"/shaders/mat_red",
+
+      "pos":[0, 0, -2],
+      "rot":[0, 0, 0],
+      "scale":[3, 3, 3]
     }
   ]
 }
