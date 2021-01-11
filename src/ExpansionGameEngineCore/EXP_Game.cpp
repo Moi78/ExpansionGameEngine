@@ -139,7 +139,7 @@ void EXP_Game::InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo)
 		lvl->CallStart();
 	}
 
-	for (auto act : m_actors) {
+	for (auto* act : m_actors) {
 		act->Start();
 	}
 }
@@ -185,7 +185,7 @@ void EXP_Game::RenderScene() {
 	
 	m_rndr->ClearWindow(m_refreshColor);
 
-	vec3f CamLoc = CamLoc = m_currentCamera->GetLocation();
+	const vec3f CamLoc = m_currentCamera->GetLocation();
 	m_currentCamera->UpdateCamera();
     
 	//Process shadows
