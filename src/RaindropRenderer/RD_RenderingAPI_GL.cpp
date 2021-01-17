@@ -130,6 +130,14 @@ void RD_WindowingSystemGLFW::PollEvents() {
 	glfwPollEvents();
 }
 
+void RD_WindowingSystemGLFW::SetVSync(const bool vsync) {
+	if (vsync) {
+		glfwSwapInterval(1);
+	} else {
+		glfwSwapInterval(0);
+	}
+}
+
 void glfwWinCallback(GLFWwindow* win, int w, int h) {
 	RaindropRenderer* rndr = (RaindropRenderer*)glfwGetWindowUserPointer(win);
 	rndr->ResizeViewport(vec2f(0.0f, 0.0f), vec2f(w, h));
@@ -161,6 +169,7 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_CULL_FACE);
 
 	return true;
 }
@@ -190,6 +199,7 @@ void RD_RenderingAPI_GL::SetFilledMode(FillingMode fmode) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 }
+
 
 RD_WindowingSystem* RD_RenderingAPI_GL::GetWindowingSystem() {
 	return m_win_sys;

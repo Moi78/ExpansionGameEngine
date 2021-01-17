@@ -83,9 +83,9 @@ public:
 	virtual int GetWidth() = 0;
 
 	virtual void SwapWindow() = 0;
+	virtual void SetVSync(const bool vsync) = 0;
 
 	virtual bool WantToClose() = 0;
-
 	virtual void PollEvents() = 0;
 
 protected:

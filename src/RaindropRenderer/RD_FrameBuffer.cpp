@@ -33,7 +33,7 @@ void RD_FrameBuffer_GL::CreateFBO() {
 	glGenFramebuffers(1, &m_FBO);
 }
 
-void RD_FrameBuffer_GL::AddAttachement(unsigned int format, unsigned int scaleMode) {
+void RD_FrameBuffer_GL::AddAttachement(unsigned int format, unsigned int scaleMode, unsigned int wrapmode) {
 	Attachement a;
 
 	RD_Texture_GL* tex = nullptr;
@@ -41,6 +41,7 @@ void RD_FrameBuffer_GL::AddAttachement(unsigned int format, unsigned int scaleMo
 	a.tex = tex;
 	a.format = format;
 	a.scaleMode = scaleMode;
+	a.wrapmode = wrapmode;
 
 	m_attachments.push_back(a);
 }
@@ -54,7 +55,15 @@ void RD_FrameBuffer_GL::BuildFBO() {
 
 		m_attachments[i].tex = new RD_Texture_GL();
 
-		m_attachments[i].tex->CreateAndAttachToFramebuffer(m_w, m_h, m_FBO, i, m_attachments[i].format, m_attachments[i].scaleMode);
+		m_attachments[i].tex->CreateAndAttachToFramebuffer(
+			m_w,
+			m_h,
+			m_FBO,
+			i, 
+			m_attachments[i].format,
+			m_attachments[i].scaleMode,
+			m_attachments[i].wrapmode);
+		
 		attach.push_back(GL_COLOR_ATTACHMENT0 + i);
 
 		if(m_attachments[i].format == IMGFORMAT_DEPTH) {

@@ -10,6 +10,8 @@
 
 #include <EXP_RigidBody.h>
 
+#include <RD_RenderingAPI.h>
+
 #include <GLFW/glfw3.h>
 
 class Character : public EXP_Actor
@@ -30,7 +32,7 @@ private:
 	EXP_Camera* m_cam;
 
 	EXP_RB_Box* m_bound;
-
+	
 	EXP_KeyboardCallback* m_move;
 	EXP_KeyboardCallback* m_destroy;
 	EXP_KeyboardCallback* m_roll;

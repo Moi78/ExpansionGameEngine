@@ -31,5 +31,7 @@
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
     <None Include="Engine\Shaders\glsl\ShadowCalc.frag" />
     <None Include="Engine\Shaders\glsl\ShadowCalc.vert" />
+    <None Include="Engine\Shaders\glsl\pbr\bloom.frag" />
+    <None Include="Engine\Shaders\glsl\pbr\bloom.vert" />
   </ItemGroup>
 </Project>

@@ -15,6 +15,8 @@
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api, Pipeline pline, int maxFramerate, bool minInit, std::string engineDir) : m_vp_size(w, h), m_vp_pos(0.0f, 0.0f) {
 	FillFeaturesArray();
 
+	m_vsync = true;
+	
 	m_engineDir = std::move(engineDir);
 
 	if (api == API::OPENGL) {
@@ -94,6 +96,12 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 			m_engineDir + "/Shaders/glsl/pbr/SSAO_Blur.frag"
 		);
 
+		m_bloom = m_api->CreateShader();
+		m_bloom->compileShaderFromFile(
+			m_engineDir + "/Shaders/glsl/pbr/bloom.vert",
+			m_engineDir + "/Shaders/glsl/pbr/bloom.frag"
+		);
+		
 		m_CurrentShader = m_light_shader;
 
 		ambientStrength = 0.001f;
@@ -173,8 +181,11 @@ RaindropRenderer::~RaindropRenderer() {
 		delete m_ssr_shader;
 		delete m_ssao_shader;
 		delete m_ssao_blur_shader;
+		delete m_bloom;
 
 		delete m_ssao_noise_tex;
+		delete m_bloom_buffera;
+		delete m_bloom_bufferb;
 	}
 }
 
@@ -517,9 +528,9 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
 	//Light & PostProcess screen
-	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
-	//SSR Texture
 	m_light_pprocess->AddAttachement(IMGFORMAT_RGB16F);
+	//SSR Texture
+	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
 	m_light_pprocess->BuildFBO();
 	
 	m_ssao_buffer = m_api->CreateFrameBuffer(width, height, true);
@@ -528,6 +539,14 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	//SSAO-Blur Texture
 	m_ssao_buffer->AddAttachement(IMGFORMAT_R16F);
 	m_ssao_buffer->BuildFBO();
+
+	m_bloom_buffera = m_api->CreateFrameBuffer(width, height, true);
+	m_bloom_buffera->AddAttachement(IMGFORMAT_RGB16F, 1, WRAPMODE_CLAMP2EDGE); //Bloom blur 1
+	m_bloom_buffera->BuildFBO();
+
+	m_bloom_bufferb = m_api->CreateFrameBuffer(width, height, true);
+	m_bloom_bufferb->AddAttachement(IMGFORMAT_RGB16F, 1, WRAPMODE_CLAMP2EDGE); //Bloom blur 2
+	m_bloom_bufferb->BuildFBO();
 	
 	return true;
 }
@@ -566,6 +585,8 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	RenderPostProcess();
 
 	m_light_pprocess->UnbindFBO();
+
+	RenderBloom();
 }
 
 void RaindropRenderer::RenderShadows() {
@@ -647,23 +668,56 @@ void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 	m_quad->RenderQuad();
 }
 
+void RaindropRenderer::RenderBloom() {
+	SwitchShader(m_bloom);
+
+	for (int i = 0; i < 10; i++) {
+		m_bloom_buffera->BindFBO();
+		if (i == 0) {
+			m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
+			m_bloom->SetInt("threshold", 1);
+		} else {
+			m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
+			m_bloom->SetInt("threshold", 0);
+		}
+		m_bloom->SetInt("gShaded", 0);
+		m_bloom->SetBool("horizontal", true);
+
+		m_quad->RenderQuad();
+
+		m_bloom_buffera->UnbindFBO();
+		m_bloom_bufferb->BindFBO();
+
+		m_bloom->SetInt("threshold", 0);
+
+		m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
+		m_bloom->SetInt("gShaded", 0);
+		m_bloom->SetInt("horizontal", false);
+
+		m_quad->RenderQuad();
+
+		m_bloom_bufferb->UnbindFBO();
+	}
+}
+
+
 void RaindropRenderer::RenderSSR(RD_Camera* cam) {
 	SwitchShader(m_ssr_shader);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
-	m_ssr_shader->SetInt("gPos", 0);
+	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
+	//m_ssr_shader->SetInt("gPos", 0);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
-	m_ssr_shader->SetInt("gNorm", 1);
+	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
+	//m_ssr_shader->SetInt("gNorm", 1);
 
-	m_light_pprocess->GetAttachementByIndex(0)->BindTexture(2); //Attachement 0 corresponds to the Light Texture Attachement
-	m_ssr_shader->SetInt("ShadedImg", 2);
+	//m_light_pprocess->GetAttachementByIndex(0)->BindTexture(2); //Attachement 0 corresponds to the Light Texture Attachement
+	//m_ssr_shader->SetInt("ShadedImg", 2);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(3);
-	m_ssr_shader->SetInt("gMetRoughAO", 3);
+	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(3);
+	//m_ssr_shader->SetInt("gMetRoughAO", 3);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gDepth)->BindTexture(4);
-	m_ssr_shader->SetInt("Depth", 4);
+	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gDepth)->BindTexture(4);
+	//m_ssr_shader->SetInt("Depth", 4);
 	
 	cam->UseCamera(m_ssr_shader);
 
@@ -768,8 +822,9 @@ void RaindropRenderer::RenderBeauty() {
 		m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7); //SSR Attachement
 		m_beauty_shader->SetInt("SSR", 7);
 
-		m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(8);
-		m_beauty_shader->SetInt("gMetRoughAO", 8);
+
+		m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(8);
+		m_beauty_shader->SetInt("bloom", 8);
 	}
 
 	m_quad->RenderQuad();
@@ -962,6 +1017,8 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_light_pprocess->ChangeFramebufferSize(sx, sy);
 	m_ssao_buffer->ChangeFramebufferSize(sx, sy);
 	m_shadows_buffer->ChangeFramebufferSize(sx, sy);
+	m_bloom_buffera->ChangeFramebufferSize(sx, sy);
+	m_bloom_bufferb->ChangeFramebufferSize(sx, sy);
 
 	m_vp_pos = pos;
 	m_vp_size = size;
@@ -983,4 +1040,14 @@ vec2f RaindropRenderer::GetViewportSize() const {
 
 vec2f RaindropRenderer::GetViewportPos() const {
 	return m_vp_pos;
+}
+
+void RaindropRenderer::SetVSync(const bool vsync) {
+	m_api->GetWindowingSystem()->SetVSync(vsync);
+
+	m_vsync = vsync;
+}
+
+bool RaindropRenderer::IsVSyncActivated() const {
+	return m_vsync;
 }

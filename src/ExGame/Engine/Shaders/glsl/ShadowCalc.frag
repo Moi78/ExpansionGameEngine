@@ -10,6 +10,10 @@ uniform int NbrDirLights;
 
 uniform sampler2D gPos;
 
+float lerp(float v0, float v1, float t) {
+	return (1 - t) * v0 + t * v1;
+}
+
 void main() {
 	float finalShadow = 0.0;
 
@@ -31,14 +35,15 @@ void main() {
 		float shadow = 0.0;
 
 		vec2 texelSize = 1.0 / textureSize(ShadowMap[i], 0);
-		for(int x = -1; x <= 1; x++) {
-			for(int y = -1; y <= 1; y++) {
+		for(float x = -1; x <= 1; x += 1) {
+			for(float y = -1; y <= 1; y += 1) {
 				float pcfDepth = texture(ShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
+
 				shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
 			}
 		}
 
-		finalShadow += shadow / 9;
+		finalShadow += clamp(shadow / 9, 0, 1);
 	}
 
 

@@ -31,6 +31,9 @@
 #define SCALEMODE_NEAREST 0
 #define SCALEMODE_LINEAR 1
 
+#define WRAPMODE_REPEAT 0
+#define WRAPMODE_CLAMP2EDGE 1
+
 #include <string>
 #include <vector>
 
@@ -44,14 +47,20 @@ public:
 
 	virtual void LoadTexture(const std::string& tex, bool flipTex = true) = 0;
 	virtual void GenerateColorTex(vec3f color) = 0;
-	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned int format = IMGFORMAT_RGB) = 0;
+	virtual void CreateTextureFromPixels(
+		void* pixels,
+		int w,
+		int h,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
 
 	virtual void CreateAndAttachToFramebuffer(
 		int w, int h,
 		unsigned int FBO,
 		unsigned int attachement = 0,
 		unsigned int format = IMGFORMAT_RGB,
-		unsigned int scaleMode = SCALEMODE_LINEAR) = 0;
+		unsigned int scaleMode = SCALEMODE_LINEAR,
+		unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
 	
 	virtual void BindTexture(unsigned int tex_unit) = 0;
 
@@ -72,13 +81,14 @@ public:
 
 	virtual void LoadTexture(const std::string& tex, bool flipTex = true);
 	virtual void GenerateColorTex(vec3f color);
-	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned format) override;
+	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned format, unsigned int wrapmode) override;
 	virtual void CreateAndAttachToFramebuffer(
 		int w, int h,
 		unsigned int FBO, 
 		unsigned int attachement = 0,
 		unsigned int format = IMGFORMAT_RGB,
-		unsigned int scaleMode = SCALEMODE_LINEAR);
+		unsigned int scaleMode = SCALEMODE_LINEAR,
+		unsigned int wrapmode = WRAPMODE_REPEAT);
 	
 	virtual void BindTexture(unsigned int tex_unit = 0);
 
@@ -90,9 +100,11 @@ private:
 	void GetGLformat(
 		unsigned int format,
 		unsigned int scaleMode,
+		unsigned int wrapmode,
 		unsigned int* formatgl,
 		unsigned int* typeGL,
-		unsigned int* scaleModegl); //I KNOW THAT IS C-STYLE >:)
+		unsigned int* scaleModegl,
+		unsigned int* wrapmodeGL); //I KNOW THAT IS C-STYLE >:)
 	
 	unsigned int m_texture;
 };

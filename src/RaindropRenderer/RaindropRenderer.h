@@ -82,6 +82,8 @@ public:
 	int getWindowHeigh() const;
 	int getWindowWidth() const;
 	void SetFullscreenMode(const bool fullscr) const;
+	void SetVSync(const bool vsync);
+	bool IsVSyncActivated() const;
 	
 	std::string GetEngineDir() const;
 
@@ -96,6 +98,7 @@ public:
 	void RenderShadows();
 
 	void RenderSSR(RD_Camera* cam);
+	void RenderBloom();
 
 	void RenderSSAO(RD_Camera* cam);
 	void GenerateSSAOKernels();
@@ -190,6 +193,7 @@ private:
 
 	bool m_error_flag;
 	bool m_resize_override;
+	bool m_vsync;
 
 	std::array<std::pair<std::string, bool>, 4> m_renderer_feature;
 
@@ -216,6 +220,8 @@ private:
 	RD_FrameBuffer* m_gbuffer;
 	RD_FrameBuffer* m_light_pprocess;
 	RD_FrameBuffer* m_shadows_buffer;
+	RD_FrameBuffer* m_bloom_buffera;
+	RD_FrameBuffer* m_bloom_bufferb;
 
 	//PBR-Only stuff
 	RD_FrameBuffer* m_ssao_buffer;
@@ -230,6 +236,7 @@ private:
 	RD_ShaderLoader* m_light_shader;
 	RD_ShaderLoader* m_beauty_shader;
 	RD_ShaderLoader* m_shadowCalc;
+	RD_ShaderLoader* m_bloom;
 	
 	RD_ShaderLoader* m_ssr_shader;
 	

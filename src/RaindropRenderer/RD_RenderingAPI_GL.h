@@ -48,6 +48,7 @@ public:
 	virtual void PollEvents();
 
 	virtual void CaptureCursor(bool mode);
+	virtual void SetVSync(const bool vsync);
 
 	GLFWwindow* GetWindow();
 

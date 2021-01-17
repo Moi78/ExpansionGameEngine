@@ -24,8 +24,8 @@ void RD_Texture_GL::LoadTexture(const std::string& tex, const bool flipTex) {
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 
 	//Wrapping
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	//Filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -77,7 +77,7 @@ void RD_Texture_GL::GenerateColorTex(vec3f color) {
 	image.clear();
 }
 
-void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement, unsigned int format, unsigned int scaleMode) {
+void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO, unsigned int attachement, unsigned int format, unsigned int scaleMode, unsigned int wrapmode) {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
 	glGenTextures(1, &m_texture);
@@ -86,8 +86,9 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 	unsigned int formatGL = GL_RGB;
 	unsigned int typeGL = GL_UNSIGNED_BYTE;
 	unsigned int scaleMde = GL_LINEAR;
+	unsigned int wrapmde = GL_REPEAT;
 
-	GetGLformat(format, scaleMode, &formatGL, &typeGL, &scaleMde);
+	GetGLformat(format, scaleMode, wrapmode, &formatGL, &typeGL, &scaleMde, &wrapmde);
 
 	const int format2 = format == IMGFORMAT_DEPTH ? GL_DEPTH_COMPONENT : GL_RGB;
 
@@ -96,8 +97,8 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, scaleMde);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, scaleMde);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapmde);
 
 	if (format != IMGFORMAT_DEPTH) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachement, GL_TEXTURE_2D, m_texture, 0);
@@ -120,11 +121,12 @@ void RD_Texture_GL::DeleteTexture() {
 	glDeleteTextures(1, &m_texture);
 }
 
-void RD_Texture_GL::CreateTextureFromPixels(void* pixels, int w, int h, unsigned format) {
+void RD_Texture_GL::CreateTextureFromPixels(void* pixels, int w, int h, unsigned format, unsigned int wrapmode) {
 	unsigned int formatGL = GL_RGB;
 	unsigned int typeGL = GL_UNSIGNED_BYTE;
+	unsigned int wrap = wrapmode;
 
-	GetGLformat(format, NULL, &formatGL, &typeGL, NULL);
+	GetGLformat(format, NULL, NULL, &formatGL, &typeGL, nullptr, &wrap);
 
 	glGenTextures(1, &m_texture);
 
@@ -134,20 +136,23 @@ void RD_Texture_GL::CreateTextureFromPixels(void* pixels, int w, int h, unsigned
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 }
 
 void RD_Texture_GL::GetGLformat(
 	unsigned int format,
 	unsigned int scaleMode,
+	unsigned int wrapmode,
 	unsigned int* formatgl,
 	unsigned int* typeGL,
-	unsigned int* scaleModegl) {
+	unsigned int* scaleModegl,
+	unsigned int* wrapmodeGL) {
 
 	unsigned int fgl = GL_RGB;
 	unsigned int tgl = GL_UNSIGNED_BYTE;
 	unsigned int scaleMde = GL_LINEAR;
+	unsigned int wrapmde = GL_REPEAT;
 	
 	switch (format) {
 	case IMGFORMAT_R:
@@ -211,6 +216,18 @@ void RD_Texture_GL::GetGLformat(
 		break;
 	}
 
+	switch(wrapmode) {
+	case WRAPMODE_REPEAT:
+		wrapmde = GL_REPEAT;
+		break;
+	case WRAPMODE_CLAMP2EDGE:
+		wrapmde = GL_CLAMP_TO_EDGE;
+		break;
+	default:
+		wrapmde = GL_REPEAT;
+		break;
+	}
+
 	if(formatgl)
 		*formatgl = fgl;
 
@@ -219,6 +236,10 @@ void RD_Texture_GL::GetGLformat(
 
 	if(scaleModegl)
 		*scaleModegl = scaleMde;
+
+	if(wrapmodeGL) {
+		*wrapmodeGL = wrapmde;
+	}
 }
 
 
