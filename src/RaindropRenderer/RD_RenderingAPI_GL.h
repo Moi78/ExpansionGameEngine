@@ -102,7 +102,7 @@ public:
 	virtual bool InitializeAPI(int w, int h, std::string wname);
 	virtual RD_WindowingSystem* GetWindowingSystem();
 
-	virtual RD_RenderingAPI_VertexElemBufferGL* CreateVertexElemBuffer();
+	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer();
 	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer();
 	virtual RD_Texture* CreateTexture();
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h, bool nodepth = false);

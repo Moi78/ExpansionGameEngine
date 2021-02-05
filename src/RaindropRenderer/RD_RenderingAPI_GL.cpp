@@ -174,7 +174,7 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	return true;
 }
 
-RD_RenderingAPI_VertexElemBufferGL* RD_RenderingAPI_GL::CreateVertexElemBuffer() {
+RD_RenderingAPI_VertexElemBuffer* RD_RenderingAPI_GL::CreateVertexElemBuffer() {
 	return new RD_RenderingAPI_VertexElemBufferGL();
 }
 

@@ -4,6 +4,7 @@
         "RootGameContentFolder":"Content",
         "GameBaseResolution":[1280, 720],
         "RenderingPipeline":"pbr",
+        "API":"dx11",
 
         "GameBin":"../x64/Debug/Game.dll",
 
@@ -16,6 +17,7 @@
         "RootGameContentFolder":"Content",
         "GameBaseResolution":[1280, 720],
         "RenderingPipeline":"pbr",
+        "API":"ogl",
 
         "GameBin":"../Game/libGame.so",
 

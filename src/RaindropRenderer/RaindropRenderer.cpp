@@ -10,7 +10,15 @@
 #include "RD_PostProcess.h"
 
 #include "RD_RenderingAPI.h"
+
+#ifdef BUILD_OPENGL
 #include "RD_RenderingAPI_GL.h"
+#endif // BUILD_OPENGL
+
+#ifdef BUILD_D3D11
+#include "RD_RenderingAPI_DX11.h"
+#endif // BUILD_D3D11
+
 
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api, Pipeline pline, int maxFramerate, bool minInit, std::string engineDir) : m_vp_size(w, h), m_vp_pos(0.0f, 0.0f) {
 	FillFeaturesArray();
@@ -19,16 +27,29 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	
 	m_engineDir = std::move(engineDir);
 
+#ifdef BUILD_OPENGL
 	if (api == API::OPENGL) {
 		m_api = std::make_unique<RD_RenderingAPI_GL>(this);
+		std::cout << "Launching with OpenGL." << std::endl;
 	}
+#endif // BUILD_OPENGL
+
+#ifdef BUILD_D3D11
+	if (api == API::DIRECTX11) {
+		m_api = std::make_unique<RD_RenderingAPI_DX11>(this);
+		std::cout << "Launching with DirectX 11." << std::endl;
+	}
+#endif // BUILD_D3D11
 
 	m_error_flag = false;
 	m_resize_override = false;
 
 	assert(m_api != nullptr && "ERROR: No 3D-API selected.");
 
-	m_api->InitializeAPI(w, h, std::move(windowName));
+	if (!m_api->InitializeAPI(w, h, std::move(windowName))) {
+		dispErrorMessageBox(StrToWStr("Cannot initialize 3D-API."));
+		exit(-1);
+	}
 
 	m_frmLmt = std::make_unique<RD_FrameLimiter>(maxFramerate);
 	m_pipeline = pline;

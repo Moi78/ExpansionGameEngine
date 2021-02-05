@@ -57,10 +57,15 @@ class RD_PostProcessEffect;
 
 class RD_RenderingAPI;
 
+#ifdef BUILD_D3D11
+class RD_RenderingAPI_DX11;
+#endif // BUILD_D3D11
+
+
 enum API {
 	OPENGL,
 	VULKAN,
-	DIRECTX
+	DIRECTX11
 };
 
 enum Pipeline {

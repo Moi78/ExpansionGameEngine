@@ -97,6 +97,15 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 		pline = Pipeline::LAMBERT_ENGINE;
 	}
 
+	API rAPI;
+	std::string api = TargetRoot.get("API", "ogl").asString();
+	if (api == "ogl") {
+		rAPI = API::OPENGL;
+	}
+	else if (api == "dx11") {
+		rAPI = API::DIRECTX11;
+	}
+
 	std::string startupMap = TargetRoot["StartupMap"].asString();
 
 	EXP_GameInfo gi = {};
@@ -107,6 +116,7 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 	gi.GameLib = GameLib;
 	gi.StartupMap = startupMap;
 	gi.RenderingPipeline = pline;
+	gi.RenderingAPI = rAPI;
 
 	return gi;
 }
@@ -119,7 +129,8 @@ void EXP_Game::InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo)
 
 	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y,
 												gameinfo.GameName,
-												API::OPENGL, gameinfo.RenderingPipeline,
+												gameinfo.RenderingAPI,
+												gameinfo.RenderingPipeline,
 												60,
 												false,
 												gameinfo.RootEngineContentFolder);
