@@ -129,6 +129,13 @@ RD_RenderingAPI_DX11::RD_RenderingAPI_DX11(RaindropRenderer* rndr) {
 
 RD_RenderingAPI_DX11::~RD_RenderingAPI_DX11() {
 	delete m_winsys;
+
+	m_maintarget->Release();
+	m_backbuffer->Release();
+
+	m_swapChain->Release();
+	m_immContext->Release();
+	m_device->Release();
 }
 
 bool RD_RenderingAPI_DX11::InitializeAPI(int w, int h, std::string wname) {
@@ -173,8 +180,7 @@ void RD_RenderingAPI_DX11::CreateDeviceSwapChain() {
 		&m_swapChain,
 		&m_device,
 		&ftrLevel,
-		&m_immContext
-	);
+		&m_immContext);
 
 	if (FAILED(res)) {
 		dispErrorMessageBox(StrToWStr("Cannot create D3D11Device and DXGISwapChain."));
@@ -183,6 +189,25 @@ void RD_RenderingAPI_DX11::CreateDeviceSwapChain() {
 	else {
 		std::cout << "Created device & swap chain." << std::endl;
 	}
+
+	m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_backbuffer);
+	if (!m_backbuffer) {
+		dispErrorMessageBox(StrToWStr("Cannot create back buffer."));
+		return;
+	}
+
+	m_device->CreateRenderTargetView(m_backbuffer, NULL, &m_maintarget);
+
+	D3D11_VIEWPORT vp;
+	ZeroMemory(&vp, sizeof(vp));
+	vp.Width = m_winsys->GetWidth();
+	vp.Height = m_winsys->GetHeight();
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+
+	m_immContext->RSSetViewports(1, &vp);
 }
 
 RD_WindowingSystem* RD_RenderingAPI_DX11::GetWindowingSystem() {
@@ -206,7 +231,7 @@ RD_FrameBuffer* RD_RenderingAPI_DX11::CreateFrameBuffer(int w, int h, bool nodep
 }
 
 RD_ShaderLoader* RD_RenderingAPI_DX11::CreateShader() {
-	return nullptr;
+	return new RD_ShaderLoader_DX11(m_device);
 }
 
 RD_Cubemap* RD_RenderingAPI_DX11::CreateCubemap() {

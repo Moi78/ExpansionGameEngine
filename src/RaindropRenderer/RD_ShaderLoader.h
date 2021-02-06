@@ -64,25 +64,64 @@ public:
 	RD_ShaderLoader_GL();
 	~RD_ShaderLoader_GL();
 
-	void compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile);
-	void CompileShaderFromCode(std::string vertexCode, std::string fragmentCode);
+	virtual void compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile);
+	virtual void CompileShaderFromCode(std::string vertexCode, std::string fragmentCode);
 
-	void useShader();
+	virtual void useShader();
 
-	void SetBool(const std::string &name, bool value);
-	void SetInt(const std::string& name, int value);
-	void SetFloat(const std::string& name, float value);
+	virtual void SetBool(const std::string &name, bool value);
+	virtual void SetInt(const std::string& name, int value);
+	virtual void SetFloat(const std::string& name, float value);
 
-	void SetMatrix(const std::string& name, mat4f matrix);
+	virtual void SetMatrix(const std::string& name, mat4f matrix);
 
-	void SetVec3(const std::string& name, vec3f vec);
+	virtual void SetVec3(const std::string& name, vec3f vec);
 
-	unsigned int GetProgID();
+	virtual unsigned int GetProgID();
 
 private:
 	unsigned int m_program_id;
 };
 
 #endif //BUILD_OPENGL
+
+#ifdef BUILD_D3D11
+
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3dcompiler.lib")
+
+#include <d3d11.h>
+
+class RAINDROPRENDERER_API RD_ShaderLoader_DX11 : public RD_ShaderLoader
+{
+public:
+	RD_ShaderLoader_DX11(ID3D11Device* device);
+	~RD_ShaderLoader_DX11();
+
+	virtual void compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile);
+	virtual void CompileShaderFromCode(std::string vertexCode, std::string fragmentCode);
+
+	virtual void useShader();
+
+	virtual void SetBool(const std::string& name, bool value);
+	virtual void SetInt(const std::string& name, int value);
+	virtual void SetFloat(const std::string& name, float value);
+
+	virtual void SetMatrix(const std::string& name, mat4f matrix);
+
+	virtual void SetVec3(const std::string& name, vec3f vec);
+
+	virtual unsigned int GetProgID() { return 0; }
+
+private:
+	ID3D11Device* m_device;
+
+	ID3D11VertexShader* m_vertShader;
+	ID3D11PixelShader* m_fragShader;
+
+	ID3D11InputLayout* m_layout;
+};
+
+#endif // BUILD_D3D11
 
 #endif //_RD_SHADER_LOADER_H__

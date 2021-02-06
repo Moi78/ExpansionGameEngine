@@ -1,9 +1,7 @@
-cbuffer PS_CONSTANT_BUFFER : register(b1) {
-    Texture2D lightpass;
-    Texture2D GUIscreen;
-    Texture2D bloom;
-    Texture2D SSR;
-};
+Texture2D lightpass : register(t0);
+Texture2D GUIscreen : register(t1);
+Texture2D bloom : register(t2);
+Texture2D SSR : register(t3);
 
 SamplerState TexSampler {
     Filter = MIN_MAG_MIP_LINEAR;

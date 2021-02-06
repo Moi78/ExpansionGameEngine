@@ -57,11 +57,6 @@ class RD_PostProcessEffect;
 
 class RD_RenderingAPI;
 
-#ifdef BUILD_D3D11
-class RD_RenderingAPI_DX11;
-#endif // BUILD_D3D11
-
-
 enum API {
 	OPENGL,
 	VULKAN,
@@ -192,6 +187,7 @@ private:
 	void SetErrorFlag(bool val);
 
 	std::unique_ptr<RD_RenderingAPI> m_api;
+	API m_api_t;
 
 	Pipeline m_pipeline;
 	std::string m_engineDir;

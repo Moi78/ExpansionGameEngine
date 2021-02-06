@@ -143,6 +143,9 @@ private:
 	ID3D11Device* m_device;
 	ID3D11DeviceContext* m_immContext;
 	IDXGISwapChain* m_swapChain;
+
+	ID3D11Texture2D* m_backbuffer;
+	ID3D11RenderTargetView* m_maintarget;
 };
 
 #endif // BUILD_D3D11
