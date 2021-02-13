@@ -1,4 +1,4 @@
-#version 410 core
+#version 450 core
 layout (location = 0) out vec4 LightPass;
 
 in vec2 UVcoords;
@@ -18,24 +18,41 @@ uniform sampler2D gEmissive;
 uniform sampler2D ssao;
 
 //Ambient
-uniform float AmbientStrength;
-uniform vec3 AmbientColor;
+layout(std140, binding = 2) uniform AMBIENT {
+	vec3 AmbientColor;
+	float AmbientStrength;
+};
 
 //Point Light
 const int MAX_POINT_LIGHTS = 243;
-uniform vec3 LightPos[MAX_POINT_LIGHTS];
-uniform float LightBrightness[MAX_POINT_LIGHTS];
-uniform vec3 LightColor[MAX_POINT_LIGHTS];
-uniform float LightRadius[MAX_POINT_LIGHTS];
-uniform int nbrPointLight;
+
+struct PointLight {
+	vec3 LightPos;
+	vec3 LightColor;
+	float LightBrightness;
+	float LightRadius;
+};
+
+layout(std140, binding = 3) uniform PointLightData {
+	int nbrPointLight;
+	PointLight plights[MAX_POINT_LIGHTS];
+};
 
 //Dir Light
-uniform int nbrDirLight;
-uniform vec3 DirLightDir[10];
-uniform vec3 DirLightColor[10];
-uniform float DirLightBrightness[10];
+struct DirLight {
+	vec3 Dir;
+	vec3 Color;
+	float brightness;
+};
 
-uniform vec3 CamPos;
+layout(std140, binding = 4) uniform DirLightData {
+	int nbrDirLight;
+	DirLight dlights[10];
+};
+
+layout(std140, binding = 5) uniform CamData {
+	vec3 CamPos;
+};
 
 uniform bool ftr_lighting = true;
 uniform bool ftr_specular = true;
@@ -98,9 +115,9 @@ float GeomSmith(vec3 N, vec3 V, vec3 L, float roughness) {
 vec3 CalcDirLight(int index) {
 	float dist = 100000.0;
 
-	vec3 ColPow = DirLightColor[index] * DirLightBrightness[index];
+	vec3 ColPow = dlights[index].Color * dlights[index].brightness;
 
-	vec3 L = normalize(vec3(-DirLightDir[index]));
+	vec3 L = normalize(vec3(-dlights[index].Dir));
 	vec3 H = normalize(viewDir + L);
 
 	vec3 radiance = ColPow;
@@ -123,12 +140,12 @@ vec3 CalcDirLight(int index) {
 }
 
 vec3 CalcPointLight(int lightIndex) {
-	float dist = length(LightPos[lightIndex] - FragPos);
+	float dist = length(plights[lightIndex].LightPos - FragPos);
 
-	if(dist < LightRadius[lightIndex]) {
-		vec3 ColPow = LightColor[lightIndex] * LightBrightness[lightIndex];
+	if(dist < plights[lightIndex].LightRadius) {
+		vec3 ColPow = plights[lightIndex].LightColor * plights[lightIndex].LightBrightness;
 
-		vec3 L = normalize(LightPos[lightIndex] - FragPos);
+		vec3 L = normalize(plights[lightIndex].LightPos - FragPos);
 		vec3 H = normalize(viewDir + L);
 
 		float attenuation = 1.0 / ((dist * dist));

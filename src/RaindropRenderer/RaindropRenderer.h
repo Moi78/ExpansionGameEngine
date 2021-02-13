@@ -174,9 +174,6 @@ private:
 	void UpdateAmbientLighting();
 	void UpdateDirLighting();
 
-	void FillPtLightIndice(int index);
-	void FillDirLightIndice(int index);
-
 	void FillFeaturesArray();
 	void EnableAllFeatures();
 
@@ -252,6 +249,12 @@ private:
 	std::vector<RD_PostProcessEffect*> m_pp_effects;
 
 	RD_ShaderLoader* m_CurrentShader;
+
+	//Uniform buffers
+	RD_UniformBuffer* m_dirLights_u;
+	RD_UniformBuffer* m_pointLight_u;
+	RD_UniformBuffer* m_ambient_u;
+	RD_UniformBuffer* m_ssao_u;
 
 	vec2f m_vp_size, m_vp_pos;
 

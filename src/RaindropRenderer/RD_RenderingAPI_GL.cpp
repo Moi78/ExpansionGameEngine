@@ -226,6 +226,10 @@ RD_Cubemap* RD_RenderingAPI_GL::CreateCubemap() {
 	return new RD_Cubemap_GL();
 }
 
+RD_UniformBuffer* RD_RenderingAPI_GL::CreateUniformBuffer(const size_t bufferSize, const int binding) {
+	return new RD_UniformBuffer_GL(bufferSize, binding);
+}
+
 void RD_RenderingAPI_GL::SetViewportSize(int w, int h, int x, int y) {
 	glViewport(x, y, w, h);
 }

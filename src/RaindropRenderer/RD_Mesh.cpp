@@ -59,8 +59,6 @@ void RD_Mesh::loadMesh(std::string filepath) {
 }
 
 void RD_Mesh::render(RD_Camera* cam) {
-
-	cam->UseCamera(m_mat->GetShader());
 	m_mat->GetShader()->SetMatrix("model", m_mdl);
 
 	m_mat->BindMaterial();

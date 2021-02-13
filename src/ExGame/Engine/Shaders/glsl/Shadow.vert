@@ -1,8 +1,10 @@
-#version 410 core
+#version 450 core
+
 layout (location = 0) in vec3 aPos;
 
 uniform mat4 lightproj;
 uniform mat4 lightview;
+
 uniform mat4 model;
 
 void main() {
