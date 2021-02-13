@@ -49,7 +49,7 @@ public:
 
     float dotProduct(vec3<T> a) {
         std::valarray<T> fa = { m_xyz[0], m_xyz[1], m_xyz[2] };
-        std::valarray<T> fb = {(double) a.getX(),(double) a.getY(),(double) a.getZ() };
+        std::valarray<T> fb = {a.getX(), a.getY(), a.getZ() };
 
         const float result = (fa * fb).sum();
 
