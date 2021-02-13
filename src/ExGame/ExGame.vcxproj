@@ -31,6 +31,14 @@
     <None Include="Engine\Shaders\glsl\Light.vert" />
     <None Include="Engine\Shaders\glsl\pbr\bloom.frag" />
     <None Include="Engine\Shaders\glsl\pbr\bloom.vert" />
+    <None Include="Engine\Shaders\glsl\pbr\Light.frag" />
+    <None Include="Engine\Shaders\glsl\pbr\Light.vert" />
+    <None Include="Engine\Shaders\glsl\pbr\SSAO.frag" />
+    <None Include="Engine\Shaders\glsl\pbr\SSAO.vert" />
+    <None Include="Engine\Shaders\glsl\pbr\SSAO_Blur.frag" />
+    <None Include="Engine\Shaders\glsl\pbr\SSAO_Blur.vert" />
+    <None Include="Engine\Shaders\glsl\pbr\SSR.frag" />
+    <None Include="Engine\Shaders\glsl\pbr\SSR.vert" />
     <None Include="Engine\Shaders\glsl\Shadow.frag" />
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
     <None Include="Engine\Shaders\glsl\ShadowCalc.frag" />

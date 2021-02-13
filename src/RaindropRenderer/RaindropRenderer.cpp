@@ -106,6 +106,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 		ambientStrength = 0.001f;
 
+		m_ssao_u = m_api->CreateUniformBuffer(64 * sizeof(float), 6);
+
 		GenerateSSAOKernels();
 		GenerateSSAONoise();
 	}
@@ -115,6 +117,10 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_engineDir + "/Shaders/glsl/ShadowCalc.vert",
 		m_engineDir + "/Shaders/glsl/ShadowCalc.frag"
 	);
+
+	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
+	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
+	m_ambient_u = m_api->CreateUniformBuffer(17, 2);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB16F);
@@ -151,6 +157,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_quad->Bufferize();
 
 	m_matlib = std::make_unique<RD_MaterialLibrary>();
+
+	UpdateAmbientLighting();
 }
 
 RaindropRenderer::~RaindropRenderer() {
@@ -174,6 +182,11 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_defTex;
 	delete m_blankTexture;
 
+	//Deleting uniform buffers
+	delete m_pointLight_u;
+	delete m_dirLights_u;
+	delete m_ambient_u;
+
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
 		delete m_ssao_buffer;
@@ -186,6 +199,8 @@ RaindropRenderer::~RaindropRenderer() {
 		delete m_ssao_noise_tex;
 		delete m_bloom_buffera;
 		delete m_bloom_bufferb;
+
+		delete m_ssao_u;
 	}
 }
 
@@ -241,18 +256,20 @@ void RaindropRenderer::UpdateAmbientLighting() {
 	if (!IsFeatureEnabled(RendererFeature::Ambient))
 		return;
 
-	m_CurrentShader->SetFloat("AmbientStrength", ambientStrength);
-	m_CurrentShader->SetVec3("AmbientColor", ambientColor);
+	/*m_CurrentShader->SetFloat("AmbientStrength", ambientStrength);
+	m_CurrentShader->SetVec3("AmbientColor", ambientColor);*/
+	m_ambient_u->BindBuffer();
+	m_ambient_u->SetBufferSubData(0, 12, ambientColor.GetPTR());
+	m_ambient_u->SetBufferSubData(12, 4, &ambientStrength);
+	m_ambient_u->UnbindBuffer();
 }
 
 int RaindropRenderer::AppendLight(RD_PointLight* ptLight) {
-	std::cout << "Registering light color : " << ptLight->GetColor().getX() << " " << ptLight->GetColor().getY() << " " << ptLight->GetColor().getZ() << " brightness : " << ptLight->GetBrightness() << std::endl;
-
 	m_pt_lights.push_back(ptLight);
 
 	const int lightIndex = (int) std::size(m_pt_lights);
 
-	//UpdatePointsLighting();
+	UpdatePointsLighting();
 
 	return lightIndex;
 }
@@ -260,6 +277,7 @@ int RaindropRenderer::AppendLight(RD_PointLight* ptLight) {
 int RaindropRenderer::AppendDirLight(RD_DirLight* dirLight) {
 	m_DirLights.push_back(dirLight);
 
+	UpdateDirLighting();
 	return 1;
 }
 
@@ -267,31 +285,22 @@ void RaindropRenderer::UpdateDirLighting() {
 	if (!IsFeatureEnabled(RendererFeature::Lighting))
 		return;
 
+	m_dirLights_u->BindBuffer();
+
+	int nbrLights = m_DirLights.size();
+	m_dirLights_u->SetBufferSubData(0, sizeof(int), &nbrLights);
+
+	int offset = 16;
 	for (int i = 0; i < m_DirLights.size(); i++) {
-		FillDirLightIndice(i);
+		float b = m_DirLights[i]->GetBrightness();
+		m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightDir().GetPTR());
+		offset += 16;
+		m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightColor().GetPTR());
+		offset += 12;
+		m_dirLights_u->SetBufferSubData(offset, sizeof(float), &b);
+		offset += 4;
 	}
-
-	m_CurrentShader->SetInt("nbrDirLight", (int) m_DirLights.size());
-}
-
-void RaindropRenderer::FillDirLightIndice(int index) {
-	if (!IsFeatureEnabled(RendererFeature::Lighting))
-		return;
-
-	if (index > m_DirLights.size()) {
-		std::cerr << "Can't add this directionnal light : Index out of range." << std::endl;
-		return;
-	}
-	else if (index > 10) {
-		std::cerr << "No more than 10 Directional Lights are supported." << std::endl;
-		return;
-	}
-
-	const std::string indexSTR = std::to_string(index);
-
-	m_CurrentShader->SetVec3("DirLightDir[" + indexSTR + "]", m_DirLights[index]->GetLightDir());
-	m_CurrentShader->SetVec3("DirLightColor[" + indexSTR + "]", m_DirLights[index]->GetLightColor());
-	m_CurrentShader->SetFloat("DirLightBrightness[" + indexSTR + "]", m_DirLights[index]->GetBrightness());
+	m_dirLights_u->UnbindBuffer();
 }
 
 void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
@@ -332,27 +341,27 @@ void RaindropRenderer::UpdatePointsLighting() {
 	if (!IsFeatureEnabled(RendererFeature::Lighting))
 		return;
 
+	m_pointLight_u->BindBuffer();
+
+	int nbrPointLight = m_pt_lights.size();
+	m_pointLight_u->SetBufferSubData(0, sizeof(int), &nbrPointLight);
+
+	int offset = 16;
 	for (int i = 0; i < m_pt_lights.size(); i++) {
-		FillPtLightIndice(i);
+		//FillPtLightIndice(i);
+		m_pointLight_u->SetBufferSubData(offset, 3 * sizeof(float), m_pt_lights[i]->GetPosition().GetPTR());
+		offset += 16;
+		m_pointLight_u->SetBufferSubData(offset, 3 * sizeof(float), m_pt_lights[i]->GetColor().GetPTR());
+		offset += 12;
+		float b = m_pt_lights[i]->GetBrightness();
+		m_pointLight_u->SetBufferSubData(offset, sizeof(float), &b);
+		offset += 4;
+		float r = m_pt_lights[i]->GetLightRadius();
+		m_pointLight_u->SetBufferSubData(offset, sizeof(float), &r);
+		offset += 16;
 	}
 
-	m_CurrentShader->SetInt("nbrPointLight", (int) m_pt_lights.size());
-}
-
-void RaindropRenderer::FillPtLightIndice(const int index) {
-	if (m_pt_lights.size() < index) {
-		std::cerr << "Can't add point light : Index out of range." << std::endl;
-	}
-	else if (index > 243) {
-		std::cerr << "Can't add point light : No more than 243 lights are supported." << std::endl;
-	}
-
-	const std::string indexSTR = std::to_string(index);
-
-	m_CurrentShader->SetVec3("LightPos["+ indexSTR +"]", m_pt_lights[index]->GetPosition());
-	m_CurrentShader->SetFloat("LightBrightness[" + indexSTR + "]", m_pt_lights[index]->GetBrightness());
-	m_CurrentShader->SetVec3("LightColor[" + indexSTR + "]", m_pt_lights[index]->GetColor());
-	m_CurrentShader->SetFloat("LightRadius[" + indexSTR + "]", m_pt_lights[index]->GetLightRadius());
+	m_pointLight_u->UnbindBuffer();
 }
 
 void RaindropRenderer::FillFeaturesArray() {
@@ -659,19 +668,13 @@ void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 		m_light_shader->SetInt("gEmissive", 7);
 	}
 
-	m_light_shader->SetVec3("CamPos", CamPos);
-
-	UpdateAmbientLighting();
-	UpdateDirLighting();
-	UpdatePointsLighting();
-
 	m_quad->RenderQuad();
 }
 
 void RaindropRenderer::RenderBloom() {
 	SwitchShader(m_bloom);
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 5; i++) {
 		m_bloom_buffera->BindFBO();
 		if (i == 0) {
 			m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
@@ -718,8 +721,6 @@ void RaindropRenderer::RenderSSR(RD_Camera* cam) {
 
 	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gDepth)->BindTexture(4);
 	//m_ssr_shader->SetInt("Depth", 4);
-	
-	cam->UseCamera(m_ssr_shader);
 
 	m_quad->RenderQuad();
 }
@@ -741,12 +742,6 @@ void RaindropRenderer::RenderSSAO(RD_Camera* cam) {
 		m_ssao_noise_tex->BindTexture(2);
 		m_ssao_shader->SetInt("noise", 2);
 
-		for (int i = 0; i < 64; i++) {
-			m_ssao_shader->SetVec3("samples[" + std::to_string(i) + "]", m_ssao_kernels[i]);
-		}
-
-		cam->UseCamera(m_ssao_shader);
-
 		m_quad->RenderQuad();
 
 		//Blur SSAO
@@ -764,8 +759,8 @@ void RaindropRenderer::RenderSSAO(RD_Camera* cam) {
 }
 
 void RaindropRenderer::GenerateSSAOKernels() {
-	const std::uniform_real_distribution<float> randFloat(0.0, 1.0);
-	const std::uniform_real_distribution<float> randFloat2(-1.0, 1.0);
+	std::uniform_real_distribution<float> randFloat(0.0, 1.0);
+	std::uniform_real_distribution<float> randFloat2(-1.0, 1.0);
 	std::default_random_engine generator;
 
 	for(int i = 0; i < 64; i++) {
@@ -784,12 +779,26 @@ void RaindropRenderer::GenerateSSAOKernels() {
 		
 		m_ssao_kernels.push_back(sample);
 	}
+	m_ssao_u->BindBuffer();
+
+	int w = GetViewportSize().getX();
+	int h = GetViewportSize().getY();
+	m_ssao_u->SetBufferSubData(0, sizeof(int), &w);
+	m_ssao_u->SetBufferSubData(4, sizeof(int), &h);
+
+	int offset = 16;
+	for (auto kern : m_ssao_kernels) {
+		m_ssao_u->SetBufferSubData(offset, sizeof(float), &kern);
+		offset += 4;
+	}
+
+	m_ssao_u->UnbindBuffer();
 }
 
 void RaindropRenderer::GenerateSSAONoise() {
 	std::vector<float> ssao_noise;
 
-	const std::uniform_real_distribution<float> randFloat(-1.0, 1.0);
+	std::uniform_real_distribution<float> randFloat(-1.0, 1.0);
 	std::default_random_engine generator;
 	
 	for(int i=  0; i < 16; i++) {
@@ -823,7 +832,7 @@ void RaindropRenderer::RenderBeauty() {
 		m_beauty_shader->SetInt("SSR", 7);
 
 
-		m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(8);
+		m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(8);
 		m_beauty_shader->SetInt("bloom", 8);
 	}
 

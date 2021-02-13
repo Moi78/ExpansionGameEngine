@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{77f46bd3-9788-4d00-93bd-485dbd1819ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL\PBR">
+      <UniqueIdentifier>{c2dd97a6-e179-4473-8efc-1bb57a975074}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -20,18 +26,68 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shaders\glsl\Beauty.frag" />
-    <None Include="Engine\Shaders\glsl\Beauty.vert" />
-    <None Include="Engine\Shaders\glsl\Debug.frag" />
-    <None Include="Engine\Shaders\glsl\Debug.vert" />
-    <None Include="Engine\Shaders\glsl\Gshad.vert" />
-    <None Include="Engine\Shaders\glsl\Light.frag" />
-    <None Include="Engine\Shaders\glsl\Light.vert" />
-    <None Include="Engine\Shaders\glsl\Shadow.frag" />
-    <None Include="Engine\Shaders\glsl\Shadow.vert" />
-    <None Include="Engine\Shaders\glsl\ShadowCalc.frag" />
-    <None Include="Engine\Shaders\glsl\ShadowCalc.vert" />
-    <None Include="Engine\Shaders\glsl\pbr\bloom.frag" />
-    <None Include="Engine\Shaders\glsl\pbr\bloom.vert" />
+    <None Include="Engine\Shaders\glsl\Beauty.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Beauty.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Debug.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Debug.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Gshad.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Light.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Light.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Shadow.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Shadow.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\ShadowCalc.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\ShadowCalc.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\Light.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\Light.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO_Blur.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO_Blur.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSR.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSR.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\bloom.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\bloom.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
   </ItemGroup>
 </Project>

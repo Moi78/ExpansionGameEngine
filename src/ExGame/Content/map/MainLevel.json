@@ -41,7 +41,7 @@
       "ref":"/sphere",
       "material":"/shaders/mat_glow_green",
 
-      "pos":[0, -2.5, 0],
+      "pos":[0, -2.5, -1.5],
       "rot":[0, 0, 0],
       "scale":[1, 1, 1]
     },

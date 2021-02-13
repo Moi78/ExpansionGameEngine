@@ -38,8 +38,6 @@ int RD_InstanciatedMesh::AppendInstance(RD_MeshInstance inst) {
 }
 
 void RD_InstanciatedMesh::render(RD_Camera* cam) {
-	cam->UseCamera(m_mat->GetShader());
-
 	m_mat->BindMaterial();
 
 	m_buffer->BindBuffer();

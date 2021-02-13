@@ -56,6 +56,17 @@ public:
 	virtual unsigned int GetProgID() = 0;
 };
 
+class RAINDROPRENDERER_API RD_UniformBuffer {
+public:
+	RD_UniformBuffer() {}
+	virtual ~RD_UniformBuffer() {}
+
+	virtual void SetBufferSubData(const int offset, const size_t size, void* data) = 0;
+
+	virtual void BindBuffer() = 0;
+	virtual void UnbindBuffer() = 0;
+};
+
 #ifdef BUILD_OPENGL
 
 class RAINDROPRENDERER_API RD_ShaderLoader_GL : public RD_ShaderLoader
@@ -81,6 +92,22 @@ public:
 
 private:
 	unsigned int m_program_id;
+};
+
+class RAINDROPRENDERER_API RD_UniformBuffer_GL : public RD_UniformBuffer {
+public:
+	RD_UniformBuffer_GL(const size_t bufferSize, const int binding);
+	virtual ~RD_UniformBuffer_GL();
+
+	virtual void SetBufferSubData(const int offset, const size_t size, void* data);
+
+	virtual void BindBuffer();
+	virtual void UnbindBuffer();
+private:
+	void CreateUBO(const size_t bufferSize);
+
+	unsigned int m_UBO;
+	int m_binding;
 };
 
 #endif //BUILD_OPENGL

@@ -186,7 +186,7 @@ void EXP_Game::RenderScene() {
 	m_rndr->ClearWindow(m_refreshColor);
 
 	const vec3f CamLoc = m_currentCamera->GetLocation();
-	m_currentCamera->UpdateCamera();
+	//m_currentCamera->UpdateCamera();
     
 	//Process shadows
 	m_rndr->RenderLightsDepth(CamLoc);

@@ -1,4 +1,4 @@
-#version 410 core
+#version 450 core
 layout (location = 0) out vec4 LightPass;
 
 in vec2 UVcoords;
@@ -13,24 +13,41 @@ uniform sampler2D gAlbedo;
 uniform sampler2D gSpec;
 
 //Ambient
-uniform float AmbientStrength;
-uniform vec3 AmbientColor;
+layout(std140, binding = 2) uniform AMBIENT{
+	vec3 AmbientColor;
+	float AmbientStrength;
+};
 
 //Point Light
 const int MAX_POINT_LIGHTS = 243;
-uniform vec3 LightPos[MAX_POINT_LIGHTS];
-uniform float LightBrightness[MAX_POINT_LIGHTS];
-uniform vec3 LightColor[MAX_POINT_LIGHTS];
-uniform float LightRadius[MAX_POINT_LIGHTS];
-uniform int nbrPointLight;
+
+struct PointLight {
+	vec3 LightPos;
+	vec3 LightColor;
+	float LightBrightness;
+	float LightRadius;
+};
+
+layout(std140, binding = 3) uniform PointLightData {
+	int nbrPointLight;
+	PointLight plights[MAX_POINT_LIGHTS];
+};
 
 //Dir Light
-uniform int nbrDirLight;
-uniform vec3 DirLightDir[10];
-uniform vec3 DirLightColor[10];
-uniform float DirLightBrightness[10];
+struct DirLight {
+	vec3 Dir;
+	vec3 Color;
+	float brightness;
+};
 
-uniform vec3 CamPos;
+layout(std140, binding = 4) uniform DirLightData {
+	int nbrDirLight;
+	DirLight dlights[10];
+};
+
+layout(std140, binding = 5) uniform CameraPos {
+	vec3 CamPos;
+};
 
 uniform bool ftr_lighting;
 uniform bool ftr_specular;
@@ -46,11 +63,11 @@ float SpecularExp = texture(gSpec, UVcoords).r;
 vec3 viewDir = normalize(CamPos - FragPos);
 
 vec3 CalcDirLight(int index) {
-	vec3 dir = normalize(vec3(-DirLightDir[index]));
+	vec3 dir = normalize(vec3(-dlights[index].Dir));
 
 	//Diffuse
 	float diff = max(0.0, dot(norm, dir));
-	vec3 diffuse = (diff * DirLightBrightness[index] * DirLightColor[index]);
+	vec3 diffuse = (diff * dlights[index].brightness * dlights[index].Color);
 
 	//Specular
 	vec3 d_specular = vec3(0.0);
@@ -59,20 +76,20 @@ vec3 CalcDirLight(int index) {
 
 		float spec = pow(max(0.0, dot(viewDir, reflectDir)), SpecularExp);
 
-		d_specular = spec * DirLightColor[index] * DirLightBrightness[index] * Specular;
+		d_specular = spec * dlights[index].Color * dlights[index].brightness * Specular;
 	}
 
 	return diffuse + d_specular;
 }
 
 vec3 CalcPointLight(int lightIndex) {
-	float dist = length(LightPos[lightIndex] - FragPos);
-	if(dist < LightRadius[lightIndex]) {
+	float dist = length(plights[lightIndex].LightPos - FragPos);
+	if(dist < plights[lightIndex].LightRadius) {
 		//Diffuse
-		vec3 LightDir = normalize(LightPos[lightIndex] - FragPos);
+		vec3 LightDir = normalize(plights[lightIndex].LightPos - FragPos);
 		float attenuation = (1.0 / (1.0 + 0.7 * (dist * dist)));
 
-		float diffuse = LightBrightness[lightIndex] * max(0.0, dot(norm, LightDir)) / dist;
+		float diffuse = plights[lightIndex].LightBrightness * max(0.0, dot(norm, LightDir)) / dist;
 
 		//Specular
 		vec3 specular = vec3(0.0, 0.0, 0.0);
@@ -83,10 +100,10 @@ vec3 CalcPointLight(int lightIndex) {
 			vec3 hwDir = normalize(LightDir + viewDir);
 			float spec = pow(max(0.0, dot(norm, hwDir)), SpecularExp);
 
-			specular = (spec * LightColor[lightIndex] * Specular);
+			specular = (spec * plights[lightIndex].LightColor * Specular);
 		}
 
-		return attenuation * (LightColor[lightIndex] * (diffuse + specular));
+		return attenuation * (plights[lightIndex].LightColor * (diffuse + specular));
 	} else {
 		return vec3(0.0);
 	}

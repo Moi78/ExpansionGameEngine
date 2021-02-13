@@ -2,7 +2,9 @@
 #include "RD_Camera.h"
 
 RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll) : view(1.0f), projection(1.0f) {
-	m_rndr = rndr; //Attach to renderer;
+	m_rndr = rndr; //Reference to renderer;
+	m_mat = rndr->GetRenderingAPI()->CreateUniformBuffer(129, 0);
+	m_camPos = rndr->GetRenderingAPI()->CreateUniformBuffer(12, 5);
 
 	m_pos = position; //Camera position
 	m_subject = vec3f(); //Camera center of view
@@ -29,24 +31,43 @@ void RD_Camera::UpdateCamera() {
 
 void RD_Camera::UpdateView() {
 	view = LookAt(m_pos, m_pos + m_subject, m_up); //View matrix
+
+	m_mat->BindBuffer();
+	m_mat->SetBufferSubData(64, 64, view.GetPTR());
+	m_mat->UnbindBuffer();
 }
 
 void RD_Camera::UpdateProj() {
 	projection = ProjPersp<float>(DEG_TO_RAD(FOV), (float)m_rndr->GetViewportSize().getX() / m_rndr->GetViewportSize().getY(), m_near, m_far);
+
+	m_mat->BindBuffer();
+	m_mat->SetBufferSubData(0, 64, projection.GetPTR());
+	m_mat->UnbindBuffer();
 }
 
 void RD_Camera::UseCamera(RD_ShaderLoader* shader) {
-	shader->SetMatrix("projection", projection);
-	shader->SetMatrix("view", view);
-	shader->SetVec3("CamPos", m_pos);
+	m_mat->BindBuffer();
+	m_mat->SetBufferSubData(0, 64, projection.GetPTR());
+	m_mat->SetBufferSubData(64, 64, view.GetPTR());
+	m_mat->UnbindBuffer();
+
+	m_camPos->BindBuffer();
+	m_camPos->SetBufferSubData(0, 12, m_pos.GetPTR());
+	m_camPos->UnbindBuffer();
 }
 
 void RD_Camera::SetLocation(vec3f position) {
 	m_pos = position;
+	UpdateView();
+
+	m_camPos->BindBuffer();
+	m_camPos->SetBufferSubData(0, 12, m_pos.GetPTR());
+	m_camPos->UnbindBuffer();
 }
 
 void RD_Camera::SetSubject(vec3f lookingAt) {
 	m_subject = lookingAt;
+	UpdateView();
 }
 
 void RD_Camera::SetFOV(float FOVinDegrees) {
@@ -59,6 +80,8 @@ void RD_Camera::RotateCamera(vec3f rotation) {
 	rot = RotateMatrix(rot, rotation);
 
 	m_subject = vec4f(rot * m_subject).XYZ();
+
+	UpdateView();
 }
 
 void RD_Camera::TranslateCamera(vec3f translation, bool changeSub) {
@@ -67,6 +90,8 @@ void RD_Camera::TranslateCamera(vec3f translation, bool changeSub) {
 	if (changeSub) {
 		m_subject = m_subject + translation;
 	}
+
+	UpdateView();
 }
 
 vec3f RD_Camera::GetSubject() {
