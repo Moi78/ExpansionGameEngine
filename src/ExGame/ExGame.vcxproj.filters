@@ -32,18 +32,130 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shaders\glsl\Beauty.frag" />
-    <None Include="Engine\Shaders\glsl\Beauty.vert" />
-    <None Include="Engine\Shaders\glsl\Debug.frag" />
-    <None Include="Engine\Shaders\glsl\Debug.vert" />
-    <None Include="Engine\Shaders\glsl\Gshad.vert" />
-    <None Include="Engine\Shaders\glsl\Light.frag" />
-    <None Include="Engine\Shaders\glsl\Light.vert" />
-    <None Include="Engine\Shaders\glsl\Shadow.frag" />
-    <None Include="Engine\Shaders\glsl\Shadow.vert" />
-    <None Include="Engine\Shaders\glsl\ShadowCalc.frag" />
-    <None Include="Engine\Shaders\glsl\ShadowCalc.vert" />
-    <None Include="Engine\Shaders\glsl\pbr\bloom.frag" />
-    <None Include="Engine\Shaders\glsl\pbr\bloom.vert" />
+    <None Include="Engine\Shaders\glsl\Beauty.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Beauty.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Debug.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Debug.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Gshad.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Light.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Light.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Shadow.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\Shadow.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\ShadowCalc.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\ShadowCalc.vert">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO_Blur.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSAO_Blur.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSR.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\SSR.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\Light.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\Light.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\bloom.frag">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\pbr\bloom.vert">
+      <Filter>GLSL\PBR</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\bloom.frag.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\bloom.vert.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\SSAO.frag.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\SSAO.vert.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\SSAO_Blur.frag.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\SSAO_Blur.vert.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\SSR.frag.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\SSR.vert.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Beauty.frag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Beauty.vert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Debug.frag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Debug.vert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Light.frag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Light.vert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Shadow.frag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\Shadow.vert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\ShadowCalc.frag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\ShadowCalc.vert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\Light.frag.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Shaders\hlsl\src\pbr\Light.vert.hlsl">
+      <Filter>HLSL\PBR</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

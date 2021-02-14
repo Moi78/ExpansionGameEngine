@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #ifdef _WIN32
 void BULLDOZERFILEMANAGER_API dispErrorMessageBox(LPCWSTR Message);
@@ -31,5 +32,6 @@ void dispErrorMessageBox(std::wstring);
 
 std::string BULLDOZERFILEMANAGER_API getFileData(std::string filePath);
 std::string BULLDOZERFILEMANAGER_API getFileExtension(std::string fileName);
+std::vector<uint8_t> BULLDOZERFILEMANAGER_API getFileDataBin(std::string filePath);
 
 #endif // _BULLDOZER_FILE_MANAGER_H__

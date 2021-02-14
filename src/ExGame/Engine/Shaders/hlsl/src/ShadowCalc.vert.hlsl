@@ -7,7 +7,7 @@ struct PixelOut {
     float2 UV : TEXCOORD;
 };
 
-float3 pos : SV_POSITION;
+static float3 pos : SV_POSITION;
 
 PixelOut main(VertInput inpt) {
     PixelOut vsOut;

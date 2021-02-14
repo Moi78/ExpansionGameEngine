@@ -238,6 +238,10 @@ RD_Cubemap* RD_RenderingAPI_DX11::CreateCubemap() {
 	return nullptr;
 }
 
+RD_UniformBuffer* RD_RenderingAPI_DX11::CreateUniformBuffer(const size_t size, const int binding) {
+	return nullptr;
+}
+
 void RD_RenderingAPI_DX11::SetViewportSize(int w, int h, int x, int y) {
 
 }

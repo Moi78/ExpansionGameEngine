@@ -1,4 +1,4 @@
-float3 ShadowColor : SV_TARGET0;
+static float3 ShadowColor : SV_TARGET0;
 
 Texture2D ShadowMaps[10] : register(t0);
 
@@ -29,7 +29,7 @@ void main(PixelOut inpt) {
         projCoord = projCoord * 0.5 + 0.5;
 
         if(projCoord.z > 1.0) {
-            ShadowColor = float3(0.0);
+            ShadowColor = float3(0.0, 0.0, 0.0);
         }
 
         float closestDepth = ShadowMaps[i].Sample(TexSampler, inpt.UV).r;
@@ -45,7 +45,7 @@ void main(PixelOut inpt) {
         float2 texelSize = 1.0 / textureSize;
         for(float x = -1; x <= 1; x += 1) {
             for(float y = -1; y <= 1; y += 1) {
-                float PCFdepth = ShadowMaps[i].Sample(TexSampler, projCoord.xy + float2(x, y));
+                float PCFdepth = ShadowMaps[i].Sample(TexSampler, projCoord.xy + float2(x, y)).r;
                 shadow += currentDepth - bias > PCFdepth ? 1.0 : 0.0;
             }
         }

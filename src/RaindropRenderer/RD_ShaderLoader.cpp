@@ -239,61 +239,18 @@ RD_ShaderLoader_DX11::~RD_ShaderLoader_DX11() {
 }
 
 void RD_ShaderLoader_DX11::compileShaderFromFile(std::string vertFile, std::string fragFile) {
-	ID3DBlob* vertBlob;
-	ID3DBlob* fragBlob;
-	ID3DBlob* errorBlob;
+	std::vector<uint8_t> vertContent = getFileDataBin(vertFile);
+	std::vector<uint8_t> fragContent = getFileDataBin(fragFile);
 
-	HRESULT hr = D3DCompileFromFile(
-		StrToWStr(vertFile).c_str(), nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"main", "vs_5_0", NULL, NULL,
-		&vertBlob, &errorBlob);
-
+	HRESULT hr = m_device->CreateVertexShader(vertContent.data(), vertContent.size(), NULL, &m_vertShader);
 	if (FAILED(hr)) {
-		std::string ErrorMessage;
-		if (errorBlob) {
-			ErrorMessage = (const char*)errorBlob->GetBufferPointer();
-			errorBlob->Release();
-		}
-
-		if (vertBlob) {
-			vertBlob->Release();
-		}
-
-		dispErrorMessageBox(StrToWStr("Unable to compile shader " + vertFile + " Error message : " + ErrorMessage));
+		dispErrorMessageBox(StrToWStr(std::string("Cannot create vertex shader from " + vertFile)));
 		return;
 	}
 
-	hr = D3DCompileFromFile(
-		StrToWStr(fragFile).c_str(), nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"main", "ps_5_0", NULL, NULL,
-		&fragBlob, &errorBlob);
-
+	hr = m_device->CreatePixelShader(fragContent.data(), fragContent.size(), NULL, &m_fragShader);
 	if (FAILED(hr)) {
-		std::string ErrorMessage;
-		if (errorBlob) {
-			ErrorMessage = (const char*)errorBlob->GetBufferPointer();
-			errorBlob->Release();
-		}
-
-		if (fragBlob) {
-			fragBlob->Release();
-		}
-
-		dispErrorMessageBox(StrToWStr("Unable to compile shader " + fragFile + " Error message : " + ErrorMessage));
-		return;
-	}
-
-	hr = m_device->CreateVertexShader(vertBlob->GetBufferPointer(), vertBlob->GetBufferSize(), NULL, &m_vertShader);
-	if (FAILED(hr)) {
-		dispErrorMessageBox(StrToWStr("Cannot create vertex shader from " + vertFile));
-		return;
-	}
-
-	hr = m_device->CreatePixelShader(fragBlob->GetBufferPointer(), fragBlob->GetBufferSize(), NULL, &m_fragShader);
-	if (FAILED(hr)) {
-		dispErrorMessageBox(StrToWStr("Cannot create fragment shader from " + fragFile));
+		dispErrorMessageBox(StrToWStr(std::string("Cannot create fragment shader from " + fragFile)));
 		return;
 	}
 
@@ -323,14 +280,11 @@ void RD_ShaderLoader_DX11::compileShaderFromFile(std::string vertFile, std::stri
 	inLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	inLayout[2].InstanceDataStepRate = 0;
 	
-	hr = m_device->CreateInputLayout(inLayout, 3, vertBlob->GetBufferPointer(), vertBlob->GetBufferSize(), &m_layout);
+	hr = m_device->CreateInputLayout(inLayout, 3, vertContent.data(), vertContent.size(), &m_layout);
 	if (FAILED(hr)) {
 		dispErrorMessageBox(StrToWStr("Failed to create input layout of shader " + vertFile));
 		return;
 	}
-
-	vertBlob->Release();
-	fragBlob->Release();
 }
 
 void RD_ShaderLoader_DX11::CompileShaderFromCode(std::string vertexCode, std::string fragmentCode) {

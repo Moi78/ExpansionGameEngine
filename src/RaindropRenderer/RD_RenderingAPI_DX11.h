@@ -122,7 +122,8 @@ public:
 	virtual RD_Texture* CreateTexture();
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h, bool nodepth = false);
 	virtual RD_ShaderLoader* CreateShader();
-	virtual RD_Cubemap* CreateCubemap() override;
+	virtual RD_Cubemap* CreateCubemap();
+	virtual RD_UniformBuffer* CreateUniformBuffer(const size_t size, const int binding);
 
 	virtual void SetViewportSize(int w, int h, int x, int y);
 

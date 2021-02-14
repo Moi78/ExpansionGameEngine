@@ -65,7 +65,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	}
 
 	if (m_api_t == API::DIRECTX11) {
-		suffix = ".hlsl";
+		suffix = ".cso";
 		folder = "hlsl";
 	}
 
@@ -97,8 +97,6 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	}
 	else {
 		std::cout << "Compiling main shaders, PBR shading model..." << std::endl;
-
-
 
 		m_shadowShader = m_api->CreateShader();
 		m_shadowShader->compileShaderFromFile(

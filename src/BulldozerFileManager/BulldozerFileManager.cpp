@@ -21,7 +21,8 @@ std::string getFileData(std::string filePath) {
 	file.open(filePath);
 
 	if (!file) {
-		dispErrorMessageBox(TEXT("File cannot be opened. \"\" will be returned."));
+		std::wstring f(filePath.begin(), filePath.end());
+		dispErrorMessageBox(std::wstring(f + L" cannot be opened. \"\" will be returned.").c_str());
 		return "";
 	}
 
@@ -36,6 +37,25 @@ std::string getFileData(std::string filePath) {
 
 	file.close();
 	return fileData;
+}
+
+std::vector<uint8_t> getFileDataBin(std::string fileName) {
+	std::ifstream file;
+	file.open(fileName, std::ios::binary | std::ios::ate);
+	if (!file) {
+		std::wstring f(fileName.begin(), fileName.end());
+		dispErrorMessageBox(std::wstring(f + L" cannot be opened. Empty vector will be returned.").c_str());
+		return {};
+	}
+
+	size_t fileSize = file.tellg();
+	std::vector<uint8_t> data(fileSize);
+
+	file.seekg(0);
+	file.read(reinterpret_cast<char*>(data.data()), fileSize);
+
+	file.close();
+	return data;
 }
 
 std::string getFileExtension(std::string fileName) {
