@@ -242,5 +242,160 @@ void RD_Texture_GL::GetGLformat(
 	}
 }
 
-
 #endif //BUILD_OPENGL
+
+#ifdef BUILD_D3D11
+
+#include "RaindropRenderer.h"
+
+RD_Texture_DX11::RD_Texture_DX11(ID3D11Device* dev) {
+	m_device = dev;
+}
+
+RD_Texture_DX11::~RD_Texture_DX11() {
+	if (m_device)
+		m_device->Release();
+}
+
+void RD_Texture_DX11::LoadTexture(const std::string& tex, bool flipTex) {
+	int w, h, nbrC;
+
+	stbi_set_flip_vertically_on_load(flipTex);
+	unsigned char* imgData = stbi_load(tex.c_str(), &w, &h, &nbrC, STBI_rgb_alpha);
+
+	D3D11_SUBRESOURCE_DATA data{};
+	data.pSysMem = imgData;
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+
+	DXGI_FORMAT fmt;
+	GetDXformat(IMGFORMAT_RGBA, &fmt);
+
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = w;
+	texDesc.Height = h;
+	texDesc.MipLevels = 6;
+	texDesc.ArraySize = 1;
+	texDesc.Format = fmt;
+	texDesc.SampleDesc = { 1, 0 };
+	texDesc.Usage = D3D11_USAGE::D3D11_USAGE_IMMUTABLE;
+	texDesc.BindFlags = NULL;
+	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	texDesc.MiscFlags = NULL;
+
+	HRESULT hr = m_device->CreateTexture2D(&texDesc, &data, &m_texture);
+	if (FAILED(hr)) {
+		std::cerr << "ERROR: Failed to create texture from file " << tex << std::endl;
+	}
+}
+
+void RD_Texture_DX11::GenerateColorTex(vec3f color) {
+	D3D11_SUBRESOURCE_DATA data{};
+	data.pSysMem = color.GetPTR();
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+
+	DXGI_FORMAT fmt;
+	GetDXformat(IMGFORMAT_RGB16F, &fmt);
+
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = 1;
+	texDesc.Height = 1;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = fmt;
+	texDesc.SampleDesc = { 1, 0 };
+	texDesc.Usage = D3D11_USAGE::D3D11_USAGE_IMMUTABLE;
+	texDesc.BindFlags = NULL;
+	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	texDesc.MiscFlags = NULL;
+
+	HRESULT hr = m_device->CreateTexture2D(&texDesc, &data, &m_texture);
+	if (FAILED(hr)) {
+		std::cerr << "ERROR: Failed to create texture from color." << std::endl;
+	}
+}
+
+void RD_Texture_DX11::CreateTextureFromPixels(void* pixels, int w, int h, unsigned int format, unsigned int wrapmode) {
+	D3D11_SUBRESOURCE_DATA data{};
+	data.pSysMem = pixels;
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+
+	DXGI_FORMAT fmt;
+	GetDXformat(format, &fmt);
+
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = w;
+	texDesc.Height = h;
+	texDesc.MipLevels = 3;
+	texDesc.ArraySize = 1;
+	texDesc.Format = fmt;
+	texDesc.SampleDesc = { 1, 0 };
+	texDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = NULL;
+	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	texDesc.MiscFlags = NULL;
+
+	HRESULT hr = m_device->CreateTexture2D(&texDesc, &data, &m_texture);
+	if (FAILED(hr)) {
+		std::cerr << "ERROR: Failed to create texture from raw pixels." << std::endl;
+	}
+}
+
+void RD_Texture_DX11::CreateAndAttachToFramebuffer(
+	int w, int h,
+	unsigned int FBO,
+	unsigned int attachment,
+	unsigned int format,
+	unsigned int scaleMode,
+	unsigned int wrapMode
+) {
+
+}
+
+void RD_Texture_DX11::BindTexture(unsigned int tex_unit) {
+
+}
+
+void RD_Texture_DX11::DeleteTexture() {
+
+}
+
+void RD_Texture_DX11::GetDXformat(
+	unsigned int format,
+	DXGI_FORMAT* formatdx
+) {
+	switch (format)
+	{
+	case IMGFORMAT_R:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R8_UINT;
+		break;
+	case IMGFORMAT_RG:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R8G8_UINT;
+		break;
+	case IMGFORMAT_RGB:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UINT;
+		break;
+	case IMGFORMAT_RGBA:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UINT;
+		break;
+	case IMGFORMAT_R16F:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R16_FLOAT;
+		break;
+	case IMGFORMAT_RG16F:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R16G16_FLOAT;
+		break;
+	case IMGFORMAT_RGB16F:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_FLOAT;
+		break;
+	case IMGFORMAT_RGBA16F:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R16G16B16A16_FLOAT;
+		break;
+	default:
+		*formatdx = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UINT;
+		break;
+	}
+}
+
+#endif // BUILD_D3D11

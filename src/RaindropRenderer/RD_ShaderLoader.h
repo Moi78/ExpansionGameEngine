@@ -26,8 +26,6 @@
 #include <cstdlib>
 #include <filesystem>
 
-#include <glad/glad.h>
-
 #include <mat4.h>
 #include <vec3.h>
 
@@ -68,6 +66,8 @@ public:
 };
 
 #ifdef BUILD_OPENGL
+
+#include <glad/glad.h>
 
 class RAINDROPRENDERER_API RD_ShaderLoader_GL : public RD_ShaderLoader
 {
@@ -147,6 +147,26 @@ private:
 	ID3D11PixelShader* m_fragShader;
 
 	ID3D11InputLayout* m_layout;
+};
+
+class RAINDROPRENDERER_API RD_UniformBuffer_DX11 : public RD_UniformBuffer {
+public:
+	RD_UniformBuffer_DX11(ID3D11Device* device, const size_t bufferSize, const int binding);
+	virtual ~RD_UniformBuffer_DX11();
+
+	virtual void SetBufferSubData(const int offset, const size_t size, void* data);
+
+	virtual void BindBuffer();
+	virtual void UnbindBuffer();
+
+private:
+	void CreateBuffer(const size_t size);
+
+	ID3D11Device* m_device;
+	ID3D11DeviceContext* m_context;
+	ID3D11Buffer* m_ubo;
+
+	int m_binding;
 };
 
 #endif // BUILD_D3D11

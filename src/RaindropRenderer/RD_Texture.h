@@ -111,4 +111,43 @@ private:
 
 #endif //BUILD_OPENGL
 
+#ifdef BUILD_D3D11
+
+#include <d3d11.h>
+
+class RAINDROPRENDERER_API RD_Texture_DX11 : public RD_Texture
+{
+public:
+	RD_Texture_DX11(ID3D11Device* dev);
+	virtual ~RD_Texture_DX11();
+
+	virtual void LoadTexture(const std::string& tex, bool flipTex = true);
+	virtual void GenerateColorTex(vec3f color);
+	virtual void CreateTextureFromPixels(void* pixels, int w, int h, unsigned int format, unsigned int wrapmode) override;
+	virtual void CreateAndAttachToFramebuffer(
+		int w, int h,
+		unsigned int FBO,
+		unsigned int attachement = 0,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int scaleMode = SCALEMODE_LINEAR,
+		unsigned int wrapmode = WRAPMODE_REPEAT);
+
+	virtual void BindTexture(unsigned int tex_unit = 0);
+
+	virtual void DeleteTexture();
+
+	virtual unsigned int GetTextureID() { return 0; };
+
+private:
+	void GetDXformat(
+		unsigned int format,
+		DXGI_FORMAT* formatdx
+	); //I KNOW THAT IS C-STYLE >:)
+
+	ID3D11Device* m_device;
+	ID3D11Texture2D* m_texture;
+};
+
+#endif // BUILD_D3D11
+
 #endif //_RD_TEXTURE_H__

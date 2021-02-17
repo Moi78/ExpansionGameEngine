@@ -75,7 +75,7 @@ void EXP_GUI_Button::RenderElement() {
 		//is left button pressed ?
 		if (m_game->GetInputHandler()->GetMouseButton(GLFW_MOUSE_BUTTON_LEFT)) {
 			//Yes ? Display pressed texture
-			m_pressed->BindTexture(GL_TEXTURE0);
+			m_pressed->BindTexture(0);
 
 			//If it is a one time btn check if it has been released
 			if (m_oneTimeButton) {
@@ -94,11 +94,11 @@ void EXP_GUI_Button::RenderElement() {
 			//Button is technically released
 			m_released = true;
 			//But hovered
-			m_hover->BindTexture(GL_TEXTURE0);
+			m_hover->BindTexture(0);
 		}
 	}
 	else {
-		m_normal->BindTexture(GL_TEXTURE0);
+		m_normal->BindTexture(0);
 	}
 
 	m_gui_shader->SetInt("imageTexture", 0);

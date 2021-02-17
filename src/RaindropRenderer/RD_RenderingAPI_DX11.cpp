@@ -223,7 +223,7 @@ RD_RenderingAPI_VertexBuffer* RD_RenderingAPI_DX11::CreateVertexBuffer() {
 }
 
 RD_Texture* RD_RenderingAPI_DX11::CreateTexture() {
-	return nullptr;
+	return new RD_Texture_DX11(m_device);
 }
 
 RD_FrameBuffer* RD_RenderingAPI_DX11::CreateFrameBuffer(int w, int h, bool nodepth) {
@@ -239,7 +239,7 @@ RD_Cubemap* RD_RenderingAPI_DX11::CreateCubemap() {
 }
 
 RD_UniformBuffer* RD_RenderingAPI_DX11::CreateUniformBuffer(const size_t size, const int binding) {
-	return nullptr;
+	return new RD_UniformBuffer_DX11(m_device, size, binding);
 }
 
 void RD_RenderingAPI_DX11::SetViewportSize(int w, int h, int x, int y) {

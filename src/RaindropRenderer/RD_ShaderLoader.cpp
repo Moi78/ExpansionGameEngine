@@ -301,4 +301,63 @@ void RD_ShaderLoader_DX11::SetFloat(const std::string& name, float value) {}
 void RD_ShaderLoader_DX11::SetMatrix(const std::string& name, mat4f matrix) {}
 void RD_ShaderLoader_DX11::SetVec3(const std::string& name, vec3f vec) {}
 
+//------------------------------ RD_UniformBuffer_DX11 ------------------------------
+
+RD_UniformBuffer_DX11::RD_UniformBuffer_DX11(ID3D11Device* device, const size_t bufferSize, const int binding) {
+	m_device = device;
+	m_binding = binding;
+
+	m_device->GetImmediateContext(&m_context);
+
+	CreateBuffer(bufferSize);
+}
+
+RD_UniformBuffer_DX11::~RD_UniformBuffer_DX11() {
+
+}
+
+void RD_UniformBuffer_DX11::SetBufferSubData(const int offset, const size_t size, void* data) {
+	D3D11_BOX offst{};
+	offst.right = offset;
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubr{};
+	mappedSubr.pData = data;
+	mappedSubr.DepthPitch = 0;
+	mappedSubr.RowPitch = 0;
+
+	m_context->Map(m_ubo, offset, D3D11_MAP::D3D11_MAP_WRITE, NULL, &mappedSubr);
+}
+
+void RD_UniformBuffer_DX11::BindBuffer() {
+	return;
+}
+
+void RD_UniformBuffer_DX11::UnbindBuffer() {
+	return;
+}
+
+void RD_UniformBuffer_DX11::CreateBuffer(const size_t size) {
+	D3D11_BUFFER_DESC UBO_Desc{};
+	UBO_Desc.ByteWidth = size;
+	UBO_Desc.Usage = D3D11_USAGE_DYNAMIC;
+	UBO_Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	UBO_Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	UBO_Desc.MiscFlags = NULL;
+	UBO_Desc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = nullptr;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+
+	HRESULT hr = m_device->CreateBuffer(&UBO_Desc, nullptr, &m_ubo);
+	if (FAILED(hr)) {
+		dispErrorMessageBox(StrToWStr(std::string("Failed to create constant buffer (binding = " + std::to_string(m_binding) + ")")));
+		return;
+	}
+
+	m_context->VSSetConstantBuffers(m_binding, 1, &m_ubo);
+	m_context->PSSetConstantBuffers(m_binding, 1, &m_ubo);
+}
+
 #endif // BUILD_D3D11
