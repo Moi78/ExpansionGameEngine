@@ -192,7 +192,7 @@ private:
 	bool m_resize_override;
 	bool m_vsync;
 
-	std::array<std::pair<std::string, bool>, 4> m_renderer_feature;
+	std::array<std::pair<std::string, bool>, 5> m_renderer_feature;
 
 	float ambientStrength;
 	vec3f ambientColor;

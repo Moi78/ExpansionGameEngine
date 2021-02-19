@@ -137,7 +137,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\libsndfile\include;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\BULLET\include;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\libsndfile\include;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\BULLET\include;..\libs\AL\include;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
@@ -161,7 +161,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\libsndfile\include;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\BULLET\include;..\libs\AL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\ExpansionGameEngineCore;..\BulldozerFileManager;..\libs\libsndfile\include;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\BULLET\include;..\libs\AL\include;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>

@@ -369,6 +369,7 @@ void RaindropRenderer::FillFeaturesArray() {
 	m_renderer_feature[1] = std::pair<std::string, bool>("ftr_lighting", true);
 	m_renderer_feature[2] = std::pair<std::string, bool>("ftr_ambient", true);
 	m_renderer_feature[3] = std::pair<std::string, bool>("ftr_ssao", true);
+	m_renderer_feature[4] = std::pair<std::string, bool>("ftr_bloom", true);
 }
 
 void RaindropRenderer::EnableAllFeatures() {
@@ -672,6 +673,13 @@ void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 }
 
 void RaindropRenderer::RenderBloom() {
+	if (!IsFeatureEnabled(RendererFeature::Bloom)) {
+		m_bloom_bufferb->BindFBO();
+		m_api->Clear(COLOR_BUFFER);
+		m_bloom_bufferb->UnbindFBO();
+		return;
+	}
+
 	SwitchShader(m_bloom);
 
 	for (int i = 0; i < 5; i++) {

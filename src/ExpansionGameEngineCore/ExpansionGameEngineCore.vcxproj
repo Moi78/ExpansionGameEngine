@@ -126,7 +126,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\libs\BULLET\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\libs\BULLET\include;..\BulldozerFileManager;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -149,7 +149,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\libs\BULLET\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\libs\BULLET\include;..\BulldozerFileManager;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -173,6 +173,7 @@
     <ClInclude Include="EXP_GUI_Button.h" />
     <ClInclude Include="EXP_GUI_ColorCache.h" />
     <ClInclude Include="EXP_GUI_ImageTexture.h" />
+    <ClInclude Include="EXP_GUI_Text.h" />
     <ClInclude Include="EXP_HotLoad.h" />
     <ClInclude Include="EXP_InputHandler.h" />
     <ClInclude Include="EXP_InstanciatedMesh.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="EXP_GUI_Button.cpp" />
     <ClCompile Include="EXP_GUI_ColorCache.cpp" />
     <ClCompile Include="EXP_GUI_ImageTexture.cpp" />
+    <ClCompile Include="EXP_GUI_Text.cpp" />
     <ClCompile Include="EXP_HotLoad.cpp" />
     <ClCompile Include="EXP_InputHandler.cpp" />
     <ClCompile Include="EXP_InstanciatedMesh.cpp" />

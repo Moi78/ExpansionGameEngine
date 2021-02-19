@@ -6,7 +6,10 @@
 #include <EXP_Callbacks.h>
 #include <EXP_RigidBody.h>
 
-#include <RD_MeshBuilder.h>
+#include <EXP_GUI_Text.h>
+#include <EXP_GUI_ColorCache.h>
+
+#include <RD_TextRenderer.h>
 
 #include "Character.h"
 

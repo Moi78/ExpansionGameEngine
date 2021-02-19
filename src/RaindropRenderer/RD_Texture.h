@@ -54,6 +54,12 @@ public:
 		unsigned int format = IMGFORMAT_RGB,
 		unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
 
+	virtual void CreateTextureFromGlyph(
+		void* data,
+		const int w,
+		const int h
+	) = 0;
+
 	virtual void CreateAndAttachToFramebuffer(
 		int w, int h,
 		unsigned int FBO,
@@ -89,6 +95,12 @@ public:
 		unsigned int format = IMGFORMAT_RGB,
 		unsigned int scaleMode = SCALEMODE_LINEAR,
 		unsigned int wrapmode = WRAPMODE_REPEAT);
+
+	virtual void CreateTextureFromGlyph(
+		void* data,
+		const int w,
+		const int h
+	);
 	
 	virtual void BindTexture(unsigned int tex_unit = 0);
 

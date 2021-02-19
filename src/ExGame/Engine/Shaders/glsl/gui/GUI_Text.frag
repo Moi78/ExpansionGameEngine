@@ -1,15 +1,14 @@
 #version 410
+layout (location = 0) out vec4 screen;
+
 in vec2 UVcoords;
 
-out vec4 Out;
-
-uniform sampler2D text;
+uniform sampler2D GlyphTex;
 uniform vec3 textColor;
 
 void main() {
-	float sampled = texture(text, UVcoords).r;
-	vec4 textTex = vec4(1.0, 1.0, 1.0, sampled);
-	Out = vec4(textColor, 1.0) * textTex;
+	float sampled = texture(GlyphTex, UVcoords).r;
+	screen = vec4(1.0, 1.0, 1.0, 1.0) * sampled;
 
 //	Out = texture(text, UVcoords);
 }

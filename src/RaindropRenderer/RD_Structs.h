@@ -11,7 +11,11 @@
 #endif //_WIN32
 
 enum RD_API RendererFeature {
-	Specular, Lighting, Ambient, SSAO
+	Specular = 0,
+	Lighting = 1,
+	Ambient  = 2,
+	SSAO	 = 3,
+	Bloom	 = 4
 };
 
 enum class RD_API RenderMode {

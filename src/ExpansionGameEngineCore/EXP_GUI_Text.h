@@ -5,43 +5,43 @@
 		#define EXPGE_API __declspec(dllexport)
 	#else
 		#define EXPGE_API __declspec(dllimport)
-	#endif
+	#endif // EXPANSIONGAMEENGINECORE_EXPORTS
 #else
 	#define EXPGE_API
-#endif
-
-#include "EXP_Game.h"
+#endif //_WIN32
 
 #include <RaindropRenderer.h>
 #include <RD_Quad.h>
-#include <RD_GUI_Manager.h>
 #include <RD_GUI_Element.h>
+#include <RD_GUI_Manager.h>
+#include <RD_TextRenderer.h>
 #include <RD_Texture.h>
+
+#include "EXP_Game.h"
 
 #include <memory>
 
-#include <mat4.h>
 #include <vec3.h>
+#include <vec2.h>
+#include <mat4.h>
 
-class EXPGE_API EXP_GUI_ImageTexture : public RD_GUI_Element
+class EXPGE_API EXP_GUI_Text : public RD_GUI_Element
 {
 public:
-	EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, float opacity, float sizex, float sizey, float posx, float posy);
-	~EXP_GUI_ImageTexture();
+	EXP_GUI_Text(EXP_Game* game, const std::string& fontRef, const std::string& text, const int fontSize, vec2f pos, vec2f scale);
+	virtual ~EXP_GUI_Text();
 
 	virtual void RenderElement() override;
 	virtual void RebuildElement() override;
 
-	void SetPosition(vec3f nPos);
-	vec3f GetPosition();
-
+	void SetPosition(vec2f nPos);
+	vec2f GetPosition();
 private:
 	std::unique_ptr<RD_Quad> m_surface;
-	RD_ShaderLoader* m_gui_shader;
+	RD_ShaderLoader* m_shader;
 
-	RD_Texture* m_image;
-
-	float m_opacity;
+	RD_TextRenderer* m_txtrndr;
+	std::string m_text;
 
 	EXP_Game* m_game;
 
