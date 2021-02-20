@@ -27,7 +27,7 @@ EXP_GUI_Text::EXP_GUI_Text(EXP_Game* game, const std::string& fontRef, const std
 	float w = (float)m_game->GetRenderer()->GetViewportSize().getX();
 	float h = (float)m_game->GetRenderer()->GetViewportSize().getY();
 
-	m_proj = ProjOrtho<float>((float)1280, 0.0f, 0.0f, (float)1280 / (w / h), -1.0f, 1.0f);
+	m_proj = ProjOrtho<float>(1280.0f, 0.0f, 0.0f, (float)1280.0f / (w / h), -1.0f, 1.0f);
 
 	m_surface = std::make_unique<RD_Quad>(game->GetRenderer());
 	m_surface->Bufferize();
