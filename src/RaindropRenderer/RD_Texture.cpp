@@ -90,7 +90,17 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 
 	GetGLformat(format, scaleMode, wrapmode, &formatGL, &typeGL, &scaleMde, &wrapmde);
 
-	const int format2 = format == IMGFORMAT_DEPTH ? GL_DEPTH_COMPONENT : GL_RGB;
+
+	int format2;
+	if (format == IMGFORMAT_DEPTH) {
+		format2 = GL_DEPTH_COMPONENT;
+	}
+	else if (format == IMGFORMAT_RGBA) {
+		format2 = GL_RGBA;
+	}
+	else {
+		format2 = GL_RGB;
+	}
 
 	glTexImage2D(GL_TEXTURE_2D, 0, formatGL, w, h, 0, format2, typeGL, NULL);
 
