@@ -10,6 +10,7 @@ in vec3 FragPos;
 in vec2 UVcoords;
 
 uniform sampler2D glyph;
+uniform vec3 txtColor;
 
 void main() {
 	float sampled = texture(glyph, UVcoords + vec2(0.0, 1.0)).r;
@@ -20,7 +21,7 @@ void main() {
 
 	gPos = FragPos;
 	gNorm = Normal;
-	gAlbedo = vec4(1.0, 1.0, 1.0, 0.0) * sampled;
+	gAlbedo = vec4(txtColor, 1.0) * sampled;
 	gSpec = 1.0;
 	gMetRoughAO = vec3(0.0, 1.0, 1.0);
 }

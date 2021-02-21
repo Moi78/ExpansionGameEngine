@@ -31,7 +31,8 @@ public:
 		const std::string& text,
 		const int size,
 		const std::string& font,
-		vec3f pos, vec3f rot, vec3f scale
+		vec3f pos, vec3f rot, vec3f scale,
+		vec3f color = vec3f()
 	);
 
 	~EXP_TextSurface();
@@ -44,11 +45,18 @@ public:
 
 	virtual void UseParentMatrix(mat4f parent);
 private:
+	void UpdateMatrices();
+
 	EXP_Game* m_game;
 
 	RD_ShaderLoader* m_shader;
 	RD_TextRenderer* m_txtRndr;
 
 	std::string m_txt;
+	vec3f m_color;
+
+	std::vector<mat4f> m_letters_prop;
+	vec3f m_space;
+	vec3f m_letter_spacing;
 };
 

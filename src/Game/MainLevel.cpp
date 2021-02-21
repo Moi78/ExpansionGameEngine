@@ -23,8 +23,12 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 	EXP_TextSurface* txt = new EXP_TextSurface(
 		game, mat,
 		"Hello world", 512, "/nova.ttf",
-		vec3f(0.0f, 0.0f, 1.0f), vec3f(0.0f), vec3f(0.1f, 0.1f, 1.0f)
+		vec3f(0.0f, 0.0f, 1.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.5f, 0.5f, 1.0f),
+		vec3f(0.0f, 0.2f, 1.0f)
 	);
+
+	txt->SetScale(vec3f(0.1f, 0.1f, 1.0f));
+	txt->SetRotation(vec3f(45.0f, 0.0f, 25.0f));
 }
 
 MainLevel::~MainLevel() {

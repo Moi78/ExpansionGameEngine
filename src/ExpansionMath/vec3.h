@@ -76,9 +76,9 @@ public:
         return vec3<T>(m_xyz[0] + a.m_xyz[0], m_xyz[1] + a.m_xyz[1], m_xyz[2] + a.m_xyz[2]);
     }
 
-    vec3<T> operator+=(vec3<T> const& a) {
-        return vec3<T>(m_xyz[0] + a.m_xyz[0], m_xyz[1] + a.m_xyz[1], m_xyz[2] + a.m_xyz[2]);
-    }
+    //vec3<T> operator+=(vec3<T> const& a) {
+    //    return vec3<T>(m_xyz[0] + a.m_xyz[0], m_xyz[1] + a.m_xyz[1], m_xyz[2] + a.m_xyz[2]);
+    //}
 
     vec3<T> operator-(vec3<T> const& a) {
         return vec3<T>(m_xyz[0] - a.m_xyz[0], m_xyz[1] - a.m_xyz[1], m_xyz[2] - a.m_xyz[2]);
@@ -90,6 +90,14 @@ public:
 
     vec3<T> operator*(float const& a) {
         return vec3<T>(m_xyz[0] * a, m_xyz[1] * a, m_xyz[2] * a);
+    }
+
+    void operator+=(float const& a) {
+        *this = (*this) + a;
+    }
+
+    void operator+=(vec3<T> const& a) {
+        *this = (*this) + a;
     }
 
     void DBGPrint() {
