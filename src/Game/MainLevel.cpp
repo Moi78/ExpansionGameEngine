@@ -13,8 +13,18 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	m_game->GetRenderer()->DisableFeature(RendererFeature::Bloom);
 
-	EXP_GUI_Text* txt = new EXP_GUI_Text(game, "/acetone.ttf", "Hello world", 120, vec2f(100, 100), vec2f(500, 500));
-	EXP_GUI_ColorCache* cache = new EXP_GUI_ColorCache(game, vec3f(0.0f, 1.0f, 0.0f), 1.0f, 100, 100, 0, 0);
+	RD_ShaderLoader* ld = game->GetRenderer()->GetRenderingAPI()->CreateShader();
+	ld->compileShaderFromFile(
+		game->GetGameInfo().RootEngineContentFolder + "/Shaders/glsl/TextRender.vert",
+		game->GetGameInfo().RootEngineContentFolder + "/Shaders/glsl/TextRender.frag"
+	);
+
+	RD_ShaderMaterial* mat = new RD_ShaderMaterial(ld);
+	EXP_TextSurface* txt = new EXP_TextSurface(
+		game, mat,
+		"Hello world", 512, "/nova.ttf",
+		vec3f(0.0f, 0.0f, 1.0f), vec3f(0.0f), vec3f(0.1f, 0.1f, 1.0f)
+	);
 }
 
 MainLevel::~MainLevel() {

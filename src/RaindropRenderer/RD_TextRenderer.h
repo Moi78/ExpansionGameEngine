@@ -21,6 +21,8 @@
 #include "RD_Texture.h"
 #include "RD_RenderingAPI.h"
 
+#include <vec2.h>
+
 class RD_API RD_TextRenderer
 {
 public:
@@ -30,11 +32,13 @@ public:
 	bool LoadFont(const std::string& path, const int fontsize);
 
 	RD_Texture* GetGlyphTexture(const char chr);
+	vec2f GetGlyphRelativeMetrics(const char chr);
+	int GetGlyphAdvance(const char chr);
 private:
 	RaindropRenderer* m_rndr;
 
 	stbtt_fontinfo m_font;
 
-	std::array<std::pair<RD_Texture*, char>, 93> m_characters;
+	std::array<std::pair<RD_Texture*, vec2f>, 93> m_characters;
 };
 

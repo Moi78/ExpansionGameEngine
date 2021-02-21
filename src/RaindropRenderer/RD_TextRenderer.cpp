@@ -40,7 +40,7 @@ bool RD_TextRenderer::LoadFont(const std::string& path, const int fontsize) {
 		m_characters[i].first = m_rndr->GetRenderingAPI()->CreateTexture();
 		m_characters[i].first->CreateTextureFromGlyph(bmp, w, h);
 
-		m_characters[i].second = i + 33;
+		m_characters[i].second = vec2f((float)w, (float)h);
 	}
 
 	return true;
@@ -48,4 +48,15 @@ bool RD_TextRenderer::LoadFont(const std::string& path, const int fontsize) {
 
 RD_Texture* RD_TextRenderer::GetGlyphTexture(const char chr) {
 	return m_characters[chr - 33].first;
+}
+
+vec2f RD_TextRenderer::GetGlyphRelativeMetrics(const char chr) {
+	return m_characters[chr - 33].second;
+}
+
+int RD_TextRenderer::GetGlyphAdvance(const char chr) {
+	int adv;
+	stbtt_GetCodepointHMetrics(&m_font, chr, &adv, NULL);
+
+	return adv;
 }

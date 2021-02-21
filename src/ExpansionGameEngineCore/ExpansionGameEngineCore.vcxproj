@@ -173,7 +173,6 @@
     <ClInclude Include="EXP_GUI_Button.h" />
     <ClInclude Include="EXP_GUI_ColorCache.h" />
     <ClInclude Include="EXP_GUI_ImageTexture.h" />
-    <ClInclude Include="EXP_GUI_Text.h" />
     <ClInclude Include="EXP_HotLoad.h" />
     <ClInclude Include="EXP_InputHandler.h" />
     <ClInclude Include="EXP_InstanciatedMesh.h" />
@@ -186,6 +185,7 @@
     <ClInclude Include="EXP_RigidBody.h" />
     <ClInclude Include="EXP_SoundEmitter.h" />
     <ClInclude Include="EXP_StaticMesh.h" />
+    <ClInclude Include="EXP_TextSurface.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="EXP_Structs.h" />
     <ClInclude Include="pch.h" />
@@ -202,7 +202,6 @@
     <ClCompile Include="EXP_GUI_Button.cpp" />
     <ClCompile Include="EXP_GUI_ColorCache.cpp" />
     <ClCompile Include="EXP_GUI_ImageTexture.cpp" />
-    <ClCompile Include="EXP_GUI_Text.cpp" />
     <ClCompile Include="EXP_HotLoad.cpp" />
     <ClCompile Include="EXP_InputHandler.cpp" />
     <ClCompile Include="EXP_InstanciatedMesh.cpp" />
@@ -215,6 +214,7 @@
     <ClCompile Include="EXP_RigidBody.cpp" />
     <ClCompile Include="EXP_SoundEmitter.cpp" />
     <ClCompile Include="EXP_StaticMesh.cpp" />
+    <ClCompile Include="EXP_TextSurface.cpp" />
     <ClCompile Include="glad.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

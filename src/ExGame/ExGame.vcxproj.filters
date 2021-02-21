@@ -89,5 +89,11 @@
     <None Include="Engine\Shaders\glsl\pbr\bloom.frag">
       <Filter>GLSL\PBR</Filter>
     </None>
+    <None Include="Engine\Shaders\glsl\TextRender.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\TextRender.vert">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

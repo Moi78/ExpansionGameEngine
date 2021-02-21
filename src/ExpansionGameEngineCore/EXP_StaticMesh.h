@@ -29,7 +29,13 @@ class EXPGE_API EXP_StaticMesh :
 	public RD_Mesh
 {
 public:
-	EXP_StaticMesh(EXP_Game* gameinstance, RD_ShaderMaterial* shader, std::string meshRef, vec3f pos, vec3f rot, vec3f scale);
+	EXP_StaticMesh(
+		EXP_Game* gameinstance,
+		RD_ShaderMaterial* shader,
+		std::string meshRef,
+		vec3f pos, vec3f rot, vec3f scale
+	);
+
 	~EXP_StaticMesh();
 
 	void LoadMesh(std::string MeshRef);

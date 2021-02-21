@@ -64,14 +64,14 @@ public:
 	void SetMaterial(RD_ShaderMaterial* mat);
 	
 private:
-	mat4f m_mdl;
-
 	bool m_shadowCaster;
 
 protected:
 	RaindropRenderer* m_rndr;
 
 	mat4f m_parent;
+	mat4f m_mdl;
+
 	RD_ShaderMaterial* m_mat;
 
 	RD_RenderingAPI_VertexElemBuffer* m_buffer;

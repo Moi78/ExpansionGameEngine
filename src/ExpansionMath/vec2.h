@@ -21,7 +21,7 @@
 template<class T>
 class vec2 {
 public:
-    vec2(T x, T y) {
+    vec2(T x = 0, T y = 0) {
         m_x = x;
         m_y = y;
     }

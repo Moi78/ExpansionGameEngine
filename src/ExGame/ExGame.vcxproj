@@ -43,6 +43,8 @@
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
     <None Include="Engine\Shaders\glsl\ShadowCalc.frag" />
     <None Include="Engine\Shaders\glsl\ShadowCalc.vert" />
+    <None Include="Engine\Shaders\glsl\TextRender.frag" />
+    <None Include="Engine\Shaders\glsl\TextRender.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

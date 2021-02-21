@@ -90,7 +90,7 @@
     <ClInclude Include="EXP_MeshBuilder.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="EXP_GUI_Text.h">
+    <ClInclude Include="EXP_TextSurface.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -170,7 +170,7 @@
     <ClCompile Include="EXP_MeshBuilder.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="EXP_GUI_Text.cpp">
+    <ClCompile Include="EXP_TextSurface.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

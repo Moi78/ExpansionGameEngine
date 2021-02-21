@@ -6,8 +6,7 @@
 #include <EXP_Callbacks.h>
 #include <EXP_RigidBody.h>
 
-#include <EXP_GUI_Text.h>
-#include <EXP_GUI_ColorCache.h>
+#include <EXP_TextSurface.h>
 
 #include <RD_TextRenderer.h>
 
