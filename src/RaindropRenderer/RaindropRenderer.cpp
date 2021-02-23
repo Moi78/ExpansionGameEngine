@@ -585,6 +585,8 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 		
 		RenderLightPass(cam->GetLocation());
 		RenderSSR(cam);
+
+		RenderBloom();
 	} else {
 		m_light_pprocess->BindFBO();
 		m_api->Clear(COLOR_BUFFER);
@@ -595,8 +597,6 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	RenderPostProcess();
 
 	m_light_pprocess->UnbindFBO();
-
-	RenderBloom();
 }
 
 void RaindropRenderer::RenderShadows() {

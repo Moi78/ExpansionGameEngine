@@ -72,7 +72,7 @@ float Rness = metrao.g;
 float Metllc = metrao.r;
 float AO = metrao.b;
 
-vec3 viewDir = normalize(CamPos - FragPos);
+vec3 viewDir = normalize(-(CamPos - FragPos));
 
 vec3 F0 = mix(vec3(0.04), Diffuse, Metllc);
 

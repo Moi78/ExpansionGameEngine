@@ -180,10 +180,10 @@ void EXP_Game::InitGui() {
 }
 
 void EXP_Game::RenderScene() {
+	m_rndr->ClearWindow(m_refreshColor);
+
 	if (!m_currentCamera)
 		return;
-	
-	m_rndr->ClearWindow(m_refreshColor);
 
 	const vec3f CamLoc = m_currentCamera->GetLocation();
 	//m_currentCamera->UpdateCamera();
@@ -193,11 +193,11 @@ void EXP_Game::RenderScene() {
 	//GBuff
 	m_rndr->RenderGbuff(m_currentCamera);
 	//Rendering GUI
-	m_rndr->RenderGUI_Screen();
+	//m_rndr->RenderGUI_Screen(); //Disabled GUI because it needs to be rewritten
 	//PostProcessing
 	m_rndr->RenderBeauty();
 
-	if (RENDER_DBG && m_currentCamera != nullptr) {
+	if constexpr(RENDER_DBG) {
 		m_rndr->RenderDbg(m_currentCamera);
 	}
 
