@@ -77,12 +77,12 @@ void EXP_TextSurface::UpdateMatrices() {
 
 		vec2f met = m_txtRndr->GetGlyphRelativeMetrics(c);
 		m_letter_spacing = vec3f(
-			(RD_Mesh::m_scale * 10.0f) * vec3f(2.0f * (met.getX() / met.getY()))
+			(RD_Mesh::m_scale * 10.0f) * vec3f(2.0f * std::clamp(met.getX() / met.getY(), 0.0f, 1.0f))
 		);
 
 		mat = TranslateMatrix(mat, overrall_pos);
 
-		vec3f nScale = RD_Mesh::m_scale * vec3f(met.getX() / met.getY(), 1.0f, 1.0f);
+		vec3f nScale = RD_Mesh::m_scale * vec3f(std::clamp(met.getX() / met.getY(), 0.0f, 1.0f), met.getY() / met.getX(), 1.0f);
 		mat = ScaleMatrix(mat, nScale);
 
 		overrall_pos = overrall_pos + m_letter_spacing;
