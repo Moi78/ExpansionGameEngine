@@ -13,10 +13,10 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	m_game->GetRenderer()->DisableFeature(RendererFeature::Bloom);
 
-	RD_ShaderLoader* ld = game->GetRenderer()->GetRenderingAPI()->CreateShader();
-	ld->compileShaderFromFile(
-		game->GetGameInfo().RootEngineContentFolder + "/Shaders/glsl/TextRender.vert",
-		game->GetGameInfo().RootEngineContentFolder + "/Shaders/glsl/TextRender.frag"
+	EXP_TextSurface* txt = new EXP_TextSurface(
+		game, "Hello world - Hey", 512, "/nova.ttf",
+		vec3f(0.0f, 0.0f, 1.0f), vec3f(0.0f), vec3f(0.1f, 0.1f, 1.0f),
+		vec3f(1.0f, 1.0f)
 	);
 }
 

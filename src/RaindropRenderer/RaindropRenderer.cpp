@@ -157,6 +157,14 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_quad->Bufferize();
 
 	m_matlib = std::make_unique<RD_MaterialLibrary>();
+	m_txtRndrs = std::make_unique<RD_GenericRessourceManager<RD_TextRenderer>>();
+
+	RD_ShaderLoader* ld = m_api->CreateShader();
+	ld->compileShaderFromFile(
+		m_engineDir + "/Shaders/glsl/TextRender.vert",
+		m_engineDir + "/Shaders/glsl/TextRender.frag"
+	);
+	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld), "text");
 
 	UpdateAmbientLighting();
 }
@@ -1067,4 +1075,8 @@ void RaindropRenderer::SetVSync(const bool vsync) {
 
 bool RaindropRenderer::IsVSyncActivated() const {
 	return m_vsync;
+}
+
+RD_GenericRessourceManager<RD_TextRenderer>* RaindropRenderer::GetTxtRendererManager() const {
+	return m_txtRndrs.get();
 }

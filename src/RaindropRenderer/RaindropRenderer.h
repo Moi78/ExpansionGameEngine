@@ -30,6 +30,8 @@
 #include "RD_FrameBuffer.h"
 #include "RD_Structs.h"
 
+#include "RD_GenericRessourceManager.h"
+
 #include <BD_MatRW.h>
 
 #include <iostream>
@@ -54,6 +56,7 @@ class RD_Camera;
 class RD_MaterialLibrary;
 class RD_GUI_Manager;
 class RD_PostProcessEffect;
+class RD_TextRenderer;
 
 class RD_RenderingAPI;
 
@@ -88,6 +91,8 @@ public:
 	std::string GetEngineDir() const;
 
 	double GetLastDeltaTime() const;
+
+	RD_GenericRessourceManager<RD_TextRenderer>* GetTxtRendererManager() const;
 
 	//Rendering
 	void RenderMeshes(RD_Camera* cam);
@@ -257,8 +262,9 @@ private:
 
 	vec2f m_vp_size, m_vp_pos;
 
-	//Materials
+	//Ressource management
 	std::unique_ptr<RD_MaterialLibrary> m_matlib;
+	std::unique_ptr<RD_GenericRessourceManager<RD_TextRenderer>> m_txtRndrs;
 };
 
 template<class T>

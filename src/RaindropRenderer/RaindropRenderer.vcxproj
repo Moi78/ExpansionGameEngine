@@ -173,6 +173,7 @@
     <ClInclude Include="RD_Error.h" />
     <ClInclude Include="RD_FrameBuffer.h" />
     <ClInclude Include="RD_FrameLimiter.h" />
+    <ClInclude Include="RD_GenericRessourceManager.h" />
     <ClInclude Include="RD_GUI_Element.h" />
     <ClInclude Include="RD_GUI_Manager.h" />
     <ClInclude Include="RD_InstanciatedMesh.h" />

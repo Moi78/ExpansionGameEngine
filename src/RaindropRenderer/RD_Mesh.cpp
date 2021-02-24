@@ -3,8 +3,6 @@
 
 RD_Mesh::RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale) : m_mdl(1.0f), m_parent(1.0f) {
 	m_nbr_indices = 0;
-
-	assert(shader != nullptr && "Given material was nullptr");
 	m_mat = shader;
 
 	m_position = position;

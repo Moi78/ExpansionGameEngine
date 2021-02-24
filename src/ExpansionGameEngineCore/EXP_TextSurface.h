@@ -27,7 +27,6 @@ class EXPGE_API EXP_TextSurface :
 {
 public:
 	EXP_TextSurface(EXP_Game* game,
-		RD_ShaderMaterial* mat,
 		const std::string& text,
 		const int size,
 		const std::string& font,
@@ -49,7 +48,6 @@ private:
 
 	EXP_Game* m_game;
 
-	RD_ShaderLoader* m_shader;
 	RD_TextRenderer* m_txtRndr;
 
 	std::string m_txt;

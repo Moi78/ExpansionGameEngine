@@ -3,7 +3,6 @@
 
 EXP_TextSurface::EXP_TextSurface(
 	EXP_Game* game,
-	RD_ShaderMaterial* mat,
 	const std::string& text,
 	const int size,
 	const std::string& font,
@@ -11,14 +10,22 @@ EXP_TextSurface::EXP_TextSurface(
 	vec3f color) :
 
 	EXP_Component(pos, rot, scale),
-	RD_Mesh(game->GetRenderer(), mat, pos, rot, scale)
+	RD_Mesh(game->GetRenderer(), nullptr, pos, rot, scale)
 {
 	m_game = game;
-	m_shader = mat->GetShader();
+	RD_Mesh::m_mat = game->GetRenderer()->GetMaterialLibrary()->GetMaterialByName("text");
 	m_color = color;
 
-	m_txtRndr = new RD_TextRenderer(game->GetRenderer());
-	m_txtRndr->LoadFont(game->GetFilePathByRef(font), size);
+	auto* txt_mgr = game->GetRenderer()->GetTxtRendererManager();
+
+	if (txt_mgr->DoRessourceExists(font)) {
+		m_txtRndr = txt_mgr->GetRessourceByName(font);
+	}
+	else {
+		m_txtRndr = new RD_TextRenderer(game->GetRenderer());
+		m_txtRndr->LoadFont(game->GetFilePathByRef(font), size);
+		txt_mgr->AddRessource(m_txtRndr, font);
+	}
 
 	m_txt = text;
 
@@ -38,12 +45,12 @@ EXP_TextSurface::EXP_TextSurface(
 
 		vec2f met = m_txtRndr->GetGlyphRelativeMetrics(m_txt[i]);
 		m_letter_spacing = vec3f(
-			(scale * 10.0f) * vec3f(2.0f * (met.getX() / met.getY()))
+			(scale * 10.0f) * vec3f(2.0f * std::clamp(met.getX() / met.getY(), 0.0f, 1.0f))
 		);
 
 		mat = TranslateMatrix(mat, overrall_pos);
 
-		vec3f nScale = scale * vec3f(met.getX() / met.getY(), 1.0f, 1.0f);
+		vec3f nScale = scale * vec3f(std::clamp(met.getX() / met.getY(), 0.0f, 1.0f), met.getY() / met.getX(), 1.0f);
 		mat = ScaleMatrix(mat, nScale);
 
 		overrall_pos = overrall_pos + m_letter_spacing;
@@ -85,15 +92,11 @@ void EXP_TextSurface::UpdateMatrices() {
 	}
 }
 
-EXP_TextSurface::~EXP_TextSurface() {
-	delete m_txtRndr;
-}
+EXP_TextSurface::~EXP_TextSurface() {}
 
 void EXP_TextSurface::render(RD_Camera* cam) {
-	m_shader->useShader();
-
 	m_buffer->BindBuffer();
-	m_shader->SetVec3("txtColor", m_color);
+	m_mat->GetShader()->SetVec3("txtColor", m_color);
 
 	int i = 0;
 	for (auto c : m_txt) {
@@ -101,7 +104,7 @@ void EXP_TextSurface::render(RD_Camera* cam) {
 			continue;
 		}
 
-		m_shader->SetMatrix("model", m_letters_prop[i]);
+		m_mat->GetShader()->SetMatrix("model", m_letters_prop[i]);
 
 		m_txtRndr->GetGlyphTexture(c)->BindTexture(0);
 		m_rndr->GetRenderingAPI()->Draw(m_buffer);
