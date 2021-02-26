@@ -37,3 +37,9 @@ add_subdirectory("src/RaindropRenderer")
 add_subdirectory("src/ExpansionGameEngineCore")
 add_subdirectory("src/ExGame")
 add_subdirectory("src/Game")
+
+set(CMAKE_INSTALL_PREFIX /usr)
+install(
+    TARGETS ExpansionGameEngineCore RaindropRenderer ExpansionMath PhysicaSound BulldozerFileManager
+    RUNTIME DESTINATION /usr/lib/
+)
