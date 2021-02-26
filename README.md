@@ -81,7 +81,7 @@ Material Node Editor
   - OpenAL Soft (by @Kcat)
   - GLFW3
   - OpenGL
-  - GLAD
+  - GLAD (Packed with the repo)
   - GLEW
   - libsndfile1
   - Bullet Physics
