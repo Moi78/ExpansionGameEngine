@@ -25,6 +25,7 @@ public:
 
 	void MoveForward();
 	void Roll();
+	void PrnPos();
 
 	void DestroyActor();
 
@@ -36,5 +37,6 @@ private:
 	EXP_KeyboardCallback* m_move;
 	EXP_KeyboardCallback* m_destroy;
 	EXP_KeyboardCallback* m_roll;
+	EXP_KeyboardCallback* m_getpos;
 };
 

@@ -39,6 +39,6 @@ private:
 
 	stbtt_fontinfo m_font;
 
-	std::array<std::pair<RD_Texture*, vec2f>, 93> m_characters;
+	std::array<std::pair<RD_Texture*, vec2f>, 94> m_characters;atta 
 };
 

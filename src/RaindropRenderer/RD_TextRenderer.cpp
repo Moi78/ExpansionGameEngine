@@ -33,7 +33,7 @@ bool RD_TextRenderer::LoadFont(const std::string& path, const int fontsize) {
 		return false;
 	}
 
-	for (int i = 0; i < 93; i++) {
+	for (int i = 0; i < 94; i++) {
 		int w, h;
 		unsigned char* bmp = stbtt_GetCodepointBitmap(&m_font, 0, stbtt_ScaleForPixelHeight(&m_font, fontsize), i + 33, &w, &h, NULL, NULL);
 

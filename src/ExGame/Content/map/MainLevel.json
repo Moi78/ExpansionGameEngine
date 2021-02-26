@@ -24,38 +24,62 @@
 
     {
       "type":"mesh",
-      "nameTag":"sphere1",
+      "nameTag":"Terrain",
 
-      "ref":"/sphere",
-      "material":"/shaders/mat_met_blue",
+      "ref":"/desert",
+      "material":"/shaders/mat_sand",
 
-      "pos":[0, 0, 0],
-      "rot":[0, 0, 0],
+      "pos":[0.0, 0.0, 0.0],
+      "rot":[0.0, 0.0, 0.0],
       "scale":[1, 1, 1]
     },
 
     {
       "type":"mesh",
-      "nameTag":"sphere2",
+      "nameTag":"rock1_1",
 
-      "ref":"/sphere",
-      "material":"/shaders/mat_glow_green",
+      "ref":"/rock1",
+      "material":"/shaders/mat_rock1",
 
-      "pos":[0, -2.5, -1.5],
-      "rot":[0, 0, 0],
-      "scale":[1, 1, 1]
+      "pos":[0.8, 7.8, 0.95],
+      "rot":[0.0, 0.0, 0.0],
+      "scale":[0.002, 0.002, 0.002]
     },
 
     {
       "type":"mesh",
-      "nameTag":"plane",
+      "nameTag":"rock1_2",
 
-      "ref":"/plane",
-      "material":"/shaders/mat_red",
+      "ref":"/rock1",
+      "material":"/shaders/mat_rock1",
 
-      "pos":[0, 0, -2],
-      "rot":[0, 0, 0],
-      "scale":[3, 3, 3]
+      "pos":[3.95, 6.81, 0.57],
+      "rot":[15.0, 12.0, 12.0],
+      "scale":[0.007, 0.007, 0.007]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"rock1_2",
+
+      "ref":"/rock1",
+      "material":"/shaders/mat_rock1",
+
+      "pos":[2.35, 7.5, 0.25],
+      "rot":[90.0, 130.0, 40.0],
+      "scale":[0.005, 0.005, 0.005]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"cactus",
+
+      "ref":"/cactus",
+      "material":"/shaders/mat_cactus",
+
+      "pos":[2.69, 3.6, 0.04],
+      "rot":[0.0, 0.0, 30.0],
+      "scale":[0.05, 0.05, 0.05]
     }
   ]
 }
