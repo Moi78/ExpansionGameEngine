@@ -5,7 +5,11 @@
 #include <EXP_Game.h>
 
 //Enabling Optimus
+#ifdef _WIN32
 extern "C" { _declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001; }
+#else
+extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
+#endif //_WIN32
 
 int main(int argc, char* argv[]) {
 	std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>("GameInfo.json");
