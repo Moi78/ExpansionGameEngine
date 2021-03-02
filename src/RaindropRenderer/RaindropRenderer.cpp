@@ -584,7 +584,7 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	if(m_pipeline == Pipeline::PBR_ENGINE) {
 		m_ssao_buffer->BindFBO();
 
-		RenderSSAO(cam);
+		RenderSSAO();
 		
 		m_ssao_buffer->UnbindFBO();
 
@@ -592,7 +592,7 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 		m_api->Clear(COLOR_BUFFER);
 		
 		RenderLightPass(cam->GetLocation());
-		RenderSSR(cam);
+		RenderSSR();
 
 		RenderBloom();
 	} else {
@@ -720,7 +720,7 @@ void RaindropRenderer::RenderBloom() {
 }
 
 
-void RaindropRenderer::RenderSSR(RD_Camera* cam) {
+void RaindropRenderer::RenderSSR() {
 	SwitchShader(m_ssr_shader);
 
 	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
@@ -741,7 +741,7 @@ void RaindropRenderer::RenderSSR(RD_Camera* cam) {
 	m_quad->RenderQuad();
 }
 
-void RaindropRenderer::RenderSSAO(RD_Camera* cam) {
+void RaindropRenderer::RenderSSAO() {
 	if (IsFeatureEnabled(RendererFeature::SSAO)) {
 		//Render SSAO
 		SwitchShader(m_ssao_shader);
@@ -846,7 +846,6 @@ void RaindropRenderer::RenderBeauty() {
 	if(m_pipeline == Pipeline::PBR_ENGINE) {
 		m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7); //SSR Attachement
 		m_beauty_shader->SetInt("SSR", 7);
-
 
 		m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(8);
 		m_beauty_shader->SetInt("bloom", 8);

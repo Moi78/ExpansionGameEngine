@@ -17,9 +17,7 @@ uniform mat4 model;
 
 void main()
 {
-    //Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
-    Normal = normalize((model * vec4(aNormal, 1.0)).xyz);
-    //Normal = normalize((model * vec4(aNormal, 0.0)).xyz);
+    Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
 
     FragPos = vec3(model * vec4(aPos, 1.0));
     UVcoord = aUV;

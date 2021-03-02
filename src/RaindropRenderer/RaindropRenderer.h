@@ -39,6 +39,8 @@
 #include <vector>
 #include <memory>
 #include <random>
+#include <thread>
+#include <mutex>
 
 #include <vec3.h>
 #include <vec2.h>
@@ -94,6 +96,8 @@ public:
 
 	RD_GenericRessourceManager<RD_TextRenderer>* GetTxtRendererManager() const;
 
+	std::mutex* GetRenderingMutex();
+
 	//Rendering
 	void RenderMeshes(RD_Camera* cam);
 	void RenderShadowMeshes();
@@ -102,10 +106,10 @@ public:
 	void RenderLightsDepth(const vec3f& camPos);
 	void RenderShadows();
 
-	void RenderSSR(RD_Camera* cam);
+	void RenderSSR();
 	void RenderBloom();
 
-	void RenderSSAO(RD_Camera* cam);
+	void RenderSSAO();
 	void GenerateSSAOKernels();
 	void GenerateSSAONoise();
 	
@@ -238,12 +242,12 @@ private:
 	RD_ShaderLoader* m_light_shader;
 	RD_ShaderLoader* m_beauty_shader;
 	RD_ShaderLoader* m_shadowCalc;
-	RD_ShaderLoader* m_bloom;
+	RD_ShaderLoader* m_bloom; //PBR
 	
-	RD_ShaderLoader* m_ssr_shader;
+	RD_ShaderLoader* m_ssr_shader; //PBR
 	
-	RD_ShaderLoader* m_ssao_shader;
-	RD_ShaderLoader* m_ssao_blur_shader;
+	RD_ShaderLoader* m_ssao_shader; //PBR
+	RD_ShaderLoader* m_ssao_blur_shader; //PBR
 
 	RD_ShaderMaterial* m_dbgMat;
 
@@ -258,7 +262,7 @@ private:
 	RD_UniformBuffer* m_dirLights_u;
 	RD_UniformBuffer* m_pointLight_u;
 	RD_UniformBuffer* m_ambient_u;
-	RD_UniformBuffer* m_ssao_u;
+	RD_UniformBuffer* m_ssao_u; //PBR
 
 	vec2f m_vp_size, m_vp_pos;
 
