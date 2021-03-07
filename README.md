@@ -29,6 +29,14 @@ Expansion Game Engine is a 3D game engine under development.
 ## Screenshots
 Here you have some screenshots I took from the last demo I've made.
 
+First demo of my PBR impl
+
+![alt_text](screenshots/EXPGE_Screen_8.PNG)
+
+Material Node Editor
+
+![alt_text](screenshots/EXPGE_Screen_9.PNG)
+
 ![alt text](screenshots/EXPGE_Screen_1.PNG)
 
 Some tests on instanciated meshes and rotations issues (now solved =° ), and GUI System
@@ -40,40 +48,19 @@ A little Maze Generator I've built with EXPGE
 ![alt text](screenshots/EXPGE_Screen_4.PNG)
 ![alt text](screenshots/EXPGE_Screen_6.PNG)
 
-FBX to MSH convertion tool
-
-![alt text](screenshots/EXPGE_Screen_7.PNG)
-
-First demo of my PBR impl
-
-![alt_text](screenshots/EXPGE_Screen_8.PNG)
-
-Material Node Editor
-
-![alt_text](screenshots/EXPGE_Screen_9.PNG)
-
 ## TODO List
 
- - [x] Check compatibility with linux (and make it compatible)
- - [x] Reduce RAM usage
  - [x] Impl. Shadows to Raindrop Renderer
    - [ ] Improve these (for instance, better PCF)
- - [x] Fix Debug rendering (Combine forward rendering with deffered)
- - [x] Rebuild point-lighting system (--> Lighting in volumes)
- - [x] Better management of ressources (especially with texture) --> I'll make a MaterialLibrary system to manage all of that, it will be transparent for the final user, but it will optimise a lot GPU memory usage
- - [x] Fix window resize
- - [x] Proprer input manager
- - [x] Custom shaders
- - [x] ExpansionMath Cleanup
-   - [x] Rewrite vectors (vec3X & vec2X)
-   - [x] Add matrices support
-   - [x] Add Quaternion support
-   - [x] Use SIMD operations
- - [x] Use smartptr when possible
  - [ ] Consistent error handling
  - [ ] Fix the error when reducing the window
- - [ ] Font Rendering on GUI System
- 
+ - [ ] Rewrite GUI system
+ - [ ] Rewrite Physics Integration (maybe switch to PhysX :thinking:)
+ - [ ] Do Vulkan integration
+ - [ ] Add particle system
+ - [ ] Add tests whenever it is possible
+ - [ ] Start developping editor & a good project manager 
+
 ## Dependencies
 
 ### Main Engine deps
@@ -93,7 +80,6 @@ Material Node Editor
   - Qt (For tools)
   - imgui
   - imnodes (by Johann Muszynski)
-  - imgui-filebrowser (by Zhuang Guan)
  
 NB1 : All libs that are precompiled and in this repo are compiled for Windows x64. If you want to compile this engine for Windows x86 you need to do it yourself. If you want to compile this engine for linux you'll need to install all the dependencies using your package manager.
  
