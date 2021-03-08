@@ -67,6 +67,14 @@ public:
 		unsigned int format = IMGFORMAT_RGB,
 		unsigned int scaleMode = SCALEMODE_LINEAR,
 		unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
+
+	virtual void CreateAndAttachToFramebufferMS(
+		int w, int h,
+		unsigned int FBO,
+		unsigned int attachement = 0,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int scaleMode = SCALEMODE_LINEAR,
+		unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
 	
 	virtual void BindTexture(unsigned int tex_unit) = 0;
 
@@ -96,6 +104,14 @@ public:
 		unsigned int scaleMode = SCALEMODE_LINEAR,
 		unsigned int wrapmode = WRAPMODE_REPEAT);
 
+	virtual void CreateAndAttachToFramebufferMS(
+		int w, int h,
+		unsigned int FBO,
+		unsigned int attachement = 0,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int scaleMode = SCALEMODE_LINEAR,
+		unsigned int wrapmode = WRAPMODE_REPEAT);
+
 	virtual void CreateTextureFromGlyph(
 		void* data,
 		const int w,
@@ -119,6 +135,9 @@ private:
 		unsigned int* wrapmodeGL); //I KNOW THAT IS C-STYLE >:)
 	
 	unsigned int m_texture;
+	unsigned int m_ms_texture;
+
+	bool m_ms;
 };
 
 #endif //BUILD_OPENGL

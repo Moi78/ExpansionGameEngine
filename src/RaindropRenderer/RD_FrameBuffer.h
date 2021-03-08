@@ -55,11 +55,16 @@ public:
 	virtual void AddAttachement(unsigned int format, unsigned int scaleMode = SCALEMODE_LINEAR, unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
 	virtual void BuildFBO() = 0;
 
+	virtual void SetMultisampled(bool state) = 0;
+
 	virtual void ConfigureRenderbuffer(int storage, int attachement) = 0;
 
 	virtual void ChangeFramebufferSize(int nw, int nh) = 0;
 
 	virtual void DebugMode() = 0;
+
+	virtual void BindWrite() = 0;
+	virtual void BindRead() = 0;
 
 private:
 	virtual void CreateFBO() = 0;
@@ -84,11 +89,16 @@ public:
 	virtual void AddAttachement(unsigned int format, unsigned int scaleMode = SCALEMODE_LINEAR, unsigned int wrapmode = WRAPMODE_REPEAT);
 	virtual void BuildFBO();
 
+	virtual void SetMultisampled(bool state);
+
 	virtual void ConfigureRenderbuffer(int storage, int attachement);
 
 	virtual void ChangeFramebufferSize(int nw, int nh);
 
 	virtual void DebugMode();
+
+	virtual void BindWrite();
+	virtual void BindRead();
 
 private:
 	virtual void CreateFBO();
@@ -99,7 +109,12 @@ private:
 
 	int m_w, m_h;
 	int m_storage, m_rbo_attachement;
+
 	bool m_nodepth;
+	bool m_ms;
+
+	//If multi-sampled, non multi-sampled FBO is here
+	RD_FrameBuffer_GL* m_FBO_nMS;
 };
 
 #endif //BUILD_OPENGL

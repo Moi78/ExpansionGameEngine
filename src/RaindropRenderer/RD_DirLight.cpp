@@ -40,7 +40,7 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 
 	rndr->SwitchShader(rndr->GetShadowShader());
 
-	mat4f lightProj = ProjOrtho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 100.0f);
+	mat4f lightProj = ProjOrtho(-30.0f, 30.0f, -30.0f, 30.0f, -10.0f, 100.0f);
 
 	vec3f fpos = (m_dir * -5) + CamPos;
 	mat4f lightView = LookAt<float>(fpos, CamPos, vec3f(0.0f, 0.0f, 1.0f));
@@ -71,6 +71,7 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual) {
 	m_shadowQuality = shadowQual;
 	m_fbo = rndr->GetRenderingAPI()->CreateFrameBuffer(m_shadowQuality, m_shadowQuality, false);
+	m_fbo->SetMultisampled(false);
 
 	m_fbo->AddAttachement(IMGFORMAT_DEPTH, SCALEMODE_LINEAR);
 	m_fbo->BuildFBO();

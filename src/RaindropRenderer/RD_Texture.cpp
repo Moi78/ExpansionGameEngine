@@ -8,6 +8,8 @@
 
 RD_Texture_GL::RD_Texture_GL() {
 	m_texture = 0;
+	m_ms_texture = 0;
+	m_ms = false;
 }
 
 RD_Texture_GL::~RD_Texture_GL() {
@@ -123,6 +125,10 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 }
 
 void RD_Texture_GL::BindTexture(unsigned int tex_unit) {
+	if (m_ms) {
+		return;
+	}
+
 	glActiveTexture(GL_TEXTURE0 + tex_unit);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 }
@@ -148,6 +154,53 @@ void RD_Texture_GL::CreateTextureFromPixels(void* pixels, int w, int h, unsigned
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+}
+
+void RD_Texture_GL::CreateAndAttachToFramebufferMS(
+	int w, int h,
+	unsigned int FBO,
+	unsigned int attachment, 
+	unsigned int format, 
+	unsigned int scaleMode, 
+	unsigned int wrapmode) {
+	m_ms = true;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	glGenTextures(1, &m_ms_texture);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_ms_texture);
+
+	unsigned int formatGL = GL_RGB;
+	unsigned int typeGL = GL_UNSIGNED_BYTE;
+	unsigned int scaleMde = GL_LINEAR;
+	unsigned int wrapmde = GL_REPEAT;
+
+	GetGLformat(format, scaleMode, wrapmode, &formatGL, &typeGL, &scaleMde, &wrapmde);
+
+
+	int format2;
+	if (format == IMGFORMAT_DEPTH) {
+		format2 = GL_DEPTH_COMPONENT;
+	}
+	else if (format == IMGFORMAT_RGBA) {
+		format2 = GL_RGBA;
+	}
+	else {
+		format2 = GL_RGB;
+	}
+
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, formatGL, w, h, GL_TRUE);
+
+	if (format != IMGFORMAT_DEPTH) {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D_MULTISAMPLE, m_ms_texture, 0);
+	}
+	else {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, m_ms_texture, 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RD_Texture_GL::CreateTextureFromGlyph(void* data, const int w, const int h) {

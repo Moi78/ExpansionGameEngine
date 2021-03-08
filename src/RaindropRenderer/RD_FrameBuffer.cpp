@@ -8,6 +8,7 @@ RD_FrameBuffer_GL::RD_FrameBuffer_GL(int w, int h, bool nodepth) : RD_FrameBuffe
 	m_h = h;
 	m_FBO = 0;
 	m_nodepth = nodepth;
+	m_ms = false;
 
 	m_storage = GL_DEPTH_COMPONENT;
 	m_rbo_attachement = GL_DEPTH_ATTACHMENT;
@@ -23,6 +24,8 @@ RD_FrameBuffer_GL::~RD_FrameBuffer_GL() {
 
 	glDeleteFramebuffers(1, &m_FBO);
 	glDeleteRenderbuffers(1, &m_RBO);
+
+	delete m_FBO_nMS;
 }
 
 unsigned int RD_FrameBuffer_GL::GetFBO() {
@@ -34,6 +37,10 @@ void RD_FrameBuffer_GL::CreateFBO() {
 }
 
 void RD_FrameBuffer_GL::AddAttachement(unsigned int format, unsigned int scaleMode, unsigned int wrapmode) {
+	if (m_ms) {
+		m_FBO_nMS->AddAttachement(format, scaleMode, wrapmode);
+	}
+
 	Attachement a;
 
 	RD_Texture_GL* tex = nullptr;
@@ -55,15 +62,29 @@ void RD_FrameBuffer_GL::BuildFBO() {
 
 		m_attachments[i].tex = new RD_Texture_GL();
 
-		m_attachments[i].tex->CreateAndAttachToFramebuffer(
-			m_w,
-			m_h,
-			m_FBO,
-			i, 
-			m_attachments[i].format,
-			m_attachments[i].scaleMode,
-			m_attachments[i].wrapmode);
-		
+		if (m_ms) {
+			m_attachments[i].tex->CreateAndAttachToFramebufferMS(
+				m_w,
+				m_h,
+				m_FBO,
+				i,
+				m_attachments[i].format,
+				m_attachments[i].scaleMode,
+				m_attachments[i].wrapmode
+			);
+		}
+		else {
+			m_attachments[i].tex->CreateAndAttachToFramebuffer(
+				m_w,
+				m_h,
+				m_FBO,
+				i,
+				m_attachments[i].format,
+				m_attachments[i].scaleMode,
+				m_attachments[i].wrapmode
+			);
+		}
+
 		attach.push_back(GL_COLOR_ATTACHMENT0 + i);
 
 		if(m_attachments[i].format == IMGFORMAT_DEPTH) {
@@ -76,16 +97,31 @@ void RD_FrameBuffer_GL::BuildFBO() {
 	if (renderBufferDepth) {
 		glGenRenderbuffers(1, &m_RBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_RBO);
-		glRenderbufferStorage(GL_RENDERBUFFER, m_storage, m_w, m_h);
+
+		if (!m_ms) {
+			glRenderbufferStorage(GL_RENDERBUFFER, m_storage, m_w, m_h);
+		}
+		else {
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, m_storage, m_w, m_h);
+		}
+
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, m_rbo_attachement, GL_RENDERBUFFER, m_RBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-			std::cerr << "ERROR: GUI Framebuffer not complete." << std::endl;
+			std::cerr << "ERROR: Framebuffer not complete." << std::endl;
 		}
 	}
 
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cerr << "ERROR: Framebuffer not complete." << std::endl;
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	if (m_ms) {
+		m_FBO_nMS->BuildFBO();
+	}
 }
 
 void RD_FrameBuffer_GL::BindFBO() {
@@ -94,10 +130,24 @@ void RD_FrameBuffer_GL::BindFBO() {
 
 void RD_FrameBuffer_GL::UnbindFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	if (m_ms) {
+		BindRead();
+		m_FBO_nMS->BindWrite();
+
+		glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+		UnbindFBO();
+		m_FBO_nMS->UnbindFBO();
+	}
 }
 
 RD_Texture* RD_FrameBuffer_GL::GetAttachementByIndex(int index) {
 	assert(m_attachments.size() > index && "(RD_Framebuffer::GetAttachementByIndex(int)) Wrong given index.");
+
+	if (m_ms) {
+		return m_FBO_nMS->GetAttachementByIndex(index);
+	}
 
 	return m_attachments[index].tex;
 }
@@ -115,6 +165,10 @@ void RD_FrameBuffer_GL::ChangeFramebufferSize(int nw, int nh) {
 
 	CreateFBO();
 	BuildFBO();
+
+	if (m_ms) {
+		m_FBO_nMS->ChangeFramebufferSize(nw, nh);
+	}
 }
 
 void RD_FrameBuffer_GL::ConfigureRenderbuffer(int storage, int attachement) {
@@ -152,6 +206,19 @@ void RD_FrameBuffer_GL::DebugMode() {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RD_FrameBuffer_GL::SetMultisampled(bool state) {
+	m_ms = state;
+	m_FBO_nMS = new RD_FrameBuffer_GL(m_w, m_h, m_nodepth);
+}
+
+void RD_FrameBuffer_GL::BindRead() {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FBO);
+}
+
+void RD_FrameBuffer_GL::BindWrite() {
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
 }
 
 #endif //BUILD_OPENGL
