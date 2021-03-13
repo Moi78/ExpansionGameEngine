@@ -9,6 +9,9 @@
 #include <qfile.h>
 
 #include <filesystem>
+#include <fstream>
+
+#include <json/json.h>
 
 class MainWindow : public QWidget
 {
@@ -25,6 +28,9 @@ public:
 	bool CopyLibs();
 	bool CopyIncludes();
 	bool CopyEngineData();
+
+	void MakeGameInfo();
+	void MakeGameProj();
 
 public slots:
 	void BrowseProjDir();
