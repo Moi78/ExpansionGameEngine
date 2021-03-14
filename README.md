@@ -60,8 +60,8 @@ A little Maze Generator I've built with EXPGE
  - [ ] Add particle system
  - [ ] Add tests whenever it is possible
  - [ ] Start developping editor & a good project manager 
-  - [ ] Editor
-  - [x] Project Manager
+     - [ ] Editor
+     - [x] Project Manager
  - [ ] Solve the Stack Overflow on blitting multisample FBO
 
 ## Dependencies
