@@ -29,6 +29,7 @@
     <None Include="Engine\Shaders\glsl\Gshad.vert" />
     <None Include="Engine\Shaders\glsl\Light.frag" />
     <None Include="Engine\Shaders\glsl\Light.vert" />
+    <None Include="Engine\Shaders\glsl\Particles.vert" />
     <None Include="Engine\Shaders\glsl\pbr\bloom.frag" />
     <None Include="Engine\Shaders\glsl\pbr\bloom.vert" />
     <None Include="Engine\Shaders\glsl\pbr\Light.frag" />

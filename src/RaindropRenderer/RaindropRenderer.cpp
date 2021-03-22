@@ -8,6 +8,7 @@
 #include "RD_MaterialLibrary.h"
 #include "RD_GUI_Manager.h"
 #include "RD_PostProcess.h"
+#include "RD_Particles.h"
 
 #include "RD_RenderingAPI.h"
 #include "RD_RenderingAPI_GL.h"
@@ -576,6 +577,7 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	m_api->Clear(COLOR_BUFFER | DEPTH_BUFFER);
 
 	RenderMeshes(cam);
+	RenderParticles();
 
 	m_gbuffer->UnbindFBO();
 
@@ -605,6 +607,12 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	RenderPostProcess();
 
 	m_light_pprocess->UnbindFBO();
+}
+
+void RaindropRenderer::RenderParticles() {
+	for (auto p : m_partEmitters) {
+		p->RenderParticles();
+	}
 }
 
 void RaindropRenderer::RenderShadows() {
@@ -1078,4 +1086,25 @@ bool RaindropRenderer::IsVSyncActivated() const {
 
 RD_GenericRessourceManager<RD_TextRenderer>* RaindropRenderer::GetTxtRendererManager() const {
 	return m_txtRndrs.get();
+}
+
+void RaindropRenderer::RegisterParticleEmitter(RD_ParticleEmitter* emitter) {
+	m_partEmitters.push_back(emitter);
+}
+
+void RaindropRenderer::UnregisterParticleEmitter(RD_ParticleEmitter* emitter) {
+	const int index = GetElemIndex<RD_ParticleEmitter*>(m_partEmitters, emitter);
+
+	if (index != -1) {
+		m_partEmitters.erase(m_partEmitters.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}
+
+void RaindropRenderer::UpdateParticles() {
+	for (auto p : m_partEmitters) {
+		p->UpdateParticles();
+	}
 }

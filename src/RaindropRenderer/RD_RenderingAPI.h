@@ -62,6 +62,22 @@ public:
 	virtual unsigned int GetFloatCount() = 0;
 };
 
+enum DataTypes {
+	TFLOAT,
+	TVEC2,
+	TVEC3
+};
+
+class RD_API RD_RenderingAPI_VertexBufferInstanced :
+	public RD_RenderingAPI_VertexBuffer{
+public:
+	RD_RenderingAPI_VertexBufferInstanced() {}
+	virtual ~RD_RenderingAPI_VertexBufferInstanced() {};
+
+	virtual void SetVertexAttr(float* data, DataTypes type, const int count, const int divisor, const int arrayID) = 0;
+	virtual void UpdateBufferData(float* data, const int count, const int arrayID) = 0;
+};
+
 class RD_API RD_WindowingSystem {
 public:
 	RD_WindowingSystem() {}
@@ -103,6 +119,7 @@ public:
 
 	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer() = 0;
 	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer() = 0;
+	virtual RD_RenderingAPI_VertexBufferInstanced* CreateVertexBufferInstanced() = 0;
 	virtual RD_Texture* CreateTexture() = 0;
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h, bool nodepth) = 0;
 	virtual RD_ShaderLoader* CreateShader() = 0;
@@ -115,7 +132,11 @@ public:
 	virtual void SetClearColor(const vec3f& color = vec3f()) = 0;
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff) = 0;
 	virtual void DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm) = 0;
+	virtual void DrawInstanced(RD_RenderingAPI_VertexBufferInstanced* vbuff, const int nbr, DrawMode dm) = 0;
 	virtual void SetFilledMode(FillingMode fmode) = 0;
+
+	virtual void EnableFaceCulling() = 0;
+	virtual void DisableFaceCulling() = 0;
 
 	virtual int GetMaxTextureCount() = 0;
 };

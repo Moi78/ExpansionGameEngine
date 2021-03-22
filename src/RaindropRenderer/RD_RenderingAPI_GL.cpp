@@ -18,7 +18,7 @@ RD_WindowingSystemGLFW::~RD_WindowingSystemGLFW() {
 bool RD_WindowingSystemGLFW::OpenWindow(std::string name, int w, int h) {
 	m_w = w;
 	m_h = h;
-
+	
 	if (!glfwInit()) {
 		const char* error;
 		glfwGetError(&error);
@@ -248,6 +248,74 @@ int RD_RenderingAPI_GL::GetMaxTextureCount() {
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &rdata);
 
 	return rdata;
+}
+
+void RD_RenderingAPI_GL::DrawInstanced(RD_RenderingAPI_VertexBufferInstanced* vbuff, const int nbr, DrawMode dm) {
+	glDrawArraysInstanced(dm + 4, 0, vbuff->GetFloatCount() / 8, nbr);
+}
+
+RD_RenderingAPI_VertexBufferInstanced* RD_RenderingAPI_GL::CreateVertexBufferInstanced() {
+	return new RD_RenderingAPI_VertexBufferInstancedGL();
+}
+
+void RD_RenderingAPI_GL::EnableFaceCulling() {
+	glEnable(GL_CULL_FACE);
+}
+
+void RD_RenderingAPI_GL::DisableFaceCulling() {
+	glDisable(GL_CULL_FACE);
+}
+
+//---------------------------------------------  RD_RenderingAPI_VertexBufferInstancedGL ---------------------------------------------  
+
+RD_RenderingAPI_VertexBufferInstancedGL::RD_RenderingAPI_VertexBufferInstancedGL() :
+	RD_RenderingAPI_VertexBufferGL() {
+	m_dataSize = 1;
+}
+
+RD_RenderingAPI_VertexBufferInstancedGL::~RD_RenderingAPI_VertexBufferInstancedGL() {
+
+}
+
+void RD_RenderingAPI_VertexBufferInstancedGL::SetVertexAttr(float* data, DataTypes type, const int count, const int divisor, const int arrayID) {
+	int size = 0;
+	switch (type)
+	{
+	case TFLOAT:
+		m_dataSize = 1;
+		break;
+	case TVEC2:
+		m_dataSize = 2;
+		break;
+	case TVEC3:
+		m_dataSize = 3;
+		break;
+	default:
+		m_dataSize = 1;
+		break;
+	}
+
+	unsigned int vbuff = 0;
+	glGenBuffers(1, &vbuff);
+	m_attrVBO.push_back(vbuff);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_attrVBO[arrayID]);
+	glBufferData(GL_ARRAY_BUFFER, count * m_dataSize * sizeof(float), static_cast<void*>(data), GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glEnableVertexAttribArray(arrayID + 3);
+	glBindBuffer(GL_ARRAY_BUFFER, m_attrVBO[arrayID]);
+	glVertexAttribPointer(arrayID + 3, m_dataSize, GL_FLOAT, GL_FALSE, m_dataSize * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glVertexAttribDivisor(3, divisor);
+}
+
+void RD_RenderingAPI_VertexBufferInstancedGL::UpdateBufferData(float* data, const int count, const int arrayID) {
+	glBindBuffer(GL_ARRAY_BUFFER, m_attrVBO[arrayID]);
+	glBufferData(GL_ARRAY_BUFFER, count * m_dataSize * sizeof(float), static_cast<void*>(data), GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //---------------------------------------------  RD_RenderingAPI_VertexElemBufferGL  ---------------------------------------------

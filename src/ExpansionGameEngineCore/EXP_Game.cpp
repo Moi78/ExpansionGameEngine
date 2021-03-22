@@ -192,8 +192,10 @@ void EXP_Game::RenderScene() {
 	m_rndr->RenderLightsDepth(CamLoc);
 	//GBuff
 	m_rndr->RenderGbuff(m_currentCamera);
+
 	//Rendering GUI
 	//m_rndr->RenderGUI_Screen(); //Disabled GUI because it needs to be rewritten
+
 	//PostProcessing
 	m_rndr->RenderBeauty();
 
@@ -238,6 +240,8 @@ void EXP_Game::UpdateLevel() const {
 			lvl->CallTick();
 		}
 	}
+
+	m_rndr->UpdateParticles();
 }
 
 EXP_GameInfo EXP_Game::GetGameInfo() const {
@@ -447,3 +451,4 @@ RD_ShaderMaterial* EXP_Game::GetShaderByFileRef(const std::string& ref) const {
 EXP_MapLoader* EXP_Game::GetCurrentMap() const {
 	return m_PlayingMap.get();
 }
+

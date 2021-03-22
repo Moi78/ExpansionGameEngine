@@ -90,8 +90,47 @@ public:
 	virtual void UnbindBuffer();
 
 	virtual unsigned int GetFloatCount();
-private:
+protected:
 	unsigned int VAO, VBO, float_count;
+};
+
+class RD_API RD_RenderingAPI_VertexBufferInstancedGL :
+	public RD_RenderingAPI_VertexBufferGL,
+	public RD_RenderingAPI_VertexBufferInstanced {
+public:
+	RD_RenderingAPI_VertexBufferInstancedGL();
+	virtual ~RD_RenderingAPI_VertexBufferInstancedGL();
+
+	virtual void SetVertexAttr(float* data, DataTypes type, const int count, const int divisor, const int arrayID);
+	virtual void UpdateBufferData(float* data, const int count, const int arrayID);
+
+	virtual void CreateBuffer() override {
+		RD_RenderingAPI_VertexBufferGL::CreateBuffer();
+	}
+
+	virtual void FillBufferData(float* data, int count) override {
+		RD_RenderingAPI_VertexBufferGL::FillBufferData(data, count);
+	}
+
+	virtual void DeleteBuffer() override {
+		RD_RenderingAPI_VertexBufferGL::DeleteBuffer();
+	}
+
+	virtual void BindBuffer() override {
+		RD_RenderingAPI_VertexBufferGL::BindBuffer();
+	}
+
+	virtual void UnbindBuffer() override {
+		RD_RenderingAPI_VertexBufferGL::UnbindBuffer();
+	}
+
+	virtual unsigned int GetFloatCount() override {
+		return RD_RenderingAPI_VertexBufferGL::GetFloatCount();
+	}
+
+private:
+	std::vector<unsigned int> m_attrVBO;
+	unsigned int m_dataSize;
 };
 
 class RD_API RD_RenderingAPI_GL : public RD_RenderingAPI {
@@ -104,6 +143,7 @@ public:
 
 	virtual RD_RenderingAPI_VertexElemBufferGL* CreateVertexElemBuffer();
 	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer();
+	virtual RD_RenderingAPI_VertexBufferInstanced* CreateVertexBufferInstanced();
 	virtual RD_Texture* CreateTexture();
 	virtual RD_FrameBuffer* CreateFrameBuffer(int w, int h, bool nodepth = false);
 	virtual RD_ShaderLoader* CreateShader();
@@ -114,10 +154,14 @@ public:
 
 	virtual void Draw(RD_RenderingAPI_VertexElemBuffer* vbuff);
 	virtual void DrawVB(RD_RenderingAPI_VertexBuffer* vbuff, DrawMode dm);
+	virtual void DrawInstanced(RD_RenderingAPI_VertexBufferInstanced* vbuff, const int nbr, DrawMode dm);
 	virtual void SetFilledMode(FillingMode fmode);
 
 	virtual void Clear(int mask);
 	virtual void SetClearColor(const vec3f& color);
+
+	virtual void EnableFaceCulling();
+	virtual void DisableFaceCulling();
 
 	virtual int GetMaxTextureCount();
 

@@ -59,6 +59,7 @@ class RD_MaterialLibrary;
 class RD_GUI_Manager;
 class RD_PostProcessEffect;
 class RD_TextRenderer;
+class RD_ParticleEmitter;
 
 class RD_RenderingAPI;
 
@@ -96,11 +97,12 @@ public:
 
 	RD_GenericRessourceManager<RD_TextRenderer>* GetTxtRendererManager() const;
 
-	std::mutex* GetRenderingMutex();
-
 	//Rendering
 	void RenderMeshes(RD_Camera* cam);
 	void RenderShadowMeshes();
+
+	void RenderParticles();
+	void UpdateParticles();
 
 	void RenderLightPass(const vec3f& camPos);
 	void RenderLightsDepth(const vec3f& camPos);
@@ -143,12 +145,14 @@ public:
 	int AppendDirLight(RD_DirLight* dirLight);
 	void RegisterMesh(RD_Mesh* mesh);
 	void AddPostProcessEffect(RD_PostProcessEffect* effect);
+	void RegisterParticleEmitter(RD_ParticleEmitter* emitter);
 
 	//Elements unregistrations
 	void UnregisterMesh(RD_Mesh*);
 	void UnregisterPointLight(RD_PointLight*);
 	void UnregisterDirLight(RD_DirLight*);
 	void RemovePostProcessEffect(RD_PostProcessEffect* effect);
+	void UnregisterParticleEmitter(RD_ParticleEmitter* emitter);
 
 	void UnregisterAllMeshes();
 	void UnregisterAllPointLights();
@@ -211,6 +215,7 @@ private:
 	std::vector<RD_PointLight*> m_pt_lights;
 	std::vector<RD_DirLight*> m_DirLights;
 	std::vector<RD_Mesh*> m_meshes;
+	std::vector<RD_ParticleEmitter*> m_partEmitters;
 
 	std::unique_ptr<RD_Mesh> m_DBG_light_mdl;
 	std::unique_ptr<RD_Mesh> m_DBG_sound_emitter_mdl;

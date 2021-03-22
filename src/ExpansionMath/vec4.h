@@ -68,6 +68,10 @@ public:
 		return vec4<T>(m_xyzw[0] + a.m_xyzw[0], m_xyzw[1] + a.m_xyzw[1], m_xyzw[2] + a.m_xyzw[2], m_xyzw[3] + a.m_xyzw[3]);
 	}
 
+	vec4<T> operator+(float const& a) {
+		return vec4<T>(m_xyzw[0] + a, m_xyzw[1] + a, m_xyzw[2] + a, m_xyzw[3] + a);
+	}
+
 	vec4<T> operator+=(vec4<T> const& a) {
 		return vec4<T>(m_xyzw[0] + a.m_xyzw[0], m_xyzw[1] + a.m_xyzw[1], m_xyzw[2] + a.m_xyzw[2], m_xyzw[3] + a.m_xyzw[3]);
 	}

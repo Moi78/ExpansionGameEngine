@@ -8,7 +8,7 @@
 
 #include <EXP_TextSurface.h>
 
-#include <RD_TextRenderer.h>
+#include <RD_Particles.h>
 
 #include "Character.h"
 
