@@ -290,6 +290,9 @@ void RD_RenderingAPI_VertexBufferInstancedGL::SetVertexAttr(float* data, DataTyp
 	case TVEC3:
 		m_dataSize = 3;
 		break;
+	case TMAT4:
+		m_dataSize = 16;
+		break;
 	default:
 		m_dataSize = 1;
 		break;
@@ -302,6 +305,30 @@ void RD_RenderingAPI_VertexBufferInstancedGL::SetVertexAttr(float* data, DataTyp
 	glBindBuffer(GL_ARRAY_BUFFER, m_attrVBO[arrayID]);
 	glBufferData(GL_ARRAY_BUFFER, count * m_dataSize * sizeof(float), static_cast<void*>(data), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+	if (type == DataTypes::TMAT4) {
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+		glEnableVertexAttribArray(arrayID + 3);
+		glEnableVertexAttribArray(arrayID + 4);
+		glEnableVertexAttribArray(arrayID + 5);
+		glEnableVertexAttribArray(arrayID + 6);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_attrVBO[arrayID]);
+
+		glVertexAttribPointer(arrayID + 3, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 16, (void*)(0));
+		glVertexAttribPointer(arrayID + 4, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 16, (void*)(sizeof(float) * 4));
+		glVertexAttribPointer(arrayID + 5, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 16, (void*)(sizeof(float) * 8));
+		glVertexAttribPointer(arrayID + 6, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 16, (void*)(sizeof(float) * 12));
+
+		glVertexAttribDivisor(arrayID + 3, divisor);
+		glVertexAttribDivisor(arrayID + 4, divisor);
+		glVertexAttribDivisor(arrayID + 5, divisor);
+		glVertexAttribDivisor(arrayID + 6, divisor);
+
+		return;
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glEnableVertexAttribArray(arrayID + 3);

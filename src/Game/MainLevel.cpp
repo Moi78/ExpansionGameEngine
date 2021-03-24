@@ -31,11 +31,11 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 	RD_SmallParticleEmitter* part = new RD_SmallParticleEmitter(
 		game->GetRenderer(), mat,
 		vec3f(0.0f, 0.0f, 3.0f), vec3f(1.0f, 0.0f, 1.0f),
-		10.0f, 0.1f, 5.0f
+		50.0f, 0.1f, 5.0f
 	);
 	game->GetRenderer()->RegisterParticleEmitter(part);
 
-	part->SetEmittingDirectionRandomness(1.0f);
+	part->SetEmittingDirectionRandomness(0.5f);
 }
 
 MainLevel::~MainLevel() {

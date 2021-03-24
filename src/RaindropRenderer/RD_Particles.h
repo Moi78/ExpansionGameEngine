@@ -24,7 +24,7 @@
 struct smParticle {
 	vec3f partPos;
 	vec3f partDir;
-	vec3f partRot;
+	mat4f partMat;
 	float velocity;
 
 	int creationStamp;

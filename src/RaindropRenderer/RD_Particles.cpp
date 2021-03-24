@@ -48,17 +48,10 @@ void RD_SmallParticleEmitter::Bufferize() {
 		1.0f, -1.0f, 0.0f,    0.0f, 0.0f, 1.0f,    1.0f, 0.0f
 	};
 
-	float t[] = {
-		0.0f, 0.0f, 0.0f
-	};
-
-	float t2[] = {
-		0.0f, 0.0f, 0.0f
-	};
+	mat4f dummy = mat4f(1.0f);
 
 	m_vbuff->FillBufferData(geom, 48);
-	m_vbuff->SetVertexAttr(t , DataTypes::TVEC3, 3, 1, 0);
-	m_vbuff->SetVertexAttr(t2, DataTypes::TVEC3, 3, 1, 1);
+	m_vbuff->SetVertexAttr(dummy.GetPTR(), DataTypes::TMAT4, 1, 1, 0);
 }
 
 void RD_SmallParticleEmitter::UpdateParticles() {
@@ -69,10 +62,15 @@ void RD_SmallParticleEmitter::UpdateParticles() {
 		lastPart = now;
 		smParticle p{};
 		p.creationStamp = now;
-		p.partDir = m_emitDir + m_distributor(m_generator);
+		p.partDir = m_emitDir + vec3f(m_distributor(m_generator), m_distributor(m_generator), m_distributor(m_generator));
 		p.partPos = m_emitPos;
 		p.velocity = m_velocity;
-		p.partRot = vec3f(m_distribAngle(m_generator), m_distribAngle(m_generator), 0.0f);
+
+		mat4f m = mat4f(1.0f);
+		m = ScaleMatrix(m, vec3f(1.0f, 1.0f, 1.0f));
+		m = RotateMatrix(m, vec3f(m_distribAngle(m_generator), m_distribAngle(m_generator), m_distribAngle(m_generator)));
+
+		p.partMat = m;
 
 		m_particles.push_back(p);
 	}
@@ -81,8 +79,7 @@ void RD_SmallParticleEmitter::UpdateParticles() {
 		return;
 	}
 
-	std::vector<float> pPos;
-	std::vector<float> pRot;
+	std::vector<float> pMat;
 	for (int i = m_particles.size() - 1; i >= 0; i--) {
 		if ((float)(now - m_particles[i].creationStamp) / 1000 > m_lifetime) {
 			m_particles.erase(m_particles.begin() + i);
@@ -91,12 +88,15 @@ void RD_SmallParticleEmitter::UpdateParticles() {
 
 		m_particles[i].partPos += (m_particles[i].partDir * m_particles[i].velocity);
 
-		pPos.insert(pPos.end(), &m_particles[i].partPos.GetPTR()[0], &m_particles[i].partPos.GetPTR()[3]);
-		pRot.insert(pRot.end(), &m_particles[i].partRot.GetPTR()[0], &m_particles[i].partRot.GetPTR()[3]);
+		mat4f trs = mat4f(1.0f);
+		trs = TranslateMatrix(trs, m_particles[i].partPos);
+
+		trs = trs * m_particles[i].partMat;
+
+		pMat.insert(pMat.end(), &trs.GetPTR()[0], &trs.GetPTR()[16]);
 	}
 
-	m_vbuff->UpdateBufferData(pPos.data(), pPos.size() / 3, 0);
-	m_vbuff->UpdateBufferData(pRot.data(), pRot.size() / 3, 1);
+	m_vbuff->UpdateBufferData(pMat.data(), pMat.size() / 16, 0);
 }
 
 void RD_SmallParticleEmitter::RenderParticles() {

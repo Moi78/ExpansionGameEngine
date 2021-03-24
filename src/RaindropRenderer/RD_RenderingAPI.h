@@ -65,7 +65,8 @@ public:
 enum DataTypes {
 	TFLOAT,
 	TVEC2,
-	TVEC3
+	TVEC3,
+	TMAT4
 };
 
 class RD_API RD_RenderingAPI_VertexBufferInstanced :
