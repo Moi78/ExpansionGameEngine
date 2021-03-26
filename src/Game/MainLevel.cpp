@@ -10,32 +10,13 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	m_ch_lvl = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(MainLevel::ChangeLVL), GLFW_KEY_Y, true);
 
-	RD_ShaderLoader* shd = game->GetRenderer()->GetRenderingAPI()->CreateShader();
+	//EXP_SMParticleEmitter* part = new EXP_SMParticleEmitter(
+	//	game, game->GetShaderByFileRefParticle("/shaders/mat_particle.exmtl"),
+	//	vec3f(0.0f, 0.0f, 3.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f), vec3f(1.0f, 0.0f, 1.0f),
+	//	50.0f, 0.5f, 5.0f
+	//);
 
-	BD_MatCustomShaderRead mr("Content/shaders/mat_particle.exmtl");
-
-	std::string frag = mr.GetShaderCode();
-	std::string vert = getFileData("Engine/Shaders/glsl/Particles.vert");
-
-	shd->CompileShaderFromCode(vert, frag);
-
-	RD_ShaderMaterial* mat = new RD_ShaderMaterial(shd);
-	for (int i = 0; i < mr.GetTextureCount(); i++) {
-		RD_Texture* t = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
-		t->LoadTexture(mr.GetTexturePath(i));
-		mat->AddTexture(mr.GetTextureParamName(i), t);
-	}
-
-	mr.CloseFile();
-
-	RD_SmallParticleEmitter* part = new RD_SmallParticleEmitter(
-		game->GetRenderer(), mat,
-		vec3f(0.0f, 0.0f, 3.0f), vec3f(1.0f, 0.0f, 1.0f),
-		50.0f, 0.1f, 5.0f
-	);
-	game->GetRenderer()->RegisterParticleEmitter(part);
-
-	part->SetEmittingDirectionRandomness(0.5f);
+	//part->SetEmittingDirectionRandomness(0.5f);
 }
 
 MainLevel::~MainLevel() {

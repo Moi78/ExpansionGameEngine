@@ -157,6 +157,7 @@ public:
 	void UnregisterAllMeshes();
 	void UnregisterAllPointLights();
 	void UnregisterAllDirLights();
+	void UnregisterAllParticleEmitters();
 
 	//Shading
 	void SwitchShader(RD_ShaderLoader*);

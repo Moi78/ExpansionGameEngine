@@ -400,6 +400,7 @@ void EXP_Game::UnloadCurrentMap() {
 	m_rndr->UnregisterAllDirLights();
 	m_rndr->UnregisterAllPointLights();
 	m_rndr->UnregisterAllMeshes();
+	m_rndr->UnregisterAllParticleEmitters();
 	
 	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.
@@ -452,3 +453,35 @@ EXP_MapLoader* EXP_Game::GetCurrentMap() const {
 	return m_PlayingMap.get();
 }
 
+RD_ShaderMaterial* EXP_Game::GetShaderByFileRefParticle(const std::string& ref) {
+	const std::string absPath = m_gameinfo.RootGameContentFolder + ref;
+	if (!std::filesystem::exists(absPath)) {
+		std::cerr << "Shader file " << ref << " does not exist." << std::endl;
+		dispErrorMessageBox(StrToWStr("Shader file " + ref + " does not exists"));
+		return nullptr;
+	}
+
+	if (m_rndr->GetMaterialLibrary()->DoMaterialExists(ref)) {
+		return m_rndr->GetMaterialLibrary()->GetMaterialByName(ref);
+	}
+
+	BD_MatCustomShaderRead mr(absPath);
+	const std::string frag = mr.GetShaderCode();
+	const std::string vert = getFileData(m_gameinfo.RootEngineContentFolder + "/Shaders/glsl/Particles.vert");
+
+	RD_ShaderLoader* shd = m_rndr->GetRenderingAPI()->CreateShader();
+	shd->CompileShaderFromCode(vert, frag);
+
+	RD_ShaderMaterial* sm = new RD_ShaderMaterial(shd);
+
+	for (int i = 0; i < mr.GetTextureCount(); i++) {
+		RD_Texture* t = m_rndr->GetRenderingAPI()->CreateTexture();
+		t->LoadTexture(mr.GetTexturePath(i));
+		sm->AddTexture(mr.GetTextureParamName(i), t);
+	}
+
+	mr.CloseFile();
+
+	m_rndr->GetMaterialLibrary()->AddMaterialToLib(sm, ref);
+	return sm;
+}

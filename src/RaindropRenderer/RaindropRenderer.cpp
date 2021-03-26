@@ -1089,10 +1089,12 @@ RD_GenericRessourceManager<RD_TextRenderer>* RaindropRenderer::GetTxtRendererMan
 }
 
 void RaindropRenderer::RegisterParticleEmitter(RD_ParticleEmitter* emitter) {
+	std::cout << "Registering new particle emitter" << std::endl;
 	m_partEmitters.push_back(emitter);
 }
 
 void RaindropRenderer::UnregisterParticleEmitter(RD_ParticleEmitter* emitter) {
+	std::cout << "Unregistering particle emitter" << std::endl;
 	const int index = GetElemIndex<RD_ParticleEmitter*>(m_partEmitters, emitter);
 
 	if (index != -1) {
@@ -1106,5 +1108,12 @@ void RaindropRenderer::UnregisterParticleEmitter(RD_ParticleEmitter* emitter) {
 void RaindropRenderer::UpdateParticles() {
 	for (auto p : m_partEmitters) {
 		p->UpdateParticles();
+	}
+}
+
+void RaindropRenderer::UnregisterAllParticleEmitters() {
+	for (auto p : m_partEmitters) {
+		UnregisterParticleEmitter(p);
+		delete p;
 	}
 }

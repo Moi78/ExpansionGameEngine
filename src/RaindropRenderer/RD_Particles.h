@@ -37,6 +37,8 @@ public:
 
 	virtual void UpdateParticles() = 0;
 	virtual void RenderParticles() = 0;
+
+	virtual void UseParentMatrix(mat4f mat) = 0;
 };
 
 class RD_API RD_SmallParticleEmitter : public RD_ParticleEmitter
@@ -51,6 +53,8 @@ public:
 
 	virtual void UpdateParticles() override;
 	virtual void RenderParticles() override;
+
+	virtual void UseParentMatrix(mat4f mat);
 
 private:
 	void Bufferize();
@@ -72,6 +76,7 @@ private:
 	std::uniform_real_distribution<float> m_distribAngle;
 
 	mat4f m_matrix;
+	mat4f m_parent_mat;
 
 	float m_rate;
 	float m_velocity;

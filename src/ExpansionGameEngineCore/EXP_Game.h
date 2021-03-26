@@ -122,6 +122,7 @@ public:
 	//Files
 	std::string GetFilePathByRef(const std::string& ref) const;
 	RD_ShaderMaterial* GetShaderByFileRef(const std::string& ref) const;
+	RD_ShaderMaterial* GetShaderByFileRefParticle(const std::string& ref);
 
 	//Physics
 	void UpdatePhysics() const;

@@ -23,8 +23,9 @@ RD_SmallParticleEmitter::RD_SmallParticleEmitter(
 
 	m_transf.resize(1000);
 
-	m_matrix = TranslateMatrix(m_matrix, emitDir);
-	m_matrix = ScaleMatrix(m_matrix, vec3f(0.5f, 0.5f, 0.5f));
+	m_matrix = TranslateMatrix(m_matrix, emitPos);
+	//m_matrix = ScaleMatrix(m_matrix, vec3f(0.5f, 0.5f, 0.5f));
+	m_parent_mat = mat4f(1.0f);
 
 	m_generator = std::mt19937(m_generator);
 	m_distributor = std::uniform_real_distribution<float>(-0.1f, 0.1f);
@@ -67,10 +68,10 @@ void RD_SmallParticleEmitter::UpdateParticles() {
 		p.velocity = m_velocity;
 
 		mat4f m = mat4f(1.0f);
-		m = ScaleMatrix(m, vec3f(1.0f, 1.0f, 1.0f));
+		m = ScaleMatrix(m, vec3f(0.5f, 0.5f, 0.5f));
 		m = RotateMatrix(m, vec3f(m_distribAngle(m_generator), m_distribAngle(m_generator), m_distribAngle(m_generator)));
 
-		p.partMat = m;
+		p.partMat = m_parent_mat * m_matrix * m;
 
 		m_particles.push_back(p);
 	}
@@ -119,4 +120,8 @@ void RD_SmallParticleEmitter::RenderParticles() {
 
 void RD_SmallParticleEmitter::SetEmittingDirectionRandomness(float threshold) {
 	m_distributor = std::uniform_real_distribution(-threshold, threshold);
+}
+
+void RD_SmallParticleEmitter::UseParentMatrix(mat4f mat) {
+	m_parent_mat = mat;
 }
