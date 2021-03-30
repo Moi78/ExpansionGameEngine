@@ -42,6 +42,8 @@
     <None Include="Engine\Shaders\glsl\pbr\SSR.vert" />
     <None Include="Engine\Shaders\glsl\Shadow.frag" />
     <None Include="Engine\Shaders\glsl\Shadow.vert" />
+    <None Include="Engine\Shaders\glsl\ShadowBlur.frag" />
+    <None Include="Engine\Shaders\glsl\ShadowBlur.vert" />
     <None Include="Engine\Shaders\glsl\ShadowCalc.frag" />
     <None Include="Engine\Shaders\glsl\ShadowCalc.vert" />
     <None Include="Engine\Shaders\glsl\TextRender.frag" />

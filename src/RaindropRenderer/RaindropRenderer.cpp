@@ -119,13 +119,27 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_engineDir + "/Shaders/glsl/ShadowCalc.frag"
 	);
 
+	m_shadowBlur = m_api->CreateShader();
+	m_shadowBlur->compileShaderFromFile(
+		m_engineDir+  "/Shaders/glsl/ShadowBlur.vert",
+		m_engineDir+  "/Shaders/glsl/ShadowBlur.frag"
+	);
+
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
 	m_ambient_u = m_api->CreateUniformBuffer(17, 2);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
-	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB16F);
+	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
 	m_shadows_buffer->BuildFBO();
+
+	m_shadows_blur = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
+	m_shadows_blur->AddAttachement(IMGFORMAT_RGB);
+	m_shadows_blur->BuildFBO();
+
+	m_shadows_blur_b = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
+	m_shadows_blur_b->AddAttachement(IMGFORMAT_RGB);
+	m_shadows_blur_b->BuildFBO();
 	
 	m_defTex = m_api->CreateTexture();
 	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
@@ -179,6 +193,9 @@ RaindropRenderer::~RaindropRenderer() {
 
 	delete m_gbuffer;
 	delete m_light_pprocess;
+	delete m_shadows_blur;
+	delete m_shadows_blur_b;
+	delete m_shadows_buffer;
 
 	//Deleting common shaders
 	delete m_shadowShader;
@@ -186,6 +203,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_beauty_shader;
 	delete m_dbgMat;
 	delete m_shadowCalc;
+	delete m_shadowBlur;
 	
 	//Deleting textures
 	delete m_defTex;
@@ -644,6 +662,24 @@ void RaindropRenderer::RenderShadows() {
 	m_quad->RenderQuad();
 	
 	m_shadows_buffer->UnbindFBO();
+
+	SwitchShader(m_shadowBlur);
+	m_shadows_blur->BindFBO();
+
+	m_shadows_buffer->GetAttachementByIndex(0)->BindTexture(0);
+	m_shadowBlur->SetInt("baseImage", 0);
+	m_shadowBlur->SetVec3("dir", vec3f(1.0f, 0.0f));
+
+	m_quad->RenderQuad();
+
+	m_shadows_blur_b->BindFBO();
+
+	m_shadows_blur->GetAttachementByIndex(0)->BindTexture(0);
+	m_shadowBlur->SetVec3("dir", vec3f(0.0f, 1.0f));
+
+	m_quad->RenderQuad();
+
+	m_shadows_blur_b->UnbindFBO();
 }
 
 void RaindropRenderer::RenderPostProcess() {
@@ -671,7 +707,7 @@ void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 	m_gbuffer->GetAttachementByIndex(m_g_buffer.gSpec)->BindTexture(3);
 	m_light_shader->SetInt("gSpec", 3);
 
-	m_shadows_buffer->GetAttachementByIndex(0)->BindTexture(4);
+	m_shadows_blur_b->GetAttachementByIndex(0)->BindTexture(4);
 	m_light_shader->SetInt("ShadowPass", 4);
 
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
@@ -1049,6 +1085,8 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_light_pprocess->ChangeFramebufferSize(sx, sy);
 	m_ssao_buffer->ChangeFramebufferSize(sx, sy);
 	m_shadows_buffer->ChangeFramebufferSize(sx, sy);
+	m_shadows_blur->ChangeFramebufferSize(sx, sy);
+	m_shadows_blur_b->ChangeFramebufferSize(sx, sy);
 	m_bloom_buffera->ChangeFramebufferSize(sx, sy);
 	m_bloom_bufferb->ChangeFramebufferSize(sx, sy);
 

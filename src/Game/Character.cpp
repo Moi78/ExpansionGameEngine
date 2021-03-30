@@ -11,13 +11,6 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 	m_getpos = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::PrnPos), GLFW_KEY_T, true);
 
 	m_bound = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(), vec3f(1.0f, 1.0f, 3.0f), 40.0f);
-
-	EXP_SMParticleEmitter* part = new EXP_SMParticleEmitter(
-		game, game->GetShaderByFileRefParticle("/shaders/mat_particle.exmtl"),
-		vec3f(0.0f, 0.0f, -0.5f), vec3f(), vec3f(1.0f, 1.0f, 1.0f), vec3f(1.0f, 0.0f, 0.0f),
-		50.0f, 0.1f, 5.0f
-	);
-	LinkComponent(part);
 }
 
 Character::~Character() {

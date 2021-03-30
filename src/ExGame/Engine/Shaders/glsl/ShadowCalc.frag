@@ -39,14 +39,14 @@ void main() {
 			for(float y = -1; y <= 1; y += 1) {
 				float pcfDepth = texture(ShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
 
-				shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+				shadow += currentDepth - bias > pcfDepth ? 0.8 : 0.0;
 			}
 		}
 
-		finalShadow += clamp(shadow / 9, 0, 1);
+		finalShadow += shadow / 9;
 	}
 
 
-	ShadowColor = vec3(1 - finalShadow, 0.0, 0.0);
+	ShadowColor = vec3(clamp(1 - finalShadow, 0.0, 1.0), 0.0, 0.0);
 	//ShadowColor = fpls.rgb;
 }

@@ -98,5 +98,11 @@
     <None Include="Engine\Shaders\glsl\Particles.vert">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="Engine\Shaders\glsl\ShadowBlur.frag">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="Engine\Shaders\glsl\ShadowBlur.vert">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

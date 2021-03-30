@@ -18,7 +18,7 @@
       "nameTag":"sun",
 
       "dir":[-1, -1, -1],
-      "color":[1, 1, 1],
+      "color":[1, 0.8, 0.8],
       "brightness":10.0
     },
 

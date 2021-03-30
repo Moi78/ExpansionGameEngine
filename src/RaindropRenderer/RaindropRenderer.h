@@ -232,6 +232,9 @@ private:
 	RD_FrameBuffer* m_gbuffer;
 	RD_FrameBuffer* m_light_pprocess;
 	RD_FrameBuffer* m_shadows_buffer;
+	RD_FrameBuffer* m_shadows_blur;
+	RD_FrameBuffer* m_shadows_blur_b;
+
 	RD_FrameBuffer* m_bloom_buffera;
 	RD_FrameBuffer* m_bloom_bufferb;
 
@@ -247,9 +250,11 @@ private:
 
 	RD_ShaderLoader* m_light_shader;
 	RD_ShaderLoader* m_beauty_shader;
+
 	RD_ShaderLoader* m_shadowCalc;
+	RD_ShaderLoader* m_shadowBlur;
+
 	RD_ShaderLoader* m_bloom; //PBR
-	
 	RD_ShaderLoader* m_ssr_shader; //PBR
 	
 	RD_ShaderLoader* m_ssao_shader; //PBR
