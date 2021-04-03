@@ -51,7 +51,7 @@ A little Maze Generator I've built with EXPGE
 ## TODO List
 
  - [x] Impl. Shadows to Raindrop Renderer
-   - [ ] Improve these (for instance, better PCF)
+   - [x] Improve these (for instance, better PCF)
  - [ ] Consistent error handling
  - [ ] Fix the error when reducing the window
  - [ ] Rewrite GUI system
