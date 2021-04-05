@@ -16,36 +16,6 @@ layout(std140, binding = 0) uniform CAMERA {
 
 uniform mat4 model;
 
-mat4 Rotate(vec3 rot, mat4 src) {
-    mat4 s = src;
-
-    float sTx = sin(radians(rot.x));
-    float cTx = cos(radians(rot.x));
-
-    float sTy = sin(radians(rot.y));
-    float cTy = cos(radians(rot.y));
-
-    mat4 mx = mat4(
-        1, 0, 0, 0,
-        0, cTx, -sTx, 0,
-        0, sTx, cTx, 0,
-        0, 0, 0, 1
-    );
-
-    s = mx * src;
-
-    mat4 my = mat4(
-        cTy, 0, sTy, 0,
-        0, 1, 0, 0,
-        -sTy, 0, cTy, 0,
-        0, 0, 0, 1
-    );
-
-    s = my * src;
-
-    return s;
-}
-
 void main()
 {
     Normal = normalize(mat3(transpose(inverse(model))) * aNormal);

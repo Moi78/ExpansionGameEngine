@@ -453,7 +453,7 @@ EXP_MapLoader* EXP_Game::GetCurrentMap() const {
 	return m_PlayingMap.get();
 }
 
-RD_ShaderMaterial* EXP_Game::GetShaderByFileRefParticle(const std::string& ref) {
+RD_ShaderMaterial* EXP_Game::GetShaderByFileRefInstanced(const std::string& ref) {
 	const std::string absPath = m_gameinfo.RootGameContentFolder + ref;
 	if (!std::filesystem::exists(absPath)) {
 		std::cerr << "Shader file " << ref << " does not exist." << std::endl;

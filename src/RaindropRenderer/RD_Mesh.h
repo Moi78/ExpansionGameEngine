@@ -81,7 +81,7 @@ protected:
 	vec3f m_rotation;
 	vec3f m_scale;
 
-	void Bufferize();
+	virtual void Bufferize();
 
 	std::vector<vec3f> m_vertices;
 	std::vector<unsigned int> m_indices;

@@ -19,6 +19,7 @@ RD_SmallParticleEmitter::RD_SmallParticleEmitter(
 	m_api = rndr->GetRenderingAPI();
 
 	m_vbuff = rndr->GetRenderingAPI()->CreateVertexBufferInstanced();
+	m_vbuff->CreateBuffer();
 	Bufferize();
 
 	m_transf.resize(1000);

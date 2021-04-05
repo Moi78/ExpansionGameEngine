@@ -9,6 +9,7 @@
 #include <EXP_TextSurface.h>
 
 #include <EXP_Particles.h>
+#include <EXP_InstanciatedMesh.h>
 
 #include "Character.h"
 
