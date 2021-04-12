@@ -57,7 +57,7 @@ void RD_InstanciatedMesh::renderShadows(RD_ShaderLoader* shadowShader) {
 	for (auto &mdl : m_mdls) {
 		shadowShader->SetMatrix("model", mdl.first);
 
-		glDrawElements(GL_TRIANGLES, m_nbr_indices, GL_UNSIGNED_INT, 0);
+		m_rndr->GetRenderingAPI()->Draw(m_buffer);
 	}
 
 	m_buffer->UnbindBuffer();

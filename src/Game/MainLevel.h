@@ -9,7 +9,7 @@
 #include <EXP_TextSurface.h>
 
 #include <EXP_Particles.h>
-#include <EXP_InstanciatedMesh.h>
+#include <EXP_RigidBody.h>
 
 #include "Character.h"
 
@@ -29,6 +29,7 @@ private:
 	EXP_MapLoader* m_mloader;
 
 	EXP_RB_Box* m_floor;
+	EXP_RB_Sphere* m_test;
 	EXP_KeyboardCallback* m_ch_lvl;
 
 	Character* m_player;

@@ -126,15 +126,15 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\libs\BULLET\include;..\BulldozerFileManager;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\PHYSX\PxShared\include\;..\libs\PHYSX\PhysX\include;..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\BulldozerFileManager;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\libs\JSONCPP\lib\$(Configuration);..\libs\libsndfile\lib;..\libs\BULLET\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;Bullet3Common_Debug.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;LinearMath_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\PHYSX\PhysX\bin\$(Configuration);..\libs\JSONCPP\lib\$(Configuration);..\libs\libsndfile\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -149,7 +149,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\libs\BULLET\include;..\BulldozerFileManager;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\PHYSX\PxShared\include\;..\libs\PHYSX\PhysX\include;..\libs\libsndfile\include;..\RaindropRenderer;..\PhysicaSound;..\ExpansionMath;..\libs\JSONCPP\include;..\libs\GL\include;..\libs\AL\include;..\BulldozerFileManager;..\RaindropRenderer\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -158,8 +158,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\libs\JSONCPP\lib\$(Configuration);..\libs\libsndfile\lib;..\libs\BULLET\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;Bullet3Common.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\PHYSX\PhysX\bin\$(Configuration);..\libs\JSONCPP\lib\$(Configuration);..\libs\libsndfile\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

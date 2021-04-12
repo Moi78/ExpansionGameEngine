@@ -19,11 +19,11 @@
 
 #include <iostream>
 
-#include <bullet/btBulletDynamicsCommon.h>
-
 #include <vec3.h>
 
 #include "EXP_Game.h"
+
+#include <PxPhysicsAPI.h>
 
 //Forward Declaration
 class EXP_PhysicsHandler;
@@ -32,9 +32,9 @@ class EXPGE_API EXP_RigidBody
 {
 public:
 	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false);
-	~EXP_RigidBody();
+	virtual ~EXP_RigidBody();
 
-	btRigidBody* GetBody();
+	physx::PxRigidActor* GetBody();
 	vec3f GetWorldPosition();
 
 	void AddMovementInput(vec3f direction, float scale);
@@ -43,13 +43,10 @@ public:
 
 protected:
 	vec3f m_pos, m_rot, m_scale;
-
-	btCollisionShape* m_shape;
-	btMotionState* m_motionState;
-	btRigidBody* m_body;
+	physx::PxRigidDynamic* m_body;
+	physx::PxRigidStatic* m_body_static; //UGLYYYYYYY
 
 	float m_mass;
-
 	bool m_isKinematic;
 
 	EXP_Game* m_game;

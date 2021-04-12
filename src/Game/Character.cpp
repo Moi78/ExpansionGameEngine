@@ -10,7 +10,7 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 	m_roll = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::Roll), GLFW_KEY_R, false);
 	m_getpos = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::PrnPos), GLFW_KEY_T, true);
 
-	m_bound = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(), vec3f(1.0f, 1.0f, 3.0f), 40.0f);
+	//m_bound = new EXP_RB_Box(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f), 40.0f);
 }
 
 Character::~Character() {

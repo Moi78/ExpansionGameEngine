@@ -8,112 +8,119 @@ EXP_RigidBody::EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, 
 	m_game = game;
 
 	m_isKinematic = kinematic;
-
-	ConstructShape();
-	m_body->setAngularFactor(btVector3(0.0f, 0.0f, 1.0f));
 }
 
 EXP_RigidBody::~EXP_RigidBody() {
-	delete m_body;
-	delete m_motionState;
-	delete m_shape;
+	m_body->release();
 }
 
-btRigidBody* EXP_RigidBody::GetBody() {
-	return m_body;
+physx::PxRigidActor* EXP_RigidBody::GetBody() {
+	if (m_mass > 0) {
+		return m_body;
+	}
+	else {
+		return m_body_static;
+	}
 }
 
 vec3f EXP_RigidBody::GetWorldPosition() {
-	btTransform trans;
-
-	m_body->getMotionState()->getWorldTransform(trans);
-
-	return vec3f(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+	if (m_mass > 0) {
+		physx::PxVec3 pos = m_body->getGlobalPose().p;
+		return vec3f(pos.x, pos.y, pos.z);
+	}
+	else {
+		physx::PxVec3 pos = m_body_static->getGlobalPose().p;
+		return vec3f(pos.x, pos.y, pos.z);
+	}
 }
 
 void EXP_RigidBody::ConstructShape() {
-	m_shape = new btBoxShape(btVector3(m_scale.getX(), m_scale.getY(), m_scale.getZ()));
+	physx::PxMaterial* mat = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(0.0f, 0.1f, 0.5f);
 
-	btTransform shapePosRot;
-	shapePosRot.setIdentity();
-	shapePosRot.setOrigin(btVector3(m_pos.getX(), m_pos.getY(), m_pos.getZ()));
-
-	btQuaternion quat;
-	quat.setEuler(m_rot.getX(), m_rot.getY(), m_rot.getZ());
-	shapePosRot.setRotation(quat);
-
-	btVector3 localInertia(0, 0, 0);
+	physx::PxShape* shp = m_game->GetPhysicsHandler()->GetPhysics()->createShape(
+		physx::PxBoxGeometry(m_scale.getX(), m_scale.getY(), m_scale.getZ()),
+		*mat
+	);
 
 	if (m_mass > 0) {
-		m_shape->calculateLocalInertia(m_mass, localInertia);
+		m_body = physx::PxCreateDynamic(
+			*m_game->GetPhysicsHandler()->GetPhysics(),
+			physx::PxTransform(m_pos.getX(), m_pos.getY(), m_pos.getZ()),
+			*shp,
+			1.0f
+		);
+
+		if (!m_body) {
+			std::cerr << "ERROR: Could not create a PxShape (Box)." << std::endl;
+			return;
+		}
+
+		m_body->setMass(m_mass);
+	}
+	else {
+		m_body_static = physx::PxCreateStatic(
+			*m_game->GetPhysicsHandler()->GetPhysics(),
+			physx::PxTransform(m_pos.getX(), m_pos.getY(), m_pos.getZ()),
+			*shp
+		);
+
+		if (!m_body_static) {
+			std::cerr << "ERROR: Could not create a PxShape (Box)." << std::endl;
+			return;
+		}
 	}
 
-	m_motionState = new btDefaultMotionState(shapePosRot);
-
-	btRigidBody::btRigidBodyConstructionInfo constructInfo(m_mass, m_motionState, m_shape, localInertia);
-
-	m_body = new btRigidBody(constructInfo);
-	
-	if (m_isKinematic) {
-		m_body->setCollisionFlags(m_body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-		m_body->setActivationState(DISABLE_DEACTIVATION);
-	}
+	shp->release();
+	mat->release();
 
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }
 
 void EXP_RigidBody::AddMovementInput(vec3f direction, float scale) {
-	if(!m_isKinematic)
-		m_body->activate();
 
-	m_body->setAngularFactor(btVector3(0.0f, 0.0f, 0.0f));
-
-	vec3f fMov = direction;
-	btVector3 btMov(fMov.getX(), fMov.getY(), fMov.getZ());
-	btVector3 btCurrSpeed = m_body->getLinearVelocity();
-
-	btVector3 btMvtFinal(btMov + btCurrSpeed);
-	btMvtFinal.normalize();
-	btMvtFinal *= scale;
-
-	m_body->setLinearVelocity(btMvtFinal);
-	//m_body->applyCentralImpulse(btMov);
 }
 
 //RB Box
 
-EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic, vec3f inertia) : EXP_RigidBody(game, pos, rot, scale, mass, kinematic) {
+EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic, vec3f inertia)  :
+	EXP_RigidBody(game, pos, rot, scale, mass, kinematic) {
 	ConstructShape();
 }
 
 //RB Sphere
 
-EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic, vec3f inertia) : EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic), m_radius(radius) {
+EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic, vec3f inertia) :
+	EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic), m_radius(radius) {
 	ConstructShape();
 }
 
 void EXP_RB_Sphere::ConstructShape() {
-	m_shape = new btSphereShape(m_radius);
+	physx::PxMaterial* mat = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(0.0f, 0.0f, 0.0f);
 
-	btTransform transPosRot;
-	transPosRot.setIdentity();
-	transPosRot.setOrigin(btVector3(m_pos.getX(), m_pos.getY(), m_pos.getZ()));
+	physx::PxShape* shp = m_game->GetPhysicsHandler()->GetPhysics()->createShape(
+		physx::PxSphereGeometry(m_radius),
+		*mat
+	);
 
-	btQuaternion quat;
-	quat.setEuler(m_rot.getX(), m_rot.getY(), m_rot.getZ());
-	transPosRot.setRotation(quat);
+	m_body = physx::PxCreateDynamic(
+		*m_game->GetPhysicsHandler()->GetPhysics(),
+		physx::PxTransform(m_pos.getX(), m_pos.getY(), m_pos.getZ()),
+		*shp,
+		1.0f
+	);
 
-	btVector3 localInertia(0, 0, 0);
+	shp->release();
+	mat->release();
 
-	if (m_mass > 0) {
-		m_shape->calculateLocalInertia(m_mass, localInertia);
+	if (!m_body) {
+		std::cerr << "ERROR: Could not create a PxShape (Box)." << std::endl;
+		return;
 	}
 
-	m_motionState = new btDefaultMotionState(transPosRot);
-
-	btRigidBody::btRigidBodyConstructionInfo constructInfo(m_mass, m_motionState, m_shape, localInertia);
-
-	m_body = new btRigidBody(constructInfo);
+	m_body->setMass(m_mass);
+	if (m_mass == 0) {
+		m_body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+	}
 
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }

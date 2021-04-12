@@ -10,22 +10,8 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	m_ch_lvl = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(MainLevel::ChangeLVL), GLFW_KEY_Y, true);
 
-	EXP_InstanciatedMesh* inst = new EXP_InstanciatedMesh(game, game->GetShaderByFileRefInstanced("/shaders/mat_inst.exmtl"), "/rock1");
-
-	for (int i = 0; i < 10; i++) {
-		RD_MeshInstance in{};
-		in.pos = vec3f(0.0f, 0.0f, i);
-		in.rotation = vec3f();
-		in.scale = vec3f(0.5f, 0.5f, 0.5f);
-
-		inst->AppendInstance(in);
-	}
-
-	EXP_SMParticleEmitter* p = new EXP_SMParticleEmitter(
-		game, game->GetShaderByFileRefInstanced("/shaders/mat_inst.exmtl"),
-		vec3f(0.0f, 0.0f, 5.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f),
-		vec3f(1.0f), 10.0f, 0.5f, 5.0f
-	);
+	m_test = new EXP_RB_Sphere(game, vec3f(0.0f, 0.0f, 20.0f), vec3f(), 0.5f, 1.0f);
+	m_floor = new EXP_RB_Box(game, vec3f(), vec3f(), vec3f(10.0f, 10.0f, 0.1f), 0.0f);
 }
 
 MainLevel::~MainLevel() {
@@ -43,7 +29,7 @@ void MainLevel::OnStart() {
 }
 
 void MainLevel::OnTick() {
-
+	m_mloader->GetStaticMeshByName("rock1_1")->SetPosition(m_test->GetWorldPosition());
 }
 
 void MainLevel::ChangeLVL() {
