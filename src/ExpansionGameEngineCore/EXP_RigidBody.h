@@ -38,6 +38,8 @@ public:
 	vec3f GetWorldPosition();
 
 	void AddMovementInput(vec3f direction, float scale);
+	void FreezeRotationAxis(bool X, bool Y, bool Z);
+	void FreezePositionAxis(bool X, bool Y, bool Z);
 
 	virtual void ConstructShape();
 
@@ -64,8 +66,18 @@ public:
 	virtual void ConstructShape() override;
 
 private:
-
 	float m_radius;
+};
+
+class EXPGE_API EXP_RB_Capsule : public EXP_RigidBody {
+public:
+	EXP_RB_Capsule(EXP_Game* game, vec3f pos, vec3f rot, float radius, float height, float mass, bool kinematic = false, vec3f inertia = vec3f());
+
+	virtual void ConstructShape() override;
+
+private:
+	float m_radius;
+	float m_height;
 };
 
 #endif //EXP_RIGID_BODY_H__

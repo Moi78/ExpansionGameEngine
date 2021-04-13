@@ -35,17 +35,23 @@ vec3f EXP_RigidBody::GetWorldPosition() {
 }
 
 void EXP_RigidBody::ConstructShape() {
-	physx::PxMaterial* mat = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(0.0f, 0.1f, 0.5f);
+	physx::PxMaterial* mat = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(0.0f, 0.2f, 0.0f);
 
 	physx::PxShape* shp = m_game->GetPhysicsHandler()->GetPhysics()->createShape(
 		physx::PxBoxGeometry(m_scale.getX(), m_scale.getY(), m_scale.getZ()),
 		*mat
 	);
 
+	mat4f transf = mat4f(1.0f);
+	transf = TranslateMatrix(transf, m_pos);
+	transf = RotateMatrix(transf, m_rot);
+
 	if (m_mass > 0) {
 		m_body = physx::PxCreateDynamic(
 			*m_game->GetPhysicsHandler()->GetPhysics(),
-			physx::PxTransform(m_pos.getX(), m_pos.getY(), m_pos.getZ()),
+			physx::PxTransform(
+				physx::PxMat44(transf.GetPTR()).getTranspose()
+			),
 			*shp,
 			1.0f
 		);
@@ -56,11 +62,14 @@ void EXP_RigidBody::ConstructShape() {
 		}
 
 		m_body->setMass(m_mass);
+		m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, m_isKinematic);
 	}
 	else {
 		m_body_static = physx::PxCreateStatic(
 			*m_game->GetPhysicsHandler()->GetPhysics(),
-			physx::PxTransform(m_pos.getX(), m_pos.getY(), m_pos.getZ()),
+			physx::PxTransform(
+				physx::PxMat44(transf.GetPTR()).getTranspose()
+			),
 			*shp
 		);
 
@@ -77,7 +86,27 @@ void EXP_RigidBody::ConstructShape() {
 }
 
 void EXP_RigidBody::AddMovementInput(vec3f direction, float scale) {
+	if (m_body) {
+		//vec3f target = m_pos + direction;
+		//m_body->setKinematicTarget(physx::PxTransform(target.getX() * scale, target.getY() * scale, target.getZ() * scale));
+		m_body->addForce(physx::PxVec3(direction.getX() * scale, direction.getY() * scale, direction.getZ() * scale));
+	}
+}
 
+void EXP_RigidBody::FreezeRotationAxis(bool X, bool Y, bool Z) {
+	if (m_body) {
+		m_body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, X);
+		m_body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, Y);
+		m_body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, Z);
+	}
+}
+
+void EXP_RigidBody::FreezePositionAxis(bool X, bool Y, bool Z) {
+	if (m_body) {
+		m_body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, X);
+		m_body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, Y);
+		m_body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, Z);
+	}
 }
 
 //RB Box
@@ -95,32 +124,113 @@ EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius,
 }
 
 void EXP_RB_Sphere::ConstructShape() {
-	physx::PxMaterial* mat = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(0.0f, 0.0f, 0.0f);
+	physx::PxMaterial* mat = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(0.0f, 0.2f, 0.0f);
 
 	physx::PxShape* shp = m_game->GetPhysicsHandler()->GetPhysics()->createShape(
 		physx::PxSphereGeometry(m_radius),
 		*mat
 	);
 
-	m_body = physx::PxCreateDynamic(
-		*m_game->GetPhysicsHandler()->GetPhysics(),
-		physx::PxTransform(m_pos.getX(), m_pos.getY(), m_pos.getZ()),
-		*shp,
-		1.0f
-	);
+	mat4f transf = mat4f(1.0f);
+	transf = TranslateMatrix(transf, m_pos);
+	transf = RotateMatrix(transf, m_rot);
+
+	if (m_mass > 0) {
+		m_body = physx::PxCreateDynamic(
+			*m_game->GetPhysicsHandler()->GetPhysics(),
+			physx::PxTransform(
+				physx::PxMat44(transf.GetPTR()).getTranspose()
+			),
+			*shp,
+			1.0f
+		);
+
+		if (!m_body) {
+			std::cerr << "ERROR: Could not create a PxShape (Sphere)." << std::endl;
+			return;
+		}
+
+		m_body->setMass(m_mass);
+		m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, m_isKinematic);
+	}
+	else {
+		m_body_static = physx::PxCreateStatic(
+			*m_game->GetPhysicsHandler()->GetPhysics(),
+			physx::PxTransform(
+				physx::PxMat44(transf.GetPTR()).getTranspose()
+			),
+			*shp
+		);
+
+		if (!m_body_static) {
+			std::cerr << "ERROR: Could not create a PxShape (Sphere)." << std::endl;
+			return;
+		}
+	}
 
 	shp->release();
 	mat->release();
 
-	if (!m_body) {
-		std::cerr << "ERROR: Could not create a PxShape (Box)." << std::endl;
-		return;
+	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
+}
+
+//RB Capsule
+EXP_RB_Capsule::EXP_RB_Capsule(EXP_Game* game, vec3f pos, vec3f rot, float radius, float height, float mass, bool kinematic, vec3f inertia) :
+	EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic)
+{
+	m_radius = radius;
+	m_height = height;
+
+	ConstructShape();
+}
+
+void EXP_RB_Capsule::ConstructShape() {
+	physx::PxMaterial* mat = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(0.0f, 0.0f, 0.0f);
+
+	physx::PxShape* shp = m_game->GetPhysicsHandler()->GetPhysics()->createShape(
+		physx::PxCapsuleGeometry(m_radius, m_height),
+		*mat
+	);
+
+	mat4f transf = mat4f(1.0f);
+	transf = TranslateMatrix(transf, m_pos);
+	transf = RotateMatrix(transf, m_rot);
+
+	if (m_mass > 0) {
+		m_body = physx::PxCreateDynamic(
+			*m_game->GetPhysicsHandler()->GetPhysics(),
+			physx::PxTransform(
+				physx::PxMat44(transf.GetPTR()).getTranspose()
+			),
+			*shp,
+			1.0f
+		);
+
+		if (!m_body) {
+			std::cerr << "ERROR: Could not create a PxShape (Capsule)." << std::endl;
+			return;
+		}
+
+		m_body->setMass(m_mass);
+		m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, m_isKinematic);
+	}
+	else {
+		m_body_static = physx::PxCreateStatic(
+			*m_game->GetPhysicsHandler()->GetPhysics(),
+			physx::PxTransform(
+				physx::PxMat44(transf.GetPTR()).getTranspose()
+			),
+			*shp
+		);
+
+		if (!m_body_static) {
+			std::cerr << "ERROR: Could not create a PxShape (Capsule)." << std::endl;
+			return;
+		}
 	}
 
-	m_body->setMass(m_mass);
-	if (m_mass == 0) {
-		m_body->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
-	}
+	shp->release();
+	mat->release();
 
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }
