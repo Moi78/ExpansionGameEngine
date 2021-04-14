@@ -28,10 +28,16 @@
 //Forward Declaration
 class EXP_PhysicsHandler;
 
+struct EXPGE_API EXP_PhysicsMaterial {
+	float StaticFriction = 0.0f;
+	float DynamicFriction = 0.1f;
+	float Restitution = 0.0f;
+};
+
 class EXPGE_API EXP_RigidBody
 {
 public:
-	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false);
+	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false, EXP_PhysicsMaterial mat = {});
 	virtual ~EXP_RigidBody();
 
 	physx::PxRigidActor* GetBody();
@@ -40,6 +46,7 @@ public:
 	void AddMovementInput(vec3f direction, float scale);
 	void FreezeRotationAxis(bool X, bool Y, bool Z);
 	void FreezePositionAxis(bool X, bool Y, bool Z);
+	vec3f GetLinearVelocity();
 
 	virtual void ConstructShape();
 
@@ -47,6 +54,8 @@ protected:
 	vec3f m_pos, m_rot, m_scale;
 	physx::PxRigidDynamic* m_body;
 	physx::PxRigidStatic* m_body_static; //UGLYYYYYYY
+
+	EXP_PhysicsMaterial m_mat;
 
 	float m_mass;
 	bool m_isKinematic;

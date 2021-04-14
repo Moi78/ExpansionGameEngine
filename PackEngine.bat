@@ -75,8 +75,8 @@ cd src/libs
 set INC_PATH=..\..\%PROJ_NAME%\Include\3rdParty\
 
 robocopy AL\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
-robocopy BULLET\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
-robocopy freetype\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
+robocopy PHYSX\PhysX\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
+robocopy PHYSX\PxShared\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
 robocopy GL\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
 robocopy JSONCPP\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
 robocopy libsndfile\include %INC_PATH% /is /it /ndl /njh /nc /ns /njs /e
@@ -103,6 +103,11 @@ copy /Y GL\dll\Debug\glfw3.dll %DEBUG_PATH%\glfw3.dll
 
 copy /Y libsndfile\bin\libsndfile-1.dll %DEBUG_PATH%\libsndfile-1.dll
 
+copy /Y PHYSX\PhysX\bin\Debug\PhysX_64.dll %DEBUG_PATH%\PhysX_64.dll
+copy /Y PHYSX\PhysX\bin\Debug\PhysXCommon_64.dll %DEBUG_PATH%\PhysXCommon_64.dll
+copy /Y PHYSX\PhysX\bin\Debug\PhysXCooking_64.dll %DEBUG_PATH%\PhysXCooking_64.dll
+copy /Y PHYSX\PhysX\bin\Debug\PhysXFoundation_64.dll %DEBUG_PATH%\PhysXFoundation_64.dll
+
 echo Copying Release bins
 
 copy /Y AL\bin\Release\OpenAL32.dll %RELEASE_PATH%\OpenAL32.dll
@@ -112,6 +117,11 @@ copy /Y GL\dll\Release\glfw3.dll %RELEASE_PATH%\glfw3.dll
 
 copy /Y libsndfile\bin\libsndfile-1.dll %RELEASE_PATH%\libsndfile-1.dll
 
+copy /Y PHYSX\PhysX\bin\Release\PhysX_64.dll %RELEASE_PATH%\PhysX_64.dll
+copy /Y PHYSX\PhysX\bin\Release\PhysXCommon_64.dll %RELEASE_PATH%\PhysXCommon_64.dll
+copy /Y PHYSX\PhysX\bin\Release\PhysXCooking_64.dll %RELEASE_PATH%\PhysXCooking_64.dll
+copy /Y PHYSX\PhysX\bin\Release\PhysXFoundation_64.dll %RELEASE_PATH%\PhysXFoundation_64.dll
+
 echo Copying Libs lib files...
 
 copy /Y AL\lib\OpenAL32.lib %DEBUGLIB_PATH%\OpenAL32.lib
@@ -120,6 +130,11 @@ copy /Y GL\lib\glew32.lib %DEBUGLIB_PATH%\glew32.lib
 copy /Y GL\lib\glfw3dll.lib %DEBUGLIB_PATH%\glfw3dll.lib
 
 copy /Y libsndfile\lib\libsndfile-1.lib %DEBUGLIB_PATH%\libsndfile-1.lib
+
+copy /Y PHYSX\PhysX\bin\Release\PhysX_64.lib %DEBUGLIB_PATH%\PhysX_64.lib
+copy /Y PHYSX\PhysX\bin\Release\PhysXCommon_64.lib %DEBUGLIB_PATH%\PhysXCommon_64.lib
+copy /Y PHYSX\PhysX\bin\Release\PhysXCooking_64.lib %DEBUGLIB_PATH%\PhysXCooking_64.lib
+copy /Y PHYSX\PhysX\bin\Release\PhysXFoundation_64.lib %DEBUGLIB_PATH%\PhysXFoundation_64.lib
 
 echo All files copied, returning to root directory...
 cd ../..
@@ -217,14 +232,32 @@ CALL :CheckFileExistence GL\lib\glfw3dll.lib
 CALL :CheckFileExistence libsndfile\bin\libsndfile-1.dll
 CALL :CheckFileExistence libsndfile\lib\libsndfile-1.lib
 
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysX_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysX_64.lib
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysXCommon_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysXCommon_64.lib
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysXCooking_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysXCooking_64.lib
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysXFoundation_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Debug\PhysXFoundation_64.lib
+
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysX_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysX_64.lib
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysXCommon_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysXCommon_64.lib
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysXCooking_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysXCooking_64.lib
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysXFoundation_64.dll
+CALL :CheckFileExistence PHYSX\PhysX\bin\Release\PhysXFoundation_64.lib
+
 exit /B 0
 
 rem ----------------------------------------------------------------
 
 :CheckLibIncFolders
 CALL :CheckFileExistence AL\include
-CALL :CheckFileExistence BULLET\include
-CALL :CheckFileExistence freetype\include
+CALL :CheckFileExistence PHYSX\PhysX\include
+CALL :CheckFileExistence PHYSX\PxShared\include
 CALL :CheckFileExistence GL\include
 CALL :CheckFileExistence JSONCPP\include
 CALL :CheckFileExistence libsndfile\include
