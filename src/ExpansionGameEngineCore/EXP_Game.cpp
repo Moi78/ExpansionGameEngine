@@ -402,9 +402,10 @@ void EXP_Game::UnloadCurrentMap() {
 	m_rndr->UnregisterAllMeshes();
 	m_rndr->UnregisterAllParticleEmitters();
 	
+	m_rndr->GetMaterialLibrary()->ClearLibrary();
+
 	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.
-	m_sigClearMatMan = true;
 	m_sigLevelFinalCleanup = true;
 }
 

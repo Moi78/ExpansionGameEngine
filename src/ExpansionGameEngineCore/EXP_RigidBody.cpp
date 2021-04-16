@@ -126,15 +126,15 @@ vec3f EXP_RigidBody::GetLinearVelocity() {
 
 //RB Box
 
-EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic, vec3f inertia)  :
-	EXP_RigidBody(game, pos, rot, scale, mass, kinematic) {
+EXP_RB_Box::EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic, EXP_PhysicsMaterial mat)  :
+	EXP_RigidBody(game, pos, rot, scale, mass, kinematic, mat) {
 	ConstructShape();
 }
 
 //RB Sphere
 
-EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic, vec3f inertia) :
-	EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic), m_radius(radius) {
+EXP_RB_Sphere::EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic, EXP_PhysicsMaterial mat) :
+	EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic, mat), m_radius(radius) {
 	ConstructShape();
 }
 
@@ -192,8 +192,8 @@ void EXP_RB_Sphere::ConstructShape() {
 }
 
 //RB Capsule
-EXP_RB_Capsule::EXP_RB_Capsule(EXP_Game* game, vec3f pos, vec3f rot, float radius, float height, float mass, bool kinematic, vec3f inertia) :
-	EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic)
+EXP_RB_Capsule::EXP_RB_Capsule(EXP_Game* game, vec3f pos, vec3f rot, float radius, float height, float mass, bool kinematic, EXP_PhysicsMaterial mat) :
+	EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic, mat)
 {
 	m_radius = radius;
 	m_height = height;

@@ -65,12 +65,12 @@ protected:
 
 class EXPGE_API EXP_RB_Box : public EXP_RigidBody {
 public:
-	EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false, vec3f inertia = vec3f());
+	EXP_RB_Box(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false, EXP_PhysicsMaterial mat = {});
 };
 
 class EXPGE_API EXP_RB_Sphere : public EXP_RigidBody {
 public:
-	EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic = false, vec3f inertia = vec3f());
+	EXP_RB_Sphere(EXP_Game* game, vec3f pos, vec3f rot, float radius, float mass, bool kinematic = false, EXP_PhysicsMaterial mat = {});
 
 	virtual void ConstructShape() override;
 
@@ -80,7 +80,7 @@ private:
 
 class EXPGE_API EXP_RB_Capsule : public EXP_RigidBody {
 public:
-	EXP_RB_Capsule(EXP_Game* game, vec3f pos, vec3f rot, float radius, float height, float mass, bool kinematic = false, vec3f inertia = vec3f());
+	EXP_RB_Capsule(EXP_Game* game, vec3f pos, vec3f rot, float radius, float height, float mass, bool kinematic = false, EXP_PhysicsMaterial mat = {});
 
 	virtual void ConstructShape() override;
 

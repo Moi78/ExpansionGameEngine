@@ -22,5 +22,5 @@ void main()
     FragPos = vec3(model * vec4(aPos, 1.0));
     UVcoord = aUV;
 
-    gl_Position = transpose(projection) * transpose(view) * vec4(FragPos, 1.0);
+    gl_Position = vec4(FragPos, 1.0) * view * projection;
 }

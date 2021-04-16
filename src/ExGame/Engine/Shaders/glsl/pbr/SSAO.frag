@@ -24,11 +24,11 @@ float bias = 0.05;
 
 vec2 noiseScale = vec2(scr_w / 4.0, scr_h / 4.0);
 
-mat4 tview = transpose(view);
-mat4 tproj = transpose(projection);
+//mat4 tview = transpose(view);
+//mat4 tproj = transpose(projection);
 
 void main() {
-    vec3 FragPos = vec4(tview * texture(gPos, UVcoords)).xyz;
+    vec3 FragPos = vec4(texture(gPos, UVcoords) * view).xyz;
     vec3 norm = texture(gNorm, UVcoords).xyz;
     vec3 randomVec = normalize(texture(noise, UVcoords * noiseScale).xyz);
 
@@ -42,11 +42,11 @@ void main() {
         samplePos = samplePos * radius + FragPos;
 
         vec4 offset = vec4(samplePos, 1.0);
-        offset = tproj * offset;
+        offset = offset * projection;
         offset.xy /= offset.w;
         offset.xy = offset.xy * 0.5 + 0.5;
 
-        float sampleDepth = vec4(tview * texture(gPos, offset.xy)).z;
+        float sampleDepth = vec4(texture(gPos, offset.xy) * view).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(FragPos.z - sampleDepth));
         occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;

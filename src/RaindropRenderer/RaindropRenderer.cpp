@@ -734,33 +734,62 @@ void RaindropRenderer::RenderBloom() {
 
 	SwitchShader(m_bloom);
 
-	for (int i = 0; i < 5; i++) {
-		m_bloom_buffera->BindFBO();
-		if (i == 0) {
-			m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
-			m_bloom->SetInt("threshold", 1);
-		} else {
-			m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
-			m_bloom->SetInt("threshold", 0);
-		}
-		m_bloom->SetInt("gShaded", 0);
-		m_bloom->SetBool("horizontal", true);
+	//for (int i = 0; i < 2; i++) {
+	//	m_bloom_buffera->BindFBO();
+	//	if (i == 0) {
+	//		m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
+	//		m_bloom->SetInt("threshold", 1);
+	//	} else {
+	//		m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
+	//		m_bloom->SetInt("threshold", 0);
+	//	}
+	//	m_bloom->SetInt("gShaded", 0);
+	//	m_bloom->SetBool("horizontal", true);
 
-		m_quad->RenderQuad();
+	//	m_quad->RenderQuad();
 
-		m_bloom_buffera->UnbindFBO();
-		m_bloom_bufferb->BindFBO();
+	//	m_bloom_buffera->UnbindFBO();
+	//	m_bloom_bufferb->BindFBO();
 
-		m_bloom->SetInt("threshold", 0);
+	//	m_bloom->SetInt("threshold", 0);
 
-		m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
-		m_bloom->SetInt("gShaded", 0);
-		m_bloom->SetInt("horizontal", false);
+	//	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
+	//	m_bloom->SetInt("gShaded", 0);
+	//	m_bloom->SetInt("horizontal", false);
 
-		m_quad->RenderQuad();
+	//	m_quad->RenderQuad();
 
-		m_bloom_bufferb->UnbindFBO();
-	}
+	//	m_bloom_bufferb->UnbindFBO();
+	//}
+
+	m_bloom_buffera->BindFBO();
+	m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
+	m_bloom->SetInt("threshold", 1);
+	m_bloom->SetInt("gShaded", 0);
+	m_bloom->SetBool("horizontal", true);
+
+	m_quad->RenderQuad();
+
+	m_bloom_bufferb->BindFBO();
+	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
+	m_bloom->SetInt("threshold", 0);
+	m_bloom->SetBool("horizontal", false);
+
+	m_quad->RenderQuad();
+
+	m_bloom_buffera->BindFBO();
+	m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
+	m_bloom->SetBool("horizontal", true);
+
+	m_quad->RenderQuad();
+
+	m_bloom_bufferb->BindFBO();
+	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
+	m_bloom->SetBool("horizontal", false);
+
+	m_quad->RenderQuad();
+
+	m_bloom_bufferb->UnbindFBO();
 }
 
 

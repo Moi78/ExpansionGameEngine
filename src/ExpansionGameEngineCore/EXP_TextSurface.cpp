@@ -48,10 +48,10 @@ EXP_TextSurface::EXP_TextSurface(
 			(scale * 10.0f) * vec3f(2.0f * std::clamp(met.getX() / met.getY(), 0.0f, 1.0f))
 		);
 
-		mat = TranslateMatrix(mat, overrall_pos);
-
 		vec3f nScale = scale * vec3f(std::clamp(met.getX() / met.getY(), 0.0f, 1.0f), std::clamp(met.getY() / met.getX(), 0.0f, 1.0f), 1.0f);
 		mat = ScaleMatrix(mat, nScale);
+
+		mat = TranslateMatrix(mat, overrall_pos);
 
 		overrall_pos = overrall_pos + m_letter_spacing;
 
@@ -80,14 +80,14 @@ void EXP_TextSurface::UpdateMatrices() {
 			(RD_Mesh::m_scale * 10.0f) * vec3f(2.0f * std::clamp(met.getX() / met.getY(), 0.0f, 1.0f))
 		);
 
-		mat = TranslateMatrix(mat, overrall_pos);
-
 		vec3f nScale = RD_Mesh::m_scale * vec3f(
 			std::clamp(met.getX() / met.getY(), 0.0f, 1.0f),
 			std::clamp(met.getY() / met.getX(), 0.0f, 1.0f), 1.0f
 		);
 
 		mat = ScaleMatrix(mat, nScale);
+
+		mat = TranslateMatrix(mat, overrall_pos);
 
 		overrall_pos = overrall_pos + m_letter_spacing;
 
