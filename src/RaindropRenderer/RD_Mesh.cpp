@@ -15,6 +15,8 @@ RD_Mesh::RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f positi
 	m_shadowCaster = true;
 
 	Update();
+
+	shader->RegisterMeshReference(this);
 }
 
 RD_Mesh::~RD_Mesh() {
@@ -56,10 +58,10 @@ void RD_Mesh::loadMesh(std::string filepath) {
 	delete reader;
 }
 
-void RD_Mesh::render(RD_Camera* cam) {
+void RD_Mesh::render() {
 	m_mat->GetShader()->SetMatrix("model", m_mdl);
 
-	m_mat->BindMaterial();
+	//m_mat->BindMaterial();
 
 	m_buffer->BindBuffer();
 	m_rndr->GetRenderingAPI()->Draw(m_buffer);

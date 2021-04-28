@@ -22,6 +22,8 @@
 #include "RD_ShaderLoader.h"
 #include "RD_Texture.h"
 
+class RD_Mesh;
+
 class RAINDROPRENDERER_API RD_ShaderMaterial {
 public:
 	RD_ShaderMaterial(RD_ShaderLoader*);
@@ -31,9 +33,15 @@ public:
 
 	void BindMaterial();
 	RD_ShaderLoader* GetShader();
+
+	void RegisterMeshReference(RD_Mesh* msh);
+	void UnregisterMeshReference(RD_Mesh* msh);
+	void DrawMeshes();
 private:
 	RD_ShaderLoader* m_shader;
-	std::vector < std::pair<std::string, RD_Texture*> > m_textures;
+	std::vector<std::pair<std::string, RD_Texture*>> m_textures;
+
+	std::vector<RD_Mesh*> m_meshes_references;
 };
 
 #endif

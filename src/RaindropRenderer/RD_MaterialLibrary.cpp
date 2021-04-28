@@ -54,3 +54,7 @@ void RD_MaterialLibrary::ClearLibrary() {
 	}
 	m_materials.clear();
 }
+
+std::vector<std::pair<std::string, RD_ShaderMaterial*>> RD_MaterialLibrary::GetRawVector() {
+	return m_materials;
+}

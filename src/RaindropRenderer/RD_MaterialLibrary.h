@@ -21,6 +21,8 @@ public:
 	bool DoMaterialExists(std::string nameDenominator);
 	RD_ShaderMaterial* GetMaterialByName(std::string nameDenominator);
 
+	std::vector<std::pair<std::string, RD_ShaderMaterial*>> GetRawVector();
+
 private:
 	std::vector<std::pair<std::string, RD_ShaderMaterial*>> m_materials;
 };

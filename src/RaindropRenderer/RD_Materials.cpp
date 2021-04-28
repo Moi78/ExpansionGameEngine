@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RD_Materials.h"
+#include "RD_Mesh.h"
 
 RD_ShaderMaterial::RD_ShaderMaterial(RD_ShaderLoader* shader) {
 	m_shader = shader;
@@ -33,4 +34,28 @@ RD_ShaderLoader* RD_ShaderMaterial::GetShader() {
 
 void RD_ShaderMaterial::AddTexture(std::string paramName, RD_Texture* tex) {
 	m_textures.push_back(std::pair<std::string, RD_Texture*>(paramName, tex));
+}
+
+void RD_ShaderMaterial::RegisterMeshReference(RD_Mesh* msh) {
+	m_meshes_references.push_back(msh);
+}
+
+void RD_ShaderMaterial::UnregisterMeshReference(RD_Mesh* msh) {
+	const int index = GetElemIndex<RD_Mesh*>(m_meshes_references, msh);
+
+	if (index != -1) {
+		m_meshes_references.erase(m_meshes_references.begin() + index);
+	}
+	else {
+		std::cerr << "ERROR: Element does not exists" << std::endl;
+	}
+}
+
+void RD_ShaderMaterial::DrawMeshes() {
+	m_shader->useShader();
+	BindMaterial();
+
+	for (auto m : m_meshes_references) {
+		m->render();
+	}
 }

@@ -37,8 +37,8 @@ int RD_InstanciatedMesh::AppendInstance(RD_MeshInstance inst) {
 	return (int)m_mdls.size() - 1;
 }
 
-void RD_InstanciatedMesh::render(RD_Camera* cam) {
-	m_mat->BindMaterial();
+void RD_InstanciatedMesh::render() {
+	//m_mat->BindMaterial();
 
 	m_buffer->BindBuffer();
 

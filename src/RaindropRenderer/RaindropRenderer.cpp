@@ -354,7 +354,7 @@ void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 			m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
 
 			m_DBG_light_mdl->SetPosition(plight->GetPosition());
-			m_DBG_light_mdl->render(cam);
+			m_DBG_light_mdl->render();
 		}
 
 		m_api->SetFilledMode(FillingMode::FILLED);
@@ -392,8 +392,8 @@ void RaindropRenderer::UpdatePointsLighting() {
 }
 
 void RaindropRenderer::FillFeaturesArray() {
-	m_renderer_feature[0] = std::pair<std::string, bool>("ftr_specular", true);
-	m_renderer_feature[1] = std::pair<std::string, bool>("ftr_lighting", true);
+	m_renderer_feature[0] = std::pair<std::string, bool>("ftr_specular", true); // Non-working antiquity
+	m_renderer_feature[1] = std::pair<std::string, bool>("ftr_lighting", true); // Non-working antiquity that needs to be fixed
 	m_renderer_feature[2] = std::pair<std::string, bool>("ftr_ambient", true);
 	m_renderer_feature[3] = std::pair<std::string, bool>("ftr_ssao", true);
 	m_renderer_feature[4] = std::pair<std::string, bool>("ftr_bloom", true);
@@ -468,11 +468,8 @@ void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
 }
 
 void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
-	for (auto* mesh : m_meshes) {
-		RD_ShaderLoader* shader = mesh->GetMaterial()->GetShader();
-		shader->useShader();
-
-		mesh->render(cam);
+	for (auto mat : m_matlib->GetRawVector()) {
+		mat.second->DrawMeshes();
 	}
 }
 

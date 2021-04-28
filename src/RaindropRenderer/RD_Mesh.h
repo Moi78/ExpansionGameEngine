@@ -41,7 +41,7 @@ public:
 
 	void loadMesh(std::string);
 
-	virtual void render(RD_Camera* cam);
+	virtual void render();
 	virtual void renderShadows(RD_ShaderLoader* shadowShader);
 
 	virtual void addRotation(vec3f rotation, bool update = true);
