@@ -58,11 +58,13 @@ A little Maze Generator I've built with EXPGE
  - [ ] Rewrite Physics Integration (maybe switch to PhysX :thinking:)
  - [ ] Do Vulkan integration
  - [ ] Add particle system
- - [ ] Add tests whenever it is possible
- - [ ] Start developping editor & a good project manager 
+      - [x] CPU Handled particles
+      - [ ] GPU Handled particles
+ - [ ] Starting the developpment of an editor & a good project manager 
      - [ ] Editor
      - [x] Project Manager
- - [ ] Solve the Stack Overflow on blitting multisample FBO
+ - [ ] Solve the Stack Overflow on blitting multisample FBO (by implementing correctly MSAA tho)
+ - [ ] Fix the CMakeLists to compile with PhysX
 
 ## Dependencies
 
