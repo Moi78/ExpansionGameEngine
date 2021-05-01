@@ -1,4 +1,5 @@
 #version 450 core
+#extension ARB_bindless_texture : require
 layout (location = 0) out vec3 ShadowColor;
 
 in vec2 UVcoords;
@@ -9,6 +10,9 @@ uniform sampler2D ShadowMap[10];
 uniform int NbrDirLights;
 
 uniform sampler2D gPos;
+layout(std430, binding = 8) buffer BINDLESS_PASSES {
+	sampler2D passes[6];
+};
 
 float lerp(float v0, float v1, float t) {
 	return (1 - t) * v0 + t * v1;
@@ -18,7 +22,7 @@ void main() {
 	float finalShadow = 0.0;
 
 	for(int i = 0; i < NbrDirLights; i++) {
-		vec4 fpls = lspaceMat[i] * vec4(texture(gPos, UVcoords).rgb, 1.0);
+		vec4 fpls = lspaceMat[i] * vec4(texture(passes[0], UVcoords).rgb, 1.0);
 
 		vec3 projCoords = fpls.xyz / fpls.w;
 		projCoords = projCoords * 0.5 + 0.5;

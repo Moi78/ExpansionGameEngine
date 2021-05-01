@@ -171,6 +171,7 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_ARB_bindless_texture);
 
 	return true;
 }
@@ -229,6 +230,10 @@ RD_Cubemap* RD_RenderingAPI_GL::CreateCubemap() {
 
 RD_UniformBuffer* RD_RenderingAPI_GL::CreateUniformBuffer(const size_t bufferSize, const int binding) {
 	return new RD_UniformBuffer_GL(bufferSize, binding);
+}
+
+RD_ShaderStorageBuffer* RD_RenderingAPI_GL::CreateShaderStorageBuffer(const size_t bufferSize, const int binding) {
+	return new RD_ShaderStorageBuffer_GL(bufferSize, binding);
 }
 
 void RD_RenderingAPI_GL::SetViewportSize(int w, int h, int x, int y) {

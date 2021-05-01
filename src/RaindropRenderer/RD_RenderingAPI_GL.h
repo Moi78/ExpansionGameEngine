@@ -149,6 +149,7 @@ public:
 	virtual RD_ShaderLoader* CreateShader();
 	virtual RD_Cubemap* CreateCubemap();
 	virtual RD_UniformBuffer* CreateUniformBuffer(const size_t bufferSize, const int binding);
+	virtual RD_ShaderStorageBuffer* CreateShaderStorageBuffer(const size_t bufferSize, const int binding);
 
 	virtual void SetViewportSize(int w, int h, int x, int y);
 

@@ -125,6 +125,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_engineDir+  "/Shaders/glsl/ShadowBlur.frag"
 	);
 
+	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
+
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
 	m_ambient_u = m_api->CreateUniformBuffer(17, 2);
@@ -559,6 +561,10 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_g_buffer.gDepth = 6;
 
 	m_gbuffer->BuildFBO();
+	
+	for (int i = 0; i < 6; i++) {
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(m_gbuff_tex_handles_s, i);
+	}
 
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
 	//Light & PostProcess screen
@@ -692,30 +698,36 @@ void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 	SendFeatureToShader(m_light_shader, RendererFeature::Specular);
 	SendFeatureToShader(m_light_shader, RendererFeature::Lighting);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0);
-	m_light_shader->SetInt("gAlbedo", 0);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0)) {
+		m_light_shader->SetInt("gAlbedo", 0);
+	}
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
-	m_light_shader->SetInt("gNormal", 1);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1)) {
+		m_light_shader->SetInt("gNormal", 1);
+	}
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(2);
-	m_light_shader->SetInt("gPos", 2);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(2)) {
+		m_light_shader->SetInt("gPos", 2);
+	}
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gSpec)->BindTexture(3);
-	m_light_shader->SetInt("gSpec", 3);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gSpec)->BindTexture(3)) {
+		m_light_shader->SetInt("gSpec", 3);
+	}
 
 	m_shadows_blur_b->GetAttachementByIndex(0)->BindTexture(4);
 	m_light_shader->SetInt("ShadowPass", 4);
 
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
-		m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(5);
-		m_light_shader->SetInt("gMetRoughAO", 5);
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(5)) {
+			m_light_shader->SetInt("gMetRoughAO", 5);
+		}
 
 		m_ssao_buffer->GetAttachementByIndex(1)->BindTexture(6); //Blurred SSAO pass
 		m_light_shader->SetInt("ssao", 6);
 
-		m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(7);
-		m_light_shader->SetInt("gEmissive", 7);
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(7)) {
+			m_light_shader->SetInt("gEmissive", 7);
+		}
 	}
 
 	m_quad->RenderQuad();
@@ -1108,6 +1120,11 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_api->SetViewportSize(sx, sy, pos.getX(), pos.getY());
 
 	m_gbuffer->ChangeFramebufferSize(sx, sy);
+
+	for (int i = 0; i < 6; i++) {
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(m_gbuff_tex_handles_s, i);
+	}
+
 	m_light_pprocess->ChangeFramebufferSize(sx, sy);
 	m_ssao_buffer->ChangeFramebufferSize(sx, sy);
 	m_shadows_buffer->ChangeFramebufferSize(sx, sy);

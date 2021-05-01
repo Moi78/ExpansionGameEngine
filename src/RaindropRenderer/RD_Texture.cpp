@@ -10,6 +10,7 @@ RD_Texture_GL::RD_Texture_GL() {
 	m_texture = 0;
 	m_ms_texture = 0;
 	m_ms = false;
+	m_isTexBindless = false;
 }
 
 RD_Texture_GL::~RD_Texture_GL() {
@@ -124,13 +125,18 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RD_Texture_GL::BindTexture(unsigned int tex_unit) {
+bool RD_Texture_GL::BindTexture(unsigned int tex_unit) {
 	if (m_ms) {
-		return;
+		return false;
+	}
+
+	if (m_isTexBindless) {
+		return false;
 	}
 
 	glActiveTexture(GL_TEXTURE0 + tex_unit);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
+	return true;
 }
 
 void RD_Texture_GL::DeleteTexture() {
@@ -215,6 +221,19 @@ void RD_Texture_GL::CreateTextureFromGlyph(void* data, const int w, const int h)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+}
+
+void RD_Texture_GL::MakeTexBindless(RD_ShaderStorageBuffer* ssbo, const int index) {
+	assert(m_texture != 0 && "ERROR: You can't make a texture bindless as long as you didn't create the texture.");
+
+	m_texHandle = glGetTextureHandleARB(m_texture);
+	glMakeTextureHandleResidentARB(m_texHandle);
+
+	ssbo->BindBuffer();
+	ssbo->SetBufferSubData(index * sizeof(uint64_t), sizeof(uint64_t), (void*)&m_texHandle);
+	ssbo->UnbindBuffer();
+
+	m_isTexBindless = true;
 }
 
 void RD_Texture_GL::GetGLformat(

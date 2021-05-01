@@ -67,6 +67,17 @@ public:
 	virtual void UnbindBuffer() = 0;
 };
 
+class RAINDROPRENDERER_API RD_ShaderStorageBuffer {
+public:
+	RD_ShaderStorageBuffer() {}
+	virtual ~RD_ShaderStorageBuffer() {}
+
+	virtual void SetBufferSubData(const int offset, const size_t size, void* data) = 0;
+
+	virtual void BindBuffer() = 0;
+	virtual void UnbindBuffer() = 0;
+};
+
 #ifdef BUILD_OPENGL
 
 class RAINDROPRENDERER_API RD_ShaderLoader_GL : public RD_ShaderLoader
@@ -107,6 +118,23 @@ private:
 	void CreateUBO(const size_t bufferSize);
 
 	unsigned int m_UBO;
+	int m_binding;
+};
+
+class RAINDROPRENDERER_API RD_ShaderStorageBuffer_GL : public RD_ShaderStorageBuffer {
+public:
+	RD_ShaderStorageBuffer_GL(const size_t bufferSize, const int binding);
+	virtual ~RD_ShaderStorageBuffer_GL();
+
+	virtual void SetBufferSubData(const int offset, const size_t size, void* data);
+
+	virtual void BindBuffer();
+	virtual void UnbindBuffer();
+
+private:
+	void CreateSSBO(const size_t bufferSize);
+
+	unsigned int m_SSBO;
 	int m_binding;
 };
 

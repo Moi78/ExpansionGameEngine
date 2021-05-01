@@ -41,6 +41,7 @@
 #include <random>
 #include <thread>
 #include <mutex>
+#include <stddef.h>
 
 #include <vec3.h>
 #include <vec2.h>
@@ -227,6 +228,9 @@ private:
 	std::vector<unsigned int> m_textureGarbageCollector;
 	std::vector<unsigned int> m_framebufferGarbageCollector;
 
+	std::unique_ptr<RD_Quad> m_quad;
+	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
+
 	//Deffered Rendering
 	Gbuff m_g_buffer;
 	RD_FrameBuffer* m_gbuffer;
@@ -235,17 +239,12 @@ private:
 	RD_FrameBuffer* m_shadows_blur;
 	RD_FrameBuffer* m_shadows_blur_b;
 
+	//PBR-Only stuff
+	RD_FrameBuffer* m_ssao_buffer;
 	RD_FrameBuffer* m_bloom_buffera;
 	RD_FrameBuffer* m_bloom_bufferb;
 
-	//PBR-Only stuff
-	RD_FrameBuffer* m_ssao_buffer;
-
-	std::unique_ptr<RD_Quad> m_quad;
-
-	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
-
-	//Internals shaders (some are'nt use and compiled if Pipeline is not PBR)
+	//Internals shaders (some aren't used and compiled if Pipeline is not PBR)
 	RD_ShaderLoader* m_shadowShader;
 
 	RD_ShaderLoader* m_light_shader;
@@ -274,6 +273,9 @@ private:
 	RD_UniformBuffer* m_pointLight_u;
 	RD_UniformBuffer* m_ambient_u;
 	RD_UniformBuffer* m_ssao_u; //PBR
+
+	//ShaderStorage
+	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;
 
 	vec2f m_vp_size, m_vp_pos;
 

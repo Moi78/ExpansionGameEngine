@@ -1,10 +1,16 @@
 #version 450 core
+#extension ARB_bindless_texture : require
 layout (location = 0) out float ssao;
 
 in vec2 UVcoords;
 
 uniform sampler2D gPos;
 uniform sampler2D gNorm;
+
+layout(std430, binding = 8) buffer BINDLESS_PASSES {
+    sampler2D passes[6];
+};
+
 uniform sampler2D noise;
 
 layout(std140, binding = 0) uniform CAMERA {
@@ -28,8 +34,8 @@ vec2 noiseScale = vec2(scr_w / 4.0, scr_h / 4.0);
 //mat4 tproj = transpose(projection);
 
 void main() {
-    vec3 FragPos = vec4(texture(gPos, UVcoords) * view).xyz;
-    vec3 norm = texture(gNorm, UVcoords).xyz;
+    vec3 FragPos = vec4(texture(passes[0], UVcoords) * view).xyz;
+    vec3 norm = texture(passes[1], UVcoords).xyz;
     vec3 randomVec = normalize(texture(noise, UVcoords * noiseScale).xyz);
 
     vec3 tangent = normalize(randomVec - norm * dot(randomVec, norm));
@@ -46,7 +52,7 @@ void main() {
         offset.xy /= offset.w;
         offset.xy = offset.xy * 0.5 + 0.5;
 
-        float sampleDepth = vec4(texture(gPos, offset.xy) * view).z;
+        float sampleDepth = vec4(texture(passes[0], offset.xy) * view).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(FragPos.z - sampleDepth));
         occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;

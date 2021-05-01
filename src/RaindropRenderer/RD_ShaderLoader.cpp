@@ -226,4 +226,34 @@ void RD_UniformBuffer_GL::SetBufferSubData(const int offset, const size_t size, 
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 }
 
+RD_ShaderStorageBuffer_GL::RD_ShaderStorageBuffer_GL(const size_t bufferSize, const int binding) {
+	m_binding = binding;
+	m_SSBO = 0;
+	CreateSSBO(bufferSize);
+}
+
+RD_ShaderStorageBuffer_GL::~RD_ShaderStorageBuffer_GL() {
+	glDeleteBuffers(1, &m_SSBO);
+}
+
+void RD_ShaderStorageBuffer_GL::BindBuffer() {
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBO);
+}
+
+void RD_ShaderStorageBuffer_GL::UnbindBuffer() {
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+void RD_ShaderStorageBuffer_GL::SetBufferSubData(const int offset, const size_t size, void* data) {
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, size, data);
+}
+
+void RD_ShaderStorageBuffer_GL::CreateSSBO(const size_t bufferSize) {
+	glGenBuffers(1, &m_SSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_binding, m_SSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
 #endif //BUILD_OPENGL
