@@ -91,6 +91,8 @@ public:
 	void SetFullscreenMode(const bool fullscr) const;
 	void SetVSync(const bool vsync);
 	bool IsVSyncActivated() const;
+
+	bool DoNeedCamUpdate();
 	
 	std::string GetEngineDir() const;
 
@@ -178,6 +180,8 @@ public:
 	void SendFeatureToShader(RD_ShaderLoader* shader, RendererFeature feature);
 
 	void UpdatePointsLighting();
+	void UpdateAmbientLighting();
+	void UpdateDirLighting();
 
 	//GUI
 	void RenderGUI_Screen() const;
@@ -186,8 +190,6 @@ public:
 	int GetFrameLimit() const;
 	bool GetErrorFlag() const;
 private:
-	void UpdateAmbientLighting();
-	void UpdateDirLighting();
 
 	void FillFeaturesArray();
 	void EnableAllFeatures();
@@ -206,6 +208,7 @@ private:
 	bool m_error_flag;
 	bool m_resize_override;
 	bool m_vsync;
+	bool m_need_cam_updt;
 
 	std::array<std::pair<std::string, bool>, 5> m_renderer_feature;
 

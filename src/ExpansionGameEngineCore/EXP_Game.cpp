@@ -242,6 +242,10 @@ void EXP_Game::UpdateLevel() const {
 	}
 
 	m_rndr->UpdateParticles();
+
+	if (m_rndr->DoNeedCamUpdate() && (m_currentCamera != nullptr)) {
+		m_currentCamera->UpdateProj();
+	}
 }
 
 EXP_GameInfo EXP_Game::GetGameInfo() const {

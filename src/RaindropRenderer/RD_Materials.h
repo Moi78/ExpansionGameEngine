@@ -30,9 +30,11 @@ public:
 	~RD_ShaderMaterial();
 
 	void AddTexture(std::string param, RD_Texture* tex);
+	void PurgeTextures();
 
 	void BindMaterial();
 	RD_ShaderLoader* GetShader();
+	void SetShader(RD_ShaderLoader* shader, bool nodelete);
 
 	void RegisterMeshReference(RD_Mesh* msh);
 	void UnregisterMeshReference(RD_Mesh* msh);

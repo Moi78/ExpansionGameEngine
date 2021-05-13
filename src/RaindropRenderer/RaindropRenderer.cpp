@@ -184,6 +184,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld), "text");
 
 	UpdateAmbientLighting();
+
+	m_need_cam_updt = false;
 }
 
 RaindropRenderer::~RaindropRenderer() {
@@ -1137,6 +1139,7 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_vp_size = size;
 
 	m_resize_override = true;
+	m_need_cam_updt = true;
 }
 
 void RaindropRenderer::DisableResizeOverride() {
@@ -1197,4 +1200,13 @@ void RaindropRenderer::UnregisterAllParticleEmitters() {
 		UnregisterParticleEmitter(p);
 		delete p;
 	}
+}
+
+bool RaindropRenderer::DoNeedCamUpdate() {
+	if (m_need_cam_updt) {
+		m_need_cam_updt = false;
+		return true;
+	}
+
+	return false;
 }

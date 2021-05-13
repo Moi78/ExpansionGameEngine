@@ -19,12 +19,12 @@ float lightDirY = -0.8f;
 float lightDirZ = -0.6f;
 float lightBrtn = 5.0f;
 
-RD_ShaderMaterial* CompileMat(EXP_Game* game, Node_Editor* editor) {
+void CompileMat(EXP_Game* game, Node_Editor* editor, RD_ShaderMaterial* mat) {
 	std::string FragCode = editor->EvalNodes();
 
 	std::string VertCode = "";
 	std::ifstream vertFile;
-	vertFile.open("Engine/ShaderFragments/VertShader.vert", std::ios::beg);
+	vertFile.open("Engine/Shaders/glsl/Gshad.vert", std::ios::beg);
 	while (!vertFile.eof()) {
 		char buf[100];
 		vertFile.getline(buf, 100);
@@ -33,16 +33,16 @@ RD_ShaderMaterial* CompileMat(EXP_Game* game, Node_Editor* editor) {
 
 	RD_ShaderLoader* sl = game->GetRenderer()->GetRenderingAPI()->CreateShader();
 	sl->CompileShaderFromCode(VertCode, FragCode);
-	RD_ShaderMaterial* shmat = new RD_ShaderMaterial(sl);
 	
+	mat->PurgeTextures();
 	for (int i = 0; i < editor->GetTextureCount(); i++) {
 		RD_Texture* tex = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 		tex->LoadTexture(editor->GetTextureRefByIndex(i).first);
 
-		shmat->AddTexture(editor->GetTextureRefByIndex(i).second, tex);
+		mat->AddTexture(editor->GetTextureRefByIndex(i).second, tex);
 	}
 
-	return shmat;
+	mat->SetShader(sl, false);
 }
 
 int main(int argc, char* argv[]) {
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplGlfw_InitForOpenGL(winsys->GetWindow(), true);
-	ImGui_ImplOpenGL3_Init("#version 410");
+	ImGui_ImplOpenGL3_Init("#version 450");
 
 	std::string projRoot = "C:/";
 
@@ -125,13 +125,17 @@ int main(int argc, char* argv[]) {
 
 	imnodes::SetNodeEditorSpacePos(snode->GetId(), ImVec2(450.0f, 50.0f));
 
-	RD_ShaderMaterial* mat = CompileMat(game, editor);
+	RD_ShaderMaterial* mat = new RD_ShaderMaterial(nullptr);
+	CompileMat(game, editor, mat);
+
 	EXP_StaticMesh* msh = new EXP_StaticMesh(game,
 		mat,
 		"/meshes/sphere",
+		vec3f(0.0f, 0.0f, 12.0f),
 		vec3f(),
-		vec3f(),
-		vec3f(1.0f, 1.0f, 1.0f));
+		vec3f(1.0f, 1.0f, 1.0f)
+	);
+	game->GetRenderer()->GetMaterialLibrary()->AddMaterialToLib(mat, "custom_mat");
 
 	//Arg parsing II
 	for (int i = 0; i < args.size(); i++) {
@@ -140,9 +144,7 @@ int main(int argc, char* argv[]) {
 				std::string fullPath = projRoot + contentPath + args[i + 1];
 				if (std::filesystem::exists(fullPath)) {
 					editor->OpenMaterialDraft(fullPath);
-					delete mat;
-					mat = CompileMat(game, editor);
-					msh->SetMaterial(mat);
+					CompileMat(game, editor, mat);
 				} else {
 					std::cerr << args[i + 1] << " : Files does not exists." << std::endl;
 				}
@@ -160,6 +162,8 @@ int main(int argc, char* argv[]) {
 	saveFinalMaterial.AddFilter("exmtl");
 
 	while (!game->GetRenderer()->WantToClose()) {
+		msh->addTranslation(vec3f(0.0f, 0.0f, -0.01f));
+
 		game->RenderScene();
 
 		int w = game->GetRenderer()->getWindowWidth();
@@ -181,6 +185,7 @@ int main(int argc, char* argv[]) {
 					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
 					if (dlight) {
 						dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+						game->GetRenderer()->UpdateDirLighting();
 					}
 				}
 
@@ -188,6 +193,7 @@ int main(int argc, char* argv[]) {
 					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
 					if (dlight) {
 						dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+						game->GetRenderer()->UpdateDirLighting();
 					}
 				}
 
@@ -195,6 +201,7 @@ int main(int argc, char* argv[]) {
 					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
 					if (dlight) {
 						dlight->SetLightDir(vec3f(lightDirX, lightDirY, lightDirZ));
+						game->GetRenderer()->UpdateDirLighting();
 					}
 				}
 
@@ -202,6 +209,7 @@ int main(int argc, char* argv[]) {
 					EXP_DirLight* dlight = game->GetCurrentMap()->GetDirLightByName("sun");
 					if (dlight) {
 						dlight->SetLightBrightness(lightBrtn);
+						game->GetRenderer()->UpdateDirLighting();
 					}
 				}
 
@@ -212,9 +220,7 @@ int main(int argc, char* argv[]) {
 				ImGui::BeginChild("Material Configuration", ImVec2((w / 2) - 30, 100), true);
 
 				if (ImGui::Button("Compile Material", ImVec2(ImGui::GetColumnWidth(), 19.0f))) {
-					delete mat;
-					mat = CompileMat(game, editor);
-					msh->SetMaterial(mat);
+					CompileMat(game, editor, mat);
 				}
 
 				ImGui::Columns(1, nullptr, false);
@@ -263,9 +269,7 @@ int main(int argc, char* argv[]) {
 			editor->OpenMaterialDraft(openBrowser.GetSelectedFile());
 			openBrowser.ResetBools();
 
-			delete mat;
-			mat = CompileMat(game, editor);
-			msh->SetMaterial(mat);
+			CompileMat(game, editor, mat);
 		}
 
 		if (saveBrowserDraft.OkPressed()) {

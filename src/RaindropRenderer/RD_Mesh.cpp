@@ -188,5 +188,8 @@ void RD_Mesh::SetShadowCasting(bool scasting) {
 }
 
 void RD_Mesh::SetMaterial(RD_ShaderMaterial* mat) {
+	m_mat->UnregisterMeshReference(this);
+
 	m_mat = mat;
+	m_mat->RegisterMeshReference(this);
 }

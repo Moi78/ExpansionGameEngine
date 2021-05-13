@@ -25,6 +25,7 @@ private:
 	EXP_MapLoader* m_loader;
 
 	EXP_MouseButtonCallback* m_clickev;
+	vec2f m_last_win_size;
 
 	EXP_Camera* m_cam;
 };

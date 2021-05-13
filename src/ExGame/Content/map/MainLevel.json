@@ -17,7 +17,7 @@
       "type":"dlight",
       "nameTag":"sun",
 
-      "dir":[-1, -1, -1],
+      "dir":[0.061, -0.8, -0.6],
       "color":[1, 0.8, 0.8],
       "brightness":10.0
     },
@@ -80,6 +80,18 @@
       "pos":[2.69, 3.6, 0.04],
       "rot":[0.0, 0.0, 30.0],
       "scale":[0.05, 0.05, 0.05]
+    },
+
+    {
+      "type":"mesh",
+      "nameTag":"sphere",
+
+      "ref":"/sphere",
+      "material":"/shaders/mat_red",
+
+      "pos":[0, 0, 0],
+      "rot":[0.0, 0.0, 0.0],
+      "scale":[1.0, 1.0, 1.0]
     }
   ]
 }

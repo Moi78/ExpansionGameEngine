@@ -59,3 +59,18 @@ void RD_ShaderMaterial::DrawMeshes() {
 		m->render();
 	}
 }
+
+void RD_ShaderMaterial::SetShader(RD_ShaderLoader* shader, bool nodelete) {
+	if (!nodelete) {
+		delete m_shader;
+	}
+
+	m_shader = shader;
+}
+
+void RD_ShaderMaterial::PurgeTextures() {
+	for (auto tex : m_textures) {
+		delete tex.second;
+	}
+	m_textures.clear();
+}

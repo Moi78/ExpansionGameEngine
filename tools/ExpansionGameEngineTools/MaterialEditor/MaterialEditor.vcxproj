@@ -124,7 +124,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\..\..\src\x64\$(Configuration);..\..\..\src\libs\GL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;RaindropRenderer.lib;ExpansionGameEngineCore.lib;glew32.lib;glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionGameEngineCore.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
@@ -147,7 +147,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\..\..\src\x64\$(Configuration);..\..\..\src\libs\GL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;RaindropRenderer.lib;ExpansionGameEngineCore.lib;glew32.lib;glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionGameEngineCore.lib;ExpansionMath.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
