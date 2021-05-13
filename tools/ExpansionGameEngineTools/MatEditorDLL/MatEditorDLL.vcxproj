@@ -157,11 +157,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CameraActor.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MaterialEditor.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraActor.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MaterialEditor.cpp" />
     <ClCompile Include="pch.cpp">

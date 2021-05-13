@@ -8,6 +8,8 @@
 #include <EXP_Camera.h>
 #include <EXP_Callbacks.h>
 
+#include "CameraActor.h"
+
 #include <GLFW/glfw3.h>
 
 class MaterialEditor : 
@@ -27,7 +29,7 @@ private:
 	EXP_MouseButtonCallback* m_clickev;
 	vec2f m_last_win_size;
 
-	EXP_Camera* m_cam;
+	CameraActor* m_cam;
 };
 
 EXPGE_LEVEL_HEADER(MaterialEditor);
