@@ -55,7 +55,7 @@ A little Maze Generator I've built with EXPGE
  - [ ] Consistent error handling
  - [ ] Fix the error when reducing the window
  - [ ] Rewrite GUI system
- - [ ] Rewrite Physics Integration (maybe switch to PhysX :thinking:)
+ - [x] Rewrite Physics Integration (maybe switch to PhysX :thinking:)
  - [ ] Do Vulkan integration
  - [ ] Add particle system
       - [x] CPU Handled particles
