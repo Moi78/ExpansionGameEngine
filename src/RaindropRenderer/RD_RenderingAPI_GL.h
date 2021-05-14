@@ -170,4 +170,6 @@ private:
 	RD_WindowingSystemGLFW* m_win_sys;
 };
 
+bool CheckExtensionAvailability(std::string ext);
+
 #endif //BUILD_OPENGL

@@ -1,7 +1,14 @@
 #version 450 core
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec3 bloom;
 
 in vec2 UVcoords;
+
+#ifdef GL_ARB_bindless_texture
+layout(std430, binding = 8) buffer BINDLESS_PASSES {
+    sampler2D passes[6];
+};
+#endif //GL_ARB_bindless_texture
 
 uniform sampler2D gShaded;
 uniform bool horizontal;
@@ -24,9 +31,25 @@ vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
 }
 
 void main() {
-    if(horizontal) {
-        bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), vec2(1.0, 0.0)).rgb - threshold, 0, 1);
+    if(threshold == 1) {
+        #ifdef GL_ARB_bindless_texture
+            if(horizontal) {
+                bloom = clamp(blur13(passes[5], UVcoords, textureSize(gShaded, 0), vec2(1.0, 0.0)).rgb - threshold, 0, 1);
+            } else {
+                bloom = clamp(blur13(passes[5], UVcoords, textureSize(gShaded, 0), vec2(0.0, 1.0)).rgb - threshold, 0, 1);
+            }
+        #else
+            if(horizontal) {
+                bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), vec2(1.0, 0.0)).rgb - threshold, 0, 1);
+            } else {
+                bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), vec2(0.0, 1.0)).rgb - threshold, 0, 1);
+            }
+        #endif //GL_ARB_bindless_texture
     } else {
-        bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), vec2(0.0, 1.0)).rgb - threshold, 0, 1);
+        if(horizontal) {
+            bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), vec2(1.0, 0.0)).rgb, 0, 1);
+        } else {
+            bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), vec2(0.0, 1.0)).rgb, 0, 1);
+        }
     }
 }

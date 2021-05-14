@@ -87,7 +87,7 @@
       "nameTag":"sphere",
 
       "ref":"/sphere",
-      "material":"/shaders/mat_red",
+      "material":"/shaders/mat_glow_green",
 
       "pos":[0, 0, 0],
       "rot":[0.0, 0.0, 0.0],

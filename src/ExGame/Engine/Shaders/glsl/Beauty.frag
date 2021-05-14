@@ -15,7 +15,7 @@ void main() {
 
     //FragColor = mix(texture(lightpass, UVcoords), gui, gui.a);
 
-    vec4 lightSSR = clamp(texture(lightpass, UVcoords), 0, 1) + (texture(bloom, UVcoords) * 2);
+    vec4 light_bloom = clamp(texture(lightpass, UVcoords), 0, 1) + (texture(bloom, UVcoords) * 2);
 
-    FragColor = mix(lightSSR, gui, gui.a);
+    FragColor = mix(light_bloom, gui, gui.a);
 }

@@ -171,7 +171,14 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_ARB_bindless_texture);
+
+	if (CheckExtensionAvailability("GL_ARB_bindless_texture")) {
+		glEnable(GL_ARB_bindless_texture);
+		std::cout << "GL_ARB_bindless_texture supported !" << std::endl;
+	}
+	else {
+		std::cerr << "ERROR: GL_ARB_bindless_texture is not supported." << std::endl;
+	}
 
 	return true;
 }
@@ -472,6 +479,22 @@ void RD_RenderingAPI_VertexBufferGL::DeleteBuffer() {
 
 unsigned int RD_RenderingAPI_VertexBufferGL::GetFloatCount() {
 	return float_count;
+}
+
+//---------------------------------------------  Misc  ---------------------------------------------
+bool CheckExtensionAvailability(std::string ext) {
+	int k = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &k);
+
+	for (int i = 0; i < k; i++) {
+		const GLubyte* kext_str = glGetStringi(GL_EXTENSIONS, i);
+
+		if (!strcmp((const char*)kext_str, ext.c_str())) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 #endif //BUILD_OPENGL

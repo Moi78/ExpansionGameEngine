@@ -200,6 +200,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_shadows_blur;
 	delete m_shadows_blur_b;
 	delete m_shadows_buffer;
+	delete m_bloom_bufferb;
 
 	//Deleting common shaders
 	delete m_shadowShader;
@@ -229,7 +230,6 @@ RaindropRenderer::~RaindropRenderer() {
 
 		delete m_ssao_noise_tex;
 		delete m_bloom_buffera;
-		delete m_bloom_bufferb;
 
 		delete m_ssao_u;
 	}
@@ -519,11 +519,19 @@ bool RaindropRenderer::CreateGbuff() {
 
 	m_gbuffer->BuildFBO();
 
+	for (int i = 0; i < 4; i++) {
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(m_gbuff_tex_handles_s, i);
+	}
+
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
 	//Light & PostProcess screen
 	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
 
 	m_light_pprocess->BuildFBO();
+
+	m_bloom_bufferb = m_api->CreateFrameBuffer(width, height, true);
+	m_bloom_bufferb->AddAttachement(IMGFORMAT_RGB);
+	m_bloom_bufferb->BuildFBO();
 
 	return true;
 }
@@ -625,6 +633,10 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 		m_api->Clear(COLOR_BUFFER);
 		
 		RenderLightPass(cam->GetLocation());
+
+		m_bloom_bufferb->BindFBO();
+		m_api->Clear(COLOR_BUFFER);
+		m_bloom_bufferb->UnbindFBO();
 	}
 	
 	RenderPostProcess();
@@ -745,38 +757,11 @@ void RaindropRenderer::RenderBloom() {
 
 	SwitchShader(m_bloom);
 
-	//for (int i = 0; i < 2; i++) {
-	//	m_bloom_buffera->BindFBO();
-	//	if (i == 0) {
-	//		m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
-	//		m_bloom->SetInt("threshold", 1);
-	//	} else {
-	//		m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
-	//		m_bloom->SetInt("threshold", 0);
-	//	}
-	//	m_bloom->SetInt("gShaded", 0);
-	//	m_bloom->SetBool("horizontal", true);
-
-	//	m_quad->RenderQuad();
-
-	//	m_bloom_buffera->UnbindFBO();
-	//	m_bloom_bufferb->BindFBO();
-
-	//	m_bloom->SetInt("threshold", 0);
-
-	//	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
-	//	m_bloom->SetInt("gShaded", 0);
-	//	m_bloom->SetInt("horizontal", false);
-
-	//	m_quad->RenderQuad();
-
-	//	m_bloom_bufferb->UnbindFBO();
-	//}
-
 	m_bloom_buffera->BindFBO();
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0)) {
+		m_bloom->SetInt("gShaded", 0);
+	}
 	m_bloom->SetInt("threshold", 1);
-	m_bloom->SetInt("gShaded", 0);
 	m_bloom->SetBool("horizontal", true);
 
 	m_quad->RenderQuad();
@@ -830,14 +815,14 @@ void RaindropRenderer::RenderSSAO() {
 		//Render SSAO
 		SwitchShader(m_ssao_shader);
 
-			m_ssao_shader->SetInt("scr_w", GetViewportSize().getX());
-			m_ssao_shader->SetInt("scr_h", GetViewportSize().getY());
+		m_ssao_shader->SetInt("scr_w", GetViewportSize().getX());
+		m_ssao_shader->SetInt("scr_h", GetViewportSize().getY());
 
-			m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
-			m_ssao_shader->SetInt("gPos", 0);
+		m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
+		m_ssao_shader->SetInt("gPos", 0);
 
-			m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
-			m_ssao_shader->SetInt("gNorm", 1);
+		m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
+		m_ssao_shader->SetInt("gNorm", 1);
 
 		m_ssao_noise_tex->BindTexture(2);
 		m_ssao_shader->SetInt("noise", 2);
@@ -927,13 +912,13 @@ void RaindropRenderer::RenderBeauty() {
 	m_gui_manager->GetScreenTexture()->BindTexture(6);
 	m_beauty_shader->SetInt("GUIscreen", 6);
 
-	if(m_pipeline == Pipeline::PBR_ENGINE) {
+	if (m_pipeline == Pipeline::PBR_ENGINE) {
 		m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7); //SSR Attachement
 		m_beauty_shader->SetInt("SSR", 7);
-
-		m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(8);
-		m_beauty_shader->SetInt("bloom", 8);
 	}
+
+	m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(8);
+	m_beauty_shader->SetInt("bloom", 8);
 
 	m_quad->RenderQuad();
 }
