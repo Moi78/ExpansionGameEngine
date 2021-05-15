@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RD_RenderingAPI_GL.h"
+#include "RD_RenderingAPI.h"
 
 #include "RD_GUI_Manager.h"
 
@@ -149,6 +150,7 @@ void glfwWinCallback(GLFWwindow* win, int w, int h) {
 
 RD_RenderingAPI_GL::RD_RenderingAPI_GL(RaindropRenderer* rndr) : RD_RenderingAPI() {
 	m_win_sys = new RD_WindowingSystemGLFW(rndr);
+	m_bindless_tex_available = false;
 }
 
 RD_RenderingAPI_GL::~RD_RenderingAPI_GL() {
@@ -174,13 +176,19 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 
 	if (CheckExtensionAvailability("GL_ARB_bindless_texture")) {
 		glEnable(GL_ARB_bindless_texture);
+		m_bindless_tex_available = true;
 		std::cout << "GL_ARB_bindless_texture supported !" << std::endl;
 	}
 	else {
+		m_bindless_tex_available = false;
 		std::cerr << "ERROR: GL_ARB_bindless_texture is not supported." << std::endl;
 	}
 
 	return true;
+}
+
+bool RD_RenderingAPI_GL::AreBindlessTexturesAvailable() {
+	return m_bindless_tex_available;
 }
 
 RD_RenderingAPI_VertexElemBufferGL* RD_RenderingAPI_GL::CreateVertexElemBuffer() {

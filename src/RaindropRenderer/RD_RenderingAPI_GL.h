@@ -165,9 +165,12 @@ public:
 	virtual void DisableFaceCulling();
 
 	virtual int GetMaxTextureCount();
+	virtual bool AreBindlessTexturesAvailable();
 
 private:
 	RD_WindowingSystemGLFW* m_win_sys;
+
+	bool m_bindless_tex_available;
 };
 
 bool CheckExtensionAvailability(std::string ext);

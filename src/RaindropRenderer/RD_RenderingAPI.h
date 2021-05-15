@@ -141,4 +141,5 @@ public:
 	virtual void DisableFaceCulling() = 0;
 
 	virtual int GetMaxTextureCount() = 0;
+	virtual bool AreBindlessTexturesAvailable() = 0;
 };

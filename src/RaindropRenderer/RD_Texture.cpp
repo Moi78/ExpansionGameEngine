@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "RD_Texture.h"
+#include "RaindropRenderer.h"
+#include "RD_RenderingAPI.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -223,8 +225,11 @@ void RD_Texture_GL::CreateTextureFromGlyph(void* data, const int w, const int h)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 }
 
-void RD_Texture_GL::MakeTexBindless(RD_ShaderStorageBuffer* ssbo, const int index) {
+void RD_Texture_GL::MakeTexBindless(RaindropRenderer* rndr, RD_ShaderStorageBuffer* ssbo, const int index) {
 	assert(m_texture != 0 && "ERROR: You can't make a texture bindless as long as you didn't create the texture.");
+	if (!rndr->GetRenderingAPI()->AreBindlessTexturesAvailable()) {
+		return;
+	}
 
 	m_texHandle = glGetTextureHandleARB(m_texture);
 	glMakeTextureHandleResidentARB(m_texHandle);

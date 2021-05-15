@@ -520,7 +520,7 @@ bool RaindropRenderer::CreateGbuff() {
 	m_gbuffer->BuildFBO();
 
 	for (int i = 0; i < 4; i++) {
-		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(m_gbuff_tex_handles_s, i);
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(this, m_gbuff_tex_handles_s, i);
 	}
 
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
@@ -573,7 +573,7 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_gbuffer->BuildFBO();
 	
 	for (int i = 0; i < 6; i++) {
-		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(m_gbuff_tex_handles_s, i);
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(this, m_gbuff_tex_handles_s, i);
 	}
 
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
@@ -1109,7 +1109,7 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_gbuffer->ChangeFramebufferSize(sx, sy);
 
 	for (int i = 0; i < 6; i++) {
-		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(m_gbuff_tex_handles_s, i);
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(this, m_gbuff_tex_handles_s, i);
 	}
 
 	m_light_pprocess->ChangeFramebufferSize(sx, sy);
