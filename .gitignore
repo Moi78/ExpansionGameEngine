@@ -378,3 +378,4 @@ healthchecksdb
 /src/ExGame/Engine/Shaders/hlsl/Beauty.vert.cso
 /src/ExGame/Engine/Shaders/hlsl/Beauty.frag.cso
 /tools/ExpansionGameEngineTools/ProjectConfigurator/versions/Expansion Game Engine v0.1.0
+/tools/ExpansionGameEngineTools/MaterialEditor/mat_editor

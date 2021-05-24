@@ -18,6 +18,8 @@
 #include "RD_Texture.h"
 #include "RD_FrameBuffer.h"
 
+#include "BulldozerFileManager.h"
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 

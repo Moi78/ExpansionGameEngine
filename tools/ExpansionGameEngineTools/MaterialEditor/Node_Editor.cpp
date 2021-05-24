@@ -322,7 +322,6 @@ Node* Node_Editor::GetNodeFromPin(const int id) {
 	return nullptr;
 }
 
-
 int Node_Editor::GetLinkStartId(int end_id) {
 	int start_id = -1;
 	for (auto l : m_links) {
@@ -878,7 +877,6 @@ std::string ConstVec4::Stringifize(Node_Editor* nedit, int start_id) {
 void ConstVec4::WriteNodeData(std::ofstream* file) {
 	file->write(reinterpret_cast<char*>(&m_value), sizeof(vec4f));
 }
-
 
 ConstFloat::ConstFloat(int id, int index) : Node(id) {
 	m_index = index;

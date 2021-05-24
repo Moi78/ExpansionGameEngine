@@ -182,6 +182,7 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	else {
 		m_bindless_tex_available = false;
 		std::cerr << "ERROR: GL_ARB_bindless_texture is not supported." << std::endl;
+		dispErrorMessageBox(L"GL_ARB_bindless_texture seems not to be supported, consider using Vulkan (not implmented yet) or DirectX (not implemented yet) or your dedicated GPU (this extension is known for not being available mainly on Intel iGPU devices). This program may disfunction.");
 	}
 
 	return true;
