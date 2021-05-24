@@ -1,4 +1,5 @@
 #version 450 core
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec4 LightPass;
 
 in vec2 UVcoords;
@@ -7,10 +8,17 @@ in vec2 UVcoords;
 
 //Passes
 uniform sampler2D ShadowPass;
-uniform sampler2D gPos;
-uniform sampler2D gNormal;
-uniform sampler2D gAlbedo;
-uniform sampler2D gSpec;
+
+#ifndef GL_ARB_bindless_texture
+	uniform sampler2D gPos;
+	uniform sampler2D gNormal;
+	uniform sampler2D gAlbedo;
+	uniform sampler2D gSpec;
+#else
+layout(std430, binding = 8) buffer BINDLESS_PASSES {
+	sampler2D passes[4];
+};
+#endif //GL_ARB_bindless_texture
 
 //Ambient
 layout(std140, binding = 2) uniform AMBIENT{
@@ -53,12 +61,21 @@ uniform bool ftr_lighting;
 uniform bool ftr_specular;
 uniform bool ftr_ambient;
 
-vec3 norm = normalize(texture(gNormal, UVcoords).rgb);
-vec3 FragPos = texture(gPos, UVcoords).rgb;
+#ifndef GL_ARB_bindless_texture
+	vec3 norm = normalize(texture(gNormal, UVcoords).rgb);
+	vec3 FragPos = texture(gPos, UVcoords).rgb;
 
-vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
-float Specular = texture(gAlbedo, UVcoords).a;
-float SpecularExp = texture(gSpec, UVcoords).r;
+	vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
+	float Specular = texture(gAlbedo, UVcoords).a;
+	float SpecularExp = texture(gSpec, UVcoords).r;
+#else
+	vec3 norm = normalize(texture(passes[1], UVcoords).rgb);
+	vec3 FragPos = texture(passes[0], UVcoords).rgb;
+
+	vec3 Diffuse = texture(passes[2], UVcoords).rgb;
+	float Specular = texture(passes[2], UVcoords).a;
+	float SpecularExp = texture(passes[3], UVcoords).r;
+#endif //GL_ARB_bindless_texture
 
 vec3 viewDir = normalize(CamPos - FragPos);
 
@@ -111,14 +128,17 @@ vec3 CalcPointLight(int lightIndex) {
 
 void main() {
 	if(!ftr_lighting) {
-		LightPass = texture(gAlbedo, UVcoords);
+		#ifndef GL_ARB_bindless_texture
+			LightPass = texture(gAlbedo, UVcoords);
+		#else
+			LightPass = texture(passes[1], UVcoords);
+		#endif //GL_ARB_bindless_texture
 		return;
 	}
 
 	vec3 diffSpec = vec3(0.0);
 
 	float shadow = texture(ShadowPass, UVcoords).r;
-
 	for(int i = 0; i < nbrDirLight; i++) {
 		diffSpec += CalcDirLight(i) * shadow;
 	}

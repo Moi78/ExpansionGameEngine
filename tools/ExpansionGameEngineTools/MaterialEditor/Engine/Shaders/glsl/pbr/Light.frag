@@ -1,5 +1,5 @@
 #version 450 core
-#extension ARB_bindless_texture : require
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec4 LightPass;
 
 in vec2 UVcoords;
@@ -10,17 +10,18 @@ in vec2 UVcoords;
 uniform sampler2D ShadowPass;
 uniform sampler2D ssao;
 
-uniform sampler2D gPos;
-uniform sampler2D gNormal;
-uniform sampler2D gAlbedo;
-uniform sampler2D gSpec;
-uniform sampler2D gMetRoughAO;
-uniform sampler2D gEmissive;
-
-layout(std430, binding = 8) buffer BINDLESS_PASSES {
-	sampler2D passes[6];
-};
-
+#ifndef GL_ARB_bindless_texture
+	uniform sampler2D gPos;
+	uniform sampler2D gNormal;
+	uniform sampler2D gAlbedo;
+	uniform sampler2D gSpec;
+	uniform sampler2D gMetRoughAO;
+	uniform sampler2D gEmissive;
+#else
+	layout(std430, binding = 8) buffer BINDLESS_PASSES {
+		sampler2D passes[6];
+	};
+#endif //ARB_bindless_texture
 //Ambient
 layout(std140, binding = 2) uniform AMBIENT {
 	vec3 AmbientColor;
@@ -64,14 +65,24 @@ uniform bool ftr_ambient = true;
 
 float PI = 3.14159265359;
 
-vec3 norm = normalize(texture(passes[1], UVcoords).rgb);
-vec3 FragPos = texture(passes[0], UVcoords).rgb;
+#ifdef GL_ARB_bindless_texture
+	vec3 norm = normalize(texture(passes[1], UVcoords).rgb);
+	vec3 FragPos = texture(passes[0], UVcoords).rgb;
 
-vec3 Diffuse = texture(passes[2], UVcoords).rgb;
-float Specular = texture(passes[2], UVcoords).a;
-float SpecularExp = texture(passes[3], UVcoords).r;
+	vec3 Diffuse = texture(passes[2], UVcoords).rgb;
+	float Specular = texture(passes[2], UVcoords).a;
+	float SpecularExp = texture(passes[3], UVcoords).r;
 
-vec4 metrao = texture(passes[4], UVcoords);
+	vec4 metrao = texture(passes[4], UVcoords);
+#else 
+	vec3 norm = normalize(texture(gNorm, UVcoords).rgb);
+	vec3 FragPos = texture(gPos, UVcoords).rgb;
+
+	vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
+	float Specular = texture(gAlbedo, UVcoords).a;
+	float SpecularExp = texture(gSpec, UVcoords).r;
+#endif //GL_ARB_bindless_texture
+
 float Rness = metrao.g;
 float Metllc = metrao.r;
 float AO = metrao.b;

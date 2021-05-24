@@ -1,5 +1,5 @@
 #version 450 core
-#extension ARB_bindless_texture : require
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec3 ShadowColor;
 
 in vec2 UVcoords;
@@ -9,10 +9,13 @@ uniform mat4 lspaceMat[10];
 uniform sampler2D ShadowMap[10];
 uniform int NbrDirLights;
 
-uniform sampler2D gPos;
-layout(std430, binding = 8) buffer BINDLESS_PASSES {
-	sampler2D passes[6];
-};
+#ifdef GL_ARB_bindless_texture
+	layout(std430, binding = 8) buffer BINDLESS_PASSES {
+		sampler2D passes[6];
+	};
+#else
+	uniform sampler2D gPos;
+#endif //GL_ARB_bindless_texture
 
 float lerp(float v0, float v1, float t) {
 	return (1 - t) * v0 + t * v1;
@@ -22,8 +25,12 @@ void main() {
 	float finalShadow = 0.0;
 
 	for(int i = 0; i < NbrDirLights; i++) {
-		vec4 fpls = lspaceMat[i] * vec4(texture(passes[0], UVcoords).rgb, 1.0);
-
+		#ifdef GL_ARB_bindless_texture
+			vec4 fpls = lspaceMat[i] * vec4(texture(passes[0], UVcoords).rgb, 1.0);
+		#else
+			vec4 fpls = lspaceMat[i] * vec4(texture(gPos, UVcoords).rgb, 1.0);
+		#endif //GL_ARB_bindless_texture
+		
 		vec3 projCoords = fpls.xyz / fpls.w;
 		projCoords = projCoords * 0.5 + 0.5;
 

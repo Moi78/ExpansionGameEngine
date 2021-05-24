@@ -1,15 +1,17 @@
 #version 450 core
-#extension ARB_bindless_texture : require
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out float ssao;
 
 in vec2 UVcoords;
 
-uniform sampler2D gPos;
-uniform sampler2D gNorm;
-
-layout(std430, binding = 8) buffer BINDLESS_PASSES {
-    sampler2D passes[6];
-};
+#ifndef GL_ARB_bindless_texture
+    uniform sampler2D gPos;
+    uniform sampler2D gNorm;
+#else
+    layout(std430, binding = 8) buffer BINDLESS_PASSES {
+        sampler2D passes[6];
+    };
+#endif //GL_ARB_bindless_texture
 
 uniform sampler2D noise;
 
@@ -30,12 +32,15 @@ float bias = 0.05;
 
 vec2 noiseScale = vec2(scr_w / 4.0, scr_h / 4.0);
 
-//mat4 tview = transpose(view);
-//mat4 tproj = transpose(projection);
-
 void main() {
-    vec3 FragPos = vec4(texture(passes[0], UVcoords) * view).xyz;
-    vec3 norm = texture(passes[1], UVcoords).xyz;
+    #ifdef GL_ARB_bindless_texture
+        vec3 FragPos = vec4(texture(passes[0], UVcoords) * view).xyz;
+        vec3 norm = texture(passes[1], UVcoords).xyz;
+    #else
+        vec3 FragPos = vec4(texture(gPos, UVcoords) * view).xyz;
+        vec3 norm = texture(gNorm, UVcoords).xyz;
+    #endif //GL_ARB_bindless_texture
+
     vec3 randomVec = normalize(texture(noise, UVcoords * noiseScale).xyz);
 
     vec3 tangent = normalize(randomVec - norm * dot(randomVec, norm));
