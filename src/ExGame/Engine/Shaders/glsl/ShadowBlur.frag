@@ -12,8 +12,6 @@ in vec2 UVcoords;
 	};
 #endif
 
-uniform vec3 dir_;
-
 layout(std430, binding = 10) buffer BLUR_STATE {
 	vec3 dir;
 	int index;
