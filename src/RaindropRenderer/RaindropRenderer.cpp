@@ -126,6 +126,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	);
 
 	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
+	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(256, 9);
+	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
 
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
@@ -135,16 +137,22 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
 	m_shadows_buffer->BuildFBO();
 
+	m_shadows_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 0);
+
 	m_shadows_blur = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_blur->AddAttachement(IMGFORMAT_RGB);
 	m_shadows_blur->BuildFBO();
 
+	m_shadows_blur->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 1);
+
 	m_shadows_blur_b = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_blur_b->AddAttachement(IMGFORMAT_RGB);
 	m_shadows_blur_b->BuildFBO();
+
+	m_shadows_blur_b->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 2);
 	
 	m_defTex = m_api->CreateTexture();
-	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
+	m_defTex->GenerateColorTex(vec3f(1.0f, 0.0f, 1.0f));
 
 	m_blankTexture = m_api->CreateTexture();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
@@ -218,6 +226,11 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_pointLight_u;
 	delete m_dirLights_u;
 	delete m_ambient_u;
+
+	//Deleting shader storage buffers
+	delete m_gbuff_tex_handles_s;
+	delete m_sfx_tex_handles_s;
+	delete m_blur_state_s;
 
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
@@ -673,8 +686,9 @@ void RaindropRenderer::RenderShadows() {
 
 	m_shadowCalc->SetInt("NbrDirLights", i);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(texID);
-	m_shadowCalc->SetInt("gPos", texID);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(texID)) {
+		m_shadowCalc->SetInt("gPos", texID);
+	}
 
 	m_quad->RenderQuad();
 	
@@ -683,16 +697,28 @@ void RaindropRenderer::RenderShadows() {
 	SwitchShader(m_shadowBlur);
 	m_shadows_blur->BindFBO();
 
-	m_shadows_buffer->GetAttachementByIndex(0)->BindTexture(0);
-	m_shadowBlur->SetInt("baseImage", 0);
-	m_shadowBlur->SetVec3("dir", vec3f(1.0f, 0.0f));
+	constexpr ShaderBlurState st_a{ { 0.0f, 1.0f, 0.0f }, 0};
+	constexpr ShaderBlurState st_b{ { 1.0f, 0.0f, 0.0f }, 1};
+
+	if (m_shadows_buffer->GetAttachementByIndex(0)->BindTexture(0)) {
+		m_shadowBlur->SetInt("baseImage", 0);
+	}
+	//m_shadowBlur->SetVec3("dir", vec3f(1.0f, 0.0f));
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_a);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 
 	m_shadows_blur_b->BindFBO();
 
 	m_shadows_blur->GetAttachementByIndex(0)->BindTexture(0);
-	m_shadowBlur->SetVec3("dir", vec3f(0.0f, 1.0f));
+	//m_shadowBlur->SetVec3("dir", vec3f(0.0f, 1.0f));
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_b);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 

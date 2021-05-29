@@ -251,7 +251,7 @@ void RD_ShaderStorageBuffer_GL::SetBufferSubData(const int offset, const size_t 
 void RD_ShaderStorageBuffer_GL::CreateSSBO(const size_t bufferSize) {
 	glGenBuffers(1, &m_SSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_binding, m_SSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }

@@ -279,6 +279,8 @@ private:
 
 	//ShaderStorage
 	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;
+	RD_ShaderStorageBuffer* m_sfx_tex_handles_s;
+	RD_ShaderStorageBuffer* m_blur_state_s;
 
 	vec2f m_vp_size, m_vp_pos;
 
@@ -299,5 +301,10 @@ int GetElemIndex(std::vector<T> array, T element) {
 		return -1;
 	}
 }
+
+struct ShaderBlurState {
+	float dir[3];
+	int index;
+};
 
 #endif // !_RAINDROP_RENDERER_H__
