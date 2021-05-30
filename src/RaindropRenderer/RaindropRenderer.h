@@ -275,12 +275,13 @@ private:
 	RD_UniformBuffer* m_dirLights_u;
 	RD_UniformBuffer* m_pointLight_u;
 	RD_UniformBuffer* m_ambient_u;
-	RD_UniformBuffer* m_ssao_u; //PBR
+	RD_UniformBuffer* m_ssao_u;
 
 	//ShaderStorage
 	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;
 	RD_ShaderStorageBuffer* m_sfx_tex_handles_s;
 	RD_ShaderStorageBuffer* m_blur_state_s;
+	RD_ShaderStorageBuffer* m_ssao_tex_handle_s;
 
 	vec2f m_vp_size, m_vp_pos;
 

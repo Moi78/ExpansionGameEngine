@@ -13,7 +13,13 @@ in vec2 UVcoords;
     };
 #endif //GL_ARB_bindless_texture
 
-uniform sampler2D noise;
+#ifndef GL_ARB_bindless_texture
+    uniform sampler2D noise;
+#else
+    layout(std430, binding = 11) buffer BINDLESS_SSAO {
+        sampler2D noise;
+    };
+#endif
 
 layout(std140, binding = 0) uniform CAMERA {
     mat4 projection;

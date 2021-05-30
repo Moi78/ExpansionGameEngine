@@ -108,6 +108,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		ambientStrength = 0.001f;
 
 		m_ssao_u = m_api->CreateUniformBuffer(64 * sizeof(float), 6);
+		m_ssao_tex_handle_s = m_api->CreateShaderStorageBuffer(sizeof(uint64_t), 11);
 
 		GenerateSSAOKernels();
 		GenerateSSAONoise();
@@ -126,7 +127,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	);
 
 	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
-	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(256, 9);
+	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 9);
 	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
 
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
@@ -242,6 +243,7 @@ RaindropRenderer::~RaindropRenderer() {
 		delete m_bloom;
 
 		delete m_ssao_noise_tex;
+		delete m_ssao_tex_handle_s;
 		delete m_bloom_buffera;
 
 		delete m_ssao_u;
@@ -603,6 +605,9 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_ssao_buffer->AddAttachement(IMGFORMAT_R16F);
 	m_ssao_buffer->BuildFBO();
 
+	m_ssao_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 3);
+	m_ssao_buffer->GetAttachementByIndex(1)->MakeTexBindless(this, m_sfx_tex_handles_s, 4);
+
 	m_bloom_buffera = m_api->CreateFrameBuffer(width, height, true);
 	m_bloom_buffera->AddAttachement(IMGFORMAT_RGB16F, 1, WRAPMODE_CLAMP2EDGE); //Bloom blur 1
 	m_bloom_buffera->BuildFBO();
@@ -703,7 +708,6 @@ void RaindropRenderer::RenderShadows() {
 	if (m_shadows_buffer->GetAttachementByIndex(0)->BindTexture(0)) {
 		m_shadowBlur->SetInt("baseImage", 0);
 	}
-	//m_shadowBlur->SetVec3("dir", vec3f(1.0f, 0.0f));
 
 	m_blur_state_s->BindBuffer();
 	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_a);
@@ -714,7 +718,6 @@ void RaindropRenderer::RenderShadows() {
 	m_shadows_blur_b->BindFBO();
 
 	m_shadows_blur->GetAttachementByIndex(0)->BindTexture(0);
-	//m_shadowBlur->SetVec3("dir", vec3f(0.0f, 1.0f));
 
 	m_blur_state_s->BindBuffer();
 	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_b);
@@ -734,9 +737,9 @@ void RaindropRenderer::RenderPostProcess() {
 void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 	SwitchShader(m_light_shader);
 	
-	SendFeatureToShader(m_light_shader, RendererFeature::Ambient);
-	SendFeatureToShader(m_light_shader, RendererFeature::Specular);
-	SendFeatureToShader(m_light_shader, RendererFeature::Lighting);
+	//SendFeatureToShader(m_light_shader, RendererFeature::Ambient);
+	//SendFeatureToShader(m_light_shader, RendererFeature::Specular);
+	//SendFeatureToShader(m_light_shader, RendererFeature::Lighting);
 
 	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0)) {
 		m_light_shader->SetInt("gAlbedo", 0);
@@ -754,16 +757,18 @@ void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 		m_light_shader->SetInt("gSpec", 3);
 	}
 
-	m_shadows_blur_b->GetAttachementByIndex(0)->BindTexture(4);
-	m_light_shader->SetInt("ShadowPass", 4);
+	if (m_shadows_blur_b->GetAttachementByIndex(0)->BindTexture(4)) {
+		m_light_shader->SetInt("ShadowPass", 4);
+	}
 
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
 		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(5)) {
 			m_light_shader->SetInt("gMetRoughAO", 5);
 		}
 
-		m_ssao_buffer->GetAttachementByIndex(1)->BindTexture(6); //Blurred SSAO pass
-		m_light_shader->SetInt("ssao", 6);
+		if (m_ssao_buffer->GetAttachementByIndex(1)->BindTexture(6)) { //Blurred SSAO pass
+			m_light_shader->SetInt("ssao", 6);
+		}
 
 		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(7)) {
 			m_light_shader->SetInt("gEmissive", 7);
@@ -841,25 +846,26 @@ void RaindropRenderer::RenderSSAO() {
 		//Render SSAO
 		SwitchShader(m_ssao_shader);
 
-		m_ssao_shader->SetInt("scr_w", GetViewportSize().getX());
-		m_ssao_shader->SetInt("scr_h", GetViewportSize().getY());
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0)) {
+			m_ssao_shader->SetInt("gPos", 0);
+		}
 
-		m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
-		m_ssao_shader->SetInt("gPos", 0);
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1)) {
+			m_ssao_shader->SetInt("gNorm", 1);
+		}
 
-		m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
-		m_ssao_shader->SetInt("gNorm", 1);
-
-		m_ssao_noise_tex->BindTexture(2);
-		m_ssao_shader->SetInt("noise", 2);
+		if (m_ssao_noise_tex->BindTexture(2)) {
+			m_ssao_shader->SetInt("noise", 2);
+		}
 
 		m_quad->RenderQuad();
 
 		//Blur SSAO
 		SwitchShader(m_ssao_blur_shader);
 
-		m_ssao_buffer->GetAttachementByIndex(0)->BindTexture(0);
-		m_ssao_blur_shader->SetInt("ssao_tex", 0);
+		if (m_ssao_buffer->GetAttachementByIndex(0)->BindTexture(0)) {
+			m_ssao_blur_shader->SetInt("ssao_tex", 0);
+		}
 
 		m_quad->RenderQuad();
 	} else {
@@ -924,6 +930,8 @@ void RaindropRenderer::GenerateSSAONoise() {
 
 	m_ssao_noise_tex = m_api->CreateTexture();
 	m_ssao_noise_tex->CreateTextureFromPixels(&ssao_noise[0], 4, 4, IMGFORMAT_RGBA16F);
+
+	m_ssao_noise_tex->MakeTexBindless(this, m_ssao_tex_handle_s, 0);
 }
 
 
@@ -1139,10 +1147,20 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	}
 
 	m_light_pprocess->ChangeFramebufferSize(sx, sy);
+
 	m_ssao_buffer->ChangeFramebufferSize(sx, sy);
+	m_ssao_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 3);
+	m_ssao_buffer->GetAttachementByIndex(1)->MakeTexBindless(this, m_sfx_tex_handles_s, 4);
+
 	m_shadows_buffer->ChangeFramebufferSize(sx, sy);
+	m_shadows_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 0);
+
 	m_shadows_blur->ChangeFramebufferSize(sx, sy);
+	m_shadows_blur->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 1);
+
 	m_shadows_blur_b->ChangeFramebufferSize(sx, sy);
+	m_shadows_blur_b->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 2);
+
 	m_bloom_buffera->ChangeFramebufferSize(sx, sy);
 	m_bloom_bufferb->ChangeFramebufferSize(sx, sy);
 

@@ -7,8 +7,8 @@ in vec2 UVcoords;
 //uniform sampler2D GUIscreen;
 
 //Passes
-	uniform sampler2D ssao;
 #ifndef GL_ARB_bindless_texture
+	uniform sampler2D ssao;
 	uniform sampler2D ShadowPass;
 
 	uniform sampler2D gPos;
@@ -23,7 +23,7 @@ in vec2 UVcoords;
 	};
 
 	layout(std430, binding = 9) buffer BINDLESS_SFX {
-		sampler2D passes_sfx[4];
+		sampler2D passes_sfx[5];
 	};
 #endif //ARB_bindless_texture
 
@@ -207,7 +207,12 @@ void main() {
 		diffSpec += max(CalcPointLight(i), 0.0);
 	}
 
-	float SSAO = texture(ssao, UVcoords).r;
+	#ifndef GL_ARB_bindless_texture
+		float SSAO = texture(ssao, UVcoords).r;
+	#else
+		float SSAO = texture(passes_sfx[4], UVcoords).r;
+	#endif
+
 	vec3 ambient = (AmbientColor * AmbientStrength) * Diffuse * AO;
 	vec3 result = (diffSpec + ambient) * SSAO;
 
