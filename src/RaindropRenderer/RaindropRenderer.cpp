@@ -129,6 +129,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
 	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 9);
 	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
+	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(4 * sizeof(uint64_t), 12);
 
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
@@ -597,6 +598,8 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	//SSR Texture
 	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
 	m_light_pprocess->BuildFBO();
+
+	m_light_pprocess->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 0);
 	
 	m_ssao_buffer = m_api->CreateFrameBuffer(width, height, true);
 	//SSAO Texture
@@ -612,9 +615,13 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_bloom_buffera->AddAttachement(IMGFORMAT_RGB16F, 1, WRAPMODE_CLAMP2EDGE); //Bloom blur 1
 	m_bloom_buffera->BuildFBO();
 
+	m_bloom_buffera->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 2);
+
 	m_bloom_bufferb = m_api->CreateFrameBuffer(width, height, true);
 	m_bloom_bufferb->AddAttachement(IMGFORMAT_RGB16F, 1, WRAPMODE_CLAMP2EDGE); //Bloom blur 2
 	m_bloom_bufferb->BuildFBO();
+
+	m_bloom_bufferb->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 3);
 	
 	return true;
 }
@@ -788,55 +795,43 @@ void RaindropRenderer::RenderBloom() {
 
 	SwitchShader(m_bloom);
 
+	constexpr ShaderBlurState st_a{ {1.0f, 0.0f}, 5, 1, 1 };
+	constexpr ShaderBlurState st_b{ {0.0f, 1.0f}, 2, 0, 0 };
+	constexpr ShaderBlurState st_c{ {1.0f, 0.0f}, 3, 0, 0 };
+
 	m_bloom_buffera->BindFBO();
 	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0)) {
 		m_bloom->SetInt("gShaded", 0);
 	}
-	m_bloom->SetInt("threshold", 1);
-	m_bloom->SetBool("horizontal", true);
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_a);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 
 	m_bloom_bufferb->BindFBO();
 	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
-	m_bloom->SetInt("threshold", 0);
-	m_bloom->SetBool("horizontal", false);
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_b);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 
 	m_bloom_buffera->BindFBO();
 	m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
-	m_bloom->SetBool("horizontal", true);
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_c);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
-
-	m_bloom_bufferb->BindFBO();
-	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
-	m_bloom->SetBool("horizontal", false);
-
-	m_quad->RenderQuad();
-
-	m_bloom_bufferb->UnbindFBO();
 }
 
 
 void RaindropRenderer::RenderSSR() {
 	SwitchShader(m_ssr_shader);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
-	//m_ssr_shader->SetInt("gPos", 0);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
-	//m_ssr_shader->SetInt("gNorm", 1);
-
-	//m_light_pprocess->GetAttachementByIndex(0)->BindTexture(2); //Attachement 0 corresponds to the Light Texture Attachement
-	//m_ssr_shader->SetInt("ShadedImg", 2);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(3);
-	//m_ssr_shader->SetInt("gMetRoughAO", 3);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gDepth)->BindTexture(4);
-	//m_ssr_shader->SetInt("Depth", 4);
 
 	m_quad->RenderQuad();
 }
@@ -940,19 +935,25 @@ void RaindropRenderer::RenderBeauty() {
 
 	SwitchShader(m_beauty_shader);
 
-	m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5);
-	m_beauty_shader->SetInt("lightpass", 5);
-
-	m_gui_manager->GetScreenTexture()->BindTexture(6);
-	m_beauty_shader->SetInt("GUIscreen", 6);
-
-	if (m_pipeline == Pipeline::PBR_ENGINE) {
-		m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7); //SSR Attachement
-		m_beauty_shader->SetInt("SSR", 7);
+	if (m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5)) {
+		m_beauty_shader->SetInt("lightpass", 5);
 	}
 
-	m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(8);
-	m_beauty_shader->SetInt("bloom", 8);
+	if (m_gui_manager->GetScreenTexture()->BindTexture(6)) {
+		m_beauty_shader->SetInt("GUIscreen", 6);
+	}
+
+	/*
+	if (m_pipeline == Pipeline::PBR_ENGINE) {
+		if (m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7)) { //SSR Attachement
+			m_beauty_shader->SetInt("SSR", 7);
+		}
+	}
+	*/
+
+	if (m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(8)) {
+		m_beauty_shader->SetInt("bloom", 8);
+	}
 
 	m_quad->RenderQuad();
 }

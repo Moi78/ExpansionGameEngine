@@ -15,6 +15,7 @@ in vec2 UVcoords;
 layout(std430, binding = 10) buffer BLUR_STATE {
 	vec3 dir;
 	int index;
+	int threshold;
 };
 
 //From https://github.com/Jam3/glsl-fast-gaussian-blur/blob/master/13.glsl
