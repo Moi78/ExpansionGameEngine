@@ -64,9 +64,9 @@ layout(std140, binding = 5) uniform CamData {
 	vec3 CamPos;
 };
 
-uniform bool ftr_lighting = true;
-uniform bool ftr_specular = true;
-uniform bool ftr_ambient = true;
+//uniform bool ftr_lighting = true;
+//uniform bool ftr_specular = true;
+//uniform bool ftr_ambient = true;
 
 float PI = 3.14159265359;
 

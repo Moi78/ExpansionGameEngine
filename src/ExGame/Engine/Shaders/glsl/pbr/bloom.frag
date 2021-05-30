@@ -16,8 +16,6 @@ in vec2 UVcoords;
     uniform sampler2D gShaded;
 #endif //GL_ARB_bindless_texture
 
-uniform bool horizontal;
-
 layout(std430, binding = 10) buffer BLUR_STATE {
 	vec3 dir;
 	int index;
