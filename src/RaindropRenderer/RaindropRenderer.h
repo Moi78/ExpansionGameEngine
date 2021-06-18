@@ -140,10 +140,15 @@ public:
 	void EmptyFramebufferGarbageCollector();
 
 	void PushModelMatrix(mat4f& model);
+	void PushLightProjViewMatrices(mat4f& lview, mat4f& lproj);
 
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(const vec3f& nColor);
+
+	void UpdatePointsLighting();
+	void UpdateAmbientLighting();
+	void UpdateDirLighting(bool lspace_only = false);
 
 	//Elements registrations
 	int AppendLight(RD_PointLight* ptLight);
@@ -180,10 +185,6 @@ public:
 	void DisableFeature(RendererFeature ftr);
 	bool IsFeatureEnabled(RendererFeature ftr);
 	void SendFeatureToShader(RD_ShaderLoader* shader, RendererFeature feature);
-
-	void UpdatePointsLighting();
-	void UpdateAmbientLighting();
-	void UpdateDirLighting();
 
 	//GUI
 	void RenderGUI_Screen() const;
@@ -279,6 +280,8 @@ private:
 	RD_UniformBuffer* m_ambient_u;
 	RD_UniformBuffer* m_ssao_u;
 	RD_UniformBuffer* m_model_u;
+	RD_UniformBuffer* m_lightview_u;
+	RD_UniformBuffer* m_lightspace_u;
 
 	//ShaderStorage
 	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;

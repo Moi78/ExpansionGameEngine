@@ -45,9 +45,7 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 	vec3f fpos = (m_dir * -5) + CamPos;
 	mat4f lightView = LookAt<float>(fpos, CamPos, vec3f(0.0f, 0.0f, 1.0f));
 
-	rndr->GetCurrentShader()->SetMatrix("lightproj", lightProj);
-	rndr->GetCurrentShader()->SetMatrix("lightview", lightView);
-
+	rndr->PushLightProjViewMatrices(lightView, lightProj);
 	m_lspace = lightProj * lightView;
 
 	rndr->GetRenderingAPI()->SetViewportSize(m_shadowQuality, m_shadowQuality, 0, 0);
@@ -61,11 +59,6 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 
 	rndr->GetRenderingAPI()->SetViewportSize(rndr->GetViewportSize().getX(), rndr->GetViewportSize().getY(), 0, 0);
 	rndr->GetRenderingAPI()->Clear(DEPTH_BUFFER | COLOR_BUFFER);
-
-	rndr->GetCurrentShader()->SetMatrix("lspaceMat", m_lspace);
-
-	m_fbo->GetAttachementByIndex(0)->BindTexture(1);
-	rndr->GetCurrentShader()->SetInt("ShadowMap", 1);
 }
 
 void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual) {

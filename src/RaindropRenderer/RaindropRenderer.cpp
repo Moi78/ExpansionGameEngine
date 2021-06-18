@@ -135,6 +135,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
 	m_ambient_u = m_api->CreateUniformBuffer(17, 2);
 	m_model_u = m_api->CreateUniformBuffer(16 * sizeof(float), 13);
+	m_lightview_u = m_api->CreateUniformBuffer(2 * 16 * sizeof(float), 14);
+	m_lightspace_u = m_api->CreateUniformBuffer(10 * 16 * sizeof(float), 15);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
@@ -230,6 +232,8 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_dirLights_u;
 	delete m_ambient_u;
 	delete m_model_u;
+	delete m_lightview_u;
+	delete m_lightspace_u;
 
 	//Deleting shader storage buffers
 	delete m_gbuff_tex_handles_s;
@@ -331,26 +335,38 @@ int RaindropRenderer::AppendDirLight(RD_DirLight* dirLight) {
 	return 1;
 }
 
-void RaindropRenderer::UpdateDirLighting() {
+void RaindropRenderer::UpdateDirLighting(bool lspace_only) {
 	if (!IsFeatureEnabled(RendererFeature::Lighting))
 		return;
 
-	m_dirLights_u->BindBuffer();
+	if (!lspace_only) {
+		m_dirLights_u->BindBuffer();
 
-	int nbrLights = m_DirLights.size();
-	m_dirLights_u->SetBufferSubData(0, sizeof(int), &nbrLights);
+		int nbrLights = m_DirLights.size();
+		m_dirLights_u->SetBufferSubData(0, sizeof(int), &nbrLights);
 
-	int offset = 16;
-	for (int i = 0; i < m_DirLights.size(); i++) {
-		float b = m_DirLights[i]->GetBrightness();
-		m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightDir().GetPTR());
-		offset += 16;
-		m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightColor().GetPTR());
-		offset += 12;
-		m_dirLights_u->SetBufferSubData(offset, sizeof(float), &b);
-		offset += 4;
+		int offset = 16;
+		for (int i = 0; i < m_DirLights.size(); i++) {
+			float b = m_DirLights[i]->GetBrightness();
+			m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightDir().GetPTR());
+			offset += 16;
+			m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightColor().GetPTR());
+			offset += 12;
+			m_dirLights_u->SetBufferSubData(offset, sizeof(float), &b);
+			offset += 4;
+		}
+		m_dirLights_u->UnbindBuffer();
 	}
-	m_dirLights_u->UnbindBuffer();
+
+	m_lightspace_u->BindBuffer();
+
+	int offset = 0;
+	for (auto l : m_DirLights) {
+		m_lightspace_u->SetBufferSubData(offset, 16 * sizeof(float), (void*)l->GetLightSpace().GetPTR());
+		offset += 16 * sizeof(float);
+	}
+
+	m_lightspace_u->UnbindBuffer();
 }
 
 void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
@@ -483,6 +499,8 @@ void RaindropRenderer::RenderLightsDepth(const vec3f& camPos) {
 	for (auto* dlight : m_DirLights) {
 		dlight->DepthRender(this, camPos);
 	}
+
+	UpdateDirLighting(true);
 }
 
 void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
@@ -693,7 +711,7 @@ void RaindropRenderer::RenderShadows() {
 		dlight->GetDepthTexID()->BindTexture(texID);
 
 		m_shadowCalc->SetInt("ShadowMap[" + std::to_string(i) + "]", texID);
-		m_shadowCalc->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
+		//m_shadowCalc->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
 
 		texID++;
 		i++;
@@ -1251,4 +1269,11 @@ void RaindropRenderer::PushModelMatrix(mat4f& model) {
 	m_model_u->BindBuffer();
 	m_model_u->SetBufferSubData(0, 16 * sizeof(float), (void*)model.GetPTR());
 	m_model_u->UnbindBuffer();
+}
+
+void RaindropRenderer::PushLightProjViewMatrices(mat4f& lview, mat4f& lproj) {
+	m_lightview_u->BindBuffer();
+	m_lightview_u->SetBufferSubData(0, 16 * sizeof(float), (void*)lview.GetPTR());
+	m_lightview_u->SetBufferSubData(16 * sizeof(float), 16 * sizeof(float), (void*)lproj.GetPTR());
+	m_lightview_u->UnbindBuffer();
 }
