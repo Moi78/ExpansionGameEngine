@@ -6,11 +6,13 @@ layout(std140, binding = 0) uniform CAMERA {
     mat4 view;
 };
 
-uniform mat4 model;
+layout(std140, binding = 13) uniform MODEL {
+    mat4 model;  
+};
 
 void main()
 {
-    vec3 FragPos = vec3(model * vec4(aPos, 1.0));
+    vec3 FragPos = vec3(vec4(aPos, 1.0) * model);
 
     gl_Position = vec4(FragPos, 1.0) * view * projection;
 }

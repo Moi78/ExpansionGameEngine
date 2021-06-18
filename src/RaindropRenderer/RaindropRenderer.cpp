@@ -134,6 +134,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
 	m_ambient_u = m_api->CreateUniformBuffer(17, 2);
+	m_model_u = m_api->CreateUniformBuffer(16 * sizeof(float), 13);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
@@ -228,11 +229,13 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_pointLight_u;
 	delete m_dirLights_u;
 	delete m_ambient_u;
+	delete m_model_u;
 
 	//Deleting shader storage buffers
 	delete m_gbuff_tex_handles_s;
 	delete m_sfx_tex_handles_s;
 	delete m_blur_state_s;
+	delete m_final_passes_tex_handle_s;
 
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
@@ -1163,7 +1166,10 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_shadows_blur_b->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 2);
 
 	m_bloom_buffera->ChangeFramebufferSize(sx, sy);
+	m_bloom_buffera->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 2);
+
 	m_bloom_bufferb->ChangeFramebufferSize(sx, sy);
+	m_bloom_bufferb->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 3);
 
 	m_vp_pos = pos;
 	m_vp_size = size;
@@ -1239,4 +1245,10 @@ bool RaindropRenderer::DoNeedCamUpdate() {
 	}
 
 	return false;
+}
+
+void RaindropRenderer::PushModelMatrix(mat4f& model) {
+	m_model_u->BindBuffer();
+	m_model_u->SetBufferSubData(0, 16 * sizeof(float), (void*)model.GetPTR());
+	m_model_u->UnbindBuffer();
 }

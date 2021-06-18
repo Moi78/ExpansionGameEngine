@@ -10,11 +10,12 @@ EXP_TextSurface::EXP_TextSurface(
 	vec3f color) :
 
 	EXP_Component(pos, rot, scale),
-	RD_Mesh(game->GetRenderer(), nullptr, pos, rot, scale)
+	RD_Mesh(game->GetRenderer(), nullptr, pos, rot, scale, true)
 {
 	m_game = game;
 	RD_Mesh::m_mat = game->GetRenderer()->GetMaterialLibrary()->GetMaterialByName("text");
 	m_color = color;
+	m_mat->RegisterMeshReference(reinterpret_cast<RD_Mesh*>(this));
 
 	auto* txt_mgr = game->GetRenderer()->GetTxtRendererManager();
 
@@ -48,10 +49,10 @@ EXP_TextSurface::EXP_TextSurface(
 			(scale * 10.0f) * vec3f(2.0f * std::clamp(met.getX() / met.getY(), 0.0f, 1.0f))
 		);
 
+		mat = TranslateMatrix(mat, overrall_pos);
+
 		vec3f nScale = scale * vec3f(std::clamp(met.getX() / met.getY(), 0.0f, 1.0f), std::clamp(met.getY() / met.getX(), 0.0f, 1.0f), 1.0f);
 		mat = ScaleMatrix(mat, nScale);
-
-		mat = TranslateMatrix(mat, overrall_pos);
 
 		overrall_pos = overrall_pos + m_letter_spacing;
 
@@ -64,7 +65,7 @@ EXP_TextSurface::EXP_TextSurface(
 void EXP_TextSurface::UpdateMatrices() {
 	m_space = (vec3f(1.0f, 0.0f, 0.0f) * RD_Mesh::m_scale) * 10.0f;
 
-	vec3f overrall_pos(RD_Mesh::m_position);
+	vec3f overrall_pos = vec3f();
 	int i = 0;
 	for (auto c : m_txt) {
 		//In case of space
@@ -85,9 +86,9 @@ void EXP_TextSurface::UpdateMatrices() {
 			std::clamp(met.getY() / met.getX(), 0.0f, 1.0f), 1.0f
 		);
 
-		mat = ScaleMatrix(mat, nScale);
-
 		mat = TranslateMatrix(mat, overrall_pos);
+
+		mat = ScaleMatrix(mat, nScale);
 
 		overrall_pos = overrall_pos + m_letter_spacing;
 
@@ -98,9 +99,9 @@ void EXP_TextSurface::UpdateMatrices() {
 
 EXP_TextSurface::~EXP_TextSurface() {}
 
-void EXP_TextSurface::render(RD_Camera* cam) {
+void EXP_TextSurface::render() {
 	m_buffer->BindBuffer();
-	m_mat->GetShader()->SetVec3("txtColor", m_color);
+	RD_Mesh::m_mat->GetShader()->SetVec3("txtColor", m_color);
 
 	int i = 0;
 	for (auto c : m_txt) {
@@ -108,9 +109,10 @@ void EXP_TextSurface::render(RD_Camera* cam) {
 			continue;
 		}
 
-		m_mat->GetShader()->SetMatrix("model", m_letters_prop[i]);
+		m_rndr->PushModelMatrix(m_letters_prop[i]);
 
 		m_txtRndr->GetGlyphTexture(c)->BindTexture(0);
+		m_mat->GetShader()->SetInt("glyph", 0);
 		m_rndr->GetRenderingAPI()->Draw(m_buffer);
 
 		i++;

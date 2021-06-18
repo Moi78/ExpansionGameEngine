@@ -12,6 +12,9 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	m_test = new EXP_RB_Sphere(game, vec3f(0.0f, 0.0f, 20.0f), vec3f(), 0.5f, 1.0f);
 	m_floor = new EXP_RB_Box(game, vec3f(), vec3f(), vec3f(10.0f, 10.0f, 0.1f), 0.0f);
+
+	m_txt = new EXP_TextSurface(game, "Hello", 70, "/nova.ttf", vec3f(0.0f, 0.0f, 2.0f), vec3f(), vec3f(0.2f, 0.2f, 0.2f), vec3f(1.0f, 0.0f, 0.0f));
+	EXP_SMParticleEmitter* pe = new EXP_SMParticleEmitter(game, game->GetShaderByFileRefInstanced("/shaders/mat_met_blue.exmtl"), vec3f(0.0f, 0.0f, 1.0f), vec3f(), vec3f(0.5f, 0.5f, 0.5f), vec3f(0.0f, 0.0f, 1.0f), 5.0f, 0.02f, 3.0f);
 }
 
 MainLevel::~MainLevel() {

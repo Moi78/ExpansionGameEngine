@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_Mesh.h"
 
-RD_Mesh::RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale) : m_mdl(1.0f), m_parent(1.0f) {
+RD_Mesh::RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale, bool noregist) : m_mdl(1.0f), m_parent(1.0f) {
 	m_nbr_indices = 0;
 	m_mat = shader;
 
@@ -16,7 +16,9 @@ RD_Mesh::RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f positi
 
 	Update();
 
-	shader->RegisterMeshReference(this);
+	if (!noregist) {
+		shader->RegisterMeshReference(this);
+	}
 }
 
 RD_Mesh::~RD_Mesh() {
@@ -59,9 +61,7 @@ void RD_Mesh::loadMesh(std::string filepath) {
 }
 
 void RD_Mesh::render() {
-	m_mat->GetShader()->SetMatrix("model", m_mdl);
-
-	//m_mat->BindMaterial();
+	m_rndr->PushModelMatrix(m_mdl);
 
 	m_buffer->BindBuffer();
 	m_rndr->GetRenderingAPI()->Draw(m_buffer);
@@ -72,7 +72,8 @@ void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
 	if (!m_shadowCaster)
 		return;
 
-	shadowShader->SetMatrix("model", m_mdl);
+	//shadowShader->SetMatrix("model", m_mdl);
+	m_rndr->PushModelMatrix(m_mdl);
 
 	m_buffer->BindBuffer();
 	m_rndr->GetRenderingAPI()->Draw(m_buffer);

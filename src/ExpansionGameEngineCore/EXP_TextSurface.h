@@ -36,13 +36,13 @@ public:
 
 	~EXP_TextSurface();
 
-	virtual void render(RD_Camera* cam);
+	virtual void render() override;
 
-	virtual void SetPosition(vec3f nPos);
-	virtual void SetRotation(vec3f nRot);
-	virtual void SetScale(vec3f nScale);
+	virtual void SetPosition(vec3f nPos) override;
+	virtual void SetRotation(vec3f nRot) override;
+	virtual void SetScale(vec3f nScale) override;
 
-	virtual void UseParentMatrix(mat4f parent);
+	virtual void UseParentMatrix(mat4f parent) override;
 private:
 	void UpdateMatrices();
 

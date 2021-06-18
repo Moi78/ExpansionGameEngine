@@ -92,6 +92,16 @@
       "pos":[0, 0, 0],
       "rot":[0.0, 0.0, 0.0],
       "scale":[1.0, 1.0, 1.0]
+    },
+
+    {
+      "type":"plight",
+      "nametag":"test",
+
+      "pos":[2, 2, 2],
+      "color":[0.5, 0, 1.0],
+      "brightness":50,
+      "radius":50
     }
   ]
 }

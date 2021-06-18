@@ -139,6 +139,8 @@ public:
 	void AddToFramebufferGarbageCollector(unsigned int fboID);
 	void EmptyFramebufferGarbageCollector();
 
+	void PushModelMatrix(mat4f& model);
+
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(const vec3f& nColor);
@@ -276,6 +278,7 @@ private:
 	RD_UniformBuffer* m_pointLight_u;
 	RD_UniformBuffer* m_ambient_u;
 	RD_UniformBuffer* m_ssao_u;
+	RD_UniformBuffer* m_model_u;
 
 	//ShaderStorage
 	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;

@@ -32,6 +32,8 @@ private:
 	EXP_RB_Sphere* m_test;
 	EXP_KeyboardCallback* m_ch_lvl;
 
+	EXP_TextSurface* m_txt;
+
 	Character* m_player;
 };
 
