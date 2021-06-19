@@ -68,6 +68,8 @@ void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual)
 
 	m_fbo->AddAttachement(IMGFORMAT_DEPTH, SCALEMODE_LINEAR);
 	m_fbo->BuildFBO();
+
+	m_fbo->GetAttachementByIndex(0)->MakeTexBindless(rndr, rndr->GetShadowMapsBufferHandle(), rndr->GetDirLightsCount());
 }
 
 mat4f RD_DirLight::GetLightSpace() const {

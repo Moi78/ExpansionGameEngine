@@ -84,6 +84,7 @@ public:
 	virtual bool BindTexture(unsigned int tex_unit) = 0;
 	virtual bool IsBindless() = 0;
 	virtual void MakeTexBindless(RaindropRenderer* rndr, RD_ShaderStorageBuffer* ssbo, const int index) = 0;
+	virtual uint64_t GetTextureHandle() = 0;
 
 	virtual unsigned int GetTextureID() = 0;
 
@@ -128,6 +129,7 @@ public:
 	virtual bool BindTexture(unsigned int tex_unit = 0);
 	virtual bool IsBindless() { return m_isTexBindless; }
 	virtual void MakeTexBindless(RaindropRenderer* rndr, RD_ShaderStorageBuffer* ssbo, const int index);
+	virtual uint64_t GetTextureHandle();
 
 	virtual void DeleteTexture();
 

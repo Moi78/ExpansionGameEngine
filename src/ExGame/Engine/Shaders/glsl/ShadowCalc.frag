@@ -8,7 +8,14 @@ layout(std140, binding = 15) uniform LIGHTSPACE {
 	mat4 lspaceMat[10];
 };
 
-uniform sampler2D ShadowMap[10];
+#ifndef GL_ARB_bindless_texture
+	uniform sampler2D ShadowMap[10];
+#else
+	layout(std430, binding = 16) buffer SHADOWMAPS {
+		sampler2D ShadowMap[10];
+	};
+#endif //GL_ARB_bindless_texture
+
 uniform int NbrDirLights;
 
 #ifdef GL_ARB_bindless_texture

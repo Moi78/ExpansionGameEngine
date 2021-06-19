@@ -130,6 +130,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 9);
 	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
 	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(4 * sizeof(uint64_t), 12);
+	m_shadowmaps_s = m_api->CreateShaderStorageBuffer(10 * sizeof(uint64_t), 16);
 
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
@@ -240,6 +241,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_sfx_tex_handles_s;
 	delete m_blur_state_s;
 	delete m_final_passes_tex_handle_s;
+	delete m_shadowmaps_s;
 
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
@@ -335,7 +337,7 @@ int RaindropRenderer::AppendDirLight(RD_DirLight* dirLight) {
 	return 1;
 }
 
-void RaindropRenderer::UpdateDirLighting(bool lspace_only) {
+void RaindropRenderer::UpdateDirLighting(const bool lspace_only) {
 	if (!IsFeatureEnabled(RendererFeature::Lighting))
 		return;
 
@@ -356,6 +358,18 @@ void RaindropRenderer::UpdateDirLighting(bool lspace_only) {
 			offset += 4;
 		}
 		m_dirLights_u->UnbindBuffer();
+
+		m_shadowmaps_s->BindBuffer();
+		int i = 0;
+
+		for (auto l : m_DirLights) {
+			uint64_t handle = l->GetDepthTexID()->GetTextureHandle();
+			m_shadowmaps_s->SetBufferSubData(i * sizeof(uint64_t), sizeof(uint64_t), (void*)&handle);
+
+			i++;
+		}
+
+		m_shadowmaps_s->UnbindBuffer();
 	}
 
 	m_lightspace_u->BindBuffer();
@@ -708,10 +722,9 @@ void RaindropRenderer::RenderShadows() {
 			continue;
 		}
 
-		dlight->GetDepthTexID()->BindTexture(texID);
-
-		m_shadowCalc->SetInt("ShadowMap[" + std::to_string(i) + "]", texID);
-		//m_shadowCalc->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
+		if (dlight->GetDepthTexID()->BindTexture(texID)) {
+			m_shadowCalc->SetInt("ShadowMap[" + std::to_string(i) + "]", texID);
+		}
 
 		texID++;
 		i++;
@@ -1276,4 +1289,12 @@ void RaindropRenderer::PushLightProjViewMatrices(mat4f& lview, mat4f& lproj) {
 	m_lightview_u->SetBufferSubData(0, 16 * sizeof(float), (void*)lview.GetPTR());
 	m_lightview_u->SetBufferSubData(16 * sizeof(float), 16 * sizeof(float), (void*)lproj.GetPTR());
 	m_lightview_u->UnbindBuffer();
+}
+
+RD_ShaderStorageBuffer* RaindropRenderer::GetShadowMapsBufferHandle() {
+	return m_shadowmaps_s;
+}
+
+int RaindropRenderer::GetDirLightsCount() {
+	return m_DirLights.size();
 }

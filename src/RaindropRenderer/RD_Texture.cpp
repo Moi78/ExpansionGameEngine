@@ -343,5 +343,8 @@ void RD_Texture_GL::GetGLformat(
 	}
 }
 
+uint64_t RD_Texture_GL::GetTextureHandle() {
+	return m_texHandle;
+}
 
 #endif //BUILD_OPENGL

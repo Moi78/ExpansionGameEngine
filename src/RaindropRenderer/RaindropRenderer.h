@@ -148,7 +148,10 @@ public:
 
 	void UpdatePointsLighting();
 	void UpdateAmbientLighting();
-	void UpdateDirLighting(bool lspace_only = false);
+	void UpdateDirLighting(const bool lspace_only = false);
+
+	RD_ShaderStorageBuffer* GetShadowMapsBufferHandle();
+	int GetDirLightsCount();
 
 	//Elements registrations
 	int AppendLight(RD_PointLight* ptLight);
@@ -289,6 +292,7 @@ private:
 	RD_ShaderStorageBuffer* m_blur_state_s;
 	RD_ShaderStorageBuffer* m_ssao_tex_handle_s;
 	RD_ShaderStorageBuffer* m_final_passes_tex_handle_s;
+	RD_ShaderStorageBuffer* m_shadowmaps_s;
 
 	vec2f m_vp_size, m_vp_pos;
 
