@@ -101,7 +101,10 @@ EXP_TextSurface::~EXP_TextSurface() {}
 
 void EXP_TextSurface::render() {
 	m_buffer->BindBuffer();
-	RD_Mesh::m_mat->GetShader()->SetVec3("txtColor", m_color);
+
+	m_rndr->GetTextColorUniform()->BindBuffer();
+	m_rndr->GetTextColorUniform()->SetBufferSubData(0, 3 * sizeof(float), (void*)m_color.GetPTR());
+	m_rndr->GetTextColorUniform()->UnbindBuffer();
 
 	int i = 0;
 	for (auto c : m_txt) {
@@ -111,8 +114,16 @@ void EXP_TextSurface::render() {
 
 		m_rndr->PushModelMatrix(m_letters_prop[i]);
 
-		m_txtRndr->GetGlyphTexture(c)->BindTexture(0);
-		m_mat->GetShader()->SetInt("glyph", 0);
+		if (m_txtRndr->GetGlyphTexture(c)->BindTexture(0)) {
+			m_mat->GetShader()->SetInt("glyph", 0);
+		}
+		else {
+			m_rndr->GetGlyphTexHandle()->BindBuffer();
+			const uint64_t tex_handle = m_txtRndr->GetGlyphTexture(c)->GetTextureHandle();
+			m_rndr->GetGlyphTexHandle()->SetBufferSubData(0, sizeof(uint64_t), (void*)&tex_handle);
+			m_rndr->GetGlyphTexHandle()->UnbindBuffer();
+		}
+
 		m_rndr->GetRenderingAPI()->Draw(m_buffer);
 
 		i++;

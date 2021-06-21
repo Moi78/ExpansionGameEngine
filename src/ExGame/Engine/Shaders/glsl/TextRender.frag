@@ -10,8 +10,17 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec2 UVcoords;
 
+#ifndef GL_ARB_bindless_texture
 uniform sampler2D glyph;
-uniform vec3 txtColor;
+#else
+layout(std430, binding = 18) buffer GLYPH_TEX {
+	sampler2D glyph;
+};
+#endif //GL_ARB_bindless_texture
+
+layout(std140, binding = 19) uniform TXT_COLOR {
+	vec3 txtColor;
+};
 
 void main() {
 	float sampled = texture(glyph, UVcoords + vec2(0.0, 1.0)).r;

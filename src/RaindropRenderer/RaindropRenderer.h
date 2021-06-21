@@ -142,6 +142,9 @@ public:
 	void PushModelMatrix(mat4f& model);
 	void PushLightProjViewMatrices(mat4f& lview, mat4f& lproj);
 
+	RD_ShaderStorageBuffer* GetGlyphTexHandle();
+	RD_UniformBuffer* GetTextColorUniform();
+
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(const vec3f& nColor);
@@ -285,6 +288,8 @@ private:
 	RD_UniformBuffer* m_model_u;
 	RD_UniformBuffer* m_lightview_u;
 	RD_UniformBuffer* m_lightspace_u;
+	RD_UniformBuffer* m_lightcount_u;
+	RD_UniformBuffer* m_text_color_u;
 
 	//ShaderStorage
 	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;
@@ -293,6 +298,7 @@ private:
 	RD_ShaderStorageBuffer* m_ssao_tex_handle_s;
 	RD_ShaderStorageBuffer* m_final_passes_tex_handle_s;
 	RD_ShaderStorageBuffer* m_shadowmaps_s;
+	RD_ShaderStorageBuffer* m_glyph_s;
 
 	vec2f m_vp_size, m_vp_pos;
 

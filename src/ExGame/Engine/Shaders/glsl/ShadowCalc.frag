@@ -16,7 +16,9 @@ layout(std140, binding = 15) uniform LIGHTSPACE {
 	};
 #endif //GL_ARB_bindless_texture
 
-uniform int NbrDirLights;
+layout(std140, binding = 17) uniform LIGHTCOUNT {
+	int NbrDirLights;
+};
 
 #ifdef GL_ARB_bindless_texture
 	layout(std430, binding = 8) buffer BINDLESS_PASSES {

@@ -131,6 +131,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
 	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(4 * sizeof(uint64_t), 12);
 	m_shadowmaps_s = m_api->CreateShaderStorageBuffer(10 * sizeof(uint64_t), 16);
+	m_glyph_s = m_api->CreateShaderStorageBuffer(sizeof(uint64_t), 18);
 
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
@@ -138,6 +139,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_model_u = m_api->CreateUniformBuffer(16 * sizeof(float), 13);
 	m_lightview_u = m_api->CreateUniformBuffer(2 * 16 * sizeof(float), 14);
 	m_lightspace_u = m_api->CreateUniformBuffer(10 * 16 * sizeof(float), 15);
+	m_lightcount_u = m_api->CreateUniformBuffer(sizeof(int), 17);
+	m_text_color_u = m_api->CreateUniformBuffer(3 * sizeof(float), 19);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
@@ -235,6 +238,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_model_u;
 	delete m_lightview_u;
 	delete m_lightspace_u;
+	delete m_lightcount_u;
 
 	//Deleting shader storage buffers
 	delete m_gbuff_tex_handles_s;
@@ -242,6 +246,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_blur_state_s;
 	delete m_final_passes_tex_handle_s;
 	delete m_shadowmaps_s;
+	delete m_glyph_s;
 
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
@@ -370,6 +375,11 @@ void RaindropRenderer::UpdateDirLighting(const bool lspace_only) {
 		}
 
 		m_shadowmaps_s->UnbindBuffer();
+
+		m_lightcount_u->BindBuffer();
+		const int nbr = m_DirLights.size();
+		m_lightcount_u->SetBufferSubData(0, sizeof(int), (void*)&nbr);
+		m_lightcount_u->UnbindBuffer();
 	}
 
 	m_lightspace_u->BindBuffer();
@@ -1297,4 +1307,12 @@ RD_ShaderStorageBuffer* RaindropRenderer::GetShadowMapsBufferHandle() {
 
 int RaindropRenderer::GetDirLightsCount() {
 	return m_DirLights.size();
+}
+
+RD_ShaderStorageBuffer* RaindropRenderer::GetGlyphTexHandle() {
+	return m_glyph_s;
+}
+
+RD_UniformBuffer* RaindropRenderer::GetTextColorUniform() {
+	return m_text_color_u;
 }
