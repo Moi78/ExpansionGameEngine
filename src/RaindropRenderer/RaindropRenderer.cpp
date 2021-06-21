@@ -138,6 +138,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_model_u = m_api->CreateUniformBuffer(16 * sizeof(float), 13);
 	m_lightview_u = m_api->CreateUniformBuffer(2 * 16 * sizeof(float), 14);
 	m_lightspace_u = m_api->CreateUniformBuffer(10 * 16 * sizeof(float), 15);
+	m_lightcount_u = m_api->CreateUniformBuffer(sizeof(int), 17);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
@@ -235,6 +236,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_model_u;
 	delete m_lightview_u;
 	delete m_lightspace_u;
+	delete m_lightcount_u;
 
 	//Deleting shader storage buffers
 	delete m_gbuff_tex_handles_s;
@@ -370,6 +372,11 @@ void RaindropRenderer::UpdateDirLighting(const bool lspace_only) {
 		}
 
 		m_shadowmaps_s->UnbindBuffer();
+
+		m_lightcount_u->BindBuffer();
+		const int nbr = m_DirLights.size();
+		m_lightcount_u->SetBufferSubData(0, sizeof(int), (void*)&nbr);
+		m_lightcount_u->UnbindBuffer();
 	}
 
 	m_lightspace_u->BindBuffer();

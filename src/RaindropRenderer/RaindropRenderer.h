@@ -285,6 +285,7 @@ private:
 	RD_UniformBuffer* m_model_u;
 	RD_UniformBuffer* m_lightview_u;
 	RD_UniformBuffer* m_lightspace_u;
+	RD_UniformBuffer* m_lightcount_u;
 
 	//ShaderStorage
 	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;
