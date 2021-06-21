@@ -239,6 +239,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_lightview_u;
 	delete m_lightspace_u;
 	delete m_lightcount_u;
+	delete m_text_color_u;
 
 	//Deleting shader storage buffers
 	delete m_gbuff_tex_handles_s;
