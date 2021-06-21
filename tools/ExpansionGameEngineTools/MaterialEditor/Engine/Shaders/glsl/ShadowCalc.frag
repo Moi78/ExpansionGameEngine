@@ -4,10 +4,21 @@ layout (location = 0) out vec3 ShadowColor;
 
 in vec2 UVcoords;
 
-uniform mat4 lspaceMat[10];
+layout(std140, binding = 15) uniform LIGHTSPACE {
+	mat4 lspaceMat[10];
+};
 
-uniform sampler2D ShadowMap[10];
-uniform int NbrDirLights;
+#ifndef GL_ARB_bindless_texture
+	uniform sampler2D ShadowMap[10];
+#else
+	layout(std430, binding = 16) buffer SHADOWMAPS {
+		sampler2D ShadowMap[10];
+	};
+#endif //GL_ARB_bindless_texture
+
+layout(std140, binding = 17) uniform LIGHTCOUNT {
+	int NbrDirLights;
+};
 
 #ifdef GL_ARB_bindless_texture
 	layout(std430, binding = 8) buffer BINDLESS_PASSES {
@@ -26,9 +37,9 @@ void main() {
 
 	for(int i = 0; i < NbrDirLights; i++) {
 		#ifdef GL_ARB_bindless_texture
-			vec4 fpls = lspaceMat[i] * vec4(texture(passes[0], UVcoords).rgb, 1.0);
+			vec4 fpls = vec4(texture(passes[0], UVcoords).rgb, 1.0) * lspaceMat[i];
 		#else
-			vec4 fpls = lspaceMat[i] * vec4(texture(gPos, UVcoords).rgb, 1.0);
+			vec4 fpls = vec4(texture(gPos, UVcoords).rgb, 1.0) * lspaceMat[i];
 		#endif //GL_ARB_bindless_texture
 		
 		vec3 projCoords = fpls.xyz / fpls.w;

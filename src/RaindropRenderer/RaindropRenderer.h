@@ -123,8 +123,6 @@ public:
 	void RenderPostProcess();
 	void RenderBeauty();
 
-	void RecreateGbuff() const;
-
 	void ResizeViewport(vec2f pos, vec2f size);
 	void DisableResizeOverride();
 	bool GetResizeOverrideState() const;

@@ -7,10 +7,10 @@ in vec2 UVcoords;
 //uniform sampler2D GUIscreen;
 
 //Passes
-uniform sampler2D ShadowPass;
-uniform sampler2D ssao;
-
 #ifndef GL_ARB_bindless_texture
+	uniform sampler2D ssao;
+	uniform sampler2D ShadowPass;
+
 	uniform sampler2D gPos;
 	uniform sampler2D gNormal;
 	uniform sampler2D gAlbedo;
@@ -21,7 +21,12 @@ uniform sampler2D ssao;
 	layout(std430, binding = 8) buffer BINDLESS_PASSES {
 		sampler2D passes[6];
 	};
+
+	layout(std430, binding = 9) buffer BINDLESS_SFX {
+		sampler2D passes_sfx[5];
+	};
 #endif //ARB_bindless_texture
+
 //Ambient
 layout(std140, binding = 2) uniform AMBIENT {
 	vec3 AmbientColor;
@@ -59,9 +64,9 @@ layout(std140, binding = 5) uniform CamData {
 	vec3 CamPos;
 };
 
-uniform bool ftr_lighting = true;
-uniform bool ftr_specular = true;
-uniform bool ftr_ambient = true;
+//uniform bool ftr_lighting = true;
+//uniform bool ftr_specular = true;
+//uniform bool ftr_ambient = true;
 
 float PI = 3.14159265359;
 
@@ -188,7 +193,11 @@ vec3 CalcPointLight(int lightIndex) {
 void main() {
 	vec3 diffSpec = vec3(0.0);
 
-	float shadow = texture(ShadowPass, UVcoords).r;
+	#ifndef GL_ARB_bindless_texture
+		float shadow = texture(ShadowPass, UVcoords).r;
+	#else
+		float shadow = texture(passes_sfx[2], UVcoords).r;
+	#endif
 
 	for(int i = 0; i < nbrDirLight; i++) {
 		diffSpec += max(CalcDirLight(i), 0.0) * shadow;
@@ -198,7 +207,12 @@ void main() {
 		diffSpec += max(CalcPointLight(i), 0.0);
 	}
 
-	float SSAO = texture(ssao, UVcoords).r;
+	#ifndef GL_ARB_bindless_texture
+		float SSAO = texture(ssao, UVcoords).r;
+	#else
+		float SSAO = texture(passes_sfx[4], UVcoords).r;
+	#endif
+
 	vec3 ambient = (AmbientColor * AmbientStrength) * Diffuse * AO;
 	vec3 result = (diffSpec + ambient) * SSAO;
 

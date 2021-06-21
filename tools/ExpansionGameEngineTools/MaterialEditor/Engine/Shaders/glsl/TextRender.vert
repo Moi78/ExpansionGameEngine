@@ -12,12 +12,14 @@ layout (std140, binding = 0) uniform CAMERA {
 	mat4 view;
 };
 
-uniform mat4 model;
+layout (std140, binding = 13) uniform MODEL {
+	mat4 model;
+};
 
 void main() {
 	Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
 
-	FragPos = vec3(model * vec4(aPos, 1.0));
+	FragPos = vec3(vec4(aPos, 1.0) * model);
 	UVcoords = aUV;
 
 	gl_Position = vec4(FragPos, 1.0) * view * proj;

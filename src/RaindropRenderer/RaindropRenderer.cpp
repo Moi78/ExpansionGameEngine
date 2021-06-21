@@ -1076,14 +1076,6 @@ void RaindropRenderer::DeleteGbuff() {
 	
 }
 
-void RaindropRenderer::RecreateGbuff() const {
-	int w = m_api->GetWindowingSystem()->GetWidth();
-	int h = m_api->GetWindowingSystem()->GetHeight();
-
-	m_gbuffer->ChangeFramebufferSize(w, h);
-	m_light_pprocess->ChangeFramebufferSize(w, h);
-}
-
 void RaindropRenderer::SetFullscreenMode(const bool mode) const {
 	m_api->GetWindowingSystem()->SetFullscreenMode(mode);
 }
@@ -1193,6 +1185,7 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	}
 
 	m_light_pprocess->ChangeFramebufferSize(sx, sy);
+	m_light_pprocess->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 0);
 
 	m_ssao_buffer->ChangeFramebufferSize(sx, sy);
 	m_ssao_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 3);

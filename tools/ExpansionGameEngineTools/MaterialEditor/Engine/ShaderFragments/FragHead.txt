@@ -1,4 +1,5 @@
 #version 450 core
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec3 gPos;
 layout (location = 1) out vec3 gNorm;
 layout (location = 2) out vec4 gAlbedo;
