@@ -64,7 +64,6 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual) {
 	m_shadowQuality = shadowQual;
 	m_fbo = rndr->GetRenderingAPI()->CreateFrameBuffer(m_shadowQuality, m_shadowQuality, false);
-	m_fbo->SetMultisampled(false);
 
 	m_fbo->AddAttachement(IMGFORMAT_DEPTH, SCALEMODE_LINEAR);
 	m_fbo->BuildFBO();
