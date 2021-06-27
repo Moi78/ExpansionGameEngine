@@ -76,7 +76,7 @@ A little Maze Generator I've built with EXPGE
   - GLAD (Packed with the repo)
   - GLEW
   - libsndfile1
-  - PhysX
+  - PhysX (Packed with the repo)
   - Jsoncpp
  
 ### Tool deps
