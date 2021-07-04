@@ -9,6 +9,7 @@
 #include "RD_GUI_Manager.h"
 #include "RD_PostProcess.h"
 #include "RD_Particles.h"
+#include "RD_Materials.h"
 
 #include "RD_RenderingAPI.h"
 #include "RD_RenderingAPI_GL.h"
@@ -108,6 +109,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		ambientStrength = 0.001f;
 
 		m_ssao_u = m_api->CreateUniformBuffer(64 * sizeof(float), 6);
+		m_ssao_tex_handle_s = m_api->CreateShaderStorageBuffer(sizeof(uint64_t), 11);
 
 		GenerateSSAOKernels();
 		GenerateSSAONoise();
@@ -125,32 +127,52 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_engineDir+  "/Shaders/glsl/ShadowBlur.frag"
 	);
 
+	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
+	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 9);
+	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
+	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(4 * sizeof(uint64_t), 12);
+	m_shadowmaps_s = m_api->CreateShaderStorageBuffer(10 * sizeof(uint64_t), 16);
+	m_glyph_s = m_api->CreateShaderStorageBuffer(sizeof(uint64_t), 18);
+
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
 	m_ambient_u = m_api->CreateUniformBuffer(17, 2);
+	m_model_u = m_api->CreateUniformBuffer(16 * sizeof(float), 13);
+	m_lightview_u = m_api->CreateUniformBuffer(2 * 16 * sizeof(float), 14);
+	m_lightspace_u = m_api->CreateUniformBuffer(10 * 16 * sizeof(float), 15);
+	m_lightcount_u = m_api->CreateUniformBuffer(sizeof(int), 17);
+	m_text_color_u = m_api->CreateUniformBuffer(3 * sizeof(float), 19);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
 	m_shadows_buffer->BuildFBO();
 
+	m_shadows_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 0);
+
 	m_shadows_blur = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_blur->AddAttachement(IMGFORMAT_RGB);
 	m_shadows_blur->BuildFBO();
 
+	m_shadows_blur->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 1);
+
 	m_shadows_blur_b = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_blur_b->AddAttachement(IMGFORMAT_RGB);
 	m_shadows_blur_b->BuildFBO();
+
+	m_shadows_blur_b->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 2);
 	
 	m_defTex = m_api->CreateTexture();
-	m_defTex->LoadTexture(m_engineDir + "/Textures/defTex.png");
+	m_defTex->GenerateColorTex(vec3f(1.0f, 0.0f, 1.0f));
 
 	m_blankTexture = m_api->CreateTexture();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
+	m_current_shader_storage_index = 30;
+
 	if constexpr (RENDER_DEBUG_ENABLED) {
 		RD_ShaderLoader* shad = m_api->CreateShader();
 		shad->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Debug.vert", m_engineDir + "/Shaders/glsl/Debug.frag");
-		m_dbgMat = new RD_ShaderMaterial(shad);
+		m_dbgMat = new RD_ShaderMaterial(shad, this);
 
 		m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, m_dbgMat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
 		m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
@@ -179,9 +201,11 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_engineDir + "/Shaders/glsl/TextRender.vert",
 		m_engineDir + "/Shaders/glsl/TextRender.frag"
 	);
-	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld), "text");
+	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld, this), "text");
 
 	UpdateAmbientLighting();
+
+	m_need_cam_updt = false;
 }
 
 RaindropRenderer::~RaindropRenderer() {
@@ -196,6 +220,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_shadows_blur;
 	delete m_shadows_blur_b;
 	delete m_shadows_buffer;
+	delete m_bloom_bufferb;
 
 	//Deleting common shaders
 	delete m_shadowShader;
@@ -213,6 +238,19 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_pointLight_u;
 	delete m_dirLights_u;
 	delete m_ambient_u;
+	delete m_model_u;
+	delete m_lightview_u;
+	delete m_lightspace_u;
+	delete m_lightcount_u;
+	delete m_text_color_u;
+
+	//Deleting shader storage buffers
+	delete m_gbuff_tex_handles_s;
+	delete m_sfx_tex_handles_s;
+	delete m_blur_state_s;
+	delete m_final_passes_tex_handle_s;
+	delete m_shadowmaps_s;
+	delete m_glyph_s;
 
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
@@ -224,8 +262,8 @@ RaindropRenderer::~RaindropRenderer() {
 		delete m_bloom;
 
 		delete m_ssao_noise_tex;
+		delete m_ssao_tex_handle_s;
 		delete m_bloom_buffera;
-		delete m_bloom_bufferb;
 
 		delete m_ssao_u;
 	}
@@ -308,26 +346,55 @@ int RaindropRenderer::AppendDirLight(RD_DirLight* dirLight) {
 	return 1;
 }
 
-void RaindropRenderer::UpdateDirLighting() {
+void RaindropRenderer::UpdateDirLighting(const bool lspace_only) {
 	if (!IsFeatureEnabled(RendererFeature::Lighting))
 		return;
 
-	m_dirLights_u->BindBuffer();
+	if (!lspace_only) {
+		m_dirLights_u->BindBuffer();
 
-	int nbrLights = m_DirLights.size();
-	m_dirLights_u->SetBufferSubData(0, sizeof(int), &nbrLights);
+		int nbrLights = m_DirLights.size();
+		m_dirLights_u->SetBufferSubData(0, sizeof(int), &nbrLights);
 
-	int offset = 16;
-	for (int i = 0; i < m_DirLights.size(); i++) {
-		float b = m_DirLights[i]->GetBrightness();
-		m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightDir().GetPTR());
-		offset += 16;
-		m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightColor().GetPTR());
-		offset += 12;
-		m_dirLights_u->SetBufferSubData(offset, sizeof(float), &b);
-		offset += 4;
+		int offset = 16;
+		for (int i = 0; i < m_DirLights.size(); i++) {
+			float b = m_DirLights[i]->GetBrightness();
+			m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightDir().GetPTR());
+			offset += 16;
+			m_dirLights_u->SetBufferSubData(offset, 3 * sizeof(float), m_DirLights[i]->GetLightColor().GetPTR());
+			offset += 12;
+			m_dirLights_u->SetBufferSubData(offset, sizeof(float), &b);
+			offset += 4;
+		}
+		m_dirLights_u->UnbindBuffer();
+
+		m_shadowmaps_s->BindBuffer();
+		int i = 0;
+
+		for (auto l : m_DirLights) {
+			uint64_t handle = l->GetDepthTexID()->GetTextureHandle();
+			m_shadowmaps_s->SetBufferSubData(i * sizeof(uint64_t), sizeof(uint64_t), (void*)&handle);
+
+			i++;
+		}
+
+		m_shadowmaps_s->UnbindBuffer();
+
+		m_lightcount_u->BindBuffer();
+		const int nbr = m_DirLights.size();
+		m_lightcount_u->SetBufferSubData(0, sizeof(int), (void*)&nbr);
+		m_lightcount_u->UnbindBuffer();
 	}
-	m_dirLights_u->UnbindBuffer();
+
+	m_lightspace_u->BindBuffer();
+
+	int offset = 0;
+	for (auto l : m_DirLights) {
+		m_lightspace_u->SetBufferSubData(offset, 16 * sizeof(float), (void*)l->GetLightSpace().GetPTR());
+		offset += 16 * sizeof(float);
+	}
+
+	m_lightspace_u->UnbindBuffer();
 }
 
 void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
@@ -354,7 +421,7 @@ void RaindropRenderer::RenderDbg(RD_Camera* cam) {
 			m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
 
 			m_DBG_light_mdl->SetPosition(plight->GetPosition());
-			m_DBG_light_mdl->render(cam);
+			m_DBG_light_mdl->render();
 		}
 
 		m_api->SetFilledMode(FillingMode::FILLED);
@@ -392,8 +459,8 @@ void RaindropRenderer::UpdatePointsLighting() {
 }
 
 void RaindropRenderer::FillFeaturesArray() {
-	m_renderer_feature[0] = std::pair<std::string, bool>("ftr_specular", true);
-	m_renderer_feature[1] = std::pair<std::string, bool>("ftr_lighting", true);
+	m_renderer_feature[0] = std::pair<std::string, bool>("ftr_specular", true); // Non-working antiquity
+	m_renderer_feature[1] = std::pair<std::string, bool>("ftr_lighting", true); // Non-working antiquity that needs to be fixed
 	m_renderer_feature[2] = std::pair<std::string, bool>("ftr_ambient", true);
 	m_renderer_feature[3] = std::pair<std::string, bool>("ftr_ssao", true);
 	m_renderer_feature[4] = std::pair<std::string, bool>("ftr_bloom", true);
@@ -460,6 +527,8 @@ void RaindropRenderer::RenderLightsDepth(const vec3f& camPos) {
 	for (auto* dlight : m_DirLights) {
 		dlight->DepthRender(this, camPos);
 	}
+
+	UpdateDirLighting(true);
 }
 
 void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
@@ -468,11 +537,8 @@ void RaindropRenderer::RegisterMesh(RD_Mesh* mesh) {
 }
 
 void RaindropRenderer::RenderMeshes(RD_Camera* cam) {
-	for (auto* mesh : m_meshes) {
-		RD_ShaderLoader* shader = mesh->GetMaterial()->GetShader();
-		shader->useShader();
-
-		mesh->render(cam);
+	for (auto mat : m_matlib->GetRawVector()) {
+		mat.second->DrawMeshes();
 	}
 }
 
@@ -518,11 +584,19 @@ bool RaindropRenderer::CreateGbuff() {
 
 	m_gbuffer->BuildFBO();
 
+	for (int i = 0; i < 4; i++) {
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(this, m_gbuff_tex_handles_s, i);
+	}
+
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
 	//Light & PostProcess screen
 	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
 
 	m_light_pprocess->BuildFBO();
+
+	m_bloom_bufferb = m_api->CreateFrameBuffer(width, height, true);
+	m_bloom_bufferb->AddAttachement(IMGFORMAT_RGB);
+	m_bloom_bufferb->BuildFBO();
 
 	return true;
 }
@@ -562,6 +636,10 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_g_buffer.gDepth = 6;
 
 	m_gbuffer->BuildFBO();
+	
+	for (int i = 0; i < 6; i++) {
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(this, m_gbuff_tex_handles_s, i);
+	}
 
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
 	//Light & PostProcess screen
@@ -569,6 +647,8 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	//SSR Texture
 	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
 	m_light_pprocess->BuildFBO();
+
+	m_light_pprocess->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 0);
 	
 	m_ssao_buffer = m_api->CreateFrameBuffer(width, height, true);
 	//SSAO Texture
@@ -577,13 +657,20 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_ssao_buffer->AddAttachement(IMGFORMAT_R16F);
 	m_ssao_buffer->BuildFBO();
 
+	m_ssao_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 3);
+	m_ssao_buffer->GetAttachementByIndex(1)->MakeTexBindless(this, m_sfx_tex_handles_s, 4);
+
 	m_bloom_buffera = m_api->CreateFrameBuffer(width, height, true);
 	m_bloom_buffera->AddAttachement(IMGFORMAT_RGB16F, 1, WRAPMODE_CLAMP2EDGE); //Bloom blur 1
 	m_bloom_buffera->BuildFBO();
 
+	m_bloom_buffera->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 2);
+
 	m_bloom_bufferb = m_api->CreateFrameBuffer(width, height, true);
 	m_bloom_bufferb->AddAttachement(IMGFORMAT_RGB16F, 1, WRAPMODE_CLAMP2EDGE); //Bloom blur 2
 	m_bloom_bufferb->BuildFBO();
+
+	m_bloom_bufferb->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 3);
 	
 	return true;
 }
@@ -620,6 +707,10 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 		m_api->Clear(COLOR_BUFFER);
 		
 		RenderLightPass(cam->GetLocation());
+
+		m_bloom_bufferb->BindFBO();
+		m_api->Clear(COLOR_BUFFER);
+		m_bloom_bufferb->UnbindFBO();
 	}
 	
 	RenderPostProcess();
@@ -645,10 +736,9 @@ void RaindropRenderer::RenderShadows() {
 			continue;
 		}
 
-		dlight->GetDepthTexID()->BindTexture(texID);
-
-		m_shadowCalc->SetInt("ShadowMap[" + std::to_string(i) + "]", texID);
-		m_shadowCalc->SetMatrix("lspaceMat[" + std::to_string(i) + "]", dlight->GetLightSpace());
+		if (dlight->GetDepthTexID()->BindTexture(texID)) {
+			m_shadowCalc->SetInt("ShadowMap[" + std::to_string(i) + "]", texID);
+		}
 
 		texID++;
 		i++;
@@ -656,8 +746,9 @@ void RaindropRenderer::RenderShadows() {
 
 	m_shadowCalc->SetInt("NbrDirLights", i);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(texID);
-	m_shadowCalc->SetInt("gPos", texID);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(texID)) {
+		m_shadowCalc->SetInt("gPos", texID);
+	}
 
 	m_quad->RenderQuad();
 	
@@ -666,16 +757,26 @@ void RaindropRenderer::RenderShadows() {
 	SwitchShader(m_shadowBlur);
 	m_shadows_blur->BindFBO();
 
-	m_shadows_buffer->GetAttachementByIndex(0)->BindTexture(0);
-	m_shadowBlur->SetInt("baseImage", 0);
-	m_shadowBlur->SetVec3("dir", vec3f(1.0f, 0.0f));
+	constexpr ShaderBlurState st_a{ { 0.0f, 1.0f, 0.0f }, 0};
+	constexpr ShaderBlurState st_b{ { 1.0f, 0.0f, 0.0f }, 1};
+
+	if (m_shadows_buffer->GetAttachementByIndex(0)->BindTexture(0)) {
+		m_shadowBlur->SetInt("baseImage", 0);
+	}
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_a);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 
 	m_shadows_blur_b->BindFBO();
 
 	m_shadows_blur->GetAttachementByIndex(0)->BindTexture(0);
-	m_shadowBlur->SetVec3("dir", vec3f(0.0f, 1.0f));
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_b);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 
@@ -691,34 +792,42 @@ void RaindropRenderer::RenderPostProcess() {
 void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
 	SwitchShader(m_light_shader);
 	
-	SendFeatureToShader(m_light_shader, RendererFeature::Ambient);
-	SendFeatureToShader(m_light_shader, RendererFeature::Specular);
-	SendFeatureToShader(m_light_shader, RendererFeature::Lighting);
+	//SendFeatureToShader(m_light_shader, RendererFeature::Ambient);
+	//SendFeatureToShader(m_light_shader, RendererFeature::Specular);
+	//SendFeatureToShader(m_light_shader, RendererFeature::Lighting);
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0);
-	m_light_shader->SetInt("gAlbedo", 0);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gAlbedo)->BindTexture(0)) {
+		m_light_shader->SetInt("gAlbedo", 0);
+	}
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
-	m_light_shader->SetInt("gNormal", 1);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1)) {
+		m_light_shader->SetInt("gNormal", 1);
+	}
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(2);
-	m_light_shader->SetInt("gPos", 2);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(2)) {
+		m_light_shader->SetInt("gPos", 2);
+	}
 
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gSpec)->BindTexture(3);
-	m_light_shader->SetInt("gSpec", 3);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gSpec)->BindTexture(3)) {
+		m_light_shader->SetInt("gSpec", 3);
+	}
 
-	m_shadows_blur_b->GetAttachementByIndex(0)->BindTexture(4);
-	m_light_shader->SetInt("ShadowPass", 4);
+	if (m_shadows_blur_b->GetAttachementByIndex(0)->BindTexture(4)) {
+		m_light_shader->SetInt("ShadowPass", 4);
+	}
 
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
-		m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(5);
-		m_light_shader->SetInt("gMetRoughAO", 5);
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(5)) {
+			m_light_shader->SetInt("gMetRoughAO", 5);
+		}
 
-		m_ssao_buffer->GetAttachementByIndex(1)->BindTexture(6); //Blurred SSAO pass
-		m_light_shader->SetInt("ssao", 6);
+		if (m_ssao_buffer->GetAttachementByIndex(1)->BindTexture(6)) { //Blurred SSAO pass
+			m_light_shader->SetInt("ssao", 6);
+		}
 
-		m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(7);
-		m_light_shader->SetInt("gEmissive", 7);
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(7)) {
+			m_light_shader->SetInt("gEmissive", 7);
+		}
 	}
 
 	m_quad->RenderQuad();
@@ -734,82 +843,43 @@ void RaindropRenderer::RenderBloom() {
 
 	SwitchShader(m_bloom);
 
-	//for (int i = 0; i < 2; i++) {
-	//	m_bloom_buffera->BindFBO();
-	//	if (i == 0) {
-	//		m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
-	//		m_bloom->SetInt("threshold", 1);
-	//	} else {
-	//		m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
-	//		m_bloom->SetInt("threshold", 0);
-	//	}
-	//	m_bloom->SetInt("gShaded", 0);
-	//	m_bloom->SetBool("horizontal", true);
-
-	//	m_quad->RenderQuad();
-
-	//	m_bloom_buffera->UnbindFBO();
-	//	m_bloom_bufferb->BindFBO();
-
-	//	m_bloom->SetInt("threshold", 0);
-
-	//	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
-	//	m_bloom->SetInt("gShaded", 0);
-	//	m_bloom->SetInt("horizontal", false);
-
-	//	m_quad->RenderQuad();
-
-	//	m_bloom_bufferb->UnbindFBO();
-	//}
+	constexpr ShaderBlurState st_a{ {1.0f, 0.0f}, 5, 1, 1 };
+	constexpr ShaderBlurState st_b{ {0.0f, 1.0f}, 2, 0, 0 };
+	constexpr ShaderBlurState st_c{ {1.0f, 0.0f}, 3, 0, 0 };
 
 	m_bloom_buffera->BindFBO();
-	m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0);
-	m_bloom->SetInt("threshold", 1);
-	m_bloom->SetInt("gShaded", 0);
-	m_bloom->SetBool("horizontal", true);
+	if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gEmissive)->BindTexture(0)) {
+		m_bloom->SetInt("gShaded", 0);
+	}
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_a);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 
 	m_bloom_bufferb->BindFBO();
 	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
-	m_bloom->SetInt("threshold", 0);
-	m_bloom->SetBool("horizontal", false);
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_b);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
 
 	m_bloom_buffera->BindFBO();
 	m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
-	m_bloom->SetBool("horizontal", true);
+
+	m_blur_state_s->BindBuffer();
+	m_blur_state_s->SetBufferSubData(0, sizeof(ShaderBlurState), (void*)&st_c);
+	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
-
-	m_bloom_bufferb->BindFBO();
-	m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
-	m_bloom->SetBool("horizontal", false);
-
-	m_quad->RenderQuad();
-
-	m_bloom_bufferb->UnbindFBO();
 }
 
 
 void RaindropRenderer::RenderSSR() {
 	SwitchShader(m_ssr_shader);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
-	//m_ssr_shader->SetInt("gPos", 0);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
-	//m_ssr_shader->SetInt("gNorm", 1);
-
-	//m_light_pprocess->GetAttachementByIndex(0)->BindTexture(2); //Attachement 0 corresponds to the Light Texture Attachement
-	//m_ssr_shader->SetInt("ShadedImg", 2);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gMetRoughAO)->BindTexture(3);
-	//m_ssr_shader->SetInt("gMetRoughAO", 3);
-
-	//m_gbuffer->GetAttachementByIndex(m_g_buffer.gDepth)->BindTexture(4);
-	//m_ssr_shader->SetInt("Depth", 4);
 
 	m_quad->RenderQuad();
 }
@@ -819,25 +889,26 @@ void RaindropRenderer::RenderSSAO() {
 		//Render SSAO
 		SwitchShader(m_ssao_shader);
 
-			m_ssao_shader->SetInt("scr_w", GetViewportSize().getX());
-			m_ssao_shader->SetInt("scr_h", GetViewportSize().getY());
-
-			m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0);
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gPos)->BindTexture(0)) {
 			m_ssao_shader->SetInt("gPos", 0);
+		}
 
-			m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1);
+		if (m_gbuffer->GetAttachementByIndex(m_g_buffer.gNorm)->BindTexture(1)) {
 			m_ssao_shader->SetInt("gNorm", 1);
+		}
 
-		m_ssao_noise_tex->BindTexture(2);
-		m_ssao_shader->SetInt("noise", 2);
+		if (m_ssao_noise_tex->BindTexture(2)) {
+			m_ssao_shader->SetInt("noise", 2);
+		}
 
 		m_quad->RenderQuad();
 
 		//Blur SSAO
 		SwitchShader(m_ssao_blur_shader);
 
-		m_ssao_buffer->GetAttachementByIndex(0)->BindTexture(0);
-		m_ssao_blur_shader->SetInt("ssao_tex", 0);
+		if (m_ssao_buffer->GetAttachementByIndex(0)->BindTexture(0)) {
+			m_ssao_blur_shader->SetInt("ssao_tex", 0);
+		}
 
 		m_quad->RenderQuad();
 	} else {
@@ -902,6 +973,8 @@ void RaindropRenderer::GenerateSSAONoise() {
 
 	m_ssao_noise_tex = m_api->CreateTexture();
 	m_ssao_noise_tex->CreateTextureFromPixels(&ssao_noise[0], 4, 4, IMGFORMAT_RGBA16F);
+
+	m_ssao_noise_tex->MakeTexBindless(this, m_ssao_tex_handle_s, 0);
 }
 
 
@@ -910,17 +983,23 @@ void RaindropRenderer::RenderBeauty() {
 
 	SwitchShader(m_beauty_shader);
 
-	m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5);
-	m_beauty_shader->SetInt("lightpass", 5);
+	if (m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5)) {
+		m_beauty_shader->SetInt("lightpass", 5);
+	}
 
-	m_gui_manager->GetScreenTexture()->BindTexture(6);
-	m_beauty_shader->SetInt("GUIscreen", 6);
+	if (m_gui_manager->GetScreenTexture()->BindTexture(6)) {
+		m_beauty_shader->SetInt("GUIscreen", 6);
+	}
 
-	if(m_pipeline == Pipeline::PBR_ENGINE) {
-		m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7); //SSR Attachement
-		m_beauty_shader->SetInt("SSR", 7);
+	/*
+	if (m_pipeline == Pipeline::PBR_ENGINE) {
+		if (m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7)) { //SSR Attachement
+			m_beauty_shader->SetInt("SSR", 7);
+		}
+	}
+	*/
 
-		m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(8);
+	if (m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(8)) {
 		m_beauty_shader->SetInt("bloom", 8);
 	}
 
@@ -1000,14 +1079,6 @@ void RaindropRenderer::DeleteGbuff() {
 	
 }
 
-void RaindropRenderer::RecreateGbuff() const {
-	int w = m_api->GetWindowingSystem()->GetWidth();
-	int h = m_api->GetWindowingSystem()->GetHeight();
-
-	m_gbuffer->ChangeFramebufferSize(w, h);
-	m_light_pprocess->ChangeFramebufferSize(w, h);
-}
-
 void RaindropRenderer::SetFullscreenMode(const bool mode) const {
 	m_api->GetWindowingSystem()->SetFullscreenMode(mode);
 }
@@ -1032,7 +1103,7 @@ void RaindropRenderer::EmptyFramebufferGarbageCollector() {
 	}*/
 }
 
-RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref) const {
+RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref) {
 	if (!std::filesystem::exists(ref)) {
 		std::cerr << "Shader file " << ref << " does not exist." << std::endl;
 		dispErrorMessageBox(StrToWStr("Shader file " + ref + " does not exists"));
@@ -1050,13 +1121,14 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref)
 	RD_ShaderLoader* shader = m_api->CreateShader();
 	shader->CompileShaderFromCode(vcode, fcode);
 
-	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader);
+	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader, this);
 	for (int i = 0; i < mread.GetTextureCount(); i++) {
 		RD_Texture* tex = m_api->CreateTexture();
 		tex->LoadTexture(mread.GetTexturePath(i));
 
 		shdmat->AddTexture(mread.GetTextureParamName(i), tex);
 	}
+	shdmat->MakeSSBO();
 
 	m_matlib->AddMaterialToLib(shdmat, ref);
 	return shdmat;
@@ -1111,18 +1183,38 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_api->SetViewportSize(sx, sy, pos.getX(), pos.getY());
 
 	m_gbuffer->ChangeFramebufferSize(sx, sy);
+
+	for (int i = 0; i < 6; i++) {
+		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(this, m_gbuff_tex_handles_s, i);
+	}
+
 	m_light_pprocess->ChangeFramebufferSize(sx, sy);
+	m_light_pprocess->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 0);
+
 	m_ssao_buffer->ChangeFramebufferSize(sx, sy);
+	m_ssao_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 3);
+	m_ssao_buffer->GetAttachementByIndex(1)->MakeTexBindless(this, m_sfx_tex_handles_s, 4);
+
 	m_shadows_buffer->ChangeFramebufferSize(sx, sy);
+	m_shadows_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 0);
+
 	m_shadows_blur->ChangeFramebufferSize(sx, sy);
+	m_shadows_blur->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 1);
+
 	m_shadows_blur_b->ChangeFramebufferSize(sx, sy);
+	m_shadows_blur_b->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 2);
+
 	m_bloom_buffera->ChangeFramebufferSize(sx, sy);
+	m_bloom_buffera->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 2);
+
 	m_bloom_bufferb->ChangeFramebufferSize(sx, sy);
+	m_bloom_bufferb->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 3);
 
 	m_vp_pos = pos;
 	m_vp_size = size;
 
 	m_resize_override = true;
+	m_need_cam_updt = true;
 }
 
 void RaindropRenderer::DisableResizeOverride() {
@@ -1183,4 +1275,50 @@ void RaindropRenderer::UnregisterAllParticleEmitters() {
 		UnregisterParticleEmitter(p);
 		delete p;
 	}
+}
+
+bool RaindropRenderer::DoNeedCamUpdate() {
+	if (m_need_cam_updt) {
+		m_need_cam_updt = false;
+		return true;
+	}
+
+	return false;
+}
+
+void RaindropRenderer::PushModelMatrix(mat4f& model) {
+	m_model_u->BindBuffer();
+	m_model_u->SetBufferSubData(0, 16 * sizeof(float), (void*)model.GetPTR());
+	m_model_u->UnbindBuffer();
+}
+
+void RaindropRenderer::PushLightProjViewMatrices(mat4f& lview, mat4f& lproj) {
+	m_lightview_u->BindBuffer();
+	m_lightview_u->SetBufferSubData(0, 16 * sizeof(float), (void*)lview.GetPTR());
+	m_lightview_u->SetBufferSubData(16 * sizeof(float), 16 * sizeof(float), (void*)lproj.GetPTR());
+	m_lightview_u->UnbindBuffer();
+}
+
+RD_ShaderStorageBuffer* RaindropRenderer::GetShadowMapsBufferHandle() {
+	return m_shadowmaps_s;
+}
+
+int RaindropRenderer::GetDirLightsCount() {
+	return m_DirLights.size();
+}
+
+RD_ShaderStorageBuffer* RaindropRenderer::GetGlyphTexHandle() {
+	return m_glyph_s;
+}
+
+RD_UniformBuffer* RaindropRenderer::GetTextColorUniform() {
+	return m_text_color_u;
+}
+
+int RaindropRenderer::GetCurrentShaderStorageIndex() {
+	return m_current_shader_storage_index;
+}
+
+void RaindropRenderer::IncrementCurrentShaderStorageIndex() {
+	m_current_shader_storage_index++;
 }

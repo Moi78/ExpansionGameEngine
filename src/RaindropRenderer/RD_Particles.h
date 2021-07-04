@@ -13,6 +13,7 @@
 #include "RaindropRenderer.h"
 #include "RD_ShaderLoader.h"
 #include "RD_RenderingAPI.h"
+#include "RD_Materials.h"
 
 #include <vec3.h>
 #include <mat4.h>

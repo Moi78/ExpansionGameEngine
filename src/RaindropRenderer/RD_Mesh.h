@@ -36,12 +36,12 @@
 class RAINDROPRENDERER_API RD_Mesh
 {
 public:
-	RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale);
+	RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f position, vec3f rotation, vec3f scale, bool noregist = false);
 	virtual ~RD_Mesh();
 
 	void loadMesh(std::string);
 
-	virtual void render(RD_Camera* cam);
+	virtual void render();
 	virtual void renderShadows(RD_ShaderLoader* shadowShader);
 
 	virtual void addRotation(vec3f rotation, bool update = true);

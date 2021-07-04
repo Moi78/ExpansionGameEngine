@@ -18,6 +18,8 @@
 #include "RD_Texture.h"
 #include "RD_FrameBuffer.h"
 
+#include "BulldozerFileManager.h"
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -149,6 +151,7 @@ public:
 	virtual RD_ShaderLoader* CreateShader();
 	virtual RD_Cubemap* CreateCubemap();
 	virtual RD_UniformBuffer* CreateUniformBuffer(const size_t bufferSize, const int binding);
+	virtual RD_ShaderStorageBuffer* CreateShaderStorageBuffer(const size_t bufferSize, const int binding);
 
 	virtual void SetViewportSize(int w, int h, int x, int y);
 
@@ -164,9 +167,14 @@ public:
 	virtual void DisableFaceCulling();
 
 	virtual int GetMaxTextureCount();
+	virtual bool AreBindlessTexturesAvailable();
 
 private:
 	RD_WindowingSystemGLFW* m_win_sys;
+
+	bool m_bindless_tex_available;
 };
+
+bool CheckExtensionAvailability(std::string ext);
 
 #endif //BUILD_OPENGL

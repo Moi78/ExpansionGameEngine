@@ -185,6 +185,7 @@ bool BD_MatCustomShaderWrite::WriteMaterialFile(std::string path) {
 	for (auto tex : m_texs) {
 		root["textures"][index]["path"] = tex.first;
 		root["textures"][index]["param"] = tex.second;
+		root["textures"][index]["texOffset"] = index;
 		index++;
 	}
 

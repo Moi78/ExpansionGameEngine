@@ -37,13 +37,13 @@ int RD_InstanciatedMesh::AppendInstance(RD_MeshInstance inst) {
 	return (int)m_mdls.size() - 1;
 }
 
-void RD_InstanciatedMesh::render(RD_Camera* cam) {
-	m_mat->BindMaterial();
+void RD_InstanciatedMesh::render() {
+	//m_mat->BindMaterial();
 
 	m_buffer->BindBuffer();
 
 	for (auto &mdl : m_mdls) {
-		m_mat->GetShader()->SetMatrix("model", mdl.first);
+		m_rndr->PushModelMatrix(mdl.first);
 
 		m_rndr->GetRenderingAPI()->Draw(m_buffer);
 	}
@@ -55,7 +55,7 @@ void RD_InstanciatedMesh::renderShadows(RD_ShaderLoader* shadowShader) {
 	m_buffer->BindBuffer();
 
 	for (auto &mdl : m_mdls) {
-		shadowShader->SetMatrix("model", mdl.first);
+		m_rndr->PushModelMatrix(mdl.first);
 
 		m_rndr->GetRenderingAPI()->Draw(m_buffer);
 	}

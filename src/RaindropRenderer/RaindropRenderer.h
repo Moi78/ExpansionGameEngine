@@ -25,7 +25,6 @@
 #include "RD_ShaderLoader.h"
 #include "RD_FrameLimiter.h"
 #include "RD_PointLight.h"
-#include "RD_Materials.h"
 #include "RD_Texture.h"
 #include "RD_FrameBuffer.h"
 #include "RD_Structs.h"
@@ -41,6 +40,7 @@
 #include <random>
 #include <thread>
 #include <mutex>
+#include <stddef.h>
 
 #include <vec3.h>
 #include <vec2.h>
@@ -53,7 +53,7 @@
 class RD_DirLight;
 class RD_Mesh;
 class RD_Quad;
-//class RD_FrameBuffer;
+class RD_ShaderMaterial;
 class RD_Camera;
 class RD_MaterialLibrary;
 class RD_GUI_Manager;
@@ -90,6 +90,8 @@ public:
 	void SetFullscreenMode(const bool fullscr) const;
 	void SetVSync(const bool vsync);
 	bool IsVSyncActivated() const;
+
+	bool DoNeedCamUpdate();
 	
 	std::string GetEngineDir() const;
 
@@ -120,8 +122,6 @@ public:
 	void RenderPostProcess();
 	void RenderBeauty();
 
-	void RecreateGbuff() const;
-
 	void ResizeViewport(vec2f pos, vec2f size);
 	void DisableResizeOverride();
 	bool GetResizeOverrideState() const;
@@ -136,9 +136,22 @@ public:
 	void AddToFramebufferGarbageCollector(unsigned int fboID);
 	void EmptyFramebufferGarbageCollector();
 
+	void PushModelMatrix(mat4f& model);
+	void PushLightProjViewMatrices(mat4f& lview, mat4f& lproj);
+
+	RD_ShaderStorageBuffer* GetGlyphTexHandle();
+	RD_UniformBuffer* GetTextColorUniform();
+
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(const vec3f& nColor);
+
+	void UpdatePointsLighting();
+	void UpdateAmbientLighting();
+	void UpdateDirLighting(const bool lspace_only = false);
+
+	RD_ShaderStorageBuffer* GetShadowMapsBufferHandle();
+	int GetDirLightsCount();
 
 	//Elements registrations
 	int AppendLight(RD_PointLight* ptLight);
@@ -163,8 +176,10 @@ public:
 	void SwitchShader(RD_ShaderLoader*);
 	RD_ShaderLoader* GetShadowShader() const;
 	RD_ShaderLoader* GetCurrentShader() const;
-	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref) const;
+	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref);
 	RD_MaterialLibrary* GetMaterialLibrary() const;
+	int GetCurrentShaderStorageIndex();
+	void IncrementCurrentShaderStorageIndex();
 
 	//Debug
 	void RenderDbg(RD_Camera*);
@@ -176,8 +191,6 @@ public:
 	bool IsFeatureEnabled(RendererFeature ftr);
 	void SendFeatureToShader(RD_ShaderLoader* shader, RendererFeature feature);
 
-	void UpdatePointsLighting();
-
 	//GUI
 	void RenderGUI_Screen() const;
 	RD_GUI_Manager* GetGUI_Manager() const;
@@ -185,8 +198,6 @@ public:
 	int GetFrameLimit() const;
 	bool GetErrorFlag() const;
 private:
-	void UpdateAmbientLighting();
-	void UpdateDirLighting();
 
 	void FillFeaturesArray();
 	void EnableAllFeatures();
@@ -205,6 +216,7 @@ private:
 	bool m_error_flag;
 	bool m_resize_override;
 	bool m_vsync;
+	bool m_need_cam_updt;
 
 	std::array<std::pair<std::string, bool>, 5> m_renderer_feature;
 
@@ -227,6 +239,9 @@ private:
 	std::vector<unsigned int> m_textureGarbageCollector;
 	std::vector<unsigned int> m_framebufferGarbageCollector;
 
+	std::unique_ptr<RD_Quad> m_quad;
+	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
+
 	//Deffered Rendering
 	Gbuff m_g_buffer;
 	RD_FrameBuffer* m_gbuffer;
@@ -235,17 +250,12 @@ private:
 	RD_FrameBuffer* m_shadows_blur;
 	RD_FrameBuffer* m_shadows_blur_b;
 
+	//PBR-Only stuff
+	RD_FrameBuffer* m_ssao_buffer;
 	RD_FrameBuffer* m_bloom_buffera;
 	RD_FrameBuffer* m_bloom_bufferb;
 
-	//PBR-Only stuff
-	RD_FrameBuffer* m_ssao_buffer;
-
-	std::unique_ptr<RD_Quad> m_quad;
-
-	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
-
-	//Internals shaders (some are'nt use and compiled if Pipeline is not PBR)
+	//Internals shaders (some aren't used and compiled if Pipeline is not PBR)
 	RD_ShaderLoader* m_shadowShader;
 
 	RD_ShaderLoader* m_light_shader;
@@ -273,7 +283,23 @@ private:
 	RD_UniformBuffer* m_dirLights_u;
 	RD_UniformBuffer* m_pointLight_u;
 	RD_UniformBuffer* m_ambient_u;
-	RD_UniformBuffer* m_ssao_u; //PBR
+	RD_UniformBuffer* m_ssao_u;
+	RD_UniformBuffer* m_model_u;
+	RD_UniformBuffer* m_lightview_u;
+	RD_UniformBuffer* m_lightspace_u;
+	RD_UniformBuffer* m_lightcount_u;
+	RD_UniformBuffer* m_text_color_u;
+
+	//ShaderStorage
+	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;
+	RD_ShaderStorageBuffer* m_sfx_tex_handles_s;
+	RD_ShaderStorageBuffer* m_blur_state_s;
+	RD_ShaderStorageBuffer* m_ssao_tex_handle_s;
+	RD_ShaderStorageBuffer* m_final_passes_tex_handle_s;
+	RD_ShaderStorageBuffer* m_shadowmaps_s;
+	RD_ShaderStorageBuffer* m_glyph_s;
+
+	int m_current_shader_storage_index;
 
 	vec2f m_vp_size, m_vp_pos;
 
@@ -294,5 +320,12 @@ int GetElemIndex(std::vector<T> array, T element) {
 		return -1;
 	}
 }
+
+struct ShaderBlurState {
+	float dir[3];
+	int index;
+	int threshold = 0;
+	int first_pass = 0;
+};
 
 #endif // !_RAINDROP_RENDERER_H__

@@ -36,8 +36,13 @@
 
 #include <string>
 #include <vector>
+#include <stddef.h>
 
 #include <vec3.h>
+
+#include "RD_ShaderLoader.h"
+
+class RaindropRenderer;
 
 class RAINDROPRENDERER_API RD_Texture
 {
@@ -76,7 +81,10 @@ public:
 		unsigned int scaleMode = SCALEMODE_LINEAR,
 		unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
 	
-	virtual void BindTexture(unsigned int tex_unit) = 0;
+	virtual bool BindTexture(unsigned int tex_unit) = 0;
+	virtual bool IsBindless() = 0;
+	virtual void MakeTexBindless(RaindropRenderer* rndr, RD_ShaderStorageBuffer* ssbo, const int index) = 0;
+	virtual uint64_t GetTextureHandle() = 0;
 
 	virtual unsigned int GetTextureID() = 0;
 
@@ -118,7 +126,10 @@ public:
 		const int h
 	);
 	
-	virtual void BindTexture(unsigned int tex_unit = 0);
+	virtual bool BindTexture(unsigned int tex_unit = 0);
+	virtual bool IsBindless() { return m_isTexBindless; }
+	virtual void MakeTexBindless(RaindropRenderer* rndr, RD_ShaderStorageBuffer* ssbo, const int index);
+	virtual uint64_t GetTextureHandle();
 
 	virtual void DeleteTexture();
 
@@ -136,6 +147,9 @@ private:
 	
 	unsigned int m_texture;
 	unsigned int m_ms_texture;
+
+	bool m_isTexBindless;
+	uint64_t m_texHandle;
 
 	bool m_ms;
 };

@@ -1,14 +1,32 @@
-#version 410 core
+#version 450 core
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec3 ShadowColor;
 
 in vec2 UVcoords;
 
-uniform mat4 lspaceMat[10];
+layout(std140, binding = 15) uniform LIGHTSPACE {
+	mat4 lspaceMat[10];
+};
 
-uniform sampler2D ShadowMap[10];
-uniform int NbrDirLights;
+#ifndef GL_ARB_bindless_texture
+	uniform sampler2D ShadowMap[10];
+#else
+	layout(std430, binding = 16) buffer SHADOWMAPS {
+		sampler2D ShadowMap[10];
+	};
+#endif //GL_ARB_bindless_texture
 
-uniform sampler2D gPos;
+layout(std140, binding = 17) uniform LIGHTCOUNT {
+	int NbrDirLights;
+};
+
+#ifdef GL_ARB_bindless_texture
+	layout(std430, binding = 8) buffer BINDLESS_PASSES {
+		sampler2D passes[6];
+	};
+#else
+	uniform sampler2D gPos;
+#endif //GL_ARB_bindless_texture
 
 float lerp(float v0, float v1, float t) {
 	return (1 - t) * v0 + t * v1;
@@ -18,8 +36,12 @@ void main() {
 	float finalShadow = 0.0;
 
 	for(int i = 0; i < NbrDirLights; i++) {
-		vec4 fpls = lspaceMat[i] * vec4(texture(gPos, UVcoords).rgb, 1.0);
-
+		#ifdef GL_ARB_bindless_texture
+			vec4 fpls = vec4(texture(passes[0], UVcoords).rgb, 1.0) * lspaceMat[i];
+		#else
+			vec4 fpls = vec4(texture(gPos, UVcoords).rgb, 1.0) * lspaceMat[i];
+		#endif //GL_ARB_bindless_texture
+		
 		vec3 projCoords = fpls.xyz / fpls.w;
 		projCoords = projCoords * 0.5 + 0.5;
 
@@ -39,14 +61,14 @@ void main() {
 			for(float y = -1; y <= 1; y += 1) {
 				float pcfDepth = texture(ShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
 
-				shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+				shadow += currentDepth - bias > pcfDepth ? 0.8 : 0.0;
 			}
 		}
 
-		finalShadow += clamp(shadow / 9, 0, 1);
+		finalShadow += shadow / 9;
 	}
 
 
-	ShadowColor = vec3(1 - finalShadow, 0.0, 0.0);
+	ShadowColor = vec3(clamp(1 - finalShadow, 0.0, 1.0), 0.0, 0.0);
 	//ShadowColor = fpls.rgb;
 }

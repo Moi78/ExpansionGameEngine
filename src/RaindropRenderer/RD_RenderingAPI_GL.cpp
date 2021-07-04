@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RD_RenderingAPI_GL.h"
+#include "RD_RenderingAPI.h"
 
 #include "RD_GUI_Manager.h"
 
@@ -29,7 +30,7 @@ bool RD_WindowingSystemGLFW::OpenWindow(std::string name, int w, int h) {
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
@@ -149,6 +150,7 @@ void glfwWinCallback(GLFWwindow* win, int w, int h) {
 
 RD_RenderingAPI_GL::RD_RenderingAPI_GL(RaindropRenderer* rndr) : RD_RenderingAPI() {
 	m_win_sys = new RD_WindowingSystemGLFW(rndr);
+	m_bindless_tex_available = false;
 }
 
 RD_RenderingAPI_GL::~RD_RenderingAPI_GL() {
@@ -172,7 +174,22 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 
+	if (CheckExtensionAvailability("GL_ARB_bindless_texture")) {
+		glEnable(GL_ARB_bindless_texture);
+		m_bindless_tex_available = true;
+		std::cout << "GL_ARB_bindless_texture supported !" << std::endl;
+	}
+	else {
+		m_bindless_tex_available = false;
+		std::cerr << "ERROR: GL_ARB_bindless_texture is not supported." << std::endl;
+		dispErrorMessageBox(L"GL_ARB_bindless_texture seems not to be supported, consider using Vulkan (not implmented yet) or DirectX (not implemented yet) or your dedicated GPU (this extension is known for not being available mainly on Intel iGPU devices). This program may disfunction.");
+	}
+
 	return true;
+}
+
+bool RD_RenderingAPI_GL::AreBindlessTexturesAvailable() {
+	return m_bindless_tex_available;
 }
 
 RD_RenderingAPI_VertexElemBufferGL* RD_RenderingAPI_GL::CreateVertexElemBuffer() {
@@ -229,6 +246,10 @@ RD_Cubemap* RD_RenderingAPI_GL::CreateCubemap() {
 
 RD_UniformBuffer* RD_RenderingAPI_GL::CreateUniformBuffer(const size_t bufferSize, const int binding) {
 	return new RD_UniformBuffer_GL(bufferSize, binding);
+}
+
+RD_ShaderStorageBuffer* RD_RenderingAPI_GL::CreateShaderStorageBuffer(const size_t bufferSize, const int binding) {
+	return new RD_ShaderStorageBuffer_GL(bufferSize, binding);
 }
 
 void RD_RenderingAPI_GL::SetViewportSize(int w, int h, int x, int y) {
@@ -467,6 +488,22 @@ void RD_RenderingAPI_VertexBufferGL::DeleteBuffer() {
 
 unsigned int RD_RenderingAPI_VertexBufferGL::GetFloatCount() {
 	return float_count;
+}
+
+//---------------------------------------------  Misc  ---------------------------------------------
+bool CheckExtensionAvailability(std::string ext) {
+	int k = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &k);
+
+	for (int i = 0; i < k; i++) {
+		const GLubyte* kext_str = glGetStringi(GL_EXTENSIONS, i);
+
+		if (!strcmp((const char*)kext_str, ext.c_str())) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 #endif //BUILD_OPENGL

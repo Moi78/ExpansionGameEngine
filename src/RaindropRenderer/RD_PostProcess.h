@@ -14,6 +14,7 @@
 
 #include "RD_ShaderLoader.h"
 #include "RD_Quad.h"
+#include "RD_Materials.h"
 
 class RD_API RD_PostProcessEffect
 {

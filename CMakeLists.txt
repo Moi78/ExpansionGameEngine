@@ -22,6 +22,7 @@ endif()
 add_definitions(${UBUNTU})
 add_definitions("-std=c++17")
 add_definitions("-fpermissive")
+add_definitions("-D_DEBUG")
 
 add_compile_definitions(BUILD_OPENGL)
 

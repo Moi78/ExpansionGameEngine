@@ -322,7 +322,6 @@ Node* Node_Editor::GetNodeFromPin(const int id) {
 	return nullptr;
 }
 
-
 int Node_Editor::GetLinkStartId(int end_id) {
 	int start_id = -1;
 	for (auto l : m_links) {
@@ -416,14 +415,31 @@ std::string Node_Editor::EvalNodes() {
 	//Pre-Scan of nodes
 	bool linkedShadowProcess = false;
 	bool linkedNormalMapProcess = false;
+
+	int texCount = 0;
 	for (auto n : m_nodes) {
 		if (n->GetNodeType() == NodeType::TSampler2D) {
-			outCode += "uniform sampler2D tex" + std::to_string(n->GetId()) + ";\n";
-
 			TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
-			m_textures.push_back(std::pair<std::string, std::string>(m_projectRoot + m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
+			s->SetShaderIndex(texCount);
+			texCount++;
 		}
+	}
 
+	if (texCount) {
+		outCode += "#ifndef GL_ARB_bindless_texture\n";
+		for (auto n : m_nodes) {
+			if (n->GetNodeType() == NodeType::TSampler2D) {
+				outCode += "uniform sampler2D tex" + std::to_string(n->GetId()) + ";\n";
+
+				TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
+				m_textures.push_back(std::pair<std::string, std::string>(m_projectRoot + m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
+			}
+		}
+		outCode += "#else\n";
+		outCode += "layout (std430) buffer TEXTURES {\nsampler2D tex[" + std::to_string(m_textures.size()) + "];\n};\n#endif\n\n";
+	}
+
+	for (auto n : m_nodes) {
 		if (n->GetNodeType() == NodeType::TNormalProcess && (!linkedNormalMapProcess)) {
 			std::ifstream bumpFunc;
 			bumpFunc.open("Engine/ShaderFragments/BumpMap.txt", std::ios::beg);
@@ -879,7 +895,6 @@ void ConstVec4::WriteNodeData(std::ofstream* file) {
 	file->write(reinterpret_cast<char*>(&m_value), sizeof(vec4f));
 }
 
-
 ConstFloat::ConstFloat(int id, int index) : Node(id) {
 	m_index = index;
 
@@ -985,6 +1000,7 @@ std::string Multiply::Stringifize(Node_Editor* nedit, int start_id) {
 
 TextureSampler::TextureSampler(int id, int index) : Node(id) {
 	m_index = index;
+	m_shader_index = 0;
 	memset(m_tex_path, 0, 300);
 }
 
@@ -1045,7 +1061,8 @@ void TextureSampler::render() {
 std::string TextureSampler::Stringifize(Node_Editor* nedit, int start_id) {
 	std::string outCode = "";
 
-	outCode += "texture(tex" + std::to_string(m_id) + ",";
+	//outCode += "texture(tex" + std::to_string(m_id) + ",";
+	outCode += "TEXTURE(" + std::to_string(m_id) + ", " + std::to_string(m_shader_index) + ", (";
 
 	Node* UV = nedit->GetNodeLinkedTo(m_index + 0);
 	if (UV) {
@@ -1055,7 +1072,7 @@ std::string TextureSampler::Stringifize(Node_Editor* nedit, int start_id) {
 		outCode += "UVcoord";
 	}
 
-	outCode += ")";
+	outCode += "))";
 
 	switch (start_id - m_index) {
 	case 1:

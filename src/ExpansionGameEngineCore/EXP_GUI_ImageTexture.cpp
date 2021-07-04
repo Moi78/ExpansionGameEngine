@@ -40,7 +40,7 @@ EXP_GUI_ImageTexture::EXP_GUI_ImageTexture(EXP_Game* game, std::string texRef, f
 		std::string workingDir = game->GetRenderer()->GetEngineDir();
 		m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.vert", workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.frag");
 
-		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader);
+		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader, m_game->GetRenderer());
 		m_manager->GetGUIshaderManager()->AddMaterialToLib(m_mat, "/Shaders/glsl/gui/GUI_ImageTexture.frag");
 	}
 	else {

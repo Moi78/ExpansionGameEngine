@@ -45,7 +45,7 @@ EXP_GUI_Button::EXP_GUI_Button(EXP_Game* game, RD_Callback* func, EXP_ButtonImag
 		std::string workingDir = game->GetRenderer()->GetEngineDir();
 		m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.vert", workingDir + "/Shaders/glsl/gui/GUI_ImageTexture.frag");
 
-		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader);
+		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader, m_game->GetRenderer());
 		m_manager->GetGUIshaderManager()->AddMaterialToLib(m_mat, "/Shaders/glsl/gui/GUI_ImageTexture.frag");
 	}
 	else {

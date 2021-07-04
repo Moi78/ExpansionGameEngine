@@ -10,7 +10,7 @@ EXP_PostProcessingEffect::EXP_PostProcessingEffect(EXP_Game* game, std::string s
 	std::string vertContent = getFileData(game->GetGameInfo().RootEngineContentFolder + "/Shaders/glsl/PostProcessing.vert");
 	m_shader->CompileShaderFromCode(vertContent, sread->GetShaderCode());
 
-	RD_ShaderMaterial* mat = new RD_ShaderMaterial(m_shader);
+	RD_ShaderMaterial* mat = new RD_ShaderMaterial(m_shader, m_game->GetRenderer());
 	LoadShader(mat);
 
 	for (int i = 0; i < sread->GetTextureCount(); i++) {
@@ -19,6 +19,7 @@ EXP_PostProcessingEffect::EXP_PostProcessingEffect(EXP_Game* game, std::string s
 
 		mat->AddTexture(sread->GetTextureParamName(i), tex);
 	}
+	mat->MakeSSBO();
 
 	game->GetRenderer()->AddPostProcessEffect(this);
 

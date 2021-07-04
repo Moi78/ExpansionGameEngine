@@ -190,6 +190,24 @@ void RD_ShaderLoader_GL::SetVec3(const std::string& name, vec3f vec) {
 	glUniform3fv(uniloc, 1, vec.GetPTR());
 }
 
+void RD_ShaderLoader_GL::SetUniformID(const int id, const std::string& name) {
+	uint16_t index = glGetUniformBlockIndex(m_program_id, name.c_str());
+	if (index == GL_INVALID_INDEX) {
+		std::cerr << "ERROR: Shader Storage Buffer " << name << " does not exists." << std::endl;
+	}
+
+	glUniformBlockBinding(m_program_id, index, id);
+}
+
+void RD_ShaderLoader_GL::SetShaderStorageID(const int id, const std::string& name) {
+	uint16_t index = glGetProgramResourceIndex(m_program_id, GL_SHADER_STORAGE_BLOCK, name.c_str());
+	if (index == GL_INVALID_INDEX) {
+		std::cerr << "ERROR: Shader Storage Buffer " << name << " does not exists." << std::endl;
+	}
+
+	glShaderStorageBlockBinding(m_program_id, index, id);
+}
+
 unsigned int RD_ShaderLoader_GL::GetProgID() {
 	return m_program_id;
 }
@@ -224,6 +242,36 @@ void RD_UniformBuffer_GL::UnbindBuffer() {
 
 void RD_UniformBuffer_GL::SetBufferSubData(const int offset, const size_t size, void* data) {
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+}
+
+RD_ShaderStorageBuffer_GL::RD_ShaderStorageBuffer_GL(const size_t bufferSize, const int binding) {
+	m_binding = binding;
+	m_SSBO = 0;
+	CreateSSBO(bufferSize);
+}
+
+RD_ShaderStorageBuffer_GL::~RD_ShaderStorageBuffer_GL() {
+	glDeleteBuffers(1, &m_SSBO);
+}
+
+void RD_ShaderStorageBuffer_GL::BindBuffer() {
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBO);
+}
+
+void RD_ShaderStorageBuffer_GL::UnbindBuffer() {
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+void RD_ShaderStorageBuffer_GL::SetBufferSubData(const int offset, const size_t size, void* data) {
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, size, data);
+}
+
+void RD_ShaderStorageBuffer_GL::CreateSSBO(const size_t bufferSize) {
+	glGenBuffers(1, &m_SSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_binding, m_SSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 #endif //BUILD_OPENGL

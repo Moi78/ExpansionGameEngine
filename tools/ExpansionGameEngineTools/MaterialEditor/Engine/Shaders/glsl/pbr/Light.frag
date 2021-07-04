@@ -1,4 +1,5 @@
-#version 410 core
+#version 450 core
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec4 LightPass;
 
 in vec2 UVcoords;
@@ -6,56 +7,92 @@ in vec2 UVcoords;
 //uniform sampler2D GUIscreen;
 
 //Passes
-uniform sampler2D ShadowPass;
+#ifndef GL_ARB_bindless_texture
+	uniform sampler2D ssao;
+	uniform sampler2D ShadowPass;
 
-uniform sampler2D gPos;
-uniform sampler2D gNormal;
+	uniform sampler2D gPos;
+	uniform sampler2D gNormal;
+	uniform sampler2D gAlbedo;
+	uniform sampler2D gSpec;
+	uniform sampler2D gMetRoughAO;
+	uniform sampler2D gEmissive;
+#else
+	layout(std430, binding = 8) buffer BINDLESS_PASSES {
+		sampler2D passes[6];
+	};
 
-uniform sampler2D gAlbedo;
-uniform sampler2D gSpec;
-uniform sampler2D gMetRoughAO;
-uniform sampler2D gEmissive;
-uniform sampler2D ssao;
+	layout(std430, binding = 9) buffer BINDLESS_SFX {
+		sampler2D passes_sfx[5];
+	};
+#endif //ARB_bindless_texture
 
 //Ambient
-uniform float AmbientStrength;
-uniform vec3 AmbientColor;
+layout(std140, binding = 2) uniform AMBIENT {
+	vec3 AmbientColor;
+	float AmbientStrength;
+};
 
 //Point Light
 const int MAX_POINT_LIGHTS = 243;
-uniform vec3 LightPos[MAX_POINT_LIGHTS];
-uniform float LightBrightness[MAX_POINT_LIGHTS];
-uniform vec3 LightColor[MAX_POINT_LIGHTS];
-uniform float LightRadius[MAX_POINT_LIGHTS];
-uniform int nbrPointLight;
+
+struct PointLight {
+	vec3 LightPos;
+	vec3 LightColor;
+	float LightBrightness;
+	float LightRadius;
+};
+
+layout(std140, binding = 3) uniform PointLightData {
+	int nbrPointLight;
+	PointLight plights[MAX_POINT_LIGHTS];
+};
 
 //Dir Light
-uniform int nbrDirLight;
-uniform vec3 DirLightDir[10];
-uniform vec3 DirLightColor[10];
-uniform float DirLightBrightness[10];
+struct DirLight {
+	vec3 Dir;
+	vec3 Color;
+	float brightness;
+};
 
-uniform vec3 CamPos;
+layout(std140, binding = 4) uniform DirLightData {
+	int nbrDirLight;
+	DirLight dlights[10];
+};
 
-uniform bool ftr_lighting = true;
-uniform bool ftr_specular = true;
-uniform bool ftr_ambient = true;
+layout(std140, binding = 5) uniform CamData {
+	vec3 CamPos;
+};
+
+//uniform bool ftr_lighting = true;
+//uniform bool ftr_specular = true;
+//uniform bool ftr_ambient = true;
 
 float PI = 3.14159265359;
 
-vec3 norm = normalize(texture(gNormal, UVcoords).rgb);
-vec3 FragPos = texture(gPos, UVcoords).rgb;
+#ifdef GL_ARB_bindless_texture
+	vec3 norm = normalize(texture(passes[1], UVcoords).rgb);
+	vec3 FragPos = texture(passes[0], UVcoords).rgb;
 
-vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
-float Specular = texture(gAlbedo, UVcoords).a;
-float SpecularExp = texture(gSpec, UVcoords).r;
+	vec3 Diffuse = texture(passes[2], UVcoords).rgb;
+	float Specular = texture(passes[2], UVcoords).a;
+	float SpecularExp = texture(passes[3], UVcoords).r;
 
-vec4 metrao = texture(gMetRoughAO, UVcoords);
+	vec4 metrao = texture(passes[4], UVcoords);
+#else 
+	vec3 norm = normalize(texture(gNorm, UVcoords).rgb);
+	vec3 FragPos = texture(gPos, UVcoords).rgb;
+
+	vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
+	float Specular = texture(gAlbedo, UVcoords).a;
+	float SpecularExp = texture(gSpec, UVcoords).r;
+#endif //GL_ARB_bindless_texture
+
 float Rness = metrao.g;
 float Metllc = metrao.r;
 float AO = metrao.b;
 
-vec3 viewDir = normalize(CamPos - FragPos);
+vec3 viewDir = normalize((CamPos - FragPos));
 
 vec3 F0 = mix(vec3(0.04), Diffuse, Metllc);
 
@@ -98,9 +135,9 @@ float GeomSmith(vec3 N, vec3 V, vec3 L, float roughness) {
 vec3 CalcDirLight(int index) {
 	float dist = 100000.0;
 
-	vec3 ColPow = DirLightColor[index] * DirLightBrightness[index];
+	vec3 ColPow = dlights[index].Color * dlights[index].brightness;
 
-	vec3 L = normalize(vec3(-DirLightDir[index]));
+	vec3 L = normalize(vec3(-dlights[index].Dir));
 	vec3 H = normalize(viewDir + L);
 
 	vec3 radiance = ColPow;
@@ -123,12 +160,12 @@ vec3 CalcDirLight(int index) {
 }
 
 vec3 CalcPointLight(int lightIndex) {
-	float dist = length(LightPos[lightIndex] - FragPos);
+	float dist = length(plights[lightIndex].LightPos - FragPos);
 
-	if(dist < LightRadius[lightIndex]) {
-		vec3 ColPow = LightColor[lightIndex] * LightBrightness[lightIndex];
+	if(dist < plights[lightIndex].LightRadius) {
+		vec3 ColPow = plights[lightIndex].LightColor * plights[lightIndex].LightBrightness;
 
-		vec3 L = normalize(LightPos[lightIndex] - FragPos);
+		vec3 L = normalize(plights[lightIndex].LightPos - FragPos);
 		vec3 H = normalize(viewDir + L);
 
 		float attenuation = 1.0 / ((dist * dist));
@@ -156,7 +193,11 @@ vec3 CalcPointLight(int lightIndex) {
 void main() {
 	vec3 diffSpec = vec3(0.0);
 
-	float shadow = texture(ShadowPass, UVcoords).r;
+	#ifndef GL_ARB_bindless_texture
+		float shadow = texture(ShadowPass, UVcoords).r;
+	#else
+		float shadow = texture(passes_sfx[2], UVcoords).r;
+	#endif
 
 	for(int i = 0; i < nbrDirLight; i++) {
 		diffSpec += max(CalcDirLight(i), 0.0) * shadow;
@@ -166,7 +207,12 @@ void main() {
 		diffSpec += max(CalcPointLight(i), 0.0);
 	}
 
-	float SSAO = texture(ssao, UVcoords).r;
+	#ifndef GL_ARB_bindless_texture
+		float SSAO = texture(ssao, UVcoords).r;
+	#else
+		float SSAO = texture(passes_sfx[4], UVcoords).r;
+	#endif
+
 	vec3 ambient = (AmbientColor * AmbientStrength) * Diffuse * AO;
 	vec3 result = (diffSpec + ambient) * SSAO;
 
@@ -175,7 +221,7 @@ void main() {
 	result = pow(result, vec3(1.0 / 2.2));
 
 	//Emissive color
-	result += texture(gEmissive, UVcoords).rgb;
+	result += texture(passes[5], UVcoords).rgb;
 
 	LightPass = vec4(result, 1.0);
 }

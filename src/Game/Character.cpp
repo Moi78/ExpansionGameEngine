@@ -28,7 +28,7 @@ void Character::Start() {
 }
 
 void Character::Tick() {
-	SetWorldPos(m_bound->GetWorldPosition());
+	//SetWorldPos(m_bound->GetWorldPosition());
 
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 	m_cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
@@ -37,8 +37,8 @@ void Character::Tick() {
 }
 
 void Character::MoveForward() {
-	//AddWorldPos(m_cam->GetForwardVector() * 0.1f);
-	m_bound->AddMovementInput(m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 0.0f), 20.0f);
+	AddWorldPos(m_cam->GetForwardVector() * 0.1f);
+	//m_bound->AddMovementInput(m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 0.0f), 20.0f);
 }
 
 void Character::DestroyActor() {

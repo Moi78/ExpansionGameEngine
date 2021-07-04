@@ -1,34 +1,56 @@
-#version 410 core
+#version 450 core
+#extension GL_ARB_bindless_texture : enable
 layout (location = 0) out vec3 bloom;
 
 in vec2 UVcoords;
 
-uniform sampler2D gShaded;
-uniform bool horizontal;
-uniform int threshold = 0;
+#ifdef GL_ARB_bindless_texture
+    layout(std430, binding = 8) buffer BINDLESS_PASSES {
+        sampler2D passes[6];
+    };
 
-int kernelSize = 25;
-float ksize = 25;
+    layout(std430, binding = 12) buffer BINDLESS_FINAL_PASSES {
+        sampler2D fpasses[4];
+    };
+#else
+    uniform sampler2D gShaded;
+#endif //GL_ARB_bindless_texture
 
-uniform float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
+layout(std430, binding = 10) buffer BLUR_STATE {
+	vec3 dir;
+	int index;
+    int threshold;
+    bool first_pass;
+};
+
+//From https://github.com/Jam3/glsl-fast-gaussian-blur/blob/master/13.glsl
+vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
+  vec4 color = vec4(0.0);
+  vec2 off1 = vec2(1.411764705882353) * direction;
+  vec2 off2 = vec2(3.2941176470588234) * direction;
+  vec2 off3 = vec2(5.176470588235294) * direction;
+  color += (texture2D(image, uv) - threshold) * 0.1964825501511404;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv + (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv - (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv + (off3 / resolution)) * 0.010381362401148057;
+  color += texture2D(image, uv - (off3 / resolution)) * 0.010381362401148057;
+  return color;
+}
 
 void main() {
-    vec3 result = texture(gShaded, UVcoords).rgb * weight[0];
-    vec2 tex_offset = 1.0 / textureSize(gShaded, 0);
-
-    vec2 texelSize = 1.0 / textureSize(gShaded, 0);
-
-    if(horizontal) {
-        for(int i = 1; i < 5; i++) {
-            result += clamp(texture(gShaded, UVcoords + vec2(tex_offset.x * i, 0.0)).rgb - threshold, 0, 1) * weight[i];
-            result += clamp(texture(gShaded, UVcoords - vec2(tex_offset.x * i, 0.0)).rgb - threshold, 0, 1) * weight[i];
-        }
-        bloom = clamp(result, 0, 1);
+    if(first_pass) {
+        #ifndef GL_ARB_bindless_texture
+	        bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), dir.xy).rgb - threshold, 0, 1);
+	    #else
+	        bloom = clamp(blur13(passes[index], UVcoords, textureSize(passes[index], 0), dir.xy).rgb - threshold, 0, 1);
+        #endif
     } else {
-        for(int i = 1; i < 5; i++) {
-            result += clamp(texture(gShaded, UVcoords + vec2(0.0, tex_offset.y * i)).rgb - threshold, 0, 1) * weight[i];
-            result += clamp(texture(gShaded, UVcoords - vec2(0.0, tex_offset.y * i)).rgb - threshold, 0, 1) * weight[i];
-        }
-        bloom = clamp(result, 0, 1);
+        #ifndef GL_ARB_bindless_texture
+	        bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), dir.xy).rgb - threshold, 0, 1);
+	    #else
+	        bloom = clamp(blur13(fpasses[index], UVcoords, textureSize(fpasses[index], 0), dir.xy).rgb - threshold, 0, 1);
+        #endif
     }
 }

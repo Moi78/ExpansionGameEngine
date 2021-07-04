@@ -281,8 +281,15 @@ public:
 		memcpy(m_tex_path, data.c_str(), 300);
 	}
 
+	void SetShaderIndex(const int index) {
+		m_shader_index = index;
+	}
+
+	int GetShaderIndex() { return m_shader_index; }
+
 private:
 	char m_tex_path[300];
+	int m_shader_index;
 };
 
 class Subtract :
