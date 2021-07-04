@@ -40,9 +40,11 @@ void CompileMat(EXP_Game* game, Node_Editor* editor, RD_ShaderMaterial* mat) {
 		tex->LoadTexture(editor->GetTextureRefByIndex(i).first);
 
 		mat->AddTexture(editor->GetTextureRefByIndex(i).second, tex);
+		std::cout << "Adding Tex Ref : " << editor->GetTextureRefByIndex(i).first << " @index : " << editor->GetTextureRefByIndex(i).second << std::endl;
 	}
-
 	mat->SetShader(sl, false);
+
+	mat->MakeSSBO();
 }
 
 int main(int argc, char* argv[]) {
@@ -125,7 +127,7 @@ int main(int argc, char* argv[]) {
 
 	imnodes::SetNodeEditorSpacePos(snode->GetId(), ImVec2(450.0f, 50.0f));
 
-	RD_ShaderMaterial* mat = new RD_ShaderMaterial(nullptr);
+	RD_ShaderMaterial* mat = new RD_ShaderMaterial(nullptr, game->GetRenderer());
 	CompileMat(game, editor, mat);
 
 	EXP_StaticMesh* msh = new EXP_StaticMesh(game,

@@ -25,7 +25,6 @@
 #include "RD_ShaderLoader.h"
 #include "RD_FrameLimiter.h"
 #include "RD_PointLight.h"
-#include "RD_Materials.h"
 #include "RD_Texture.h"
 #include "RD_FrameBuffer.h"
 #include "RD_Structs.h"
@@ -54,7 +53,7 @@
 class RD_DirLight;
 class RD_Mesh;
 class RD_Quad;
-//class RD_FrameBuffer;
+class RD_ShaderMaterial;
 class RD_Camera;
 class RD_MaterialLibrary;
 class RD_GUI_Manager;
@@ -177,8 +176,10 @@ public:
 	void SwitchShader(RD_ShaderLoader*);
 	RD_ShaderLoader* GetShadowShader() const;
 	RD_ShaderLoader* GetCurrentShader() const;
-	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref) const;
+	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref);
 	RD_MaterialLibrary* GetMaterialLibrary() const;
+	int GetCurrentShaderStorageIndex();
+	void IncrementCurrentShaderStorageIndex();
 
 	//Debug
 	void RenderDbg(RD_Camera*);
@@ -297,6 +298,8 @@ private:
 	RD_ShaderStorageBuffer* m_final_passes_tex_handle_s;
 	RD_ShaderStorageBuffer* m_shadowmaps_s;
 	RD_ShaderStorageBuffer* m_glyph_s;
+
+	int m_current_shader_storage_index;
 
 	vec2f m_vp_size, m_vp_pos;
 

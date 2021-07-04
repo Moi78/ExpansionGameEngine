@@ -13,3 +13,9 @@ in vec3 Bitan;
 
 in vec3 FragPos;
 in vec2 UVcoord;
+
+#ifdef GL_ARB_bindless_texture
+#define TEXTURE(id, index, UV) texture(tex[index], UV)
+#else
+#define TEXTURE(id, index, UV) texture(tex#id, UV)
+#endif

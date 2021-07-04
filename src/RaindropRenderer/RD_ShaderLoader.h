@@ -48,10 +48,11 @@ public:
 	virtual void SetBool(const std::string& name, bool value) = 0;
 	virtual void SetInt(const std::string& name, int value) = 0;
 	virtual void SetFloat(const std::string& name, float value) = 0;
-
 	virtual void SetMatrix(const std::string& name, mat4f matrix) = 0;
-
 	virtual void SetVec3(const std::string& name, vec3f vec) = 0;
+
+	virtual void SetUniformID(const int id, const std::string& name) = 0;
+	virtual void SetShaderStorageID(const int id, const std::string& name) = 0;
 
 	virtual unsigned int GetProgID() = 0;
 };
@@ -94,10 +95,11 @@ public:
 	void SetBool(const std::string &name, bool value);
 	void SetInt(const std::string& name, int value);
 	void SetFloat(const std::string& name, float value);
-
 	void SetMatrix(const std::string& name, mat4f matrix);
-
 	void SetVec3(const std::string& name, vec3f vec);
+
+	virtual void SetUniformID(const int id, const std::string& name);
+	virtual void SetShaderStorageID(const int id, const std::string& name);
 
 	unsigned int GetProgID();
 

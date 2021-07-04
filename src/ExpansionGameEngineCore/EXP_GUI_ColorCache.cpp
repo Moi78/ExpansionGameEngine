@@ -31,7 +31,7 @@ EXP_GUI_ColorCache::EXP_GUI_ColorCache(EXP_Game* game, vec3f color, float opacit
 		std::string workingDir = game->GetRenderer()->GetEngineDir();
 		m_gui_shader->compileShaderFromFile(workingDir + "/Shaders/glsl/gui/GUI_ColorCache.vert", workingDir + "/Shaders/glsl/gui/GUI_ColorCache.frag");
 
-		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader);
+		RD_ShaderMaterial* m_mat = new RD_ShaderMaterial(m_gui_shader, m_game->GetRenderer());
 		m_manager->GetGUIshaderManager()->AddMaterialToLib(m_mat, "/Shaders/glsl/gui/GUI_ColorCache.frag");
 	}
 	else {

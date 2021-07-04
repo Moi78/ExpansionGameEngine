@@ -190,6 +190,24 @@ void RD_ShaderLoader_GL::SetVec3(const std::string& name, vec3f vec) {
 	glUniform3fv(uniloc, 1, vec.GetPTR());
 }
 
+void RD_ShaderLoader_GL::SetUniformID(const int id, const std::string& name) {
+	uint16_t index = glGetUniformBlockIndex(m_program_id, name.c_str());
+	if (index == GL_INVALID_INDEX) {
+		std::cerr << "ERROR: Shader Storage Buffer " << name << " does not exists." << std::endl;
+	}
+
+	glUniformBlockBinding(m_program_id, index, id);
+}
+
+void RD_ShaderLoader_GL::SetShaderStorageID(const int id, const std::string& name) {
+	uint16_t index = glGetProgramResourceIndex(m_program_id, GL_SHADER_STORAGE_BLOCK, name.c_str());
+	if (index == GL_INVALID_INDEX) {
+		std::cerr << "ERROR: Shader Storage Buffer " << name << " does not exists." << std::endl;
+	}
+
+	glShaderStorageBlockBinding(m_program_id, index, id);
+}
+
 unsigned int RD_ShaderLoader_GL::GetProgID() {
 	return m_program_id;
 }

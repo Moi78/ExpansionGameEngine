@@ -477,13 +477,14 @@ RD_ShaderMaterial* EXP_Game::GetShaderByFileRefInstanced(const std::string& ref)
 	RD_ShaderLoader* shd = m_rndr->GetRenderingAPI()->CreateShader();
 	shd->CompileShaderFromCode(vert, frag);
 
-	RD_ShaderMaterial* sm = new RD_ShaderMaterial(shd);
+	RD_ShaderMaterial* sm = new RD_ShaderMaterial(shd, GetRenderer());
 
 	for (int i = 0; i < mr.GetTextureCount(); i++) {
 		RD_Texture* t = m_rndr->GetRenderingAPI()->CreateTexture();
 		t->LoadTexture(mr.GetTexturePath(i));
 		sm->AddTexture(mr.GetTextureParamName(i), t);
 	}
+	sm->MakeSSBO();
 
 	mr.CloseFile();
 

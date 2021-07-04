@@ -9,6 +9,7 @@
 #include "RD_GUI_Manager.h"
 #include "RD_PostProcess.h"
 #include "RD_Particles.h"
+#include "RD_Materials.h"
 
 #include "RD_RenderingAPI.h"
 #include "RD_RenderingAPI_GL.h"
@@ -166,10 +167,12 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_blankTexture = m_api->CreateTexture();
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
+	m_current_shader_storage_index = 30;
+
 	if constexpr (RENDER_DEBUG_ENABLED) {
 		RD_ShaderLoader* shad = m_api->CreateShader();
 		shad->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Debug.vert", m_engineDir + "/Shaders/glsl/Debug.frag");
-		m_dbgMat = new RD_ShaderMaterial(shad);
+		m_dbgMat = new RD_ShaderMaterial(shad, this);
 
 		m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, m_dbgMat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
 		m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
@@ -198,7 +201,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_engineDir + "/Shaders/glsl/TextRender.vert",
 		m_engineDir + "/Shaders/glsl/TextRender.frag"
 	);
-	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld), "text");
+	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld, this), "text");
 
 	UpdateAmbientLighting();
 
@@ -1100,7 +1103,7 @@ void RaindropRenderer::EmptyFramebufferGarbageCollector() {
 	}*/
 }
 
-RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref) const {
+RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref) {
 	if (!std::filesystem::exists(ref)) {
 		std::cerr << "Shader file " << ref << " does not exist." << std::endl;
 		dispErrorMessageBox(StrToWStr("Shader file " + ref + " does not exists"));
@@ -1118,13 +1121,14 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref)
 	RD_ShaderLoader* shader = m_api->CreateShader();
 	shader->CompileShaderFromCode(vcode, fcode);
 
-	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader);
+	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader, this);
 	for (int i = 0; i < mread.GetTextureCount(); i++) {
 		RD_Texture* tex = m_api->CreateTexture();
 		tex->LoadTexture(mread.GetTexturePath(i));
 
 		shdmat->AddTexture(mread.GetTextureParamName(i), tex);
 	}
+	shdmat->MakeSSBO();
 
 	m_matlib->AddMaterialToLib(shdmat, ref);
 	return shdmat;
@@ -1309,4 +1313,12 @@ RD_ShaderStorageBuffer* RaindropRenderer::GetGlyphTexHandle() {
 
 RD_UniformBuffer* RaindropRenderer::GetTextColorUniform() {
 	return m_text_color_u;
+}
+
+int RaindropRenderer::GetCurrentShaderStorageIndex() {
+	return m_current_shader_storage_index;
+}
+
+void RaindropRenderer::IncrementCurrentShaderStorageIndex() {
+	m_current_shader_storage_index++;
 }
