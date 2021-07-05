@@ -5,6 +5,7 @@
 #include <EXP_Level.h>
 #include <EXP_Callbacks.h>
 #include <EXP_RigidBody.h>
+#include <EXP_PostProcessEffect.h>
 
 #include <EXP_TextSurface.h>
 

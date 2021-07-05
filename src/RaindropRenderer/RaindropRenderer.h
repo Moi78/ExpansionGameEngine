@@ -265,6 +265,7 @@ private:
 	RD_ShaderLoader* m_shadowBlur;
 
 	RD_ShaderLoader* m_bloom; //PBR
+	RD_ShaderLoader* m_bloom_apply; //PBR
 	RD_ShaderLoader* m_ssr_shader; //PBR
 	
 	RD_ShaderLoader* m_ssao_shader; //PBR

@@ -22,6 +22,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BloomApply.frag" />
+    <None Include="BloomApply.vert" />
     <None Include="Engine\Shaders\glsl\Beauty.frag" />
     <None Include="Engine\Shaders\glsl\Beauty.vert" />
     <None Include="Engine\Shaders\glsl\Debug.frag" />

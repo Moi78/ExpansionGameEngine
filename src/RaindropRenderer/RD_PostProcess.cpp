@@ -15,8 +15,9 @@ void RD_PostProcessEffect::RenderEffect(RD_Texture* screen) {
 	m_shader->GetShader()->useShader();
 	m_shader->BindMaterial();
 
-	screen->BindTexture(9);
-	m_shader->GetShader()->SetInt("screen", 9);
+	if (screen->BindTexture(9)) {
+		m_shader->GetShader()->SetInt("screen", 9);
+	}
 
 	m_screen->RenderQuad();
 }

@@ -103,6 +103,12 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 			m_engineDir + "/Shaders/glsl/pbr/bloom.vert",
 			m_engineDir + "/Shaders/glsl/pbr/bloom.frag"
 		);
+
+		m_bloom_apply = m_api->CreateShader();
+		m_bloom_apply->compileShaderFromFile(
+			m_engineDir + "/Shaders/glsl/pbr/BloomApply.vert",
+			m_engineDir + "/Shaders/glsl/pbr/BloomApply.frag"
+		);
 		
 		m_CurrentShader = m_light_shader;
 
@@ -260,6 +266,7 @@ RaindropRenderer::~RaindropRenderer() {
 		delete m_ssao_shader;
 		delete m_ssao_blur_shader;
 		delete m_bloom;
+		delete m_bloom_apply;
 
 		delete m_ssao_noise_tex;
 		delete m_ssao_tex_handle_s;
@@ -644,8 +651,6 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_light_pprocess = m_api->CreateFrameBuffer(width, height, true);
 	//Light & PostProcess screen
 	m_light_pprocess->AddAttachement(IMGFORMAT_RGB16F);
-	//SSR Texture
-	m_light_pprocess->AddAttachement(IMGFORMAT_RGB);
 	m_light_pprocess->BuildFBO();
 
 	m_light_pprocess->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 0);
@@ -875,6 +880,21 @@ void RaindropRenderer::RenderBloom() {
 	m_blur_state_s->UnbindBuffer();
 
 	m_quad->RenderQuad();
+
+	//m_api->Clear(COLOR_BUFFER);
+	m_light_pprocess->BindFBO();
+
+	SwitchShader(m_bloom_apply);
+
+	if (m_light_pprocess->GetAttachementByIndex(0)->BindTexture(0)) {
+		m_bloom_apply->SetInt("screen", 0);
+	}
+
+	if (m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(1)) {
+		m_bloom_apply->SetInt("bloom", 1);
+	}
+
+	m_quad->RenderQuad();
 }
 
 
@@ -985,22 +1005,6 @@ void RaindropRenderer::RenderBeauty() {
 
 	if (m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5)) {
 		m_beauty_shader->SetInt("lightpass", 5);
-	}
-
-	if (m_gui_manager->GetScreenTexture()->BindTexture(6)) {
-		m_beauty_shader->SetInt("GUIscreen", 6);
-	}
-
-	/*
-	if (m_pipeline == Pipeline::PBR_ENGINE) {
-		if (m_light_pprocess->GetAttachementByIndex(1)->BindTexture(7)) { //SSR Attachement
-			m_beauty_shader->SetInt("SSR", 7);
-		}
-	}
-	*/
-
-	if (m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(8)) {
-		m_beauty_shader->SetInt("bloom", 8);
 	}
 
 	m_quad->RenderQuad();
