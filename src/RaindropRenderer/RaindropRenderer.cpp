@@ -6,7 +6,6 @@
 #include "RD_Quad.h"
 #include "RD_Camera.h"
 #include "RD_MaterialLibrary.h"
-#include "RD_GUI_Manager.h"
 #include "RD_PostProcess.h"
 #include "RD_Particles.h"
 #include "RD_Materials.h"
@@ -136,7 +135,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
 	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 9);
 	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
-	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(4 * sizeof(uint64_t), 12);
+	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 12);
 	m_shadowmaps_s = m_api->CreateShaderStorageBuffer(10 * sizeof(uint64_t), 16);
 	m_glyph_s = m_api->CreateShaderStorageBuffer(sizeof(uint64_t), 18);
 
@@ -192,9 +191,6 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	else {
 		CreateGbuff_PBR();
 	}
-
-	m_gui_manager = std::make_unique<RD_GUI_Manager>(this);
-	m_gui_manager->InitManager();
 
 	m_quad = std::make_unique<RD_Quad>(this);
 	m_quad->Bufferize();
@@ -1148,14 +1144,6 @@ bool RaindropRenderer::GetErrorFlag() const {
 
 std::string RaindropRenderer::GetEngineDir() const {
 	return m_engineDir;
-}
-
-void RaindropRenderer::RenderGUI_Screen() const {
-	m_gui_manager->RenderScreen();
-}
-
-RD_GUI_Manager* RaindropRenderer::GetGUI_Manager() const {
-	return m_gui_manager.get();
 }
 
 void RaindropRenderer::AddPostProcessEffect(RD_PostProcessEffect* effect) {

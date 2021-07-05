@@ -9,32 +9,11 @@ in vec2 UVcoords;
 uniform sampler2D screen;
 #else
 layout(std430, binding = 12) buffer FINAL_PASSES {
-	sampler2D passes[4];
-};
-#endif
-
-#ifdef GL_ARB_bindless_texture
-#define TEXTURE(id, index, UV) texture(tex[index], UV)
-#else
-#define TEXTURE(id, index, UV) texture(tex#id, UV)
-#endif
-
-#ifndef GL_ARB_bindless_texture
-uniform sampler2D tex4;
-#else
-layout(std430) buffer TEXTURES {
-    sampler2D tex[1];
+	sampler2D passes[5];
 };
 #endif
 
 void main() {
-    FragColor = texture(passes[0], UVcoords) * vec4(TEXTURE(4, 0, UVcoords).rgb, 1.0);
-}",
-    "textures": [
-        {
-			"param" : "tex4",
-			"path" : "Content/textures/cactus_diff.jpg",
-			"texOffset" : 0
-        }
-    ]
+    FragColor = texture(passes[0], UVcoords) * vec4(1.0, 0.5, 0.5, 1.0);
+}"
 }

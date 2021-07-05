@@ -42,12 +42,6 @@
     <ClInclude Include="RD_FrameLimiter.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="RD_GUI_Element.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="RD_GUI_Manager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="RD_MaterialLibrary.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -129,12 +123,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_FrameLimiter.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="RD_GUI_Element.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="RD_GUI_Manager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_MaterialLibrary.cpp">

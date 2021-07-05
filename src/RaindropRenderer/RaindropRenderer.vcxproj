@@ -174,8 +174,6 @@
     <ClInclude Include="RD_FrameBuffer.h" />
     <ClInclude Include="RD_FrameLimiter.h" />
     <ClInclude Include="RD_GenericRessourceManager.h" />
-    <ClInclude Include="RD_GUI_Element.h" />
-    <ClInclude Include="RD_GUI_Manager.h" />
     <ClInclude Include="RD_InstanciatedMesh.h" />
     <ClInclude Include="RD_MaterialLibrary.h" />
     <ClInclude Include="RD_Materials.h" />
@@ -209,8 +207,6 @@
     <ClCompile Include="RD_Error.cpp" />
     <ClCompile Include="RD_FrameBuffer.cpp" />
     <ClCompile Include="RD_FrameLimiter.cpp" />
-    <ClCompile Include="RD_GUI_Element.cpp" />
-    <ClCompile Include="RD_GUI_Manager.cpp" />
     <ClCompile Include="RD_InstanciatedMesh.cpp" />
     <ClCompile Include="RD_MaterialLibrary.cpp" />
     <ClCompile Include="RD_Materials.cpp" />

@@ -22,8 +22,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BloomApply.frag" />
-    <None Include="BloomApply.vert" />
     <None Include="Engine\Shaders\glsl\Beauty.frag" />
     <None Include="Engine\Shaders\glsl\Beauty.vert" />
     <None Include="Engine\Shaders\glsl\Debug.frag" />
@@ -34,6 +32,8 @@
     <None Include="Engine\Shaders\glsl\Particles.vert" />
     <None Include="Engine\Shaders\glsl\pbr\bloom.frag" />
     <None Include="Engine\Shaders\glsl\pbr\bloom.vert" />
+    <None Include="Engine\Shaders\glsl\pbr\BloomApply.frag" />
+    <None Include="Engine\Shaders\glsl\pbr\BloomApply.vert" />
     <None Include="Engine\Shaders\glsl\pbr\Light.frag" />
     <None Include="Engine\Shaders\glsl\pbr\Light.vert" />
     <None Include="Engine\Shaders\glsl\pbr\SSAO.frag" />

@@ -104,10 +104,10 @@
     <None Include="Engine\Shaders\glsl\ShadowBlur.vert">
       <Filter>GLSL</Filter>
     </None>
-    <None Include="BloomApply.vert">
+    <None Include="Engine\Shaders\glsl\pbr\BloomApply.frag">
       <Filter>GLSL\PBR</Filter>
     </None>
-    <None Include="BloomApply.frag">
+    <None Include="Engine\Shaders\glsl\pbr\BloomApply.vert">
       <Filter>GLSL\PBR</Filter>
     </None>
   </ItemGroup>

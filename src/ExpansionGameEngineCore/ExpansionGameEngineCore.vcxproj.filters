@@ -39,18 +39,6 @@
     <ClInclude Include="EXP_Game.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="EXP_GUI_Button.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="EXP_GUI_ColorCache.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="EXP_GUI_ImageTexture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="EXP_GuiManager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="EXP_HotLoad.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -120,18 +108,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="EXP_Game.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="EXP_GUI_Button.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="EXP_GUI_ColorCache.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="EXP_GUI_ImageTexture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="EXP_GuiManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="EXP_HotLoad.cpp">

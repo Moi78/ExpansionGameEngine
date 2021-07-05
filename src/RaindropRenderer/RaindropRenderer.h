@@ -191,10 +191,6 @@ public:
 	bool IsFeatureEnabled(RendererFeature ftr);
 	void SendFeatureToShader(RD_ShaderLoader* shader, RendererFeature feature);
 
-	//GUI
-	void RenderGUI_Screen() const;
-	RD_GUI_Manager* GetGUI_Manager() const;
-
 	int GetFrameLimit() const;
 	bool GetErrorFlag() const;
 private:
@@ -240,7 +236,6 @@ private:
 	std::vector<unsigned int> m_framebufferGarbageCollector;
 
 	std::unique_ptr<RD_Quad> m_quad;
-	std::unique_ptr<RD_GUI_Manager> m_gui_manager;
 
 	//Deffered Rendering
 	Gbuff m_g_buffer;

@@ -2,8 +2,6 @@
 #include "RD_RenderingAPI_GL.h"
 #include "RD_RenderingAPI.h"
 
-#include "RD_GUI_Manager.h"
-
 //---------------------------------------------  RD_WindowingSystemGLFW  ---------------------------------------------
 
 #ifdef BUILD_OPENGL
@@ -143,7 +141,6 @@ void RD_WindowingSystemGLFW::SetVSync(const bool vsync) {
 void glfwWinCallback(GLFWwindow* win, int w, int h) {
 	RaindropRenderer* rndr = (RaindropRenderer*)glfwGetWindowUserPointer(win);
 	rndr->ResizeViewport(vec2f(0.0f, 0.0f), vec2f(w, h));
-	rndr->GetGUI_Manager()->RebuildFramebuffer();
 }
 
 //---------------------------------------------  RD_Rendering_API_GL ---------------------------------------------
