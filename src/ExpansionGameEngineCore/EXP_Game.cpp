@@ -407,7 +407,7 @@ void EXP_Game::UnloadCurrentMap() {
 	m_rndr->UnregisterAllParticleEmitters();
 	
 	m_rndr->GetMaterialLibrary()->ClearLibrary();
-
+    
 	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.
 	m_sigLevelFinalCleanup = true;
@@ -415,6 +415,18 @@ void EXP_Game::UnloadCurrentMap() {
 
 void EXP_Game::LoadMap(const std::string& map) {
 	UnloadCurrentMap();
+    
+    if(!m_rndr->GetMaterialLibrary()->DoMaterialExists("text")) {
+        //Essential Material
+        RD_ShaderLoader* ld = m_rndr->GetRenderingAPI()->CreateShader();
+        ld->compileShaderFromFile(
+            m_gameinfo.RootEngineContentFolder + "/Shaders/glsl/TextRender.vert",
+            m_gameinfo.RootEngineContentFolder + "/Shaders/glsl/TextRender.frag"
+        );
+        m_rndr->GetMaterialLibrary()->AddMaterialToLib(new RD_ShaderMaterial(ld, GetRenderer()), "text");
+
+    }
+    
 	m_PlayingMap->LoadMap(m_gameinfo.RootGameContentFolder + map);
 
 	m_PlayingMap->GetLevelCode()->OnStart();

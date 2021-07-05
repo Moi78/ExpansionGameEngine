@@ -17,15 +17,13 @@ RD_FrameBuffer_GL::RD_FrameBuffer_GL(int w, int h, bool nodepth) : RD_FrameBuffe
 }
 
 RD_FrameBuffer_GL::~RD_FrameBuffer_GL() {
-	for (auto attachement : m_attachments) {
+    for (auto attachement : m_attachments) {
 		delete attachement.tex;
 	}
 	m_attachments.clear();
-
-	glDeleteFramebuffers(1, &m_FBO);
+    
+    glDeleteFramebuffers(1, &m_FBO);
 	glDeleteRenderbuffers(1, &m_RBO);
-
-	delete m_FBO_nMS;
 }
 
 unsigned int RD_FrameBuffer_GL::GetFBO() {
