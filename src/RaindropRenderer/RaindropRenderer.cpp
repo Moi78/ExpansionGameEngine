@@ -138,6 +138,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 12);
 	m_shadowmaps_s = m_api->CreateShaderStorageBuffer(10 * sizeof(uint64_t), 16);
 	m_glyph_s = m_api->CreateShaderStorageBuffer(sizeof(uint64_t), 18);
+	m_final_pass_selector_s = m_api->CreateShaderStorageBuffer(sizeof(int), 20);
 
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);
@@ -173,6 +174,10 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
 	m_current_shader_storage_index = 30;
+
+	m_final_pass_selector_s->BindBuffer();
+	m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)0);
+	m_final_pass_selector_s->UnbindBuffer();
 
 	if constexpr (RENDER_DEBUG_ENABLED) {
 		RD_ShaderLoader* shad = m_api->CreateShader();
@@ -253,6 +258,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_final_passes_tex_handle_s;
 	delete m_shadowmaps_s;
 	delete m_glyph_s;
+	delete m_final_pass_selector_s;
 
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
@@ -713,10 +719,10 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 		m_api->Clear(COLOR_BUFFER);
 		m_bloom_bufferb->UnbindFBO();
 	}
-	
-	RenderPostProcess();
 
 	m_light_pprocess->UnbindFBO();
+
+	RenderPostProcess();
 }
 
 void RaindropRenderer::RenderParticles() {
@@ -785,9 +791,63 @@ void RaindropRenderer::RenderShadows() {
 }
 
 void RaindropRenderer::RenderPostProcess() {
+	int selector = 0;
+	m_final_pass_selector_s->BindBuffer();
+	m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)&selector);
+	m_final_pass_selector_s->UnbindBuffer();
+
+	m_light_pprocess->GetAttachementByIndex(0)->BindTexture(0);
+
+	//Recycling bloom buffers
+	int i = 0;
 	for (auto* pp : m_pp_effects) {
-		pp->RenderEffect(m_light_pprocess->GetAttachementByIndex(0));
+		if (i % 2 == 0) {
+			if (i > 0) {
+				selector = 3;
+				m_final_pass_selector_s->BindBuffer();
+				m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)&selector);
+				m_final_pass_selector_s->UnbindBuffer();
+
+				m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(0);
+			}
+
+			m_bloom_buffera->BindFBO();
+			pp->RenderEffect(m_light_pprocess->GetAttachementByIndex(0));
+			m_bloom_buffera->UnbindFBO();
+		}
+		else {
+			if (i > 0) {
+				selector = 2;
+				m_final_pass_selector_s->BindBuffer();
+				m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)&selector);
+				m_final_pass_selector_s->UnbindBuffer();
+
+				m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(0);
+			}
+
+			m_bloom_bufferb->BindFBO();
+			pp->RenderEffect(m_light_pprocess->GetAttachementByIndex(0));
+			m_bloom_bufferb->UnbindFBO();
+		}
+
+		i++;
 	}
+
+	if (i > 0) {
+		if (i % 2 == 0) {
+			selector = 3;
+		}
+		else {
+			selector = 2;
+		}
+	}
+	else {
+		selector = 0;
+	}
+
+	m_final_pass_selector_s->BindBuffer();
+	m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)&selector);
+	m_final_pass_selector_s->UnbindBuffer();
 }
 
 void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {

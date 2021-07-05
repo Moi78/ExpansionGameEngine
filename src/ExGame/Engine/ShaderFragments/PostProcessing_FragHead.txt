@@ -13,7 +13,11 @@ layout(std430, binding = 12) buffer FINAL_PASSES {
 #endif
 
 #ifdef GL_ARB_bindless_texture
-#define TEXTURE(id, index, UV) texture(tex[index], UV)
+#define TEXTURE(unif, index, UV) texture(tex[index], UV)
 #else
-#define TEXTURE(id, index, UV) texture(tex#id, UV)
+#define TEXTURE(unif, index, UV) texture(unif, UV)
 #endif
+
+layout(std430, binding = 20) buffer PASS_SELECTOR {
+	int index;
+};

@@ -294,6 +294,7 @@ private:
 	RD_ShaderStorageBuffer* m_final_passes_tex_handle_s;
 	RD_ShaderStorageBuffer* m_shadowmaps_s;
 	RD_ShaderStorageBuffer* m_glyph_s;
+	RD_ShaderStorageBuffer* m_final_pass_selector_s;
 
 	int m_current_shader_storage_index;
 
