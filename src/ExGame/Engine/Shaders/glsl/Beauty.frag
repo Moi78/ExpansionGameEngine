@@ -6,8 +6,6 @@ in vec2 UVcoords;
 
 #ifndef GL_ARB_bindless_texture
     uniform sampler2D lightpass;
-    uniform sampler2D bufferA;
-    uniform sampler2D bufferB;
 #else
     layout(std430, binding = 12) buffer BINDLESS_FINAL_PASSES {
         sampler2D fpasses[4];

@@ -174,6 +174,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_blankTexture->GenerateColorTex(vec3f(1.0f, 1.0f, 1.0f));
 
 	m_current_shader_storage_index = 30;
+	m_current_selector = 0;
 
 	m_final_pass_selector_s->BindBuffer();
 	m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)0);
@@ -848,6 +849,8 @@ void RaindropRenderer::RenderPostProcess() {
 	m_final_pass_selector_s->BindBuffer();
 	m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)&selector);
 	m_final_pass_selector_s->UnbindBuffer();
+
+	m_current_selector = 0;
 }
 
 void RaindropRenderer::RenderLightPass(const vec3f& CamPos) {
@@ -1059,8 +1062,20 @@ void RaindropRenderer::RenderBeauty() {
 
 	SwitchShader(m_beauty_shader);
 
-	if (m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5)) {
-		m_beauty_shader->SetInt("lightpass", 5);
+	if (m_current_selector == 0) {
+		if (m_light_pprocess->GetAttachementByIndex(0)->BindTexture(5)) {
+			m_beauty_shader->SetInt("lightpass", 5);
+		}
+	}
+	else if (m_current_selector == 2) {
+		if (m_bloom_buffera->GetAttachementByIndex(0)->BindTexture(5)) {
+			m_beauty_shader->SetInt("lightpass", 5);
+		}
+	}
+	else if (m_current_selector == 3) {
+		if (m_bloom_bufferb->GetAttachementByIndex(0)->BindTexture(5)) {
+			m_beauty_shader->SetInt("lightpass", 5);
+		}
 	}
 
 	m_quad->RenderQuad();

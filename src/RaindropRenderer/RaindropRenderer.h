@@ -297,6 +297,7 @@ private:
 	RD_ShaderStorageBuffer* m_final_pass_selector_s;
 
 	int m_current_shader_storage_index;
+	int m_current_selector;
 
 	vec2f m_vp_size, m_vp_pos;
 
