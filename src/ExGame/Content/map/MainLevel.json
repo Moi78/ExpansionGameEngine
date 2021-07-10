@@ -12,7 +12,7 @@
       "rot":[0.0, 0.0, 0.0],
       "scale":[500, 500, 500]
     },
-
+    
     {
       "type":"dlight",
       "nameTag":"sun",
