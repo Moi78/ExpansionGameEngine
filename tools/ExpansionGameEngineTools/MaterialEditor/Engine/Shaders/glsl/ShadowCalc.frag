@@ -32,6 +32,23 @@ float lerp(float v0, float v1, float t) {
 	return (1 - t) * v0 + t * v1;
 }
 
+float PCF_Step(sampler2D map, vec3 projCoords, float currentDepth, float filterSize) {
+	float bias = 0.0015;
+
+	float shadow = 0.0;
+
+	vec2 texelSize = 1.0 / textureSize(map, 0);
+	for(float x = -filterSize; x <= filterSize; x += 1) {
+		for(float y = -filterSize; y <= filterSize; y += 1) {
+			float pcfDepth = texture(map, projCoords.xy + vec2(x, y) * texelSize).r;
+
+			shadow += currentDepth - bias > pcfDepth ? 0.8 : 0.0;
+		}
+	}
+
+	return shadow / (distance(-filterSize, filterSize)*distance(-filterSize, filterSize));
+}
+
 void main() {
 	float finalShadow = 0.0;
 
@@ -47,28 +64,16 @@ void main() {
 
 		if(projCoords.z > 1.0) {
 			ShadowColor = vec3(0.0, 0.0, 0.0);
+			continue;
 		}
 
 		float closestDepth = texture(ShadowMap[i], projCoords.xy).r;
 		float currentDepth = projCoords.z;
 
 		float bias = 0.0015;
-
-		float shadow = 0.0;
-
-		vec2 texelSize = 1.0 / textureSize(ShadowMap[i], 0);
-		for(float x = -1; x <= 1; x += 1) {
-			for(float y = -1; y <= 1; y += 1) {
-				float pcfDepth = texture(ShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
-
-				shadow += currentDepth - bias > pcfDepth ? 0.8 : 0.0;
-			}
-		}
-
-		finalShadow += shadow / 9;
+		
+		finalShadow += PCF_Step(ShadowMap[i], projCoords, currentDepth, 2);
 	}
 
-
 	ShadowColor = vec3(clamp(1 - finalShadow, 0.0, 1.0), 0.0, 0.0);
-	//ShadowColor = fpls.rgb;
 }

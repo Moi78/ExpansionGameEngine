@@ -4,6 +4,9 @@
 RD_DirLight::RD_DirLight(RaindropRenderer* rndr, vec3f dir, vec3f color, float brightness) : m_dir(dir), m_color(color), m_brightness(brightness), m_lspace(1.0f) {
 	SetUpShadowFB(rndr, 4096);
 	m_shadowCaster = true;
+
+	m_far_plane = 100.0f;
+	m_near_plane = -10.0f;
 }
 
 RD_DirLight::~RD_DirLight() {
@@ -40,7 +43,7 @@ void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
 
 	rndr->SwitchShader(rndr->GetShadowShader());
 
-	mat4f lightProj = ProjOrtho(-30.0f, 30.0f, -30.0f, 30.0f, -10.0f, 100.0f);
+	mat4f lightProj = ProjOrtho(-30.0f, 30.0f, -30.0f, 30.0f, m_near_plane, m_far_plane);
 
 	vec3f fpos = (m_dir * -5) + CamPos;
 	mat4f lightView = LookAt<float>(fpos, CamPos, vec3f(0.0f, 0.0f, 1.0f));
@@ -89,4 +92,9 @@ void RD_DirLight::SetShadowCasting(bool scast) {
 
 bool RD_DirLight::GetShadowCasting() const {
 	return m_shadowCaster;
+}
+
+void RD_DirLight::SetNearFarPlanes(float nearp, float farp) {
+	m_near_plane = nearp;
+	m_far_plane = farp;
 }

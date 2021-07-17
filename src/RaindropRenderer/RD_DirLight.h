@@ -48,6 +48,8 @@ public:
 	RD_Texture* GetDepthTexID() const;
 
 	void Cleanup(RaindropRenderer* rndr);
+
+	void SetNearFarPlanes(float nearp, float farp);
 private:
 	vec3f m_dir;
 	vec3f m_color;
@@ -55,6 +57,8 @@ private:
 
 	unsigned int m_depthMapTEX;
 	unsigned int m_depthMapFBO;
+
+	float m_far_plane, m_near_plane;
 
 	RD_FrameBuffer* m_fbo;
 

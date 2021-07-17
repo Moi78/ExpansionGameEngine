@@ -6,6 +6,7 @@
 #include <EXP_InputHandler.h>
 #include <EXP_Callbacks.h>
 #include <EXP_InstanciatedMesh.h>
+#include <EXP_StaticMesh.h>
 #include <EXP_MeshBuilder.h>
 #include <EXP_RigidBody.h>
 #include <EXP_Particles.h>
@@ -38,5 +39,7 @@ private:
 	EXP_KeyboardCallback* m_destroy;
 	EXP_KeyboardCallback* m_roll;
 	EXP_KeyboardCallback* m_getpos;
+
+	EXP_StaticMesh* m_test;
 };
 
