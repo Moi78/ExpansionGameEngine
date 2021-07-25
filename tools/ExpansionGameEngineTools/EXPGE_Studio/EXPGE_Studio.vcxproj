@@ -114,7 +114,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>BUILD_OPENGL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_OPENGL;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\src\ExpansionMath;..\..\..\src\RaindropRenderer;..\..\..\src\ExpansionGameEngineCore;..\..\..\src\PhysicaSound;..\..\..\src\BulldozerFileManager;..\..\..\src\libs\JSONCPP\include;..\..\..\src\libs\GL\include;..\..\..\src\libs\BULLET\include;..\..\..\src\libs\libsndfile\include;..\..\..\src\libs\AL\include;..\..\libs\IMGUI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -132,7 +132,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>BUILD_OPENGL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_OPENGL;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\..\src\ExpansionMath;..\..\..\src\RaindropRenderer;..\..\..\src\ExpansionGameEngineCore;..\..\..\src\PhysicaSound;..\..\..\src\BulldozerFileManager;..\..\..\src\libs\JSONCPP\include;..\..\..\src\libs\GL\include;..\..\..\src\libs\BULLET\include;..\..\..\src\libs\libsndfile\include;..\..\..\src\libs\AL\include;..\..\libs\IMGUI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -168,9 +168,11 @@
     <ClInclude Include="..\..\libs\IMGUI\imstb_textedit.h" />
     <ClInclude Include="..\..\libs\IMGUI\imstb_truetype.h" />
     <ClInclude Include="AssetBrowser.h" />
+    <ClInclude Include="EditorConf.h" />
     <ClInclude Include="EditorGUI.h" />
     <ClInclude Include="EditorRegistry.h" />
     <ClInclude Include="FileUtils.h" />
+    <ClInclude Include="Process.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -18,16 +18,5 @@ void Editor::OnStart() {
 }
 
 void Editor::OnTick() {
-	vec2f currSize(m_game->GetRenderer()->getWindowHeigh(), m_game->GetRenderer()->getWindowWidth());
-	if ((m_last_win_size.getX() == currSize.getX()) && (m_last_win_size.getX() == currSize.getY())) {
-		return;
-	}
-	else {
-		m_last_win_size = currSize;
-	}
 
-	m_game->GetRenderer()->ResizeViewport(
-		vec2f((2.0f / 12.0f) * currSize.getY(), currSize.getX() * (2.0f / 12.0f)),
-		vec2f(currSize.getY() * (10.0f / 12.0f), currSize.getX())
-	);
 }

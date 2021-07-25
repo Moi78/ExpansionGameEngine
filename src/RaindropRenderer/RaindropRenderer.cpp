@@ -382,6 +382,10 @@ void RaindropRenderer::UpdateDirLighting(const bool lspace_only) {
 		int i = 0;
 
 		for (auto l : m_DirLights) {
+			if (!l->GetShadowCasting()) {
+				continue;
+			}
+
 			uint64_t handle = l->GetDepthTexID()->GetTextureHandle();
 			m_shadowmaps_s->SetBufferSubData(i * sizeof(uint64_t), sizeof(uint64_t), (void*)&handle);
 
@@ -391,7 +395,7 @@ void RaindropRenderer::UpdateDirLighting(const bool lspace_only) {
 		m_shadowmaps_s->UnbindBuffer();
 
 		m_lightcount_u->BindBuffer();
-		const int nbr = m_DirLights.size();
+		int nbr = i;
 		m_lightcount_u->SetBufferSubData(0, sizeof(int), (void*)&nbr);
 		m_lightcount_u->UnbindBuffer();
 	}

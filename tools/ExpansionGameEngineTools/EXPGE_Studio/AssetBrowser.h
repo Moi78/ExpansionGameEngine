@@ -8,13 +8,21 @@
 #include "imgui.h"
 
 #include "FileUtils.h"
+#include "Process.h"
+#include "EditorConf.h"
+#include "EditorRegistry.h"
 
 #include <EXP_Game.h>
 #include <RD_Texture.h>
 
 class AssetBrowser {
 public:
-	AssetBrowser(EXP_Game* game, std::string path) : m_base_path(path), m_path("/"), m_game(game) {
+	AssetBrowser(EXP_Game* game, std::string path, EditorConf* editConf, EditorRegistry* editorReg) :
+		m_base_path(path), m_path("/"), m_game(game) {
+
+		m_reg = editorReg;
+		m_conf = editConf;
+
 		m_folder_icon = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 		m_folder_icon->LoadTexture("studio/icons/folder.png", false);
 
@@ -40,6 +48,11 @@ public:
 		delete m_mesh_icon;
 		delete m_texture_icon;
 		delete m_misc_icon;
+
+		for (auto sp : m_subprocesses) {
+			delete sp;
+		}
+		m_subprocesses.clear();
 	}
 
 	void RefreshFilesFolders() {
@@ -47,14 +60,8 @@ public:
 		m_files_folders = ListFilesAndFolders(m_base_path + m_path, {});
 	}
 
-	void Render(float wwidth, float wheight) {
-		ImGui::SetNextWindowPos({ 0, (8.0f / 12.0f) * wheight });
-		ImGui::SetNextWindowSize(ImVec2(wwidth, (4.0f / 12.0f) * wheight));
-		ImGui::Begin(
-			std::string("Assets - " + m_path).c_str(),
-			nullptr,
-			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize
-		);
+	void Render(float wwidth, float wheight, float shift = 0.0f) {
+		ImGui::Begin(std::string("Assets - " + m_path + "###asset_browser").c_str());
 
 		ImGui::Button("Import Asset...");
 		ImGui::SameLine();
@@ -111,7 +118,24 @@ public:
 
 				bool isSelected = m_selected == ff.first ? true : false;
 				if (ImGui::Selectable(std::string("##" + ff.first).c_str(), isSelected, 0, ImVec2(0, 30))) {
-					m_selected = ff.first;
+					if (m_selected == ff.first) {
+						if (ext == "msh") {
+							EXP_StaticMesh* m = new EXP_StaticMesh(
+								m_game, m_game->GetShaderByFileRef("/mat_red.exmtl"), m_base_path + m_path + ff.first,
+								vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), true
+							);
+							m->SetNameTag("staticMesh" + std::to_string(m_reg->m_meshes.size()));
+
+							m_reg->m_meshes.push_back(m);
+
+						}
+						else {
+							OpenFile(ff.first);
+						}
+					}
+					else {
+						m_selected = ff.first;
+					}
 				}
 
 				ImGui::SameLine();
@@ -140,14 +164,34 @@ public:
 		ImGui::End();
 	}
 
+	void OpenFile(std::string file) {
+		std::string ext = GetExtension(file);
+		if (ext == "draft") {
+			Process* p = new Process();
+			p->LaunchProcess(
+				std::string(m_conf->MaterialEditorPath + "MaterialEditor.exe -p ")
+				+ m_base_path
+				+ " -c \"\" -o "
+				+ m_path + file,
+				m_conf->MaterialEditorPath
+			);
+
+			m_subprocesses.push_back(p);
+		}
+	}
+
 private:
 	EXP_Game* m_game;
+	EditorConf* m_conf;
+	EditorRegistry* m_reg;
 
 	std::string m_path;
 	std::string m_base_path;
 
 	std::vector<std::pair<std::string, ElemType>> m_files_folders;
 	std::string m_selected;
+
+	std::vector<Process*> m_subprocesses;
 
 	RD_Texture* m_folder_icon;
 	RD_Texture* m_mesh_icon;

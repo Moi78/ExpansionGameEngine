@@ -22,5 +22,7 @@ private:
 	EXP_MouseButtonCallback* m_mb_cbk;
 	EXP_KeyboardCallback* m_forward;
 	EXP_KeyboardCallback* m_backward;
+
+	bool m_mvt_allowed;
 };
 

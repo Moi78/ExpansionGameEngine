@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "EXP_StaticMesh.h"
 
-EXP_StaticMesh::EXP_StaticMesh(EXP_Game* gameinstance, RD_ShaderMaterial* shader, std::string MeshRef, vec3f pos, vec3f rot, vec3f scale) :
+EXP_StaticMesh::EXP_StaticMesh(EXP_Game* gameinstance, RD_ShaderMaterial* shader, std::string MeshRef, vec3f pos, vec3f rot, vec3f scale, bool useSystemTree) :
 	EXP_Component(pos, rot, scale), m_gameinstance(gameinstance),
 	RD_Mesh(gameinstance->GetRenderer(), shader, pos, rot, scale)
 {
+	m_useSystemTree = useSystemTree;
 	LoadMesh(MeshRef);
 }
 
@@ -13,12 +14,22 @@ EXP_StaticMesh::~EXP_StaticMesh() {
 }
 
 bool EXP_StaticMesh::MeshRefExists(std::string MeshRef) {
-	return std::filesystem::exists(std::filesystem::path(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh"));
+	if (!m_useSystemTree) {
+		return std::filesystem::exists(std::filesystem::path(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh"));
+	}
+	else {
+		return std::filesystem::exists(MeshRef);
+	}
 }
 
 void EXP_StaticMesh::LoadMesh(std::string MeshRef) {
 	if (MeshRefExists(MeshRef)) {
-		RD_Mesh::loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh");
+		if (!m_useSystemTree) {
+			RD_Mesh::loadMesh(m_gameinstance->GetGameInfo().RootGameContentFolder + MeshRef + ".msh");
+		}
+		else {
+			RD_Mesh::loadMesh(MeshRef);
+		}
 
 		m_gameinstance->RegisterMesh(this);
 	}

@@ -85,9 +85,13 @@ int main(int argc, char* argv[]) {
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::StyleColorsDark();
+	ImGui::GetStyle().WindowRounding = 3.0f;
 
 	ImGui_ImplGlfw_InitForOpenGL(winsys->GetWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 450");
+
+	ImFont* fnt = io.Fonts->AddFontFromFileTTF("studio/font/open_sans.ttf", 17.0f);
+	io.Fonts->Fonts[0] = fnt;
 
 	while (!game->GetRenderer()->WantToClose()) {
 		game->RenderScene();

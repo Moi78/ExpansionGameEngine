@@ -33,7 +33,8 @@ public:
 		EXP_Game* gameinstance,
 		RD_ShaderMaterial* shader,
 		std::string meshRef,
-		vec3f pos, vec3f rot, vec3f scale
+		vec3f pos, vec3f rot, vec3f scale,
+		bool useSystemTree = false
 	);
 
 	~EXP_StaticMesh();
@@ -50,6 +51,7 @@ private:
 	bool MeshRefExists(std::string MeshRef);
 
 	EXP_Game* m_gameinstance;
+	bool m_useSystemTree;
 };
 
 #endif //_EXP_STATIC_MESH__
