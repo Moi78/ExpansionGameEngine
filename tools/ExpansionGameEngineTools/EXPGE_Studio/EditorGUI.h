@@ -7,6 +7,7 @@
 #include "EditorRegistry.h"
 #include "AssetBrowser.h"
 #include "EditorConf.h"
+#include "Filebrowser.h"
 
 #include "imgui.h"
 #include "FileUtils.h"
@@ -29,7 +30,7 @@ public:
 	//Detail Panel
 	void DetailPLight(EXP_PointLight* plight);
 	void DetailDLight(EXP_DirLight* dlight);
-	void DetailSMesh(EXP_StaticMesh* smesh);
+	void DetailSMesh(EXP_StaticMesh* smesh, std::string mat);
 
 	EditorConf* GetConf() { return &m_conf; }
 
@@ -40,10 +41,12 @@ private:
 	EditorConf m_conf;
 
 	std::pair<COMP_TYPES, void*> m_selected;
+	int m_selected_index;
 
 	std::string m_projectPath;
 	std::string m_contentPath;
 
 	AssetBrowser* m_asset_browser;
+	Filebrowser* m_material_browser;
 };
 

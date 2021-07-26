@@ -211,6 +211,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	);
 	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld, this), "text");
 
+	m_default_mat = FetchShaderFromFile(m_engineDir + "/Materials/default_mat.exmtl");
+
 	UpdateAmbientLighting();
 
 	m_need_cam_updt = false;
@@ -1182,11 +1184,16 @@ void RaindropRenderer::EmptyFramebufferGarbageCollector() {
 	}*/
 }
 
-RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref) {
+RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref, const std::string& texPathPrefix) {
 	if (!std::filesystem::exists(ref)) {
 		std::cerr << "Shader file " << ref << " does not exist." << std::endl;
 		dispErrorMessageBox(StrToWStr("Shader file " + ref + " does not exists"));
-		return nullptr;
+		if (m_default_mat) {
+			return m_default_mat;
+		}
+		else {
+			return nullptr;
+		}
 	}
 
 	if (m_matlib->DoMaterialExists(ref)) {
@@ -1203,13 +1210,14 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref)
 	RD_ShaderMaterial* shdmat = new RD_ShaderMaterial(shader, this);
 	for (int i = 0; i < mread.GetTextureCount(); i++) {
 		RD_Texture* tex = m_api->CreateTexture();
-		tex->LoadTexture(mread.GetTexturePath(i));
+		tex->LoadTexture(texPathPrefix + mread.GetTexturePath(i));
 
 		shdmat->AddTexture(mread.GetTextureParamName(i), tex);
 	}
 	shdmat->MakeSSBO();
 
 	m_matlib->AddMaterialToLib(shdmat, ref);
+
 	return shdmat;
 }
 
@@ -1392,4 +1400,8 @@ int RaindropRenderer::GetCurrentShaderStorageIndex() {
 
 void RaindropRenderer::IncrementCurrentShaderStorageIndex() {
 	m_current_shader_storage_index++;
+}
+
+RD_ShaderMaterial* RaindropRenderer::GetDefaultMaterial() {
+	return m_default_mat;
 }

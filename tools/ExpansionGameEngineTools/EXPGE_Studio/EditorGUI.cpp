@@ -16,6 +16,10 @@ EditorGUI::EditorGUI(EXP_Game* game, std::string projectPath, std::string conten
 	m_contentPath = contentPath;
 
 	m_asset_browser = new AssetBrowser(game, m_projectPath + m_contentPath, &m_conf, &m_reg);
+	m_material_browser = new Filebrowser(m_projectPath + m_contentPath);
+	m_material_browser->AddFilter("exmtl");
+
+	m_selected_index = 0;
 }
 
 EditorGUI::~EditorGUI() {
@@ -30,6 +34,7 @@ void EditorGUI::RenderEditorGUI() {
 	float wheight = winsys->GetHeight() - 20.0f;
 
 	RenderMenuBar();
+	m_material_browser->Render(m_game->GetRenderer());
 
 	{
 		ImGui::Begin("Add");
@@ -68,7 +73,7 @@ void EditorGUI::RenderEditorGUI() {
 				DetailDLight(dlight);
 			} else if (m_selected.first == COMP_TYPES::TSMESH) {
 				EXP_StaticMesh* smesh = reinterpret_cast<EXP_StaticMesh*>(m_selected.second);
-				DetailSMesh(smesh);
+				DetailSMesh(smesh, m_reg.m_meshes[m_selected_index].second);
 			}
 		}
 
@@ -80,6 +85,7 @@ void EditorGUI::RenderEditorGUI() {
 
 		if (ImGui::BeginTable("outliner_tab", 2, ImGuiTableFlags_BordersInnerV)) {
 
+			int i = 0;
 			for (auto p : m_reg.m_plights) {
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
@@ -87,25 +93,31 @@ void EditorGUI::RenderEditorGUI() {
 				bool selected = ((void*)p) == m_selected.second ? true : false;
 				if (ImGui::Selectable(p->GetNameTag().c_str(), selected)) {
 					m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TPLIGHT, p);
+					m_selected_index = i;
 				}
 
 				ImGui::TableNextColumn();
 				ImGui::Text("Point Light");
+				i++;
 			}
 
+			i = 0;
 			for (auto m : m_reg.m_meshes) {
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 
-				bool selected = ((void*)m) == m_selected.second ? true : false;
-				if (ImGui::Selectable(m->GetNameTag().c_str(), selected)) {
-					m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TSMESH, m);
+				bool selected = ((void*)m.first) == m_selected.second ? true : false;
+				if (ImGui::Selectable(m.first->GetNameTag().c_str(), selected)) {
+					m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TSMESH, m.first);
+					m_selected_index = i;
 				}
 
 				ImGui::TableNextColumn();
 				ImGui::Text("Static Mesh");
+				i++;
 			}
 
+			i = 0;
 			for (auto d : m_reg.m_dlights) {
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
@@ -113,10 +125,12 @@ void EditorGUI::RenderEditorGUI() {
 				bool selected = ((void*)d) == m_selected.second ? true : false;
 				if (ImGui::Selectable(d->GetNameTag().c_str(), selected)) {
 					m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TDLIGHT, d);
+					m_selected_index = i;
 				}
 
 				ImGui::TableNextColumn();
 				ImGui::Text("Directionnal Light");
+				i++;
 			}
 
 			ImGui::EndTable();
@@ -210,7 +224,7 @@ void EditorGUI::DetailDLight(EXP_DirLight* dirlight) {
 	}
 }
 
-void EditorGUI::DetailSMesh(EXP_StaticMesh* smesh) {
+void EditorGUI::DetailSMesh(EXP_StaticMesh* smesh, std::string mat) {
 	char name[50] = {};
 	strcpy(name, smesh->GetNameTag().c_str());
 
@@ -236,4 +250,17 @@ void EditorGUI::DetailSMesh(EXP_StaticMesh* smesh) {
 	}
 
 	ImGui::Separator();
+
+	ImGui::Text(std::string("Current Material : " + mat).c_str());
+	if (ImGui::Button("Change Material", ImVec2(-1, 0))) {
+		m_material_browser->Open();
+	}
+
+	if (m_material_browser->OkPressed()) {
+		std::string fp = m_material_browser->GetFileNameBuffer();
+		RD_ShaderMaterial* mat = m_game->GetRenderer()->FetchShaderFromFile(fp, m_projectPath + "/");
+		smesh->SetMaterial(mat);
+
+		m_reg.m_meshes[m_selected_index].second = m_material_browser->GetFileName();
+	}
 }

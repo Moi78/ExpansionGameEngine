@@ -426,6 +426,10 @@ void EXP_Game::LoadMap(const std::string& map) {
         m_rndr->GetMaterialLibrary()->AddMaterialToLib(new RD_ShaderMaterial(ld, GetRenderer()), "text");
 
     }
+
+	if (!m_rndr->GetMaterialLibrary()->DoMaterialExists(m_gameinfo.RootEngineContentFolder + "/Materials/default_mat.exmtl")) {
+		m_rndr->FetchShaderFromFile(m_gameinfo.RootEngineContentFolder + "/Materials/default_mat.exmtl");
+	}
     
 	m_PlayingMap->LoadMap(m_gameinfo.RootGameContentFolder + map);
 

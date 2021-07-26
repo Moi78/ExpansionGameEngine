@@ -171,6 +171,7 @@
     <ClInclude Include="EditorConf.h" />
     <ClInclude Include="EditorGUI.h" />
     <ClInclude Include="EditorRegistry.h" />
+    <ClInclude Include="Filebrowser.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="Process.h" />
   </ItemGroup>

@@ -108,6 +108,8 @@ public:
 				ImGui::SameLine();
 				ImGui::Image((ImTextureID)m_folder_icon->GetTextureID(), ImVec2(30, 30));
 				ImGui::SameLine();
+				ImVec2 cursor = ImGui::GetCursorPos();
+				ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 6.0f));
 				ImGui::Text(ff.first.c_str());
 			}
 		}
@@ -121,12 +123,14 @@ public:
 					if (m_selected == ff.first) {
 						if (ext == "msh") {
 							EXP_StaticMesh* m = new EXP_StaticMesh(
-								m_game, m_game->GetShaderByFileRef("/mat_red.exmtl"), m_base_path + m_path + ff.first,
+								m_game,
+								m_game->GetRenderer()->GetDefaultMaterial(),
+								m_base_path + m_path + ff.first,
 								vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), true
 							);
 							m->SetNameTag("staticMesh" + std::to_string(m_reg->m_meshes.size()));
 
-							m_reg->m_meshes.push_back(m);
+							m_reg->m_meshes.push_back(std::pair<EXP_StaticMesh*, std::string>(m, "Default Material"));
 
 						}
 						else {
@@ -156,6 +160,8 @@ public:
 				}
 
 				ImGui::SameLine();
+				ImVec2 cursor = ImGui::GetCursorPos();
+				ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 6.0f));
 				ImGui::Text(ff.first.c_str());
 			}
 		}
