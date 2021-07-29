@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
 	ImFont* fnt = io.Fonts->AddFontFromFileTTF("studio/font/open_sans.ttf", 17.0f);
 	io.Fonts->Fonts[0] = fnt;
 
-	while (!game->GetRenderer()->WantToClose()) {
+	while ((!game->GetRenderer()->WantToClose()) && (!game->GetCloseOverride())) {
 		game->RenderScene();
 		
 		ImGui_ImplOpenGL3_NewFrame();

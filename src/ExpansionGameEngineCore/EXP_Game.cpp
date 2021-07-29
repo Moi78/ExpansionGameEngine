@@ -29,7 +29,8 @@ EXP_Game::EXP_Game(const EXP_GameInfo& gameinfo, const vec3f& refreshColor) {
     
 	InitPhysicaSound();
 	InitGame(refreshColor, gameinfo);
-	InitGui();
+
+	m_close_override = false;
 }
 
 EXP_Game::EXP_Game(const std::string& gameinfo) {
@@ -50,7 +51,8 @@ EXP_Game::EXP_Game(const std::string& gameinfo) {
 
 	InitPhysicaSound();
 	InitGame(vec3f(), gi);
-	InitGui();
+
+	m_close_override = false;
 }
 
 EXP_Game::~EXP_Game() {
@@ -175,10 +177,6 @@ void EXP_Game::UpdateSound() const {
 	}
 }
 
-void EXP_Game::InitGui() {
-
-}
-
 void EXP_Game::RenderScene() {
 	m_rndr->ClearWindow(m_refreshColor);
 
@@ -186,15 +184,11 @@ void EXP_Game::RenderScene() {
 		return;
 
 	const vec3f CamLoc = m_currentCamera->GetLocation();
-	//m_currentCamera->UpdateCamera();
     
 	//Process shadows
 	m_rndr->RenderLightsDepth(CamLoc);
 	//GBuff
 	m_rndr->RenderGbuff(m_currentCamera);
-
-	//Rendering GUI
-	//m_rndr->RenderGUI_Screen(); //Disabled GUI because it needs to be rewritten
 
 	//PostProcessing
 	m_rndr->RenderBeauty();
@@ -506,4 +500,12 @@ RD_ShaderMaterial* EXP_Game::GetShaderByFileRefInstanced(const std::string& ref)
 
 	m_rndr->GetMaterialLibrary()->AddMaterialToLib(sm, ref);
 	return sm;
+}
+
+void EXP_Game::Close() {
+	m_close_override = true;
+}
+
+bool EXP_Game::GetCloseOverride() {
+	return m_close_override;
 }

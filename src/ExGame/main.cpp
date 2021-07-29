@@ -14,7 +14,7 @@ extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
 int main(int argc, char* argv[]) {
 	std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>("GameInfo.json");
 
-	while (!game->GetRenderer()->WantToClose()) {
+	while ((!game->GetRenderer()->WantToClose()) && ((!game->GetCloseOverride()))) {
 		if (game->CheckErrors()) {
 			exit(-1);
 		}

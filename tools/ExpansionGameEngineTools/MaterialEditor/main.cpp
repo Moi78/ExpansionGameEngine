@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
 	Filebrowser saveFinalMaterial(projRoot + contentPath);
 	saveFinalMaterial.AddFilter("exmtl");
 
-	while (!game->GetRenderer()->WantToClose()) {
+	while ((!game->GetRenderer()->WantToClose())) {
 		game->RenderScene();
 
 		int w = game->GetRenderer()->getWindowWidth();

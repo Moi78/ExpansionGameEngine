@@ -29,6 +29,8 @@ public:
 	void RenderEditorGUI();
 	void RenderMenuBar();
 
+	void RenderQuitPopup();
+
 	//Detail Panel
 	void DetailPLight(EXP_PointLight* plight);
 	void DetailDLight(EXP_DirLight* dlight);
@@ -50,5 +52,7 @@ private:
 
 	AssetBrowser* m_asset_browser;
 	Filebrowser* m_material_browser;
+
+	bool m_quit_popup_enabled;
 };
 

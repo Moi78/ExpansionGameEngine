@@ -21,6 +21,8 @@ EditorGUI::EditorGUI(EXP_Game* game, std::string projectPath, std::string conten
 
 	m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TNONE, nullptr);
 	m_selected_index = 0;
+
+	m_quit_popup_enabled = false;
 }
 
 EditorGUI::~EditorGUI() {
@@ -35,6 +37,8 @@ void EditorGUI::RenderEditorGUI() {
 	float wheight = winsys->GetHeight() - 20.0f;
 
 	RenderMenuBar();
+	RenderQuitPopup();
+
 	m_material_browser->Render(m_game->GetRenderer());
 
 	{
@@ -168,7 +172,13 @@ void EditorGUI::RenderMenuBar() {
 	ImGui::BeginMainMenuBar();
 
 	if (ImGui::BeginMenu("File")) {
-		ImGui::MenuItem("New...", nullptr);
+		ImGui::MenuItem("New...");
+		ImGui::MenuItem("Save", "CTRL+S");
+		ImGui::Separator();
+
+		if (ImGui::MenuItem("Quit")) {
+			m_quit_popup_enabled = true;
+		}
 
 		ImGui::EndMenu();
 	}
@@ -286,5 +296,30 @@ void EditorGUI::DetailSMesh(EXP_StaticMesh* smesh, std::string mat) {
 		smesh->SetMaterial(mat);
 
 		m_reg.m_meshes[m_selected_index].second = m_material_browser->GetFileName();
+	}
+}
+
+void EditorGUI::RenderQuitPopup() {
+	if (!m_quit_popup_enabled) {
+		return;
+	}
+
+	ImGui::OpenPopup("Quit ?##quit_popup");
+	if (ImGui::BeginPopupModal("Quit ?##quit_popup", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+		ImGui::Text("Are you sure you want to quit the app now ?");
+
+		if (ImGui::Button("Yes", ImVec2((ImGui::GetContentRegionAvailWidth() / 2) - 5, 30))) {
+			m_game->Close();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("No", ImVec2(ImGui::GetContentRegionAvailWidth(), 30))) {
+			m_quit_popup_enabled = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
 	}
 }

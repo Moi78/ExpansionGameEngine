@@ -76,6 +76,9 @@ public:
 	~EXP_Game();
 	
 	EXP_GameInfo GetGameInfo() const;
+
+	void Close();
+	bool GetCloseOverride();
     
 	//For internal usage only
 	void RegisterMesh(RD_Mesh*) const;
@@ -133,7 +136,6 @@ public:
 private:
 	void InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo);
 	void InitPhysicaSound();
-	void InitGui();
 	void InitPhysics();
 	EXP_GameInfo CreateGameInfoFromJSON(const std::string& gameInfo);
 
@@ -164,6 +166,8 @@ private:
 	std::unique_ptr<EXP_PhysicsHandler> m_physicsHandler;
 	//Actors
 	std::vector<EXP_Actor*> m_actors;
+
+	bool m_close_override;
 };
 
 #endif //_EXP_GAME_H__
