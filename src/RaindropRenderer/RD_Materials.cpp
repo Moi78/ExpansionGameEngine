@@ -73,7 +73,7 @@ void RD_ShaderMaterial::UnregisterMeshReference(RD_Mesh* msh) {
 		m_meshes_references.erase(m_meshes_references.begin() + index);
 	}
 	else {
-		std::cerr << "ERROR: Element does not exists" << std::endl;
+		std::cerr << "ERROR: (Unregister Mesh Reference) Element does not exists" << std::endl;
 	}
 }
 

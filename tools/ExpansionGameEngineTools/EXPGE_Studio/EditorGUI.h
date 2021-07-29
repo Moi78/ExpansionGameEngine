@@ -1,5 +1,6 @@
 #pragma once
 #include <EXP_Game.h>
+#include <EXP_InputHandler.h>
 #include <RD_Texture.h>
 #include <EXP_Component.h>
 #include <EXP_PointLight.h>
@@ -13,6 +14,7 @@
 #include "FileUtils.h"
 
 enum COMP_TYPES {
+	TNONE,
 	TPLIGHT,
 	TDLIGHT,
 	TSMESH

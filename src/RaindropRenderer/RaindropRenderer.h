@@ -318,7 +318,7 @@ int GetElemIndex(std::vector<T> array, T element) {
 		return std::distance(array.begin(), it);
 	}
 	else {
-		std::cerr << "ERROR: Element cannot be found !" << std::endl;
+		std::cerr << "ERROR: (GetElemIndex) Element cannot be found !" << std::endl;
 		return -1;
 	}
 }

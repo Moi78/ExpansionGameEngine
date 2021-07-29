@@ -1094,7 +1094,7 @@ void RaindropRenderer::UnregisterMesh(RD_Mesh* mesh) {
 		m_meshes.erase(m_meshes.begin() + index);
 	}
 	else {
-		std::cerr << "ERROR: Element does not exists" << std::endl;
+		std::cerr << "ERROR: (Mesh) Element does not exists" << std::endl;
 	}
 }
 
@@ -1106,8 +1106,10 @@ void RaindropRenderer::UnregisterDirLight(RD_DirLight* light) {
 		m_DirLights.erase(m_DirLights.begin() + index);
 	}
 	else {
-		std::cerr << "ERROR: Element does not exists" << std::endl;
+		std::cerr << "ERROR: (Dir Light) Element does not exists" << std::endl;
 	}
+
+	UpdateDirLighting();
 }
 
 void RaindropRenderer::UnregisterPointLight(RD_PointLight* ptLight) {
@@ -1117,8 +1119,10 @@ void RaindropRenderer::UnregisterPointLight(RD_PointLight* ptLight) {
 		m_pt_lights.erase(m_pt_lights.begin() + index);
 	}
 	else {
-		std::cerr << "ERROR: Element does not exists" << std::endl;
+		std::cerr << "ERROR: (Point Light) Element does not exists" << std::endl;
 	}
+
+	UpdatePointsLighting();
 }
 
 void RaindropRenderer::UnregisterAllMeshes() {

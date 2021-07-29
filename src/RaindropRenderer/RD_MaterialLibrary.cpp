@@ -6,6 +6,8 @@ RD_MaterialLibrary::RD_MaterialLibrary() {}
 RD_MaterialLibrary::~RD_MaterialLibrary() {}
 
 void RD_MaterialLibrary::AddMaterialToLib(RD_ShaderMaterial* mat, std::string matName) {
+	std::cout << "Added new Material to a lib" << std::endl;
+
 	std::pair<std::string, RD_ShaderMaterial*> matPair(matName, mat); //Making a pair of a material and its names
 
 	m_materials.push_back(matPair);
@@ -50,7 +52,8 @@ void RD_MaterialLibrary::ClearLibrary() {
 	std::cout << "Clearing Material Library" << std::endl;
 
 	for (auto mat : m_materials) {
-		delete mat.second;
+		RD_ShaderMaterial* m = mat.second;
+		delete m;
 	}
 	m_materials.clear();
 }

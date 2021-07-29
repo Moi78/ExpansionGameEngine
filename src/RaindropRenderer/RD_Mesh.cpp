@@ -22,7 +22,9 @@ RD_Mesh::RD_Mesh(RaindropRenderer* rndr, RD_ShaderMaterial* shader, vec3f positi
 }
 
 RD_Mesh::~RD_Mesh() {
-	
+	if (m_mat) {
+		m_mat->UnregisterMeshReference(this);
+	}
 }
 
 void RD_Mesh::loadMesh(std::string filepath) {

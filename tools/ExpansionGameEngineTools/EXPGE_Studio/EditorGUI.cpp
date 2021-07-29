@@ -19,6 +19,7 @@ EditorGUI::EditorGUI(EXP_Game* game, std::string projectPath, std::string conten
 	m_material_browser = new Filebrowser(m_projectPath + m_contentPath);
 	m_material_browser->AddFilter("exmtl");
 
+	m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TNONE, nullptr);
 	m_selected_index = 0;
 }
 
@@ -134,6 +135,29 @@ void EditorGUI::RenderEditorGUI() {
 			}
 
 			ImGui::EndTable();
+		}
+
+		if (ImGui::IsWindowHovered()) {
+			if (m_game->GetInputHandler()->GetKey(261)) { //Key delete
+				if (m_selected.first == COMP_TYPES::TDLIGHT) {
+					m_game->UnregisterDirLight(reinterpret_cast<EXP_DirLight*>(m_selected.second));
+					m_reg.m_dlights.erase(m_reg.m_dlights.begin() + m_selected_index);
+				}
+
+				if (m_selected.first == COMP_TYPES::TPLIGHT) {
+					m_game->UnregisterPointLight(reinterpret_cast<EXP_PointLight*>(m_selected.second));
+					m_reg.m_plights.erase(m_reg.m_plights.begin() + m_selected_index);
+				}
+
+				if (m_selected.first == COMP_TYPES::TSMESH) {
+					m_game->UnregisterMesh(reinterpret_cast<EXP_StaticMesh*>(m_selected.second));
+					m_reg.m_meshes.erase(m_reg.m_meshes.begin() + m_selected_index);
+				}
+
+				if (m_selected.first != COMP_TYPES::TNONE) {
+					m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TNONE, nullptr);
+				}
+			}
 		}
 
 		ImGui::End();
