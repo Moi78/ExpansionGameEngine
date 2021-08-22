@@ -292,7 +292,7 @@ void EditorGUI::DetailSMesh(EXP_StaticMesh* smesh, std::string mat) {
 
 	if (m_material_browser->OkPressed()) {
 		std::string fp = m_material_browser->GetFileNameBuffer();
-		RD_ShaderMaterial* mat = m_game->GetRenderer()->FetchShaderFromFile(fp, m_projectPath + "/");
+		RD_ShaderMaterial* mat = m_game->GetRenderer()->FetchShaderFromFile(fp, m_projectPath + m_contentPath);
 		smesh->SetMaterial(mat);
 
 		m_reg.m_meshes[m_selected_index].second = m_material_browser->GetFileName();

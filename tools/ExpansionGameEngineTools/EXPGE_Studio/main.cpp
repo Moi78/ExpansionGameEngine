@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 	EXP_GameInfo gi;
 	gi.GameBaseResolution = { 1280, 720 };
 	gi.GameName = "Expansion Game Engine - Studio";
-	gi.RenderingAPI = API::OPENGL;
+	gi.RenderingAPI = API::OPENGL4;
 	gi.RenderingPipeline = Pipeline::PBR_ENGINE;
 	gi.RootEngineContentFolder = "Engine";
 	gi.RootGameContentFolder = "studio";

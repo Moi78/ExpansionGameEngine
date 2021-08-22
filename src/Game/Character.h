@@ -21,8 +21,8 @@ public:
 	Character(EXP_Game* game);
 	~Character();
 
-	virtual void Start() override;
-	virtual void Tick() override;
+	virtual void OnStart() override;
+	virtual void OnTick() override;
 
 	void MoveForward();
 	void Roll();

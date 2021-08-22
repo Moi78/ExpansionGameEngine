@@ -63,12 +63,6 @@ class RD_ParticleEmitter;
 
 class RD_RenderingAPI;
 
-enum API {
-	OPENGL,
-	VULKAN,
-	DIRECTX
-};
-
 enum Pipeline {
 	PBR_ENGINE,
 	LAMBERT_ENGINE

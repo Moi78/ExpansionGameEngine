@@ -10,8 +10,8 @@ public:
 	CameraClass(EXP_Game* game);
 	~CameraClass();
 
-	virtual void Start();
-	virtual void Tick();
+	virtual void OnStart();
+	virtual void OnTick();
 
 	void AllowMoving();
 	void Forward();

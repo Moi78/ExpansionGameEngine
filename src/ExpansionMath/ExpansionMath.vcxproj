@@ -177,10 +177,6 @@
     </ClCompile>
     <ClCompile Include="volumes.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\ExGame\Engine\Shaders\glsl\pbr\Light.frag" />
-    <None Include="..\ExGame\Engine\Shaders\glsl\pbr\Light.vert" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

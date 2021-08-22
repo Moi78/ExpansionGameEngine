@@ -10,10 +10,10 @@ CameraActor::~CameraActor() {
 	m_game->GetInputHandler()->CaptureCursor(false);
 }
 
-void CameraActor::Start() {
+void CameraActor::OnStart() {
 	m_cam->Use();
 }
 
-void CameraActor::Tick() {
+void CameraActor::OnTick() {
 
 }

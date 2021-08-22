@@ -138,6 +138,7 @@ bool RD_Texture_GL::BindTexture(unsigned int tex_unit) {
 
 	glActiveTexture(GL_TEXTURE0 + tex_unit);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
+
 	return true;
 }
 

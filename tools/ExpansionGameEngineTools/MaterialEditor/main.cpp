@@ -20,7 +20,18 @@ float lightDirZ = -0.6f;
 float lightBrtn = 5.0f;
 
 void CompileMat(EXP_Game* game, Node_Editor* editor, RD_ShaderMaterial* mat) {
-	std::string FragCode = editor->EvalNodes();
+	std::string FragCode;
+	switch (game->GetRenderer()->GetRenderingAPI()->GetAPIType()) {
+	case API::OPENGL3:
+		FragCode = editor->EvalNodesOldGL();
+		break;
+	case API::OPENGL4:
+		FragCode = editor->EvalNodes();
+		break;
+	default:
+		FragCode = editor->EvalNodes();
+		break;
+	}
 
 	std::string VertCode = "";
 	std::ifstream vertFile;
@@ -52,7 +63,7 @@ int main(int argc, char* argv[]) {
 	EXP_GameInfo gi;
 	gi.GameBaseResolution = { 1280, 720 };
 	gi.GameName = "Material Editor";
-	gi.RenderingAPI = API::OPENGL;
+	gi.RenderingAPI = API::OPENGL4;
 	gi.RenderingPipeline = Pipeline::PBR_ENGINE;
 	gi.RootEngineContentFolder = "Engine";
 	gi.RootGameContentFolder = "mat_editor";

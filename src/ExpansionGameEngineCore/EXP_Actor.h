@@ -51,9 +51,9 @@ public:
 	void AddWorldRot(vec3f rot_offset);
 	void AddWorldScale(vec3f scale_offset);
 
-	virtual void Tick();
-	virtual void Start();
-	virtual void Unregister();
+	virtual void OnTick();
+	virtual void OnStart();
+	virtual void OnUnregister();
 
 	void UpdateActor();
 	void UpdateActorMatrix();

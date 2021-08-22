@@ -370,6 +370,7 @@ public:
 	int GetLinkStartId(int end_id);
 
 	std::string EvalNodes();
+	std::string EvalNodesOldGL();
 
 	int GetTextureCount() const;
 	std::pair<std::string, std::string> GetTextureRefByIndex(int index);
@@ -416,6 +417,8 @@ public:
 
 	void RenderNodes();
 
+	bool GetEvalLegacy() { return m_evalLegacy; }
+
 private:
 	EXP_Game* m_game;
 	EXP_KeyboardCallback* m_suppr;
@@ -430,4 +433,6 @@ private:
 
 	std::string m_projectRoot;
 	std::string m_contentPath;
+
+	bool m_evalLegacy;
 };

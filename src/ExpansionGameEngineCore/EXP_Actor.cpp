@@ -67,15 +67,15 @@ void EXP_Actor::AddWorldScale(vec3f ascale) {
 	UpdateActor();
 }
 
-void EXP_Actor::Start() {
+void EXP_Actor::OnStart() {
 
 }
 
-void EXP_Actor::Tick() {
+void EXP_Actor::OnTick() {
 
 }
 
-void EXP_Actor::Unregister() {
+void EXP_Actor::OnUnregister() {
 
 }
 

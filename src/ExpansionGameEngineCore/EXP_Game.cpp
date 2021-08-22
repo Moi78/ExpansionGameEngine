@@ -99,6 +99,17 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 		pline = Pipeline::LAMBERT_ENGINE;
 	}
 
+	API api;
+	if (TargetRoot["RenderingAPI"].asString() == "OGL3") {
+		api = API::OPENGL3;
+	}
+	else if (TargetRoot["RenderingAPI"].asString() == "OGL4") {
+		api = API::OPENGL4;
+	}
+	else {
+		api = API::OPENGL4;
+	}
+
 	std::string startupMap = TargetRoot["StartupMap"].asString();
 
 	EXP_GameInfo gi = {};
@@ -109,6 +120,7 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 	gi.GameLib = GameLib;
 	gi.StartupMap = startupMap;
 	gi.RenderingPipeline = pline;
+	gi.RenderingAPI = api;
 
 	return gi;
 }
@@ -121,7 +133,7 @@ void EXP_Game::InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo)
 
 	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y,
 												gameinfo.GameName,
-												API::OPENGL, gameinfo.RenderingPipeline,
+												gameinfo.RenderingAPI, gameinfo.RenderingPipeline,
 												60,
 												false,
 												gameinfo.RootEngineContentFolder);
@@ -142,7 +154,7 @@ void EXP_Game::InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo)
 	}
 
 	for (auto* act : m_actors) {
-		act->Start();
+		act->OnStart();
 	}
 }
 
@@ -327,7 +339,7 @@ void EXP_Game::UpdateCallbacks() {
 	m_hinput->UpdateMouseInput();
 
 	for (auto* act : m_actors) {
-		act->Tick();
+		act->OnTick();
 	}
 }
 
@@ -367,7 +379,7 @@ void EXP_Game::UnregisterActor(EXP_Actor* actor, bool nodelete) {
 
 	if (index != -1) {
 		m_actors.erase(m_actors.begin() + index);
-		actor->Unregister();
+		actor->OnUnregister();
 
 		if(!nodelete)
 			delete actor;
@@ -384,7 +396,7 @@ EXP_HotLoad* EXP_Game::GetGameLib() const {
 void EXP_Game::UnloadCurrentMap() {
 	for (auto* actor : m_actors) {
 		if (actor) {
-			actor->Unregister();
+			actor->OnUnregister();
 			delete actor;
 		}
 	}
@@ -429,7 +441,7 @@ void EXP_Game::LoadMap(const std::string& map) {
 
 	m_PlayingMap->GetLevelCode()->OnStart();
 	for (auto* actor : m_actors) {
-		actor->Start();
+		actor->OnStart();
 	}
 }
 
@@ -461,7 +473,7 @@ void EXP_Game::UnregisterMouseButtonCallback(EXP_MouseButtonCallback* cllbck, bo
 RD_ShaderMaterial* EXP_Game::GetShaderByFileRef(const std::string& ref) const {
 	const std::string absPath = m_gameinfo.RootGameContentFolder + ref;
 
-	return m_rndr->FetchShaderFromFile(absPath);
+	return m_rndr->FetchShaderFromFile(absPath, m_gameinfo.RootGameContentFolder);
 }
 
 EXP_MapLoader* EXP_Game::GetCurrentMap() const {
@@ -480,9 +492,30 @@ RD_ShaderMaterial* EXP_Game::GetShaderByFileRefInstanced(const std::string& ref)
 		return m_rndr->GetMaterialLibrary()->GetMaterialByName(ref);
 	}
 
+	std::string folder, vertEXT;
+	bool legacy = false;
+	switch (m_rndr->GetRenderingAPI()->GetAPIType())
+	{
+	case OPENGL3:
+		folder = "/glsl/gl3/";
+		vertEXT = "vert";
+		legacy = true;
+		break;
+	case OPENGL4:
+		folder = "/glsl/gl4/";
+		vertEXT = "vert";
+		break;
+	case VULKAN:
+		break;
+	case DIRECTX:
+		break;
+	default:
+		break;
+	}
+
 	BD_MatCustomShaderRead mr(absPath);
-	const std::string frag = mr.GetShaderCode();
-	const std::string vert = getFileData(m_gameinfo.RootEngineContentFolder + "/Shaders/glsl/Particles.vert");
+	const std::string frag = mr.GetShaderCode(legacy);
+	const std::string vert = getFileData(m_gameinfo.RootEngineContentFolder + "/Shaders/" + folder + "/Particles." + vertEXT);
 
 	RD_ShaderLoader* shd = m_rndr->GetRenderingAPI()->CreateShader();
 	shd->CompileShaderFromCode(vert, frag);

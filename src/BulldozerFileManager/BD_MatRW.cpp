@@ -136,8 +136,8 @@ void BD_MatCustomShaderRead::CloseFile() {
 		m_file.close();
 }
 
-std::string BD_MatCustomShaderRead::GetShaderCode() {
-	return m_root["glsl"].asString();
+std::string BD_MatCustomShaderRead::GetShaderCode(bool legacyCode) {
+	return m_root[legacyCode ? "glsl_leg" : "glsl"].asString();
 }
 
 int BD_MatCustomShaderRead::GetTextureCount() {
@@ -170,6 +170,10 @@ void BD_MatCustomShaderWrite::SetShaderCode(std::string shadercode) {
 	m_shader_code = shadercode;
 }
 
+void BD_MatCustomShaderWrite::SetShaderCodeOldGL(std::string code) {
+	m_shader_code_leg = code;
+}
+
 bool BD_MatCustomShaderWrite::WriteMaterialFile(std::string path) {
 	std::ofstream file;
 	file.open(path, std::ios::binary);
@@ -190,6 +194,7 @@ bool BD_MatCustomShaderWrite::WriteMaterialFile(std::string path) {
 	}
 
 	root["glsl"] = m_shader_code;
+	root["glsl_leg"] = m_shader_code_leg;
 
 	file << root;
 

@@ -25,12 +25,12 @@ Character::~Character() {
 	m_game->GetInputHandler()->CaptureCursor(false);
 }
 
-void Character::Start() {
+void Character::OnStart() {
 	m_cam->Use();
 	m_game->GetInputHandler()->CaptureCursor(true);
 }
 
-void Character::Tick() {
+void Character::OnTick() {
 	//SetWorldPos(m_bound->GetWorldPosition());
 
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);

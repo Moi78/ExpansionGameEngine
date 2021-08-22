@@ -145,9 +145,11 @@ void glfwWinCallback(GLFWwindow* win, int w, int h) {
 
 //---------------------------------------------  RD_Rendering_API_GL ---------------------------------------------
 
-RD_RenderingAPI_GL::RD_RenderingAPI_GL(RaindropRenderer* rndr) : RD_RenderingAPI() {
+RD_RenderingAPI_GL::RD_RenderingAPI_GL(RaindropRenderer* rndr, const bool legacy) : RD_RenderingAPI() {
 	m_win_sys = new RD_WindowingSystemGLFW(rndr);
 	m_bindless_tex_available = false;
+
+	m_legacy = legacy;
 }
 
 RD_RenderingAPI_GL::~RD_RenderingAPI_GL() {
@@ -171,15 +173,17 @@ bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 
-	if (CheckExtensionAvailability("GL_ARB_bindless_texture")) {
-		glEnable(GL_ARB_bindless_texture);
-		m_bindless_tex_available = true;
-		std::cout << "GL_ARB_bindless_texture supported !" << std::endl;
-	}
-	else {
-		m_bindless_tex_available = false;
-		std::cerr << "ERROR: GL_ARB_bindless_texture is not supported." << std::endl;
-		dispErrorMessageBox(L"GL_ARB_bindless_texture seems not to be supported, consider using Vulkan (not implmented yet) or DirectX (not implemented yet) or your dedicated GPU (this extension is known for not being available mainly on Intel iGPU devices). This program may disfunction.");
+	if (!m_legacy) {
+		if (CheckExtensionAvailability("GL_ARB_bindless_texture")) {
+			glEnable(GL_ARB_bindless_texture);
+			m_bindless_tex_available = true;
+			std::cout << "GL_ARB_bindless_texture supported !" << std::endl;
+		}
+		else {
+			m_bindless_tex_available = false;
+			std::cerr << "ERROR: GL_ARB_bindless_texture is not supported." << std::endl;
+			dispErrorMessageBox(L"GL_ARB_bindless_texture seems not to be supported, consider using OpenGL 3, Vulkan (not implmented yet) or DirectX (not implemented yet) or your dedicated GPU (this extension is known for not being available mainly on Intel iGPU devices). This program may disfunction.");
+		}
 	}
 
 	return true;

@@ -38,3 +38,10 @@ struct RD_API Gbuff {
 	//Special tex, not used at the same time.
 	unsigned int gLight;
 };
+
+enum RD_API API {
+	OPENGL3,
+	OPENGL4,
+	VULKAN,
+	DIRECTX
+};

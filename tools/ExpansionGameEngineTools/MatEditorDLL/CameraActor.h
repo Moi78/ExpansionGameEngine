@@ -16,8 +16,8 @@ public:
 	CameraActor(EXP_Game* game);
 	~CameraActor();
 
-	virtual void Start() override;
-	virtual void Tick() override;
+	virtual void OnStart() override;
+	virtual void OnTick() override;
 
 private:
 	EXP_Camera* m_cam;

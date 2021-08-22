@@ -3,7 +3,7 @@
     ],
 
     "glsl" : "
-#version 410 core
+#version 450 core
 layout (location = 0) out vec3 gPos;
 layout (location = 1) out vec3 gNorm;
 layout (location = 2) out vec4 gAlbedo;
@@ -24,5 +24,27 @@ void main() {
     gSpec = 0.0;
     gMetRoughAO = vec3(0.0, 1.0, 1.0);
 }
-"
+",
+    "glsl_leg" : "
+#version 450 core
+layout (location = 0) out vec3 gPos;
+layout (location = 1) out vec3 gNorm;
+layout (location = 2) out vec4 gAlbedo;
+layout (location = 3) out float gSpec;
+layout (location = 4) out vec3 gMetRoughAO;
+
+in vec3 Normal;
+in vec3 Tan;
+in vec3 Bitan;
+
+in vec3 FragPos;
+in vec2 UVcoord;
+
+void main() {
+    gPos = FragPos;
+    gNorm = normalize(Normal);
+    gAlbedo = vec4(1.0, 1.0, 1.0, 1.0);
+    gSpec = 0.0;
+    gMetRoughAO = vec3(0.0, 1.0, 1.0);
+}"
 }

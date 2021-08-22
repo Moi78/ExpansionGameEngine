@@ -11,6 +11,8 @@ Node_Editor::Node_Editor(EXP_Game* game, std::string projectRoot, std::string co
 	
 	m_currentIndex = 13;
 	m_currentId = 1;
+
+	m_evalLegacy = false;
 }
 
 Node_Editor::~Node_Editor() {
@@ -29,7 +31,7 @@ void Node_Editor::SaveFinalMaterial(std::string matPath) {
 	{
 		if (n->GetNodeType() == NodeType::TSampler2D) {
 			TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
-			m_textures.push_back(std::pair<std::string, std::string>(m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
+			m_textures.push_back(std::pair<std::string, std::string>(s->GetTexPath(), "tex" + std::to_string(s->GetId())));
 		}
 	}
 	m_contentPath = "/" + m_contentPath;
@@ -39,6 +41,7 @@ void Node_Editor::SaveFinalMaterial(std::string matPath) {
 	}
 
 	mw->SetShaderCode(EvalNodes());
+	mw->SetShaderCodeOldGL(EvalNodesOldGL());
 
 	mw->WriteMaterialFile(matPath);
 
@@ -467,6 +470,85 @@ std::string Node_Editor::EvalNodes() {
 
 	head.close();
 
+	return outCode;
+}
+
+std::string Node_Editor::EvalNodesOldGL() {
+	m_evalLegacy = true;
+
+	std::string outCode;
+
+	//Clearing old trash
+	m_textures.clear();
+
+	//Copying Fragment Shader Head
+	std::ifstream head;
+	head.open("Engine/ShaderFragments/FragHead_PBR_LEGACY.txt", std::ios::beg);
+	if (!head) {
+		std::cerr << "Cannot open fraghead" << std::endl;
+		return "";
+	}
+
+	while (!head.eof()) {
+		char line[100];
+		head.getline(line, 100);
+		outCode += line;
+		outCode += "\n";
+	}
+
+	//Pre-Scan of nodes
+	bool linkedShadowProcess = false;
+	bool linkedNormalMapProcess = false;
+
+	int texCount = 0;
+	for (auto n : m_nodes) {
+		if (n->GetNodeType() == NodeType::TSampler2D) {
+			TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
+			s->SetShaderIndex(texCount);
+			texCount++;
+		}
+	}
+
+	if (texCount) {
+		for (auto n : m_nodes) {
+			if (n->GetNodeType() == NodeType::TSampler2D) {
+				outCode += "uniform sampler2D tex" + std::to_string(n->GetId()) + ";\n";
+
+				TextureSampler* s = reinterpret_cast<TextureSampler*>(n);
+				m_textures.push_back(std::pair<std::string, std::string>(m_projectRoot + m_contentPath + s->GetTexPath(), "tex" + std::to_string(s->GetId())));
+			}
+		}
+	}
+
+	for (auto n : m_nodes) {
+		if (n->GetNodeType() == NodeType::TNormalProcess && (!linkedNormalMapProcess)) {
+			std::ifstream bumpFunc;
+			bumpFunc.open("Engine/ShaderFragments/BumpMap.txt", std::ios::beg);
+			if (!bumpFunc) {
+				return "";
+			}
+
+			while (!bumpFunc.eof()) {
+				char line[200];
+				bumpFunc.getline(line, 200);
+				outCode += std::string(line) + "\n";
+			}
+
+			linkedNormalMapProcess = true;
+		}
+	}
+
+	outCode += "void main() {\n";
+
+	outCode += m_nodes[0]->Stringifize(this, 0);
+
+	outCode += "}";
+
+	std::cout << outCode << std::endl;
+
+	head.close();
+
+	m_evalLegacy = false;
 	return outCode;
 }
 
@@ -1061,8 +1143,12 @@ void TextureSampler::render() {
 std::string TextureSampler::Stringifize(Node_Editor* nedit, int start_id) {
 	std::string outCode = "";
 
-	//outCode += "texture(tex" + std::to_string(m_id) + ",";
-	outCode += "TEXTURE(" + std::to_string(m_id) + ", " + std::to_string(m_shader_index) + ", (";
+	if (nedit->GetEvalLegacy()) {
+		outCode += "texture(tex" + std::to_string(m_id) + ",";
+	}
+	else {
+		outCode += "TEXTURE(" + std::to_string(m_id) + ", " + std::to_string(m_shader_index) + ", (";
+	}
 
 	Node* UV = nedit->GetNodeLinkedTo(m_index + 0);
 	if (UV) {
@@ -1072,7 +1158,12 @@ std::string TextureSampler::Stringifize(Node_Editor* nedit, int start_id) {
 		outCode += "UVcoord";
 	}
 
-	outCode += "))";
+	if (!nedit->GetEvalLegacy()) {
+		outCode += "))";
+	}
+	else {
+		outCode += ")";
+	}
 
 	switch (start_id - m_index) {
 	case 1:

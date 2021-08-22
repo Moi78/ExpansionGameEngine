@@ -74,7 +74,7 @@ bool EXP_MapLoader::LoadMap(std::string map) {
 			std::string ref = node.get("ref", "/").asString();
 
 			std::string mat = node.get("material", "").asString();
-			RD_ShaderMaterial* shader = m_game->GetRenderer()->FetchShaderFromFile(m_game->GetFilePathByRef(mat) + ".exmtl");
+			RD_ShaderMaterial* shader = m_game->GetShaderByFileRef(mat + ".exmtl");
 
 			Json::Value pos = node["pos"];
 			vec3f mpos(pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat());

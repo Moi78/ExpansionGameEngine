@@ -137,7 +137,7 @@ private:
 
 class RD_API RD_RenderingAPI_GL : public RD_RenderingAPI {
 public:
-	RD_RenderingAPI_GL(RaindropRenderer* rndr);
+	RD_RenderingAPI_GL(RaindropRenderer* rndr, const bool legacy = false);
 	virtual ~RD_RenderingAPI_GL();
 
 	virtual bool InitializeAPI(int w, int h, std::string wname);
@@ -169,10 +169,13 @@ public:
 	virtual int GetMaxTextureCount();
 	virtual bool AreBindlessTexturesAvailable();
 
+	virtual API GetAPIType() { return m_legacy ? API::OPENGL3 : API::OPENGL4; }
+
 private:
 	RD_WindowingSystemGLFW* m_win_sys;
 
 	bool m_bindless_tex_available;
+	bool m_legacy;
 };
 
 bool CheckExtensionAvailability(std::string ext);

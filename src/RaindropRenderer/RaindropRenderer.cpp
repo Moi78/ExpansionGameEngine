@@ -20,8 +20,13 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	
 	m_engineDir = std::move(engineDir);
 
-	if (api == API::OPENGL) {
+	if (api == API::OPENGL4) {
+		std::cout << "Using OGL4." << std::endl;
 		m_api = std::make_unique<RD_RenderingAPI_GL>(this);
+	}
+	else if (api == API::OPENGL3) {
+		std::cout << "Using OGL3." << std::endl;
+		m_api = std::make_unique<RD_RenderingAPI_GL>(this, true);
 	}
 
 	m_error_flag = false;
@@ -34,26 +39,47 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_frmLmt = std::make_unique<RD_FrameLimiter>(maxFramerate);
 	m_pipeline = pline;
 
+	std::string folder, fragEXT, vertEXT;
+	switch (api)
+	{
+	case OPENGL3:
+		folder = "/glsl/gl3/";
+		fragEXT = "frag";
+		vertEXT = "vert";
+		break;
+	case OPENGL4:
+		folder = "/glsl/gl4/";
+		fragEXT = "frag";
+		vertEXT = "vert";
+		break;
+	case VULKAN:
+		break;
+	case DIRECTX:
+		break;
+	default:
+		break;
+	}
+
 	//Shader Compiling
 	if (m_pipeline == Pipeline::LAMBERT_ENGINE) {
 		std::cout << "Compiling main shaders, lambert shading model..." << std::endl;
 
 		m_shadowShader = m_api->CreateShader();
 		m_shadowShader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/Shadow.vert",
-			m_engineDir + "/Shaders/glsl/Shadow.frag"
+			m_engineDir + "/Shaders" + folder + "Shadow." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "Shadow." + fragEXT + ""
 		);
 
 		m_light_shader = m_api->CreateShader();
 		m_light_shader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/Light.vert",
-			m_engineDir + "/Shaders/glsl/Light.frag"
+			m_engineDir + "/Shaders" + folder + "Light." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "Light." + fragEXT + ""
 		);
 
 		m_beauty_shader = m_api->CreateShader();
 		m_beauty_shader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/Beauty.vert",
-			m_engineDir + "/Shaders/glsl/Beauty.frag"
+			m_engineDir + "/Shaders" + folder + "Beauty." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "Beauty." + fragEXT + ""
 		);
 
 		m_CurrentShader = m_light_shader;
@@ -65,48 +91,48 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 		m_shadowShader = m_api->CreateShader();
 		m_shadowShader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/Shadow.vert",
-			m_engineDir + "/Shaders/glsl/Shadow.frag");
+			m_engineDir + "/Shaders" + folder + "Shadow." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "Shadow." + fragEXT + "");
 
 		m_light_shader = m_api->CreateShader();
 		m_light_shader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/pbr/Light.vert",
-			m_engineDir + "/Shaders/glsl/pbr/Light.frag");
+			m_engineDir + "/Shaders" + folder + "pbr/Light." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "pbr/Light." + fragEXT + "");
 
 		m_beauty_shader = m_api->CreateShader();
 		m_beauty_shader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/Beauty.vert",
-			m_engineDir + "/Shaders/glsl/Beauty.frag"
+			m_engineDir + "/Shaders" + folder + "Beauty." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "Beauty." + fragEXT + ""
 		);
 
 		m_ssr_shader = m_api->CreateShader();
 		m_ssr_shader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/pbr/SSR.vert",
-			m_engineDir + "/Shaders/glsl/pbr/SSR.frag"
+			m_engineDir + "/Shaders" + folder + "pbr/SSR." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "pbr/SSR." + fragEXT + ""
 		);
 
 		m_ssao_shader = m_api->CreateShader();
 		m_ssao_shader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/pbr/SSAO.vert",
-			m_engineDir + "/Shaders/glsl/pbr/SSAO.frag"
+			m_engineDir + "/Shaders" + folder + "pbr/SSAO." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "pbr/SSAO." + fragEXT + ""
 		);
 
 		m_ssao_blur_shader = m_api->CreateShader();
 		m_ssao_blur_shader->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/pbr/SSAO_Blur.vert", 
-			m_engineDir + "/Shaders/glsl/pbr/SSAO_Blur.frag"
+			m_engineDir + "/Shaders" + folder + "pbr/SSAO_Blur." + vertEXT + "", 
+			m_engineDir + "/Shaders" + folder + "pbr/SSAO_Blur." + fragEXT + ""
 		);
 
 		m_bloom = m_api->CreateShader();
 		m_bloom->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/pbr/bloom.vert",
-			m_engineDir + "/Shaders/glsl/pbr/bloom.frag"
+			m_engineDir + "/Shaders" + folder + "pbr/bloom." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "pbr/bloom." + fragEXT + ""
 		);
 
 		m_bloom_apply = m_api->CreateShader();
 		m_bloom_apply->compileShaderFromFile(
-			m_engineDir + "/Shaders/glsl/pbr/BloomApply.vert",
-			m_engineDir + "/Shaders/glsl/pbr/BloomApply.frag"
+			m_engineDir + "/Shaders" + folder + "pbr/BloomApply." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "pbr/BloomApply." + fragEXT + ""
 		);
 		
 		m_CurrentShader = m_light_shader;
@@ -122,14 +148,14 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 	m_shadowCalc = m_api->CreateShader();
 	m_shadowCalc->compileShaderFromFile(
-		m_engineDir + "/Shaders/glsl/ShadowCalc.vert",
-		m_engineDir + "/Shaders/glsl/ShadowCalc.frag"
+		m_engineDir + "/Shaders" + folder + "ShadowCalc." + vertEXT + "",
+		m_engineDir + "/Shaders" + folder + "ShadowCalc." + fragEXT + ""
 	);
 
 	m_shadowBlur = m_api->CreateShader();
 	m_shadowBlur->compileShaderFromFile(
-		m_engineDir+  "/Shaders/glsl/ShadowBlur.vert",
-		m_engineDir+  "/Shaders/glsl/ShadowBlur.frag"
+		m_engineDir+  "/Shaders" + folder + "ShadowBlur." + vertEXT + "",
+		m_engineDir+  "/Shaders" + folder + "ShadowBlur." + fragEXT + ""
 	);
 
 	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
@@ -182,7 +208,11 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 	if constexpr (RENDER_DEBUG_ENABLED) {
 		RD_ShaderLoader* shad = m_api->CreateShader();
-		shad->compileShaderFromFile(m_engineDir + "/Shaders/glsl/Debug.vert", m_engineDir + "/Shaders/glsl/Debug.frag");
+		shad->compileShaderFromFile(
+			m_engineDir + "/Shaders" + folder + "Debug." + vertEXT + "",
+			m_engineDir + "/Shaders" + folder + "Debug." + fragEXT + ""
+		);
+
 		m_dbgMat = new RD_ShaderMaterial(shad, this);
 
 		m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, m_dbgMat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
@@ -206,8 +236,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 	RD_ShaderLoader* ld = m_api->CreateShader();
 	ld->compileShaderFromFile(
-		m_engineDir + "/Shaders/glsl/TextRender.vert",
-		m_engineDir + "/Shaders/glsl/TextRender.frag"
+		m_engineDir + "/Shaders" + folder + "TextRender." + vertEXT + "",
+		m_engineDir + "/Shaders" + folder + "TextRender." + fragEXT + ""
 	);
 	m_matlib->AddMaterialToLib(new RD_ShaderMaterial(ld, this), "text");
 
@@ -1204,9 +1234,26 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref,
 		return m_matlib->GetMaterialByName(ref);
 	}
 
+	std::string folder, vertEXT;
+	bool legacy = false;
+	switch (m_api->GetAPIType())
+	{
+	case API::OPENGL3:
+		folder = "/glsl/gl3/";
+		vertEXT = "vert";
+		legacy = true;
+		break;
+	case API::OPENGL4:
+		folder = "/glsl/gl4/";
+		vertEXT = "vert";
+		break;
+	default:
+		break;
+	}
+
 	BD_MatCustomShaderRead mread(ref);
-	const std::string fcode = mread.GetShaderCode();
-	const std::string vcode = getFileData(m_engineDir + "/Shaders/glsl/Gshad.vert");
+	const std::string fcode = mread.GetShaderCode(legacy);
+	const std::string vcode = getFileData(m_engineDir + "/Shaders" + folder + "Gshad." + vertEXT + "");
 
 	RD_ShaderLoader* shader = m_api->CreateShader();
 	shader->CompileShaderFromCode(vcode, fcode);

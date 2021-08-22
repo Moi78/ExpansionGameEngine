@@ -68,7 +68,7 @@ public:
 
 	void CloseFile();
 
-	std::string GetShaderCode();
+	std::string GetShaderCode(bool legacyCode);
 	int GetTextureCount();
 	std::string GetTextureParamName(int index);
 	std::string GetTexturePath(int index);
@@ -84,13 +84,16 @@ public:
 	~BD_MatCustomShaderWrite();
 
 	void SetShaderCode(std::string code);
+	void SetShaderCodeOldGL(std::string code);
 	void AddTextureRef(std::string ref, std::string param);
 
 	bool WriteMaterialFile(std::string path);
 
 private:
 	std::vector<std::pair<std::string, std::string>> m_texs;
+
 	std::string m_shader_code;
+	std::string m_shader_code_leg;
 };
 
 #endif //_BD_MAT_RW_H__

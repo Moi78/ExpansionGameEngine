@@ -16,11 +16,11 @@ CameraClass::~CameraClass() {
 
 }
 
-void CameraClass::Start() {
+void CameraClass::OnStart() {
 	m_cam->Use();
 }
 
-void CameraClass::Tick() {
+void CameraClass::OnTick() {
 	//m_game->GetInputHandler()->CaptureCursor(false);
 	if (!m_game->GetInputHandler()->GetMouseButton(1)) {
 		m_game->GetInputHandler()->CaptureCursor(false);

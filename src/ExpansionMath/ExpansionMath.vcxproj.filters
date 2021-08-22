@@ -66,8 +66,4 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\ExGame\Engine\Shaders\glsl\pbr\Light.frag" />
-    <None Include="..\ExGame\Engine\Shaders\glsl\pbr\Light.vert" />
-  </ItemGroup>
 </Project>

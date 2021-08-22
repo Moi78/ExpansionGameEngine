@@ -142,4 +142,6 @@ public:
 
 	virtual int GetMaxTextureCount() = 0;
 	virtual bool AreBindlessTexturesAvailable() = 0;
+
+	virtual API GetAPIType() = 0;
 };
