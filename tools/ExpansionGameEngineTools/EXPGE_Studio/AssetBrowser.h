@@ -17,11 +17,12 @@
 
 class AssetBrowser {
 public:
-	AssetBrowser(EXP_Game* game, std::string path, EditorConf* editConf, EditorRegistry* editorReg) :
+	AssetBrowser(EXP_Game* game, std::string path, EditorConf* editConf, EditorRegistry* editorReg, EXP_MapLoader* mloader) :
 		m_base_path(path), m_path("/"), m_game(game) {
 
 		m_reg = editorReg;
 		m_conf = editConf;
+		m_loader = mloader;
 
 		m_folder_icon = game->GetRenderer()->GetRenderingAPI()->CreateTexture();
 		m_folder_icon->LoadTexture("studio/icons/folder.png", false);
@@ -133,6 +134,9 @@ public:
 							m_reg->m_meshes.push_back(std::pair<EXP_StaticMesh*, std::string>(m, "Default Material"));
 
 						}
+						else if (ext == "json") {
+							OpenMap(m_base_path + m_path + ff.first);
+						}
 						else {
 							OpenFile(ff.first);
 						}
@@ -186,10 +190,40 @@ public:
 		}
 	}
 
+	void OpenMap(std::string file) {
+		m_loader->UnloadMap();
+		m_game->GetRenderer()->GetMaterialLibrary()->ClearLibrary();
+
+		m_reg->m_actors.clear();
+		m_reg->m_meshes.clear();
+		m_reg->m_plights.clear();
+		m_reg->m_dlights.clear();
+
+		m_loader->LoadMap(file, m_base_path, true);
+
+		std::vector<std::pair<EXP_StaticMesh*, std::string>> meshes;
+		for (auto m : m_loader->GetMeshList()) {
+			std::string material_name = m_game->GetRenderer()->GetMaterialLibrary()->GetMaterialName(m->GetMaterial());
+			int i = material_name.size();
+			for (i; i >= 0; i--) {
+				if ((material_name[i] == '/') || (material_name[i] == '\\')) {
+					break;
+				}
+			}
+			material_name.erase(material_name.begin(), material_name.begin() + i + 1);
+
+			meshes.push_back(std::pair<EXP_StaticMesh*, std::string>(m, material_name));
+		}
+		m_reg->m_meshes = meshes;
+		m_reg->m_dlights = m_loader->GetDirLightList();
+		m_reg->m_plights = m_loader->GetPointLightList();
+	}
+
 private:
 	EXP_Game* m_game;
 	EditorConf* m_conf;
 	EditorRegistry* m_reg;
+	EXP_MapLoader* m_loader;
 
 	std::string m_path;
 	std::string m_base_path;

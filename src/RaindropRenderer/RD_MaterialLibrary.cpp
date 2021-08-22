@@ -44,7 +44,7 @@ RD_ShaderMaterial* RD_MaterialLibrary::GetMaterialByName(std::string name) {
 		}
 	}
 
-	std::cerr << "Material " << name << " was not found. Returning void struct." << std::endl;
+	std::cerr << "ERROR: Material (RD_MaterialLibrary::GetMaterialByName) " << name << " was not found. Returning void struct." << std::endl;
 	return {};
 }
 
@@ -53,6 +53,8 @@ void RD_MaterialLibrary::ClearLibrary() {
 
 	for (auto mat : m_materials) {
 		RD_ShaderMaterial* m = mat.second;
+		m->DeleteMaterial();
+
 		delete m;
 	}
 	m_materials.clear();
@@ -60,4 +62,14 @@ void RD_MaterialLibrary::ClearLibrary() {
 
 std::vector<std::pair<std::string, RD_ShaderMaterial*>> RD_MaterialLibrary::GetRawVector() {
 	return m_materials;
+}
+
+std::string RD_MaterialLibrary::GetMaterialName(RD_ShaderMaterial* mat) {
+	for (auto m : m_materials) {
+		if (m.second == mat) {
+			return m.first;
+		}
+	}
+
+	std::cerr << "ERROR (RD_MaterialLibrary::GetMaterialName) : Material not found." << std::endl;
 }

@@ -7,6 +7,7 @@
 #include <string>
 
 #include "RaindropRenderer.h"
+#include "RD_Materials.h"
 
 class RAINDROPRENDERER_API RD_MaterialLibrary
 {
@@ -20,6 +21,7 @@ public:
 
 	bool DoMaterialExists(std::string nameDenominator);
 	RD_ShaderMaterial* GetMaterialByName(std::string nameDenominator);
+	std::string GetMaterialName(RD_ShaderMaterial* mat);
 
 	std::vector<std::pair<std::string, RD_ShaderMaterial*>> GetRawVector();
 

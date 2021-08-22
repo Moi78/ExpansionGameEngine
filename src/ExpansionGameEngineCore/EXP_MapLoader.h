@@ -43,7 +43,8 @@ public:
 	EXP_MapLoader(EXP_Game* game);
 	~EXP_MapLoader();
 
-	bool LoadMap(std::string);
+	bool LoadMap(std::string map, const bool nocode = false);
+	bool LoadMap(std::string map, std::string content_path, const bool nocode = false);
 	void UnloadMap();
 
 	EXP_Level* GetLevelCode();
@@ -51,6 +52,10 @@ public:
 	EXP_StaticMesh* GetStaticMeshByName(std::string name);
 	EXP_PointLight* GetPointLightByName(std::string name);
 	EXP_DirLight* GetDirLightByName(std::string name);
+
+	std::vector<EXP_StaticMesh*> GetMeshList() { return m_meshes; }
+	std::vector<EXP_PointLight*> GetPointLightList() { return m_ptlights; }
+	std::vector<EXP_DirLight*> GetDirLightList() { return m_dlights; }
 
 private:
 	EXP_Game* m_game;
@@ -63,8 +68,6 @@ private:
 
 	LEVELCODERELEASER m_rl;
 	void* m_rawLevelCode;
-
-	std::mutex m_mu;
 };
 
 #endif

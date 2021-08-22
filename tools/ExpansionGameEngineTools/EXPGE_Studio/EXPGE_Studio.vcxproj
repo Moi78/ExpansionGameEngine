@@ -157,6 +157,7 @@
     <ClCompile Include="..\..\libs\IMGUI\imgui_tables.cpp" />
     <ClCompile Include="..\..\libs\IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="EditorGUI.cpp" />
+    <ClCompile Include="EditorRegistry.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="FileUtils.cpp" />
   </ItemGroup>

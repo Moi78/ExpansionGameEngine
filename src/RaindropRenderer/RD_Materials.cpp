@@ -9,15 +9,7 @@ RD_ShaderMaterial::RD_ShaderMaterial(RD_ShaderLoader* shader, RaindropRenderer* 
 }
 
 RD_ShaderMaterial::~RD_ShaderMaterial() {
-	std::cout << "Deleting shader material" << std::endl;
 
-	delete m_shader;
-	delete m_texture_buffer;
-
-	for (auto tex : m_textures) {
-		delete tex.second;
-	}
-	m_textures.clear();
 }
 
 void RD_ShaderMaterial::BindMaterial() {
@@ -95,6 +87,18 @@ void RD_ShaderMaterial::SetShader(RD_ShaderLoader* shader, bool nodelete) {
 }
 
 void RD_ShaderMaterial::PurgeTextures() {
+	for (auto tex : m_textures) {
+		delete tex.second;
+	}
+	m_textures.clear();
+}
+
+void RD_ShaderMaterial::DeleteMaterial() {
+	std::cout << "Deleting shader material" << std::endl;
+
+	delete m_shader;
+	delete m_texture_buffer;
+
 	for (auto tex : m_textures) {
 		delete tex.second;
 	}

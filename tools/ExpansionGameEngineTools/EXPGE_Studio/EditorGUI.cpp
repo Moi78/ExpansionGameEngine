@@ -15,7 +15,8 @@ EditorGUI::EditorGUI(EXP_Game* game, std::string projectPath, std::string conten
 	m_projectPath = projectPath;
 	m_contentPath = contentPath;
 
-	m_asset_browser = new AssetBrowser(game, m_projectPath + m_contentPath, &m_conf, &m_reg);
+	m_loader = new EXP_MapLoader(game);
+	m_asset_browser = new AssetBrowser(game, m_projectPath + m_contentPath, &m_conf, &m_reg, m_loader);
 	m_material_browser = new Filebrowser(m_projectPath + m_contentPath);
 	m_material_browser->AddFilter("exmtl");
 

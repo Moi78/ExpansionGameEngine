@@ -1,9 +1,11 @@
 #pragma once
+#include <RaindropRenderer.h>
 #include <EXP_Game.h>
 #include <EXP_InputHandler.h>
 #include <RD_Texture.h>
 #include <EXP_Component.h>
 #include <EXP_PointLight.h>
+#include <EXP_MapLoader.h>
 
 #include "EditorRegistry.h"
 #include "AssetBrowser.h"
@@ -52,6 +54,8 @@ private:
 
 	AssetBrowser* m_asset_browser;
 	Filebrowser* m_material_browser;
+
+	EXP_MapLoader* m_loader;
 
 	bool m_quit_popup_enabled;
 };

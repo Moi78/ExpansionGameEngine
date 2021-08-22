@@ -14,3 +14,5 @@ struct EditorRegistry {
 	std::vector<std::pair<EXP_StaticMesh*, std::string>> m_meshes;
 	std::vector<EXP_Actor*> m_actors;
 };
+
+void ClearRegistry(EditorRegistry* reg);

@@ -45,6 +45,9 @@
     <ClCompile Include="FileUtils.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="EditorRegistry.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\IMGUI\imconfig.h">

@@ -43,6 +43,8 @@ public:
 	void UnregisterMeshReference(RD_Mesh* msh);
 	void DrawMeshes();
 
+	void DeleteMaterial();
+
 private:
 	RaindropRenderer* m_rndr;
 
