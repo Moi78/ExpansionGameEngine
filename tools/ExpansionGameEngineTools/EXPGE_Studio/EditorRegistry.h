@@ -9,6 +9,8 @@
 #include <string>
 
 struct EditorRegistry {
+	std::string mapPath;
+
 	std::vector<EXP_PointLight*> m_plights;
 	std::vector<EXP_DirLight*> m_dlights;
 	std::vector<std::pair<EXP_StaticMesh*, std::string>> m_meshes;

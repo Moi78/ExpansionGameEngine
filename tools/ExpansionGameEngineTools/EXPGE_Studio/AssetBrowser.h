@@ -136,6 +136,7 @@ public:
 						}
 						else if (ext == "json") {
 							OpenMap(m_base_path + m_path + ff.first);
+							m_reg->mapPath = m_base_path + m_path + ff.first;
 						}
 						else {
 							OpenFile(ff.first);

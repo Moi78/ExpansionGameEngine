@@ -40,6 +40,8 @@ public:
 
 	EditorConf* GetConf() { return &m_conf; }
 
+	void SaveMap(std::string map_path);
+
 private:
 	EXP_Game* m_game;
 
@@ -53,7 +55,9 @@ private:
 	std::string m_contentPath;
 
 	AssetBrowser* m_asset_browser;
+
 	Filebrowser* m_material_browser;
+	Filebrowser* m_map_save_browser;
 
 	EXP_MapLoader* m_loader;
 

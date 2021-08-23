@@ -17,8 +17,12 @@ EditorGUI::EditorGUI(EXP_Game* game, std::string projectPath, std::string conten
 
 	m_loader = new EXP_MapLoader(game);
 	m_asset_browser = new AssetBrowser(game, m_projectPath + m_contentPath, &m_conf, &m_reg, m_loader);
+
 	m_material_browser = new Filebrowser(m_projectPath + m_contentPath);
 	m_material_browser->AddFilter("exmtl");
+
+	m_map_save_browser = new Filebrowser(m_projectPath + m_contentPath);
+	m_map_save_browser->AddFilter("json");
 
 	m_selected = std::pair<COMP_TYPES, void*>(COMP_TYPES::TNONE, nullptr);
 	m_selected_index = 0;
@@ -41,6 +45,7 @@ void EditorGUI::RenderEditorGUI() {
 	RenderQuitPopup();
 
 	m_material_browser->Render(m_game->GetRenderer());
+	m_map_save_browser->Render(m_game->GetRenderer());
 
 	{
 		ImGui::Begin("Add");
@@ -174,7 +179,17 @@ void EditorGUI::RenderMenuBar() {
 
 	if (ImGui::BeginMenu("File")) {
 		ImGui::MenuItem("New...");
-		ImGui::MenuItem("Save", "CTRL+S");
+
+		if (ImGui::MenuItem("Save", "CTRL+S")) {
+			if (m_reg.mapPath != "") {
+				SaveMap(m_reg.mapPath);
+			}
+			else {
+				m_map_save_browser->Open();
+			}
+		}
+		
+		ImGui::MenuItem("Save As", "CTRL+SHIFT+S");
 		ImGui::Separator();
 
 		if (ImGui::MenuItem("Quit")) {
@@ -182,6 +197,12 @@ void EditorGUI::RenderMenuBar() {
 		}
 
 		ImGui::EndMenu();
+	}
+
+	if (m_map_save_browser->OkPressed()) {
+		SaveMap(m_map_save_browser->GetFileNameBuffer());
+
+		m_map_save_browser->ResetBools();
 	}
 
 	ImGui::EndMainMenuBar();
@@ -297,6 +318,8 @@ void EditorGUI::DetailSMesh(EXP_StaticMesh* smesh, std::string mat) {
 		smesh->SetMaterial(mat);
 
 		m_reg.m_meshes[m_selected_index].second = m_material_browser->GetFileName();
+
+		m_material_browser->ResetBools();
 	}
 }
 
@@ -323,4 +346,8 @@ void EditorGUI::RenderQuitPopup() {
 
 		ImGui::EndPopup();
 	}
+}
+
+void EditorGUI::SaveMap(std::string map_path) {
+	std::cout << "Saving map at " << map_path << std::endl;
 }
