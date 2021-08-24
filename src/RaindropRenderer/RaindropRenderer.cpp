@@ -164,7 +164,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 12);
 	m_shadowmaps_s = m_api->CreateShaderStorageBuffer(10 * sizeof(uint64_t), 16);
 	m_glyph_s = m_api->CreateShaderStorageBuffer(sizeof(uint64_t), 18);
-	m_final_pass_selector_s = m_api->CreateShaderStorageBuffer(sizeof(int), 20);
+	m_final_pass_selector_s = m_api->CreateShaderStorageBuffer(sizeof(int), 15);
 
 	m_pointLight_u = m_api->CreateUniformBuffer(243 * (8 * 4 + sizeof(int)), 3);
 	m_dirLights_u = m_api->CreateUniformBuffer(10 * ((7 * 4) + sizeof(int)), 4);

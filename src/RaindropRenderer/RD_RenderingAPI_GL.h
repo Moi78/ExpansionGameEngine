@@ -31,7 +31,7 @@ public:
 	RD_WindowingSystemGLFW(RaindropRenderer* rndr);
 	virtual ~RD_WindowingSystemGLFW();
 
-	virtual bool OpenWindow(std::string name, int w, int h);
+	virtual bool OpenWindow(std::string name, int w, int h, int api_major = 4, int api_minor = 5);
 	virtual void SetFullscreenMode(bool mode);
 
 	virtual int GetHeight();

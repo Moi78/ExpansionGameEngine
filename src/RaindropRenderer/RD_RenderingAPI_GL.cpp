@@ -14,7 +14,7 @@ RD_WindowingSystemGLFW::~RD_WindowingSystemGLFW() {
 	glfwDestroyWindow(m_win);
 }
 
-bool RD_WindowingSystemGLFW::OpenWindow(std::string name, int w, int h) {
+bool RD_WindowingSystemGLFW::OpenWindow(std::string name, int w, int h, int api_major, int api_minor) {
 	m_w = w;
 	m_h = h;
 	
@@ -27,8 +27,8 @@ bool RD_WindowingSystemGLFW::OpenWindow(std::string name, int w, int h) {
 		return false;
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, api_major);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, api_minor);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
@@ -157,7 +157,17 @@ RD_RenderingAPI_GL::~RD_RenderingAPI_GL() {
 }
 
 bool RD_RenderingAPI_GL::InitializeAPI(int w, int h, std::string wname) {
-	if (!m_win_sys->OpenWindow(wname, w, h)) {
+	int major, minor = 0;
+	if (m_legacy) {
+		major = 3;
+		minor = 3;
+	}
+	else {
+		major = 4;
+		minor = 5;
+	}
+
+	if (!m_win_sys->OpenWindow(wname, w, h, major, minor)) {
 		dispErrorMessageBox(StrToWStr("Cannot initialize GLFW."));
 		return false;
 	}

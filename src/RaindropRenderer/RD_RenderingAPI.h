@@ -84,7 +84,7 @@ public:
 	RD_WindowingSystem() {}
 	virtual ~RD_WindowingSystem() {}
 
-	virtual bool OpenWindow(std::string name, int w, int h) = 0;
+	virtual bool OpenWindow(std::string name, int w, int h) { return false; }
 	virtual void SetFullscreenMode(bool mode) = 0;
 
 	virtual bool GetKeyPress(int key) = 0;

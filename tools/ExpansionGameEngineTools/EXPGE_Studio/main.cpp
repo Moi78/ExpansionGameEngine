@@ -12,6 +12,13 @@
 #include "EditorRegistry.h"
 #include "EditorGUI.h"
 
+//Enabling Optimus
+#ifdef _WIN32
+extern "C" { _declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001; }
+#else
+extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
+#endif //_WIN32
+
 int main(int argc, char* argv[]) {
 	//EXPGE Renderer
 	EXP_GameInfo gi;
