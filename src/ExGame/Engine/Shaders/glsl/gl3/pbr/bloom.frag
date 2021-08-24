@@ -1,4 +1,4 @@
-#version 450 core
+#version 330 core
 layout (location = 0) out vec3 bloom;
 
 in vec2 UVcoords;
