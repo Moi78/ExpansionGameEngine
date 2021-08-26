@@ -186,7 +186,18 @@ void EditorGUI::RenderMenuBar() {
 	ImGui::BeginMainMenuBar();
 
 	if (ImGui::BeginMenu("File")) {
-		ImGui::MenuItem("New...");
+		if (ImGui::MenuItem("New Level")) {
+			m_loader->UnloadMap();
+			m_game->GetRenderer()->GetMaterialLibrary()->ClearLibrary();
+			
+			m_reg.levelCodeObjectName = "";
+			m_reg.mapPath = "";
+
+			m_reg.m_actors.clear();
+			m_reg.m_dlights.clear();
+			m_reg.m_meshes.clear();
+			m_reg.m_plights.clear();
+		}
 
 		if (ImGui::MenuItem("Save", "CTRL+S")) {
 			if (m_reg.mapPath != "") {
