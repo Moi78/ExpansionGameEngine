@@ -17,8 +17,7 @@ EXP_MapLoader::~EXP_MapLoader() {
 
 bool EXP_MapLoader::LoadMap(std::string map, const bool nocode) {
 	if (!std::filesystem::exists(map)) {
-		std::cerr << "Cannot load map file, file " << map << " does not exists" << std::endl;
-		dispErrorMessageBox(StrToWStr("Cannot load map file " + map + " path does not exists."));
+		dispErrorMessageBox(StrToWStr("(EXP_MapLoader::LoadMap) Cannot load map file " + map + " path does not exists."));
 		return false;
 	}
 
@@ -33,23 +32,24 @@ bool EXP_MapLoader::LoadMap(std::string map, const bool nocode) {
 	builder["collectComment"] = false;
 
 	if (!Json::parseFromStream(builder, mapStream, &root, &errs)) {
-		std::cerr << "Cannot load map file " << map << ". " << errs << std::endl;
+		std::cerr << "ERROR (EXP_MapLoader::LoadMap): Cannot load map file " << map << ". " << errs << std::endl;
 		return false;
 	}
 
+	m_levelcode_name = root["MapLevelCodeObjectName"].asString();
 	if (!nocode) {
 		//Getting Level code object from user's shared lib (Handler)
 		std::string MapCodeObject = root["MapLevelCodeObjectName"].asString() + "Handler";
 		LEVELCODEHANDLER lvlH = m_game->GetGameLib()->FetchLibHandler<LEVELCODEHANDLER>(MapCodeObject.c_str());
 		if (lvlH == NULL) {
-			std::cerr << "Cannot load code object " << root["MapLevelCodeObjectName"].asString() << std::endl;
+			std::cerr << "ERROR (EXP_MapLoader::LoadMap): Cannot load code object " << root["MapLevelCodeObjectName"].asString() << std::endl;
 			exit(-3);
 		}
 		else {
 			m_rawLevelCode = lvlH(m_game, this);
 			m_levelCode = (EXP_Level*)m_rawLevelCode;
 			if (!m_levelCode) {
-				std::cerr << "ERROR: Cannot create instance of level code object. " << MapCodeObject << std::endl;
+				std::cerr << "ERROR (EXP_MapLoader::LoadMap): Cannot create instance of level code object. " << MapCodeObject << std::endl;
 				exit(-4);
 			}
 			else {
@@ -61,7 +61,7 @@ bool EXP_MapLoader::LoadMap(std::string map, const bool nocode) {
 		std::string MapCodeObjRl = root["MapLevelCodeObjectName"].asString() + "Remover";
 		m_rl = m_game->GetGameLib()->FetchLibHandler<LEVELCODERELEASER>(MapCodeObjRl.c_str());
 		if (m_rl == NULL) {
-			std::cerr << "Cannot load code object" << root["MapLevelCodeObjectName"] << std::endl;
+			std::cerr << "ERROR (EXP_MapLoader::LoadMap): Cannot load code object" << root["MapLevelCodeObjectName"] << std::endl;
 			exit(-3);
 		}
 	}
@@ -81,7 +81,8 @@ bool EXP_MapLoader::LoadMap(std::string map, const bool nocode) {
 			std::string ref = node.get("ref", "/").asString();
 
 			std::string mat = node.get("material", "").asString();
-			RD_ShaderMaterial* shader = m_game->GetShaderByFileRef(mat + ".exmtl");
+			RD_ShaderMaterial* shader = m_game->GetShaderByFileRef(mat);
+			shader->SetMetaInf(mat);
 
 			Json::Value pos = node["pos"];
 			vec3f mpos(pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat());
@@ -154,6 +155,7 @@ bool EXP_MapLoader::LoadMap(std::string map, std::string content_path, const boo
 		return false;
 	}
 
+	m_levelcode_name = root["MapLevelCodeObjectName"].asString();
 	if (!nocode) {
 		//Getting Level code object from user's shared lib (Handler)
 		std::string MapCodeObject = root["MapLevelCodeObjectName"].asString() + "Handler";
@@ -198,7 +200,8 @@ bool EXP_MapLoader::LoadMap(std::string map, std::string content_path, const boo
 			std::string ref = node.get("ref", "/").asString();
 
 			std::string mat = node.get("material", "").asString();
-			RD_ShaderMaterial* shader = m_game->GetRenderer()->FetchShaderFromFile(content_path + mat + ".exmtl", content_path);
+			RD_ShaderMaterial* shader = m_game->GetRenderer()->FetchShaderFromFile(content_path + mat, content_path);
+			shader->SetMetaInf(mat);
 
 			Json::Value pos = node["pos"];
 			vec3f mpos(pos[0].asFloat(), pos[1].asFloat(), pos[2].asFloat());
@@ -209,7 +212,8 @@ bool EXP_MapLoader::LoadMap(std::string map, std::string content_path, const boo
 			Json::Value scale = node["scale"];
 			vec3f mscale(scale[0].asFloat(), scale[1].asFloat(), scale[2].asFloat());
 
-			EXP_StaticMesh* mesh = new EXP_StaticMesh(m_game, shader, content_path + ref + ".msh", mpos, mrot, mscale, true);
+			EXP_StaticMesh* mesh = new EXP_StaticMesh(m_game, shader, content_path + ref, mpos, mrot, mscale, true);
+			mesh->SetMetaInf(ref);
 			mesh->SetNameTag(node["nameTag"].asString());
 			m_meshes.push_back(mesh);
 
@@ -323,4 +327,8 @@ EXP_DirLight* EXP_MapLoader::GetDirLightByName(std::string name) {
 
 	std::cerr << "ERROR: DirLight " << name << " was not found. Returning nullptr." << std::endl;
 	return nullptr;
+}
+
+std::string EXP_MapLoader::GetLevelCodeObjectName() {
+	return m_levelcode_name;
 }

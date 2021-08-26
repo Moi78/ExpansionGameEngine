@@ -8,12 +8,18 @@
 #include <vector>
 #include <string>
 
+struct MeshMeta {
+	std::string material;
+	std::string meshref;
+};
+
 struct EditorRegistry {
 	std::string mapPath;
+	std::string levelCodeObjectName;
 
 	std::vector<EXP_PointLight*> m_plights;
 	std::vector<EXP_DirLight*> m_dlights;
-	std::vector<std::pair<EXP_StaticMesh*, std::string>> m_meshes;
+	std::vector<std::pair<EXP_StaticMesh*, MeshMeta>> m_meshes;
 	std::vector<EXP_Actor*> m_actors;
 };
 

@@ -12,6 +12,9 @@
 #include "EditorConf.h"
 #include "Filebrowser.h"
 
+#include <fstream>
+#include <filesystem>
+
 #include "imgui.h"
 #include "FileUtils.h"
 

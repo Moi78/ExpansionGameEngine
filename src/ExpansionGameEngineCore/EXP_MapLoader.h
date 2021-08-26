@@ -48,6 +48,7 @@ public:
 	void UnloadMap();
 
 	EXP_Level* GetLevelCode();
+	std::string GetLevelCodeObjectName();
 
 	EXP_StaticMesh* GetStaticMeshByName(std::string name);
 	EXP_PointLight* GetPointLightByName(std::string name);
@@ -68,6 +69,8 @@ private:
 
 	LEVELCODERELEASER m_rl;
 	void* m_rawLevelCode;
+
+	std::string m_levelcode_name;
 };
 
 #endif

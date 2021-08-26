@@ -84,7 +84,7 @@ void EditorGUI::RenderEditorGUI() {
 				DetailDLight(dlight);
 			} else if (m_selected.first == COMP_TYPES::TSMESH) {
 				EXP_StaticMesh* smesh = reinterpret_cast<EXP_StaticMesh*>(m_selected.second);
-				DetailSMesh(smesh, m_reg.m_meshes[m_selected_index].second);
+				DetailSMesh(smesh, m_reg.m_meshes[m_selected_index].second.material);
 			}
 		}
 
@@ -172,6 +172,14 @@ void EditorGUI::RenderEditorGUI() {
 
 		ImGui::End();
 	}
+
+	{
+		ImGui::Begin("Level Info");
+
+		ImGui::InputText("Level code object name", (char*)m_reg.levelCodeObjectName.c_str(), m_reg.levelCodeObjectName.capacity() + 1);
+
+		ImGui::End();
+	}
 }
 
 void EditorGUI::RenderMenuBar() {
@@ -183,13 +191,16 @@ void EditorGUI::RenderMenuBar() {
 		if (ImGui::MenuItem("Save", "CTRL+S")) {
 			if (m_reg.mapPath != "") {
 				SaveMap(m_reg.mapPath);
+				m_asset_browser->RefreshFilesFolders();
 			}
 			else {
 				m_map_save_browser->Open();
 			}
 		}
 		
-		ImGui::MenuItem("Save As", "CTRL+SHIFT+S");
+		if (ImGui::MenuItem("Save As", "CTRL+SHIFT+S")) {
+			m_map_save_browser->Open();
+		}
 		ImGui::Separator();
 
 		if (ImGui::MenuItem("Quit")) {
@@ -317,7 +328,9 @@ void EditorGUI::DetailSMesh(EXP_StaticMesh* smesh, std::string mat) {
 		RD_ShaderMaterial* mat = m_game->GetRenderer()->FetchShaderFromFile(fp, m_projectPath + m_contentPath);
 		smesh->SetMaterial(mat);
 
-		m_reg.m_meshes[m_selected_index].second = m_material_browser->GetFileName();
+		std::string m = m_material_browser->GetRelativeFileName();
+
+		m_reg.m_meshes[m_selected_index].second.material = m;
 
 		m_material_browser->ResetBools();
 	}
@@ -350,4 +363,77 @@ void EditorGUI::RenderQuitPopup() {
 
 void EditorGUI::SaveMap(std::string map_path) {
 	std::cout << "Saving map at " << map_path << std::endl;
+
+	std::ofstream file;
+	file.open(map_path, std::ios::binary);
+
+	Json::Value root;
+
+	root["MapLevelCodeObjectName"] = m_reg.levelCodeObjectName.c_str();
+
+	Json::Value nodes;
+	
+	//Meshes
+	int i = 0;
+	for (auto m : m_reg.m_meshes) {
+		nodes[i]["type"] = "mesh";
+		nodes[i]["nameTag"] = m.first->GetNameTag();
+		nodes[i]["ref"] = m.second.meshref;
+		nodes[i]["material"] = m.second.material;
+
+		nodes[i]["pos"][0] = m.first->GetPosition().getX();
+		nodes[i]["pos"][1] = m.first->GetPosition().getY();
+		nodes[i]["pos"][2] = m.first->GetPosition().getZ();
+
+		nodes[i]["rot"][0] = m.first->GetRotation().getX();
+		nodes[i]["rot"][1] = m.first->GetRotation().getY();
+		nodes[i]["rot"][2] = m.first->GetRotation().getZ();
+
+		nodes[i]["scale"][0] = m.first->GetScale().getX();
+		nodes[i]["scale"][1] = m.first->GetScale().getY();
+		nodes[i]["scale"][2] = m.first->GetScale().getZ();
+
+		i++;
+	}
+
+	//Dir lights
+	for (auto dl : m_reg.m_dlights) {
+		nodes[i]["type"] = "dlight";
+		nodes[i]["nameTag"] = dl->GetNameTag();
+		
+		nodes[i]["dir"][0] = dl->GetLightDir().getX();
+		nodes[i]["dir"][1] = dl->GetLightDir().getY();
+		nodes[i]["dir"][2] = dl->GetLightDir().getZ();
+
+		nodes[i]["color"][0] = dl->GetLightColor().getX();
+		nodes[i]["color"][1] = dl->GetLightColor().getY();
+		nodes[i]["color"][2] = dl->GetLightColor().getZ();
+
+		nodes[i]["brightness"] = dl->GetBrightness();
+
+		i++;
+	}
+
+	//Point Lights
+	for (auto pl : m_reg.m_plights) {
+		nodes[i]["type"] = "plight";
+		nodes[i]["nameTag"] = pl->GetNameTag();
+
+		nodes[i]["pos"][0] = pl->GetPosition().getX();
+		nodes[i]["pos"][1] = pl->GetPosition().getY();
+		nodes[i]["pos"][2] = pl->GetPosition().getZ();
+
+		nodes[i]["color"][0] = pl->GetColor().getX();
+		nodes[i]["color"][1] = pl->GetColor().getY();
+		nodes[i]["color"][2] = pl->GetColor().getZ();
+
+		nodes[i]["brightness"] = pl->GetBrightness();
+		nodes[i]["radius"] = pl->GetLightRadius();
+
+		i++;
+	}
+
+	root["nodes"] = nodes;
+
+	file << root;
 }

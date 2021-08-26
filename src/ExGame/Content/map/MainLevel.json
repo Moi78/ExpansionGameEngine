@@ -5,8 +5,8 @@
       "type":"mesh",
       "nameTag":"skydome",
 
-      "ref":"/test_dome",
-      "material":"/shaders/mat_hdri",
+      "ref":"/test_dome.msh",
+      "material":"/shaders/mat_hdri.exmtl",
 
       "pos":[0.0, 0.0, 0.0],
       "rot":[0.0, 0.0, 0.0],
@@ -26,8 +26,8 @@
       "type":"mesh",
       "nameTag":"Terrain",
 
-      "ref":"/desert",
-      "material":"/shaders/mat_sand",
+      "ref":"/desert.msh",
+      "material":"/shaders/mat_sand.exmtl",
 
       "pos":[0.0, 0.0, 0.0],
       "rot":[0.0, 0.0, 0.0],
@@ -38,8 +38,8 @@
       "type":"mesh",
       "nameTag":"rock1_1",
 
-      "ref":"/rock1",
-      "material":"/shaders/mat_rock1",
+      "ref":"/rock1.msh",
+      "material":"/shaders/mat_rock1.exmtl",
 
       "pos":[0.8, 7.8, 0.95],
       "rot":[0.0, 0.0, 0.0],
@@ -50,8 +50,8 @@
       "type":"mesh",
       "nameTag":"rock1_2",
 
-      "ref":"/rock1",
-      "material":"/shaders/mat_rock1",
+      "ref":"/rock1.msh",
+      "material":"/shaders/mat_rock1.exmtl",
 
       "pos":[3.95, 6.81, 0.57],
       "rot":[15.0, 12.0, 12.0],
@@ -62,8 +62,8 @@
       "type":"mesh",
       "nameTag":"rock1_2",
 
-      "ref":"/rock1",
-      "material":"/shaders/mat_rock1",
+      "ref":"/rock1.msh",
+      "material":"/shaders/mat_rock1.exmtl",
 
       "pos":[2.35, 7.5, 0.25],
       "rot":[90.0, 130.0, 40.0],
@@ -74,8 +74,8 @@
       "type":"mesh",
       "nameTag":"cactus",
 
-      "ref":"/cactus",
-      "material":"/shaders/mat_cactus",
+      "ref":"/cactus.msh",
+      "material":"/shaders/mat_cactus.exmtl",
 
       "pos":[2.69, 3.6, 0.04],
       "rot":[0.0, 0.0, 30.0],
@@ -86,8 +86,8 @@
       "type":"mesh",
       "nameTag":"sphere",
 
-      "ref":"/sphere",
-      "material":"/shaders/mat_glow_green",
+      "ref":"/sphere.msh",
+      "material":"/shaders/mat_glow_green.exmtl",
 
       "pos":[0, 0, 0],
       "rot":[0.0, 0.0, 0.0],
@@ -96,7 +96,7 @@
 
     {
       "type":"plight",
-      "nametag":"test",
+      "nameTag":"test",
 
       "pos":[2, 2, 2],
       "color":[0.5, 0, 1.0],

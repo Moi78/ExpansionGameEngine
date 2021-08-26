@@ -196,6 +196,26 @@ public:
 		}
 	}
 
+	std::string GetRelativeFileName() {
+		if (m_filters.size() != 0) {
+			std::string raw_buff(m_fileSelectedName);
+
+			std::string ext = GetExtension(raw_buff);
+			for (auto f : m_filters) {
+				if (ext == f) {
+					return m_actualPath + raw_buff;
+				}
+			}
+
+			raw_buff += ".";
+			raw_buff += m_filters[0]; //Putting first filter
+			return m_actualPath + raw_buff;
+		}
+		else {
+			return m_actualPath + std::string(m_fileSelectedName);
+		}
+	}
+
 	std::string GetFileName() {
 		if (m_filters.size() != 0) {
 			std::string raw_buff(m_fileSelectedName);

@@ -5,8 +5,8 @@
       "type":"mesh",
       "nameTag":"skydome",
 
-      "ref":"/test_dome",
-      "material":"/shaders/mat_hdri",
+      "ref":"/test_dome.msh",
+      "material":"/shaders/mat_hdri.exmtl",
 
       "pos":[0.0, 0.0, 0.0],
       "rot":[0.0, 0.0, 0.0],

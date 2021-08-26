@@ -45,6 +45,9 @@ public:
 
 	void DeleteMaterial();
 
+	void SetMetaInf(const std::string& meta);
+	std::string GetMetaInf();
+
 private:
 	RaindropRenderer* m_rndr;
 
@@ -53,6 +56,8 @@ private:
 	std::vector<std::pair<std::string, RD_Texture*>> m_textures;
 
 	std::vector<RD_Mesh*> m_meshes_references;
+
+	std::string m_meta;
 };
 
 #endif

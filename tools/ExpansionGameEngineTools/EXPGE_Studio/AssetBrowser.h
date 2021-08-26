@@ -131,7 +131,7 @@ public:
 							);
 							m->SetNameTag("staticMesh" + std::to_string(m_reg->m_meshes.size()));
 
-							m_reg->m_meshes.push_back(std::pair<EXP_StaticMesh*, std::string>(m, "Default Material"));
+							m_reg->m_meshes.push_back(std::pair<EXP_StaticMesh*, MeshMeta>(m, { "Default Material", "/" + ff.first}));
 
 						}
 						else if (ext == "json") {
@@ -202,22 +202,17 @@ public:
 
 		m_loader->LoadMap(file, m_base_path, true);
 
-		std::vector<std::pair<EXP_StaticMesh*, std::string>> meshes;
+		std::vector<std::pair<EXP_StaticMesh*, MeshMeta>> meshes;
 		for (auto m : m_loader->GetMeshList()) {
-			std::string material_name = m_game->GetRenderer()->GetMaterialLibrary()->GetMaterialName(m->GetMaterial());
-			int i = material_name.size();
-			for (i; i >= 0; i--) {
-				if ((material_name[i] == '/') || (material_name[i] == '\\')) {
-					break;
-				}
-			}
-			material_name.erase(material_name.begin(), material_name.begin() + i + 1);
+			std::string material_name = m->GetMaterial()->GetMetaInf();
 
-			meshes.push_back(std::pair<EXP_StaticMesh*, std::string>(m, material_name));
+			meshes.push_back(std::pair<EXP_StaticMesh*, MeshMeta>(m, { material_name, m->GetMetaInf() }));
 		}
 		m_reg->m_meshes = meshes;
 		m_reg->m_dlights = m_loader->GetDirLightList();
 		m_reg->m_plights = m_loader->GetPointLightList();
+
+		m_reg->levelCodeObjectName = m_loader->GetLevelCodeObjectName();
 	}
 
 private:

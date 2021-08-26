@@ -2,6 +2,9 @@
 #include "EditorRegistry.h"
 
 void ClearRegistry(EditorRegistry* reg) {
+	reg->mapPath.clear();
+	reg->levelCodeObjectName.clear();
+
 	for (auto pl : reg->m_plights) {
 		delete pl;
 	}

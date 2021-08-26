@@ -47,11 +47,18 @@ public:
 	
 	virtual void UseParentMatrix(mat4f parent) override;
 
+	void SetMetaInf(const std::string& meta);
+	std::string GetMeshRef();
+	std::string GetMetaInf();
+
 private:
 	bool MeshRefExists(std::string MeshRef);
 
 	EXP_Game* m_gameinstance;
 	bool m_useSystemTree;
+
+	std::string m_meshref;
+	std::string m_meta;
 };
 
 #endif //_EXP_STATIC_MESH__

@@ -104,3 +104,11 @@ void RD_ShaderMaterial::DeleteMaterial() {
 	}
 	m_textures.clear();
 }
+
+void RD_ShaderMaterial::SetMetaInf(const std::string& meta) {
+	m_meta = meta;
+}
+
+std::string RD_ShaderMaterial::GetMetaInf() {
+	return m_meta;
+}
