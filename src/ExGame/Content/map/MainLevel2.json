@@ -1,16 +1,30 @@
 {
-  "MapLevelCodeObjectName": "MainLevel",
-  "nodes": [
-    {
-      "type":"mesh",
-      "nameTag":"skydome",
-
-      "ref":"/test_dome.msh",
-      "material":"/shaders/mat_hdri.exmtl",
-
-      "pos":[0.0, 0.0, 0.0],
-      "rot":[0.0, 0.0, 0.0],
-      "scale":[500, 500, 500]
-    }
-  ]
+	"MapLevelCodeObjectName" : "MainLevel",
+	"nodes" : 
+	[
+		{
+			"material" : "/shaders/mat_hdri.exmtl",
+			"nameTag" : "skydome",
+			"pos" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"ref" : "/test_dome.msh",
+			"rot" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				500.0,
+				500.0,
+				500.0
+			],
+			"type" : "mesh"
+		}
+	]
 }

@@ -332,3 +332,9 @@ EXP_DirLight* EXP_MapLoader::GetDirLightByName(std::string name) {
 std::string EXP_MapLoader::GetLevelCodeObjectName() {
 	return m_levelcode_name;
 }
+
+void EXP_MapLoader::ClearAll() {
+	m_meshes.clear();
+	m_ptlights.clear();
+	m_dlights.clear();
+}

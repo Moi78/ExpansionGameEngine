@@ -69,6 +69,10 @@ void RD_ShaderMaterial::UnregisterMeshReference(RD_Mesh* msh) {
 	}
 }
 
+void RD_ShaderMaterial::UnregisterAllMeshes() {
+	m_meshes_references.clear();
+}
+
 void RD_ShaderMaterial::DrawMeshes() {
 	m_shader->useShader();
 	BindMaterial();

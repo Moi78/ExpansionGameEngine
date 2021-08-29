@@ -125,7 +125,7 @@ public:
 						if (ext == "msh") {
 							EXP_StaticMesh* m = new EXP_StaticMesh(
 								m_game,
-								m_game->GetRenderer()->GetDefaultMaterial(),
+								m_game->GetRenderer()->FetchShaderFromFile(m_game->GetRenderer()->GetEngineDir() + "/Materials/default_mat.exmtl"),
 								m_base_path + m_path + ff.first,
 								vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), true
 							);
@@ -192,8 +192,11 @@ public:
 	}
 
 	void OpenMap(std::string file) {
-		m_loader->UnloadMap();
+		m_loader->ClearAll();
 		m_game->GetRenderer()->GetMaterialLibrary()->ClearLibrary();
+		m_game->GetRenderer()->UnregisterAllDirLights();
+		m_game->GetRenderer()->UnregisterAllMeshes();
+		m_game->GetRenderer()->UnregisterAllPointLights();
 
 		m_reg->m_actors.clear();
 		m_reg->m_meshes.clear();

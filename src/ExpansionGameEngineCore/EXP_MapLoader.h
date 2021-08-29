@@ -46,6 +46,7 @@ public:
 	bool LoadMap(std::string map, const bool nocode = false);
 	bool LoadMap(std::string map, std::string content_path, const bool nocode = false);
 	void UnloadMap();
+	void ClearAll();
 
 	EXP_Level* GetLevelCode();
 	std::string GetLevelCodeObjectName();

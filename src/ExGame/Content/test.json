@@ -1,34 +1,10 @@
 {
-	"MapLevelCodeObjectName" : "MainLevel5",
+	"MapLevelCodeObjectName" : "test",
 	"nodes" : 
 	[
 		{
-			"material" : "/shaders/mat_hdri.exmtl",
-			"nameTag" : "skydome",
-			"pos" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"ref" : "/test_dome.msh",
-			"rot" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"scale" : 
-			[
-				500.0,
-				500.0,
-				500.0
-			],
-			"type" : "mesh"
-		},
-		{
-			"material" : "/shaders/mat_sand.exmtl",
-			"nameTag" : "Terrain",
+			"material" : "/shaders/mat_met_blue.exmtl",
+			"nameTag" : "staticMesh0",
 			"pos" : 
 			[
 				0.0,
@@ -51,156 +27,37 @@
 			"type" : "mesh"
 		},
 		{
-			"material" : "/shaders/mat_rock1.exmtl",
-			"nameTag" : "rock1_1",
-			"pos" : 
-			[
-				0.80000001192092896,
-				7.8000001907348633,
-				0.94999998807907104
-			],
-			"ref" : "/rock1.msh",
-			"rot" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"scale" : 
-			[
-				0.0020000000949949026,
-				0.0020000000949949026,
-				0.0020000000949949026
-			],
-			"type" : "mesh"
-		},
-		{
-			"material" : "/shaders/mat_rock1.exmtl",
-			"nameTag" : "rock1_2",
-			"pos" : 
-			[
-				3.9500000476837158,
-				6.809999942779541,
-				0.56999999284744263
-			],
-			"ref" : "/rock1.msh",
-			"rot" : 
-			[
-				15.0,
-				12.0,
-				12.0
-			],
-			"scale" : 
-			[
-				0.0070000002160668373,
-				0.0070000002160668373,
-				0.0070000002160668373
-			],
-			"type" : "mesh"
-		},
-		{
-			"material" : "/shaders/mat_rock1.exmtl",
-			"nameTag" : "rock1_2",
-			"pos" : 
-			[
-				2.3499999046325684,
-				7.5,
-				0.25
-			],
-			"ref" : "/rock1.msh",
-			"rot" : 
-			[
-				90.0,
-				130.0,
-				40.0
-			],
-			"scale" : 
-			[
-				0.004999999888241291,
-				0.004999999888241291,
-				0.004999999888241291
-			],
-			"type" : "mesh"
-		},
-		{
-			"material" : "/shaders/mat_cactus.exmtl",
-			"nameTag" : "cactus",
-			"pos" : 
-			[
-				2.690000057220459,
-				3.5999999046325684,
-				0.039999999105930328
-			],
-			"ref" : "/cactus.msh",
-			"rot" : 
-			[
-				0.0,
-				0.0,
-				30.0
-			],
-			"scale" : 
-			[
-				0.05000000074505806,
-				0.05000000074505806,
-				0.05000000074505806
-			],
-			"type" : "mesh"
-		},
-		{
-			"material" : "/shaders/mat_glow_green.exmtl",
-			"nameTag" : "sphere",
-			"pos" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"ref" : "/sphere.msh",
-			"rot" : 
-			[
-				0.0,
-				0.0,
-				0.0
-			],
-			"scale" : 
+			"brightness" : 50.0,
+			"color" : 
 			[
 				1.0,
 				1.0,
 				1.0
 			],
-			"type" : "mesh"
-		},
-		{
-			"brightness" : 10.0,
-			"color" : 
+			"nameTag" : "pointlight0",
+			"pos" : 
 			[
-				1.0,
-				0.80000001192092896,
-				0.80000001192092896
+				0.0,
+				0.0,
+				3.0
 			],
-			"dir" : 
-			[
-				0.061000000685453415,
-				-0.80000001192092896,
-				-0.60000002384185791
-			],
-			"nameTag" : "sun",
-			"type" : "dlight"
+			"radius" : 50.0,
+			"type" : "plight"
 		},
 		{
 			"brightness" : 50.0,
 			"color" : 
 			[
-				0.5,
+				1.0,
 				0.0,
-				1.0
+				0.0
 			],
-			"nameTag" : "test",
+			"nameTag" : "pointlight1",
 			"pos" : 
 			[
-				2.0,
-				2.0,
-				2.0
+				0.0,
+				5.0,
+				3.0
 			],
 			"radius" : 50.0,
 			"type" : "plight"

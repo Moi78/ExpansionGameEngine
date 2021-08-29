@@ -6,7 +6,7 @@ RD_MaterialLibrary::RD_MaterialLibrary() {}
 RD_MaterialLibrary::~RD_MaterialLibrary() {}
 
 void RD_MaterialLibrary::AddMaterialToLib(RD_ShaderMaterial* mat, std::string matName) {
-	std::cout << "Added new Material to a lib" << std::endl;
+	std::cout << "Added " << matName << " to a material lib" << std::endl;
 
 	std::pair<std::string, RD_ShaderMaterial*> matPair(matName, mat); //Making a pair of a material and its names
 
@@ -71,5 +71,5 @@ std::string RD_MaterialLibrary::GetMaterialName(RD_ShaderMaterial* mat) {
 		}
 	}
 
-	std::cerr << "ERROR (RD_MaterialLibrary::GetMaterialName) : Material not found." << std::endl;
+	std::cerr << "ERROR (RD_MaterialLibrary::GetMaterialName): Material not found." << std::endl;
 }

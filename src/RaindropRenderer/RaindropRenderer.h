@@ -170,12 +170,10 @@ public:
 	void SwitchShader(RD_ShaderLoader*);
 	RD_ShaderLoader* GetShadowShader() const;
 	RD_ShaderLoader* GetCurrentShader() const;
-	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref, const std::string& texPathPrefix = "");
+	RD_ShaderMaterial* FetchShaderFromFile(const std::string& ref, const std::string& texPathPrefix = "", const bool noreg = false);
 	RD_MaterialLibrary* GetMaterialLibrary() const;
 	int GetCurrentShaderStorageIndex();
 	void IncrementCurrentShaderStorageIndex();
-
-	RD_ShaderMaterial* GetDefaultMaterial();
 
 	//Debug
 	void RenderDbg(RD_Camera*);
@@ -291,8 +289,6 @@ private:
 	RD_ShaderStorageBuffer* m_shadowmaps_s;
 	RD_ShaderStorageBuffer* m_glyph_s;
 	RD_ShaderStorageBuffer* m_final_pass_selector_s;
-
-	RD_ShaderMaterial* m_default_mat;
 
 	int m_current_shader_storage_index;
 	int m_current_selector;

@@ -187,8 +187,11 @@ void EditorGUI::RenderMenuBar() {
 
 	if (ImGui::BeginMenu("File")) {
 		if (ImGui::MenuItem("New Level")) {
-			m_loader->UnloadMap();
+			m_loader->ClearAll();
 			m_game->GetRenderer()->GetMaterialLibrary()->ClearLibrary();
+			m_game->GetRenderer()->UnregisterAllDirLights();
+			m_game->GetRenderer()->UnregisterAllMeshes();
+			m_game->GetRenderer()->UnregisterAllPointLights();
 			
 			m_reg.levelCodeObjectName = "";
 			m_reg.mapPath = "";
@@ -228,6 +231,25 @@ void EditorGUI::RenderMenuBar() {
 	}
 
 	ImGui::EndMainMenuBar();
+
+	if ((m_game->GetInputHandler()->GetKey(341)) && (m_game->GetInputHandler()->GetKey(83)) && (!m_map_save_browser->IsOpened())) { // CTRL+S
+		if (m_reg.mapPath != "") {
+			SaveMap(m_reg.mapPath);
+			m_asset_browser->RefreshFilesFolders();
+		}
+		else {
+			m_map_save_browser->Open();
+		}
+	}
+
+	if (
+		(m_game->GetInputHandler()->GetKey(341)) &&
+		(m_game->GetInputHandler()->GetKey(83)) &&
+		(m_game->GetInputHandler()->GetKey(340)) &&
+		(!m_map_save_browser->IsOpened())
+	) { // CTRL+SHIFT+S
+			m_map_save_browser->Open();
+	}
 }
 
 void EditorGUI::DetailPLight(EXP_PointLight* plight) {
@@ -377,7 +399,12 @@ void EditorGUI::SaveMap(std::string map_path) {
 
 	std::ofstream file;
 	file.open(map_path, std::ios::binary);
+	if (!file.is_open()) {
+		dispErrorMessageBox(StrToWStr("(EditorGUI::SaveMap) Could not save map at " + map_path));
+		return;
+	}
 
+	m_reg.mapPath = map_path;
 	Json::Value root;
 
 	root["MapLevelCodeObjectName"] = m_reg.levelCodeObjectName.c_str();
