@@ -11,12 +11,12 @@
 #include "AssetBrowser.h"
 #include "EditorConf.h"
 #include "Filebrowser.h"
+#include "FileUtils.h"
 
 #include <fstream>
 #include <filesystem>
 
 #include "imgui.h"
-#include "FileUtils.h"
 
 enum COMP_TYPES {
 	TNONE,

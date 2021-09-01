@@ -17,7 +17,7 @@ public:
 	}
 
 	~Process() {
-		CloseProcess();
+
 	}
 
 	void LaunchProcess(std::string command, std::string working_dir = "") {

@@ -6,6 +6,7 @@
 
 struct EditorConf {
 	std::string MaterialEditorPath;
+	std::string FBX2MSH_Path;
 };
 
 #endif //_EDITOR_CONF_H__

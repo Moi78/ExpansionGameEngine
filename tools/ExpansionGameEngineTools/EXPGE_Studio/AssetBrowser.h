@@ -4,10 +4,12 @@
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #include "imgui.h"
 
 #include "FileUtils.h"
+#include "Filebrowser.h"
 #include "Process.h"
 #include "EditorConf.h"
 #include "EditorRegistry.h"
@@ -43,6 +45,14 @@ public:
 		m_material_draft_icon->LoadTexture("studio/icons/material_draft.png", false);
 
 		m_files_folders = ListFilesAndFolders(m_base_path + m_path, {});
+
+#ifdef _WIN32
+		m_asset_browser = new Filebrowser("C:/");
+#else
+		m_asset_browser = new Filebrowser("/");
+#endif //_WIN32
+
+		m_folder_create_mode = false;
 	}
 	~AssetBrowser() {
 		delete m_folder_icon;
@@ -62,9 +72,14 @@ public:
 	}
 
 	void Render(float wwidth, float wheight, float shift = 0.0f) {
+		m_asset_browser->Render(m_game->GetRenderer());
+
 		ImGui::Begin(std::string("Assets - " + m_path + "###asset_browser").c_str());
 
-		ImGui::Button("Import Asset...");
+		if (ImGui::Button("Import Asset...")) {
+			m_asset_browser->Open();
+		}
+
 		ImGui::SameLine();
 
 		if (ImGui::Button("Parent Folder")) {
@@ -83,9 +98,42 @@ public:
 			}
 		}
 
+		ImGui::SameLine();
+
+		if (ImGui::Button("Create New Folder")) {
+			m_folder_create_mode = true;
+			memset(m_new_folder_name, 0, 300);
+		}
+
 		ImGui::Separator();
 
 		ImGui::BeginChild(1);
+
+		if (m_folder_create_mode) {
+			ImGui::Image((ImTextureID)m_folder_icon->GetTextureID(), ImVec2(30, 30));
+			ImGui::SameLine();
+			ImVec2 cursor = ImGui::GetCursorPos();
+			ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 6.0f));
+
+			ImGui::InputText("Folder name", m_new_folder_name, 300);
+		}
+
+		if (m_folder_create_mode && m_game->GetInputHandler()->GetKey(257)) { //Key Enter
+			if (!std::filesystem::exists(m_base_path + m_path + std::string(m_new_folder_name))) {
+				std::filesystem::create_directory(m_base_path + m_path + std::string(m_new_folder_name));
+				RefreshFilesFolders();
+
+				m_folder_create_mode = false;
+
+				std::cout << "Created folder \"" << m_new_folder_name << "\"" << std::endl;
+			}
+			else {
+				dispErrorMessageBox(StrToWStr("\"" + std::string(m_new_folder_name) + "\" already exists."));
+			}
+		}
+		else if (m_folder_create_mode && m_game->GetInputHandler()->GetKey(256)) { //Escape Key
+			m_folder_create_mode = false;
+		}
 
 		for (auto ff : m_files_folders) {
 			if (ff.second == ElemType::FOLDER) {
@@ -171,8 +219,36 @@ public:
 			}
 		}
 
+		if (ImGui::IsWindowHovered()) {
+			if (m_game->GetInputHandler()->GetKey(261)) {
+				if (m_selected != "") {
+					std::cout << "Deleting " << m_base_path + m_path + m_selected << std::endl;
+					std::filesystem::remove_all(m_base_path + m_path + m_selected);
+
+					m_selected.clear();
+					RefreshFilesFolders();
+				}
+			}
+		}
+
 		ImGui::EndChild();
 		ImGui::End();
+
+		if (m_asset_browser->OkPressed()) {
+			if (std::filesystem::exists(m_asset_browser->GetFileNameBuffer())) {
+				std::filesystem::copy(m_asset_browser->GetFileNameBuffer(), m_base_path + m_path + m_asset_browser->GetFileName());
+
+				RefreshFilesFolders();
+			}
+			else {
+				dispErrorMessageBox(StrToWStr(m_asset_browser->GetFileNameBuffer() + " does not exists."));
+			}
+			m_asset_browser->ResetBools();
+		}
+	}
+
+	void RenderDeletePopup() {
+
 	}
 
 	void OpenFile(std::string file) {
@@ -238,6 +314,13 @@ private:
 	RD_Texture* m_misc_icon;
 	RD_Texture* m_material_icon;
 	RD_Texture* m_material_draft_icon;
+
+	Filebrowser* m_asset_browser;
+
+	bool m_folder_create_mode;
+	bool m_delete_popup;
+
+	char m_new_folder_name[300];
 };
 
 #endif //_ASSET_BROWSER_H__

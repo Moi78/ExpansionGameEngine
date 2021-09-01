@@ -224,6 +224,20 @@ void EditorGUI::RenderMenuBar() {
 		ImGui::EndMenu();
 	}
 
+	if (ImGui::BeginMenu("Tools")) {
+		if (ImGui::MenuItem("Start Material Editor...")) {
+			Process p = Process();
+			p.LaunchProcess(
+				std::string(m_conf.MaterialEditorPath + "MaterialEditor.exe -p ")
+				+ m_projectPath
+				+ " -c \""+ m_contentPath +"\"",
+				m_conf.MaterialEditorPath
+			);
+		}
+
+		ImGui::EndMenu();
+	}
+
 	if (m_map_save_browser->OkPressed()) {
 		SaveMap(m_map_save_browser->GetFileNameBuffer());
 

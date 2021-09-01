@@ -41,7 +41,12 @@ int main(int argc, char* argv[]) {
 	RD_MaterialLibrary* matlib = game->GetRenderer()->GetMaterialLibrary();
 
 	//Editor
+#ifdef _WIN32
 	std::string projectPath = "C:/";
+#else
+	std::string projectPath = "/";
+#endif //_WIN32
+
 	std::string contentPath;
 	for (int i = 0; i < argc; i++) {
 		std::string arg(argv[i]);
