@@ -32,7 +32,7 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 	bFile.open(ddir.c_str(), std::ios::binary);
 
 	if (!bFile) {
-		dispErrorMessageBox(TEXT("Cannot create bin file. See console for details."));
+		dispErrorMessageBox(TEXT("Cannot create mesh file. See console for details."));
 		std::cerr << "Cannot create bin file : " << ddir;
 
 		return;

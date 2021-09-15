@@ -166,6 +166,7 @@
     <ClInclude Include="BD_LightDB_RW.h" />
     <ClInclude Include="BD_MatRW.h" />
     <ClInclude Include="BD_Reader.h" />
+    <ClInclude Include="BD_SkeletonRW.h" />
     <ClInclude Include="BD_Writer.h" />
     <ClInclude Include="BulldozerFileManager.h" />
     <ClInclude Include="framework.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="BD_LightDB_RW.cpp" />
     <ClCompile Include="BD_MatRW.cpp" />
     <ClCompile Include="BD_Reader.cpp" />
+    <ClCompile Include="BD_SkeletonRW.cpp" />
     <ClCompile Include="BD_Writer.cpp" />
     <ClCompile Include="BulldozerFileManager.cpp" />
     <ClCompile Include="dllmain.cpp" />

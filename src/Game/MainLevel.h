@@ -14,6 +14,8 @@
 
 #include "Character.h"
 
+#include <BD_SkeletonRW.h>
+
 class MainLevel : public EXP_Level
 {
 public:
