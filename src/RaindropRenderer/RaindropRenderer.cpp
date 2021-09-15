@@ -1446,4 +1446,3 @@ int RaindropRenderer::GetCurrentShaderStorageIndex() {
 void RaindropRenderer::IncrementCurrentShaderStorageIndex() {
 	m_current_shader_storage_index++;
 }
-

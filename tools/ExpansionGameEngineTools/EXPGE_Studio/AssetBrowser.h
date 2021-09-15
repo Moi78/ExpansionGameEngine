@@ -179,7 +179,7 @@ public:
 							);
 							m->SetNameTag("staticMesh" + std::to_string(m_reg->m_meshes.size()));
 
-							m_reg->m_meshes.push_back(std::pair<EXP_StaticMesh*, MeshMeta>(m, { "Default Material", "/" + ff.first}));
+							m_reg->m_meshes.push_back(std::pair<EXP_StaticMesh*, MeshMeta>(m, { "Default Material", m_path + ff.first}));
 
 						}
 						else if (ext == "json") {

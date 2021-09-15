@@ -1,4 +1,4 @@
-#version 450 core
+#version 330 core
 layout (location = 1) out float ssao_blur;
 
 in vec2 UVcoords;

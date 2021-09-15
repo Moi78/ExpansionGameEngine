@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
 
 	EXP_StaticMesh* msh = new EXP_StaticMesh(game,
 		mat,
-		"/meshes/sphere",
+		"/meshes/sphere.msh",
 		vec3f(0.0f, 0.0f, 0.0f),
 		vec3f(),
 		vec3f(1.0f, 1.0f, 1.0f)

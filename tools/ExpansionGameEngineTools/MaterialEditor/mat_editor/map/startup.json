@@ -5,8 +5,8 @@
             "type":"mesh",
             "nameTag":"floor",
 
-            "ref":"/meshes/floor",
-            "material":"/def_shader",
+            "ref":"/meshes/floor.msh",
+            "material":"/def_shader.exmtl",
 
             "pos":[0, 0, -1.0],
             "rot":[0, 0, 0],
