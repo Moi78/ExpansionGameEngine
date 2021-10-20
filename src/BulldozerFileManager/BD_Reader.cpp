@@ -39,6 +39,7 @@ void BD_Reader::ReadMSHFile(std::string file) {
 	int iSize = 0;
 	int nSize = 0;
 	int uvSize = 0;
+	int vsSize = 0;
 
 	//Reading vertices
 	bFile.read(reinterpret_cast<char*>(&vSize), sizeof(int)); //Reading Size
@@ -79,10 +80,20 @@ void BD_Reader::ReadMSHFile(std::string file) {
 		mUVcoord.push_back(tempUV);
 	}
 
+	//Reading Vertex Strength
+	bFile.read(reinterpret_cast<char*>(&vsSize), sizeof(int)); //Same Pattern
+
+	vec4f value = vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+	for (int i = 0; i < vsSize; i++) {
+		bFile.read(reinterpret_cast<char*>(&value), sizeof(vec4f));
+		mVertWeight.push_back(value);
+	}
+
 	icount = iSize;
 	vcount = vSize;
 	ncount = nSize;
 	uvcount = uvSize;
+	vwcount = vsSize;
 
 	bFile.close();
 }
@@ -127,6 +138,16 @@ vec2f BD_Reader::GetUVcoordByIndex(int index) {
 	return mUVcoord[index];
 }
 
+vec4f BD_Reader::GetVertexWeightByIndex(int index) {
+	//Error check
+	if (index > mVertWeight.size()) {
+		dispErrorMessageBox(TEXT("Index out of range. See console for details."));
+		std::cerr << "(VertexStrength) Index is out of range." << std::endl;
+	}
+
+	return mVertWeight[index];
+}
+
 int BD_Reader::GetIndicesCount() {
 	return icount;
 }
@@ -141,4 +162,8 @@ int BD_Reader::GetNormalCount() {
 
 int BD_Reader::GetUVcoordCount() {
 	return uvcount;
+}
+
+int BD_Reader::GetVertexWeightCount() {
+	return vwcount;
 }

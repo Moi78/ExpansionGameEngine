@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include <vec3.h>
+#include <BD_Reader.h>
 
 #include "EXP_Game.h"
 
@@ -87,6 +88,17 @@ public:
 private:
 	float m_radius;
 	float m_height;
+};
+
+class EXPGE_API EXP_RB_Mesh : public EXP_RigidBody {
+public:
+	EXP_RB_Mesh(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::string meshref, float mass, EXP_PhysicsMaterial mat = {});
+
+	virtual void ConstructShape() override;
+
+private:
+	std::vector<physx::PxVec3> m_verticies;
+	std::vector<int32_t> m_indicies;
 };
 
 #endif //EXP_RIGID_BODY_H__

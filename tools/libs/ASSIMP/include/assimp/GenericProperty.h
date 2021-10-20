@@ -40,17 +40,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 
-#pragma once
 #ifndef AI_GENERIC_PROPERTY_H_INCLUDED
 #define AI_GENERIC_PROPERTY_H_INCLUDED
 
-#ifdef __GNUC__
-#   pragma GCC system_header
-#endif
-
 #include <assimp/Importer.hpp>
 #include <assimp/ai_assert.h>
-#include <assimp/Hash.h>
+#include "Hash.h"
 
 #include <map>
 

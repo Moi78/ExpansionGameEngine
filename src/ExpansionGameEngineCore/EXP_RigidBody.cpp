@@ -253,3 +253,73 @@ void EXP_RB_Capsule::ConstructShape() {
 
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }
+
+EXP_RB_Mesh::EXP_RB_Mesh(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::string meshref, float mass, EXP_PhysicsMaterial mat) : 
+	EXP_RigidBody(game, pos, rot, scale, mass, true, mat)
+{
+	BD_Reader mr = BD_Reader();
+	mr.ReadMSHFile(game->GetFilePathByRef(meshref));
+
+	for (int i = 0; i < mr.GetVerticesCount(); i++) {
+		vec3f v = mr.GetVertexByIndex(i);
+
+		m_verticies.push_back(physx::PxVec3(v.getX(), v.getY(), v.getZ()));
+	}
+
+	for (int i = 0; i < mr.GetIndicesCount(); i++) {
+		int idc = mr.GetIndiceByIndex(i);
+		m_indicies.push_back(idc);
+	}
+
+	ConstructShape();
+}
+
+void EXP_RB_Mesh::ConstructShape() {
+	using namespace physx;
+
+	PxTriangleMeshDesc mDesc;
+
+	mDesc.points.count = m_verticies.size();
+	mDesc.points.stride = sizeof(PxVec3);
+	mDesc.points.data = m_verticies.data();
+
+	mDesc.triangles.count = m_indicies.size();
+	mDesc.triangles.stride = 3 * sizeof(int32_t);
+	mDesc.triangles.data = m_indicies.data();
+
+	PxDefaultMemoryOutputStream buf;
+	PxCooking* cooker = m_game->GetPhysicsHandler()->GetCooker();
+	if (!cooker->cookTriangleMesh(mDesc, buf)) {
+		std::cerr << "ERROR: Could not cook mesh data." << std::endl;
+		return;
+	}
+
+	PxDefaultMemoryInputData rbuf(buf.getData(), buf.getSize());
+	PxTriangleMesh* mesh_data = m_game->GetPhysicsHandler()->GetPhysics()->createTriangleMesh(rbuf);
+
+	mat4f transf = mat4f(1.0f);
+	transf = TranslateMatrix(transf, m_pos);
+	transf = RotateMatrix(transf, m_rot);
+
+	PxPhysics* phx = m_game->GetPhysicsHandler()->GetPhysics();
+
+	m_body = phx->createRigidDynamic(PxTransform(physx::PxMat44(transf.GetPTR()).getTranspose()));
+
+	if (!m_body) {
+		std::cerr << "ERROR: Could not create a rigid body (Mesh)." << std::endl;
+		return;
+	}
+
+	m_body->setMass(m_mass);
+	m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+
+	PxTriangleMeshGeometry triGeom;
+	triGeom.triangleMesh = mesh_data;
+
+	PxMaterial* mat = phx->createMaterial(m_mat.StaticFriction, m_mat.DynamicFriction, m_mat.Restitution);
+	PxShape* shp = PxRigidActorExt::createExclusiveShape(*m_body, triGeom, *mat);
+
+	mat->release();
+
+	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
+}

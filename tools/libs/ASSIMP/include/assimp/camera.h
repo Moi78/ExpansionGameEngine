@@ -47,10 +47,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef AI_CAMERA_H_INC
 #define AI_CAMERA_H_INC
 
-#ifdef __GNUC__
-#   pragma GCC system_header
-#endif
-
 #include "types.h"
 
 #ifdef __cplusplus

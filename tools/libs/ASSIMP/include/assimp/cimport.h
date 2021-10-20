@@ -48,12 +48,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef AI_ASSIMP_H_INC
 #define AI_ASSIMP_H_INC
 
-#ifdef __GNUC__
-#   pragma GCC system_header
-#endif
-
 #include <assimp/types.h>
-#include <assimp/importerdesc.h>
+#include "importerdesc.h"
 
 #ifdef __cplusplus
 extern "C" {

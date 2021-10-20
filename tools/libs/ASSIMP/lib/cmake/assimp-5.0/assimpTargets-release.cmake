@@ -34,8 +34,6 @@ if(MSVC)
     endif()
   endif()
   set(ASSIMP_LIBRARY_SUFFIX "-${MSVC_PREFIX}-mt" CACHE STRING "the suffix for the assimp windows library" )
-  	
-  file(TO_NATIVE_PATH ${_IMPORT_PREFIX} _IMPORT_PREFIX)
 
   if(ASSIMP_BUILD_SHARED_LIBS)
     set(sharedLibraryName "assimp${ASSIMP_LIBRARY_SUFFIX}.dll")
@@ -65,17 +63,13 @@ if(MSVC)
 else()
   set(ASSIMP_LIBRARY_SUFFIX "" CACHE STRING "the suffix for the assimp libraries" )
   if(ASSIMP_BUILD_SHARED_LIBS)
-    if(WIN32)
-      # Handle MinGW compiler.
-      set(sharedLibraryName "libassimp${ASSIMP_LIBRARY_SUFFIX}d.dll.lib")
-    elseif(APPLE)
+    if(APPLE)
       set(sharedLibraryName "libassimp${ASSIMP_LIBRARY_SUFFIX}.5.dll")
     else()
       set(sharedLibraryName "libassimp${ASSIMP_LIBRARY_SUFFIX}.dll.5")
     endif()
     set_target_properties(assimp::assimp PROPERTIES
       IMPORTED_SONAME_RELEASE "${sharedLibraryName}"
-
       IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/${sharedLibraryName}"
     )
     list(APPEND _IMPORT_CHECK_TARGETS assimp::assimp )

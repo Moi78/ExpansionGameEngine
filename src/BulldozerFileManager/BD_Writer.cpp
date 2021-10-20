@@ -25,6 +25,10 @@ void BD_Writer::AppendUVcoord(vec2f uv) {
 	m_uv_coord.push_back(uv);
 }
 
+void BD_Writer::AppendVertexWeight(vec4f weight) {
+	m_vertex_weight.push_back(weight);
+}
+
 void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 	std::string ddir = filepath + filename + ".msh";
 
@@ -42,6 +46,7 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 	int nbrIndice = m_indices.size();
 	int nbrNormal = m_normals.size();
 	int nbrUVcoord = m_uv_coord.size();
+	int nbrVertStrength = m_vertex_weight.size();
 
 	//Vertices
 	bFile.write(reinterpret_cast<const char*>(&nbrVertices), sizeof(int));
@@ -69,6 +74,13 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 
 	for (int i = 0; i < nbrUVcoord; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_uv_coord[i]), sizeof(vec2f));
+	}
+
+	//Vertex Strength
+	bFile.write(reinterpret_cast<const char*>(&nbrVertStrength), sizeof(int));
+
+	for (int i = 0; i < nbrVertStrength; i++) {
+		bFile.write(reinterpret_cast<const char*>(&m_vertex_weight[i]), sizeof(vec4f));
 	}
 
 	bFile.close();

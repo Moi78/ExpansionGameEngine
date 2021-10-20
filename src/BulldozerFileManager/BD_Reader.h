@@ -22,6 +22,7 @@
 
 #include <vec3.h>
 #include <vec2.h>
+#include <vec4.h>
 
 #include <iostream>
 #include <string>
@@ -41,11 +42,13 @@ public:
 	vec3f GetVertexByIndex(int);
 	vec3f GetNormalByIndex(int);
 	vec2f GetUVcoordByIndex(int);
+	vec4f GetVertexWeightByIndex(int);
 
 	int GetIndicesCount();
 	int GetVerticesCount();
 	int GetNormalCount();
 	int GetUVcoordCount();
+	int GetVertexWeightCount();
 
 	void ClearAll();
 
@@ -54,11 +57,13 @@ private:
 	std::vector<vec3f> mVertices;
 	std::vector<vec3f> mNormal;
 	std::vector<vec2f> mUVcoord;
+	std::vector<vec4f> mVertWeight;
 
 	int icount;
 	int vcount;
 	int ncount;
 	int uvcount;
+	int vwcount;
 };
 
 #endif // _BD_READER_H__

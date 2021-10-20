@@ -83,14 +83,52 @@ void FBX2MSH::ExtractDataFromScene(const aiScene* scene) {
 			}
 		}
 		else {
-			std::cout << "No UV coords on this mesh" << std::endl;
+			for (int uv = 0; uv < scene->mMeshes[i]->mNumVertices; uv++) {
+				writer->AppendUVcoord(vec2f(0.0f, 0.0f));
+			}
+		}
+
+		//Vertex Weight
+		std::vector<vec4f> vWeights;
+		for (int w = 0; w < scene->mMeshes[i]->mNumVertices; w++) {
+			vWeights.push_back(vec4f());
+		}
+
+		for (int bn = 0; bn < scene->mMeshes[i]->mNumBones; bn++) {
+			for (int w = 0; w < scene->mMeshes[i]->mNumVertices; w++) {
+				aiVertexWeight vw = scene->mMeshes[i]->mBones[bn]->mWeights[w];
+				
+				if (vWeights[vw.mVertexId].GetX() == 0) {
+					vWeights[vw.mVertexId].SetX(vw.mWeight);
+				}
+				else if (vWeights[vw.mVertexId].GetY() == 0) {
+					vWeights[vw.mVertexId].SetY(vw.mWeight);
+				}
+				else if (vWeights[vw.mVertexId].GetZ() == 0) {
+					vWeights[vw.mVertexId].SetZ(vw.mWeight);
+				}
+				else if (vWeights[vw.mVertexId].GetW() == 0) {
+					vWeights[vw.mVertexId].SetW(vw.mWeight);
+				}
+			}
+		}
+
+		for (auto w : vWeights) {
+			writer->AppendVertexWeight(w);
 		}
 
 		QFileInfo finfo(m_dst);
 		QString fpath = finfo.absolutePath() + "/";
-		QString fname = finfo.fileName().split(".", QString::SkipEmptyParts).at(0) + "_";
-		std::string dest = fname.toUtf8().constData() + std::string(scene->mMeshes[i]->mName.C_Str());
-		//QMessageBox::information(this, "Info super utile", QString::fromUtf8(dest.c_str()));
+
+		std::string dest;
+		if (scene->mNumMeshes > 1) {
+			QString fname = finfo.fileName().split(".", QString::SkipEmptyParts).at(0) + "_";
+			dest = fname.toUtf8().constData() + std::string(scene->mMeshes[i]->mName.C_Str());
+		}
+		else {
+			QString fname = finfo.fileName().split(".", QString::SkipEmptyParts).at(0);
+			dest = fname.toUtf8().constData();
+		}
 
 		writer->ToBinary(fpath.toUtf8().constData(), dest);
 		writer->ClearWriter();

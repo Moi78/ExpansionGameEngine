@@ -41,6 +41,7 @@ public:
 	void RemoveBodyFromWorld(EXP_RigidBody*);
 
 	physx::PxPhysics* GetPhysics() { return m_physics; }
+	physx::PxCooking* GetCooker() { return m_cooker; }
 
 private:
 	int GetPrefferedNumberOfThreads();
