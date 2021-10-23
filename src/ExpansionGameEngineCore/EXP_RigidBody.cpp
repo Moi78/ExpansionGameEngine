@@ -52,7 +52,7 @@ void EXP_RigidBody::ConstructShape() {
 	transf = TranslateMatrix(transf, m_pos);
 	transf = RotateMatrix(transf, m_rot);
 
-	if (m_mass > 0) {
+	if ((m_mass > 0)) {
 		m_body = physx::PxCreateDynamic(
 			*m_game->GetPhysicsHandler()->GetPhysics(),
 			physx::PxTransform(
@@ -93,9 +93,18 @@ void EXP_RigidBody::ConstructShape() {
 
 void EXP_RigidBody::AddMovementInput(vec3f direction, float scale) {
 	if (m_body) {
-		//vec3f target = m_pos + direction;
-		//m_body->setKinematicTarget(physx::PxTransform(target.getX() * scale, target.getY() * scale, target.getZ() * scale));
-		m_body->addForce(physx::PxVec3(direction.getX() * scale, direction.getY() * scale, direction.getZ() * scale));
+		if (m_isKinematic) {
+			vec3f target = GetWorldPosition() + (direction * scale);
+
+			mat4f transf = mat4f(1.0f);
+			transf = TranslateMatrix(transf, target);
+			transf = RotateMatrix(transf, m_rot);
+
+			m_body->setKinematicTarget(physx::PxTransform(physx::PxMat44(transf.GetPTR()).getTranspose()));
+		}
+		else {
+			m_body->addForce(physx::PxVec3(direction.getX() * scale, direction.getY() * scale, direction.getZ() * scale));
+		}
 	}
 }
 
@@ -152,7 +161,7 @@ void EXP_RB_Sphere::ConstructShape() {
 	transf = TranslateMatrix(transf, m_pos);
 	transf = RotateMatrix(transf, m_rot);
 
-	if (m_mass > 0) {
+	if ((m_mass > 0)) {
 		m_body = physx::PxCreateDynamic(
 			*m_game->GetPhysicsHandler()->GetPhysics(),
 			physx::PxTransform(
@@ -192,7 +201,12 @@ void EXP_RB_Sphere::ConstructShape() {
 }
 
 //RB Capsule
-EXP_RB_Capsule::EXP_RB_Capsule(EXP_Game* game, vec3f pos, vec3f rot, float radius, float height, float mass, bool kinematic, EXP_PhysicsMaterial mat) :
+EXP_RB_Capsule::EXP_RB_Capsule(
+	EXP_Game* game,
+	vec3f pos, vec3f rot,
+	float radius, float height,
+	float mass, bool kinematic,
+	EXP_PhysicsMaterial mat) :
 	EXP_RigidBody(game, pos, rot, vec3f(), mass, kinematic, mat)
 {
 	m_radius = radius;
@@ -254,7 +268,7 @@ void EXP_RB_Capsule::ConstructShape() {
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }
 
-EXP_RB_Mesh::EXP_RB_Mesh(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::string meshref, float mass, EXP_PhysicsMaterial mat) : 
+EXP_RB_Mesh::EXP_RB_Mesh(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, std::string meshref, float mass, EXP_PhysicsMaterial mat) :
 	EXP_RigidBody(game, pos, rot, scale, mass, true, mat)
 {
 	BD_Reader mr = BD_Reader();
