@@ -6,7 +6,7 @@
 
 //Enabling Optimus
 #ifdef _WIN32
-extern "C" { _declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000000; }
+extern "C" { _declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001; }
 #else
 extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
 #endif //_WIN32
