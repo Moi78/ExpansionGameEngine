@@ -11,7 +11,7 @@ EXP_PhysicsHandler::~EXP_PhysicsHandler() {
 	m_PVD->release();
 	m_cooker->release();
 	m_fnd->release();
-	m_controller_man->release();
+	//m_controller_man->release();
 
 	std::cout << "Shutted down physics engine" << std::endl;
 }
