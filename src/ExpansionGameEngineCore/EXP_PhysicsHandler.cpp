@@ -75,7 +75,7 @@ void EXP_PhysicsHandler::InitWorld() {
 		std::cout << "Created PxScene." << std::endl;
 	}
 
-	m_controller_man = PxCreateControllerManager(*m_world);
+	//m_controller_man = PxCreateControllerManager(*m_world);
 	if (!m_controller_man) {
 		dispErrorMessageBox(StrToWStr("Failed to create PxControllerManager."));
 		return;
