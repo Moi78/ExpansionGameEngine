@@ -101,4 +101,30 @@ private:
 	std::vector<int32_t> m_indicies;
 };
 
+class EXPGE_API EXP_CharacterController {
+public:
+	EXP_CharacterController() {
+		m_controller = nullptr;
+	};
+
+	virtual ~EXP_CharacterController() {}
+
+	virtual void ConstructController() = 0;
+
+protected:
+	physx::PxController* m_controller;
+};
+
+class EXPGE_API EXP_CharControllerCapsule : public EXP_CharacterController {
+public:
+	EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, float height, float radius, float mass, EXP_PhysicsMaterial mat = {});
+	virtual ~EXP_CharControllerCapsule();
+
+	virtual void ConstructController() override;
+
+private:
+	EXP_Game* m_game;
+	float m_height, m_radius;
+};
+
 #endif //EXP_RIGID_BODY_H__

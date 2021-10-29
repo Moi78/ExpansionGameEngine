@@ -33,7 +33,7 @@ public:
 private:
 	EXP_Camera* m_cam;
 
-	EXP_RB_Capsule* m_bound;
+	//EXP_CharControllerCapsule* m_bound;
 	
 	EXP_KeyboardCallback* m_move;
 	EXP_KeyboardCallback* m_destroy;

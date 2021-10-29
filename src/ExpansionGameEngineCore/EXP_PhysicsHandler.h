@@ -39,9 +39,11 @@ public:
 
 	void RegisterRigidBody(EXP_RigidBody*);
 	void RemoveBodyFromWorld(EXP_RigidBody*);
+	void PurgeControllers();
 
 	physx::PxPhysics* GetPhysics() { return m_physics; }
 	physx::PxCooking* GetCooker() { return m_cooker; }
+	physx::PxControllerManager* GetControllerManager() { return m_controller_man; }
 
 private:
 	int GetPrefferedNumberOfThreads();
@@ -55,6 +57,7 @@ private:
 	physx::PxPvd* m_PVD;
 	physx::PxPhysics* m_physics;
 	physx::PxCooking* m_cooker;
+	physx::PxControllerManager* m_controller_man;
 
 	physx::PxScene* m_world;
 

@@ -11,6 +11,7 @@ EXP_PhysicsHandler::~EXP_PhysicsHandler() {
 	m_PVD->release();
 	m_cooker->release();
 	m_fnd->release();
+	m_controller_man->release();
 
 	std::cout << "Shutted down physics engine" << std::endl;
 }
@@ -73,6 +74,15 @@ void EXP_PhysicsHandler::InitWorld() {
 	else {
 		std::cout << "Created PxScene." << std::endl;
 	}
+
+	m_controller_man = PxCreateControllerManager(*m_world);
+	if (!m_controller_man) {
+		dispErrorMessageBox(StrToWStr("Failed to create PxControllerManager."));
+		return;
+	}
+	else {
+		std::cout << "Created PxControllerManager." << std::endl;
+	}
 }
 
 void EXP_PhysicsHandler::UpdateWorld() {
@@ -99,6 +109,10 @@ void EXP_PhysicsHandler::RemoveBodyFromWorld(EXP_RigidBody* bd) {
 	}
 
 	delete bd;
+}
+
+void EXP_PhysicsHandler::PurgeControllers() {
+	//m_controller_man->purgeControllers();
 }
 
 int EXP_PhysicsHandler::GetPrefferedNumberOfThreads() {

@@ -413,6 +413,8 @@ void EXP_Game::UnloadCurrentMap() {
 	m_rndr->UnregisterAllParticleEmitters();
 	
 	m_rndr->GetMaterialLibrary()->ClearLibrary();
+
+	//m_physicsHandler->PurgeControllers();
     
 	//Did this terribleness because openGL need to delete buffers in the same thread
 	//as the context.

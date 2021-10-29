@@ -337,3 +337,24 @@ void EXP_RB_Mesh::ConstructShape() {
 
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }
+
+EXP_CharControllerCapsule::EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, float height, float radius, float mass, EXP_PhysicsMaterial mat) : EXP_CharacterController() {
+	m_game = game;
+
+	m_height = height;
+	m_radius = radius;
+}
+
+EXP_CharControllerCapsule::~EXP_CharControllerCapsule() {
+	if (m_controller)
+		m_controller->release();
+}
+
+void EXP_CharControllerCapsule::ConstructController() {
+	physx::PxCapsuleControllerDesc desc;
+	desc.height = m_height;
+	desc.radius = m_radius;
+	desc.upDirection = physx::PxVec3(0.0f, 0.0f, 1.0f);
+	
+	m_controller = m_game->GetPhysicsHandler()->GetControllerManager()->createController(desc);
+}
