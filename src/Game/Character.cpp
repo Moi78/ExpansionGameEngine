@@ -39,7 +39,7 @@ void Character::OnTick() {
 }
 
 void Character::MoveForward() {
-	//AddWorldPos(m_cam->GetForwardVector() * 0.1f);
+	AddWorldPos(m_cam->GetForwardVector() * 0.1f);
 	//m_bound->AddMovementInput(m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 1.0f), 0.1f);
 }
 

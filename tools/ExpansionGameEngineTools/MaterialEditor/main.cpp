@@ -14,6 +14,13 @@
 
 #include <glad/glad.h>
 
+//Enabling Optimus
+#ifdef _WIN32
+extern "C" { _declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001; }
+#else
+extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
+#endif //_WIN32
+
 float lightDirX = 1.0f;
 float lightDirY = -0.8f;
 float lightDirZ = -0.6f;

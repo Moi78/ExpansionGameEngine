@@ -7,7 +7,13 @@ EditorGUI::EditorGUI(EXP_Game* game, std::string projectPath, std::string conten
 
 	m_conf = {};
 	#ifdef _DEBUG
-		m_conf.MaterialEditorPath = std::getenv("EXPGE_MAT_EDITOR_DIR");
+		const char* env_var = std::getenv("EXPGE_MAT_EDITOR_DIR");
+		if (env_var) {
+			m_conf.MaterialEditorPath = env_var;
+		}
+		else {
+			m_conf.MaterialEditorPath = "./";
+		}
 	#else
 		m_conf.MaterialEditorPath = "./";
 	#endif //_DEBUG
