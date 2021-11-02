@@ -87,6 +87,7 @@ public:
 	virtual uint64_t GetTextureHandle() = 0;
 
 	virtual unsigned int GetTextureID() = 0;
+	virtual unsigned int GetTextureMSID() = 0;
 
 	virtual void DeleteTexture() = 0;
 };
@@ -134,6 +135,7 @@ public:
 	virtual void DeleteTexture();
 
 	virtual unsigned int GetTextureID();
+	virtual unsigned int GetTextureMSID();
 
 private:
 	void GetGLformat(

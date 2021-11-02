@@ -198,7 +198,7 @@ void RD_Texture_GL::CreateAndAttachToFramebufferMS(
 		format2 = GL_RGB;
 	}
 
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, formatGL, w, h, GL_TRUE);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, formatGL, w, h, GL_TRUE);
 
 	if (format != IMGFORMAT_DEPTH) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D_MULTISAMPLE, m_ms_texture, 0);
@@ -346,6 +346,10 @@ void RD_Texture_GL::GetGLformat(
 
 uint64_t RD_Texture_GL::GetTextureHandle() {
 	return m_texHandle;
+}
+
+unsigned int RD_Texture_GL::GetTextureMSID() {
+	return m_ms_texture;
 }
 
 #endif //BUILD_OPENGL

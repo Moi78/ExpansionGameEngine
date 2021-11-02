@@ -126,18 +126,12 @@ void RD_FrameBuffer_GL::BindFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 }
 
+void RD_FrameBuffer_GL::BindNonMSFBO() {
+	m_FBO_nMS->BindFBO();
+}
+
 void RD_FrameBuffer_GL::UnbindFBO() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	if (m_ms) {
-		BindRead();
-		m_FBO_nMS->BindWrite();
-
-		glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
-		UnbindFBO();
-		m_FBO_nMS->UnbindFBO();
-	}
 }
 
 RD_Texture* RD_FrameBuffer_GL::GetAttachementByIndex(int index) {
@@ -217,6 +211,26 @@ void RD_FrameBuffer_GL::BindRead() {
 
 void RD_FrameBuffer_GL::BindWrite() {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
+}
+
+bool RD_FrameBuffer_GL::IsFBMultisampled() {
+	return m_ms;
+}
+
+std::vector<Attachement> RD_FrameBuffer_GL::GetFBAttachements() {
+	return m_attachments;
+}
+
+void RD_FrameBuffer_GL::MultisampledToIntermediate() {
+	BindRead();
+	m_FBO_nMS->BindWrite();
+
+	for (int i = 0; i < m_attachments.size(); i++) {
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + i);
+
+		glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	}
 }
 
 #endif //BUILD_OPENGL

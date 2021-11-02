@@ -650,6 +650,7 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	const int height = GetViewportSize().getY();
 
 	m_gbuffer = m_api->CreateFrameBuffer(width, height, false);
+	//m_gbuffer->SetMultisampled(true);
 
 	//Position buff
 	m_gbuffer->AddAttachement(IMGFORMAT_RGB16F);
@@ -727,6 +728,9 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 	RenderParticles();
 
 	m_gbuffer->UnbindFBO();
+	if (m_gbuffer->IsFBMultisampled()) {
+		m_gbuffer->MultisampledToIntermediate();
+	}
 
 	RenderShadows();
 

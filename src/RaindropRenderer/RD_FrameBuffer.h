@@ -47,15 +47,18 @@ public:
 	virtual unsigned int GetFBO() = 0;
 
 	virtual void BindFBO() = 0;
+	virtual void BindNonMSFBO() = 0;
 	virtual void UnbindFBO() = 0;
 
 	virtual int GetNumberOfAttachements() = 0;
 	virtual RD_Texture* GetAttachementByIndex(int index) = 0;
+	virtual bool IsFBMultisampled() = 0;
 
 	virtual void AddAttachement(unsigned int format, unsigned int scaleMode = SCALEMODE_LINEAR, unsigned int wrapmode = WRAPMODE_REPEAT) = 0;
 	virtual void BuildFBO() = 0;
 
 	virtual void SetMultisampled(bool state) = 0;
+	virtual void MultisampledToIntermediate() = 0;
 
 	virtual void ConfigureRenderbuffer(int storage, int attachement) = 0;
 
@@ -81,6 +84,7 @@ public:
 	virtual unsigned int GetFBO();
 
 	virtual void BindFBO();
+	virtual void BindNonMSFBO();
 	virtual void UnbindFBO();
 
 	virtual int GetNumberOfAttachements();
@@ -90,6 +94,8 @@ public:
 	virtual void BuildFBO();
 
 	virtual void SetMultisampled(bool state);
+	virtual void MultisampledToIntermediate();
+	virtual bool IsFBMultisampled();
 
 	virtual void ConfigureRenderbuffer(int storage, int attachement);
 
@@ -99,6 +105,8 @@ public:
 
 	virtual void BindWrite();
 	virtual void BindRead();
+
+	std::vector<Attachement> GetFBAttachements();
 
 private:
 	virtual void CreateFBO();
