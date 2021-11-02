@@ -37,11 +37,11 @@ Material Node Editor
 
 ![alt_text](screenshots/EXPGE_Screen_9.PNG)
 
+Level Editor
+
+![alt_text](screenshots/EXPGE_Screen_10.png)
+
 ![alt text](screenshots/EXPGE_Screen_1.PNG)
-
-Some tests on instanciated meshes and rotations issues (now solved =° ), and GUI System
-
-![alt text](screenshots/EXPGE_Screen_3.PNG)
 
 A little Maze Generator I've built with EXPGE
 
