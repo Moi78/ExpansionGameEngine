@@ -11,7 +11,8 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 	m_ch_lvl = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(MainLevel::ChangeLVL), GLFW_KEY_Y, true);
 
 	m_test = new EXP_RB_Sphere(game, vec3f(0.0f, 0.0f, 20.0f), vec3f(), 0.5f, 1.0f);
-	m_floor = new EXP_RB_Box(game, vec3f(), vec3f(), vec3f(100.0f, 100.0f, 0.1f), 0.1f, false);
+	//m_floor = new EXP_RB_Box(game, vec3f(), vec3f(), vec3f(100.0f, 100.0f, 0.1f), 0.0f, false);
+	EXP_RB_Mesh* msh = new EXP_RB_Mesh(game, vec3f(), vec3f(), vec3f(1.0f, 1.0f, 1.0f), "/cactus.msh", 0.0f);
 
 	m_txt = new EXP_TextSurface(game, "Hello", 512, "/nova.ttf", vec3f(0.0f, 0.0f, 2.0f), vec3f(), vec3f(0.2f, 0.2f, 0.2f), vec3f(1.0f, 0.5f, 0.5f));
 

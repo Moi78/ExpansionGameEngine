@@ -136,7 +136,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>..\libs\PHYSX\PhysX\bin\$(Configuration);..\libs\JSONCPP\lib\$(Configuration);..\libs\libsndfile\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXCooking_64.lib;PhysXCharacterKinematic_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -161,7 +161,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>..\libs\PHYSX\PhysX\bin\$(Configuration);..\libs\JSONCPP\lib\$(Configuration);..\libs\libsndfile\lib;..\libs\GL\lib;..\libs\AL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jsoncpp.lib;ExpansionMath.lib;BulldozerFileManager.lib;PhysicaSound.lib;RaindropRenderer.lib;glew32.lib;glfw3dll.lib;OpenAL32.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXCooking_64.lib;PhysXCharacterKinematic_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

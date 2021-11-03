@@ -19,7 +19,7 @@ EXP_RigidBody::~EXP_RigidBody() {
 }
 
 physx::PxRigidActor* EXP_RigidBody::GetBody() {
-	if (m_mass > 0) {
+	if ((m_mass > 0) || (m_isKinematic)) {
 		return m_body;
 	}
 	else {
@@ -343,6 +343,11 @@ EXP_CharControllerCapsule::EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, 
 
 	m_height = height;
 	m_radius = radius;
+
+	m_pos = pos;
+	m_mat = mat;
+
+	ConstructController();
 }
 
 EXP_CharControllerCapsule::~EXP_CharControllerCapsule() {
@@ -351,10 +356,26 @@ EXP_CharControllerCapsule::~EXP_CharControllerCapsule() {
 }
 
 void EXP_CharControllerCapsule::ConstructController() {
-	physx::PxCapsuleControllerDesc desc;
-	desc.height = m_height;
-	desc.radius = m_radius;
+	physx::PxCapsuleControllerDesc desc{};
+	desc.height = 1.0f;
+	desc.radius = 0.5f;
 	desc.upDirection = physx::PxVec3(0.0f, 0.0f, 1.0f);
-	
+	desc.maxJumpHeight = 1.0f;
+	desc.invisibleWallHeight = 1.0f;
+	desc.position = physx::PxExtendedVec3(m_pos.getX(), m_pos.getY(), m_pos.getZ());
+	desc.material = m_game->GetPhysicsHandler()->GetPhysics()->createMaterial(m_mat.StaticFriction, m_mat.DynamicFriction, m_mat.Restitution);
+
 	m_controller = m_game->GetPhysicsHandler()->GetControllerManager()->createController(desc);
+
+	physx::PxFilterData data{};
+	m_filters = physx::PxControllerFilters(&data);
+}
+
+vec3f EXP_CharControllerCapsule::GetWorldPosition() {
+	physx::PxExtendedVec3 pos = m_controller->getPosition();
+	return vec3f(pos.x, pos.y, pos.z);
+}
+
+void EXP_CharControllerCapsule::AddMovementInput(vec3f dir) {
+	m_controller->move(physx::PxVec3(dir.getX(), dir.getY(), dir.getZ()), 0.01f, 16.33f, m_filters);
 }

@@ -109,10 +109,14 @@ public:
 
 	virtual ~EXP_CharacterController() {}
 
+	virtual void AddMovementInput(vec3f dir) = 0;
+	virtual vec3f GetWorldPosition() = 0;
+
 	virtual void ConstructController() = 0;
 
 protected:
 	physx::PxController* m_controller;
+	physx::PxControllerFilters m_filters;
 };
 
 class EXPGE_API EXP_CharControllerCapsule : public EXP_CharacterController {
@@ -120,11 +124,17 @@ public:
 	EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, float height, float radius, float mass, EXP_PhysicsMaterial mat = {});
 	virtual ~EXP_CharControllerCapsule();
 
+	virtual vec3f GetWorldPosition();
+	virtual void AddMovementInput(vec3f dir);
+
 	virtual void ConstructController() override;
 
 private:
 	EXP_Game* m_game;
 	float m_height, m_radius;
+	
+	vec3f m_pos;
+	EXP_PhysicsMaterial m_mat;
 };
 
 #endif //EXP_RIGID_BODY_H__
