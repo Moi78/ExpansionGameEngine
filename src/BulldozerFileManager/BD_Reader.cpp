@@ -20,8 +20,8 @@ void BD_Reader::ClearAll() {
 
 void BD_Reader::ReadMSHFile(std::string file) {
 	if (!std::filesystem::exists(file)) {
-		const wchar_t* f = std::wstring(file.begin(), file.end()).c_str();
-		dispErrorMessageBox(f);
+		std::string message = file + " does not exists.";
+		dispErrorMessageBox(std::wstring(message.begin(), message.end()).c_str());
 		return;
 	}
 
