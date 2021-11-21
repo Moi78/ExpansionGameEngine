@@ -184,6 +184,16 @@ void EditorGUI::RenderEditorGUI() {
 
 		ImGui::InputText("Level code object name", (char*)m_reg.levelCodeObjectName.c_str(), m_reg.levelCodeObjectName.capacity() + 1);
 
+		float astren = m_game->GetRenderer()->GetAmbientStrength();
+		if (ImGui::InputFloat("Ambient strength", &astren)) {
+			m_game->GetRenderer()->SetAmbientStrength(astren);
+		}
+
+		vec3f acolor = m_game->GetRenderer()->GetAmbientColor();
+		if (ImGui::InputFloat3("Ambient Color", acolor.GetPTR())) {
+			m_game->GetRenderer()->SetAmbientColor(acolor);
+		}
+
 		ImGui::End();
 	}
 }
@@ -428,6 +438,12 @@ void EditorGUI::SaveMap(std::string map_path) {
 	Json::Value root;
 
 	root["MapLevelCodeObjectName"] = m_reg.levelCodeObjectName.c_str();
+
+	root["AmbientStrength"] = m_game->GetRenderer()->GetAmbientStrength();
+
+	root["AmbientColor"][0] = m_game->GetRenderer()->GetAmbientColor().getX();
+	root["AmbientColor"][1] = m_game->GetRenderer()->GetAmbientColor().getY();
+	root["AmbientColor"][2] = m_game->GetRenderer()->GetAmbientColor().getZ();
 
 	Json::Value nodes;
 	

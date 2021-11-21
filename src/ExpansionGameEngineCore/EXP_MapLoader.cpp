@@ -66,6 +66,16 @@ bool EXP_MapLoader::LoadMap(std::string map, const bool nocode) {
 		}
 	}
 
+	float ambient_strength = root.get("AmbientStrength", 0.1f).asFloat();
+	vec3f ambient_color = vec3f(
+		root.get("AmbientColor", 0)[0].asFloat(),
+		root.get("AmbientColor", 0)[1].asFloat(),
+		root.get("AmbientColor", 0)[2].asFloat()
+	);
+
+	m_game->GetRenderer()->SetAmbientColor(ambient_color);
+	m_game->GetRenderer()->SetAmbientStrength(ambient_strength);
+
 	int nodeCount = root["nodes"].size();
 	for (int i = 0; i < nodeCount; i++) {
 
@@ -184,6 +194,16 @@ bool EXP_MapLoader::LoadMap(std::string map, std::string content_path, const boo
 			exit(-3);
 		}
 	}
+
+	float ambient_strength = root.get("AmbientStrength", 0.1f).asFloat();
+	vec3f ambient_color = vec3f(
+		root.get("AmbientColor", 0)[0].asFloat(),
+		root.get("AmbientColor", 0)[1].asFloat(),
+		root.get("AmbientColor", 0)[2].asFloat()
+	);
+
+	m_game->GetRenderer()->SetAmbientColor(ambient_color);
+	m_game->GetRenderer()->SetAmbientStrength(ambient_strength);
 
 	int nodeCount = root["nodes"].size();
 	for (int i = 0; i < nodeCount; i++) {

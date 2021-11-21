@@ -139,6 +139,8 @@ public:
 	//Lighting
 	void SetAmbientStrength(float strength);
 	void SetAmbientColor(const vec3f& nColor);
+	float GetAmbientStrength();
+	vec3f GetAmbientColor();
 
 	void UpdatePointsLighting();
 	void UpdateAmbientLighting();

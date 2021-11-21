@@ -1450,3 +1450,11 @@ int RaindropRenderer::GetCurrentShaderStorageIndex() {
 void RaindropRenderer::IncrementCurrentShaderStorageIndex() {
 	m_current_shader_storage_index++;
 }
+
+float RaindropRenderer::GetAmbientStrength() {
+	return ambientStrength;
+}
+
+vec3f RaindropRenderer::GetAmbientColor() {
+	return ambientColor;
+}

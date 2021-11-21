@@ -1,5 +1,7 @@
 {
     "MapLevelCodeObjectName":"Editor",
+    "AmbientStrength":0,
+    "AmbientColor":[0, 0, 0],
     "nodes": [
 
     ]
