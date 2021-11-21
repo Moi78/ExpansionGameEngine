@@ -22,7 +22,20 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 		vec3f(0.0f, 0.5f, 1.0f), 5.0f, 0.02f, 3.0f
 	);
 
-	//m_game->GetRenderer()->DisableFeature(RendererFeature::SSAO);
+	//RD_ShaderLoader* sl_vert = m_game->GetRenderer()->GetRenderingAPI()->CreateShader();
+	//sl_vert->compileShaderFromFile("Content/cust_shad/Gshad_hmap.vert", "Content/cust_shad/mat.frag");
+	//
+	//RD_ShaderMaterial* mat = new RD_ShaderMaterial(sl_vert, m_game->GetRenderer());
+
+	//RD_Texture* tex = m_game->GetRenderer()->GetRenderingAPI()->CreateTexture();
+	//tex->LoadTexture("Content/heightmap.png");
+	//mat->AddTexture("tex", tex);
+
+	//mat->MakeSSBO();
+
+	//m_game->GetRenderer()->GetMaterialLibrary()->AddMaterialToLib(mat, "custom_mat_test");
+	//
+	//EXP_StaticMesh* smesh = new EXP_StaticMesh(game, mat, "/plane_sub.msh", vec3f(0.0f, 0.0f, 7.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
 }
 
 MainLevel::~MainLevel() {
