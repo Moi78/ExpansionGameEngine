@@ -28,21 +28,29 @@ float lightBrtn = 5.0f;
 
 void CompileMat(EXP_Game* game, Node_Editor* editor, RD_ShaderMaterial* mat) {
 	std::string FragCode;
+	std::string plateform_path;
 	switch (game->GetRenderer()->GetRenderingAPI()->GetAPIType()) {
 	case API::OPENGL3:
 		FragCode = editor->EvalNodesOldGL();
+		plateform_path = "/glsl/gl3/";
 		break;
 	case API::OPENGL4:
 		FragCode = editor->EvalNodes();
+		plateform_path = "/glsl/gl4/";
 		break;
 	default:
 		FragCode = editor->EvalNodes();
+		plateform_path = "/glsl/gl3/";
 		break;
 	}
 
 	std::string VertCode = "";
 	std::ifstream vertFile;
-	vertFile.open("Engine/Shaders/glsl/Gshad.vert", std::ios::beg);
+	vertFile.open("Engine/Shaders/" + plateform_path + "Gshad.vert", std::ios::beg);
+	if (!vertFile.is_open()) {
+		dispErrorMessageBox(StrToWStr("Failed to open Engine/Shaders/glsl/" + plateform_path +"Gshad.vert"));
+	}
+
 	while (!vertFile.eof()) {
 		char buf[100];
 		vertFile.getline(buf, 100);

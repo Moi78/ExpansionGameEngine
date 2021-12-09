@@ -35,6 +35,8 @@ void Character::OnTick() {
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 	m_cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
 
+	m_bound->AddMovementInput(vec3f(0.0f, 0.0f, -0.2f));
+
 	//AddWorldRot(vec3f(m_game->GetInputHandler()->GetMouseYaxis() / -10.0f, 0.0f, m_game->GetInputHandler()->GetMouseXaxis() / -10.0f));
 }
 

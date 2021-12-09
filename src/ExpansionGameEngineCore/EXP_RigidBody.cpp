@@ -377,5 +377,7 @@ vec3f EXP_CharControllerCapsule::GetWorldPosition() {
 }
 
 void EXP_CharControllerCapsule::AddMovementInput(vec3f dir) {
-	m_controller->move(physx::PxVec3(dir.getX(), dir.getY(), dir.getZ()), 0.01f, 16.33f, m_filters);
+	auto result = m_controller->move(physx::PxVec3(dir.getX(), dir.getY(), dir.getZ()), 0.01f, 16.33f, m_filters);
+
+	std::cout << (int)result.operator uint8_t() << std::endl;
 }
