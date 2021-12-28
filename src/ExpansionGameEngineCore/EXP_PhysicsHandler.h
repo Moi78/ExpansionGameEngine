@@ -17,16 +17,15 @@
 
 #endif //_WIN32
 
-#include <PxPhysicsAPI.h>
-#include <foundation/PxErrorCallback.h>
-#include <extensions/PxDefaultAllocator.h>
-
 #include <iostream>
 #include <thread>
 #include <vector>
 
 #include <vec3.h>
 #include "EXP_RigidBody.h"
+
+#include <bullet/btBulletCollisionCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
 
 class EXPGE_API EXP_PhysicsHandler
 {
@@ -41,9 +40,9 @@ public:
 	void RemoveBodyFromWorld(EXP_RigidBody*);
 	void PurgeControllers();
 
-	physx::PxPhysics* GetPhysics() { return m_physics; }
-	physx::PxCooking* GetCooker() { return m_cooker; }
-	physx::PxControllerManager* GetControllerManager() { return m_controller_man; }
+	btDiscreteDynamicsWorld* GetWorld() {
+		return m_world;
+	}
 
 private:
 	int GetPrefferedNumberOfThreads();
@@ -53,13 +52,7 @@ private:
 
 	vec3f m_gravity;
 
-	physx::PxFoundation* m_fnd;
-	physx::PxPvd* m_PVD;
-	physx::PxPhysics* m_physics;
-	physx::PxCooking* m_cooker;
-	physx::PxControllerManager* m_controller_man;
-
-	physx::PxScene* m_world;
+	btDiscreteDynamicsWorld* m_world;
 
 	std::vector<EXP_RigidBody*> m_bodies;
 };

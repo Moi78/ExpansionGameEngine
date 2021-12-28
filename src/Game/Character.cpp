@@ -10,7 +10,8 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 	m_roll = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::Roll), GLFW_KEY_R, false);
 	m_getpos = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::PrnPos), GLFW_KEY_T, true);
 
-	m_bound = new EXP_CharControllerCapsule(game, vec3f(0.0f, 0.0f, 1.0f), 1.0f, 0.5f, 1.0f);
+	m_bound = new EXP_RB_Capsule(game, vec3f(0.0f, 0.0f, 4.0f), vec3f(90.0f), 0.5f, 1.0f, 1.0f, true);
+	m_bound->FreezeRotationAxis(true, true, true);
 	
 	m_test = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_met_blue.exmtl"), "/cactus.msh", vec3f(1.0f, 1.0f), vec3f(), vec3f(0.05f, 0.05f, 0.05f));
 	LinkComponent(m_test);
@@ -35,14 +36,14 @@ void Character::OnTick() {
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 	m_cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
 
-	m_bound->AddMovementInput(vec3f(0.0f, 0.0f, -0.2f));
+	//m_bound->AddMovementInput(vec3f(0.0f, 0.0f, -0.2f));
 
 	//AddWorldRot(vec3f(m_game->GetInputHandler()->GetMouseYaxis() / -10.0f, 0.0f, m_game->GetInputHandler()->GetMouseXaxis() / -10.0f));
 }
 
 void Character::MoveForward() {
 	//AddWorldPos(m_cam->GetForwardVector() * 0.1f);
-	m_bound->AddMovementInput(m_cam->GetForwardVector() * 0.1f);
+	m_bound->AddMovementInput(m_cam->GetForwardVector(), 10.0f);
 }
 
 void Character::DestroyActor() {

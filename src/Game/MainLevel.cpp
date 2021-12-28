@@ -16,11 +16,11 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	m_txt = new EXP_TextSurface(game, "Hello", 512, "/nova.ttf", vec3f(0.0f, 0.0f, 2.0f), vec3f(), vec3f(0.2f, 0.2f, 0.2f), vec3f(1.0f, 0.5f, 0.5f));
 
-	EXP_SMParticleEmitter* pe = new EXP_SMParticleEmitter(
-		game, game->GetShaderByFileRefInstanced("/shaders/mat_met_blue.exmtl"),
-		vec3f(0.0f, 0.0f, 1.0f), vec3f(), vec3f(1.f, 1.f, 1.f),
-		vec3f(0.0f, 0.5f, 1.0f), 5.0f, 0.02f, 3.0f
-	);
+	//EXP_SMParticleEmitter* pe = new EXP_SMParticleEmitter(
+	//	game, game->GetShaderByFileRefInstanced("/shaders/mat_met_blue.exmtl"),
+	//	vec3f(0.0f, 0.0f, 1.0f), vec3f(), vec3f(1.f, 1.f, 1.f),
+	//	vec3f(0.0f, 0.5f, 1.0f), 5.0f, 0.02f, 3.0f
+	//);
 
 	//RD_ShaderLoader* sl_vert = m_game->GetRenderer()->GetRenderingAPI()->CreateShader();
 	//sl_vert->compileShaderFromFile("Content/cust_shad/Gshad_hmap.vert", "Content/cust_shad/mat.frag");
