@@ -62,7 +62,15 @@ void EXP_RigidBody::AddMovementInput(vec3f direction, float scale) {
 }
 
 void EXP_RigidBody::FreezeRotationAxis(bool X, bool Y, bool Z) {
-	m_body->setAngularFactor(btVector3(X ? 1.0f : 0.0f, Y ? 1.0f : 0.0f, Z ? 1.0f : 0.0f));
+	btVector3 ang(1.0f, 1.0f, 1.0f);
+	if (X)
+		ang.setX(0.0f);
+	if (Y)
+		ang.setY(0.0f);
+	if (Z)
+		ang.setZ(0.0f);
+
+	m_body->setAngularFactor(ang);
 }
 
 void EXP_RigidBody::FreezePositionAxis(bool X, bool Y, bool Z) {
@@ -73,6 +81,10 @@ vec3f EXP_RigidBody::GetLinearVelocity() {
 	btVector3 vel = m_body->getLinearVelocity();
 
 	return BTVEC_TO_VEC3F(vel);
+}
+
+void EXP_RigidBody::SetLinearVelocity(vec3f vel) {
+	m_body->setLinearVelocity(VEC3F_TO_BTVEC(vel));
 }
 
 //RB Box
@@ -164,13 +176,14 @@ void EXP_RB_Mesh::ConstructShape() {
 	m_game->GetPhysicsHandler()->RegisterRigidBody(this);
 }
 
-EXP_CharControllerCapsule::EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, float height, float radius, float mass, EXP_PhysicsMaterial mat) : EXP_CharacterController() {
+EXP_CharControllerCapsule::EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, vec3f rot, float height, float radius, float mass, EXP_PhysicsMaterial mat) : EXP_CharacterController() {
 	m_game = game;
 
 	m_height = height;
 	m_radius = radius;
 
 	m_pos = pos;
+	m_rot = rot;
 	m_mat = mat;
 
 	ConstructController();
@@ -181,18 +194,15 @@ EXP_CharControllerCapsule::~EXP_CharControllerCapsule() {
 }
 
 void EXP_CharControllerCapsule::ConstructController() {
-	/*btPairCachingGhostObject* go = new btPairCachingGhostObject();
-	btConvexShape* shp = new btCapsuleShape(m_radius, m_height);
-
-	m_controller = new btKinematicCharacterController(go, shp, 0.3f, btVector3(0.0f, 0.0f, 1.0f));*/
+	m_capsule = new EXP_RB_Capsule(m_game, m_pos, m_rot, m_radius, m_height, 1.0f);
+	m_capsule->FreezeRotationAxis(true, true, false);
+	m_capsule->GetBody()->setRestitution(0.0f);
 }
 
 vec3f EXP_CharControllerCapsule::GetWorldPosition() {
-	//return BTVEC_TO_VEC3F(m_controller->getGhostObject()->getWorldTransform().getOrigin());
-	return vec3f();
+	return m_capsule->GetWorldPosition();
 }
 
 void EXP_CharControllerCapsule::AddMovementInput(vec3f dir) {
-	/*m_controller->setWalkDirection(VEC3F_TO_BTVEC(dir));
-	m_controller->playerStep(m_game->GetPhysicsHandler()->GetWorld(), 1.0f);*/
+	m_capsule->SetLinearVelocity(dir * 10.0f);
 }

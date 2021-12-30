@@ -51,7 +51,9 @@ public:
 	void AddMovementInput(vec3f direction, float scale);
 	void FreezeRotationAxis(bool X, bool Y, bool Z);
 	void FreezePositionAxis(bool X, bool Y, bool Z);
+
 	vec3f GetLinearVelocity();
+	void SetLinearVelocity(vec3f vel);
 
 	virtual void ConstructShape();
 
@@ -121,7 +123,7 @@ public:
 
 class EXPGE_API EXP_CharControllerCapsule : public EXP_CharacterController {
 public:
-	EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, float height, float radius, float mass, EXP_PhysicsMaterial mat = {});
+	EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, vec3f rot, float height, float radius, float mass, EXP_PhysicsMaterial mat = {});
 	virtual ~EXP_CharControllerCapsule();
 
 	virtual vec3f GetWorldPosition();
@@ -133,9 +135,10 @@ private:
 	EXP_Game* m_game;
 	float m_height, m_radius;
 
-	//btKinematicCharacterController* m_controller;
+	EXP_RB_Capsule* m_capsule;
 	
 	vec3f m_pos;
+	vec3f m_rot;
 	EXP_PhysicsMaterial m_mat;
 };
 

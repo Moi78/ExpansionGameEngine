@@ -25,6 +25,7 @@ void EXP_PhysicsHandler::InitWorld() {
 
 void EXP_PhysicsHandler::UpdateWorld() {
 	m_world->stepSimulation(m_updtTime);
+	m_world->performDiscreteCollisionDetection();
 }
 
 void EXP_PhysicsHandler::RegisterRigidBody(EXP_RigidBody* rb) {
