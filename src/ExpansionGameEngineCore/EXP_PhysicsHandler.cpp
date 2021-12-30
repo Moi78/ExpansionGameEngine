@@ -51,10 +51,6 @@ void EXP_PhysicsHandler::RemoveBodyFromWorld(EXP_RigidBody* bd) {
 	delete bd;
 }
 
-void EXP_PhysicsHandler::PurgeControllers() {
-	
-}
-
 int EXP_PhysicsHandler::GetPrefferedNumberOfThreads() {
 	const int nbrThreads = std::thread::hardware_concurrency();
 	std::cout << "Detected " << nbrThreads << " CPU threads." << std::endl;

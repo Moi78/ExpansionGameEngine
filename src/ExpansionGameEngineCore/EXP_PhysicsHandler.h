@@ -38,7 +38,8 @@ public:
 
 	void RegisterRigidBody(EXP_RigidBody*);
 	void RemoveBodyFromWorld(EXP_RigidBody*);
-	void PurgeControllers();
+
+	vec3f GetGravity() { return m_gravity; }
 
 	btDiscreteDynamicsWorld* GetWorld() {
 		return m_world;

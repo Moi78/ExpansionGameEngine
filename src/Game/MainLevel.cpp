@@ -36,6 +36,8 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 	//m_game->GetRenderer()->GetMaterialLibrary()->AddMaterialToLib(mat, "custom_mat_test");
 	//
 	//EXP_StaticMesh* smesh = new EXP_StaticMesh(game, mat, "/plane_sub.msh", vec3f(0.0f, 0.0f, 7.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
+
+	m_game->ToggleDebugRendering(true);
 }
 
 MainLevel::~MainLevel() {

@@ -88,6 +88,7 @@ public:
 	virtual void SetFullscreenMode(bool mode) = 0;
 
 	virtual bool GetKeyPress(int key) = 0;
+	virtual bool GetKeyRelease(int key) = 0;
 	virtual bool GetMouseButton(int button) = 0;
 
 	virtual double GetCursorPosX() = 0;

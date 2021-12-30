@@ -116,6 +116,7 @@ public:
 	virtual ~EXP_CharacterController() {}
 
 	virtual void AddMovementInput(vec3f dir) = 0;
+	virtual void StopMovement() = 0;
 	virtual vec3f GetWorldPosition() = 0;
 
 	virtual void ConstructController() = 0;
@@ -126,8 +127,10 @@ public:
 	EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, vec3f rot, float height, float radius, float mass, EXP_PhysicsMaterial mat = {});
 	virtual ~EXP_CharControllerCapsule();
 
-	virtual vec3f GetWorldPosition();
-	virtual void AddMovementInput(vec3f dir);
+	virtual vec3f GetWorldPosition() override;
+
+	virtual void AddMovementInput(vec3f dir) override;
+	virtual void StopMovement() override;
 
 	virtual void ConstructController() override;
 

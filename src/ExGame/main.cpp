@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		game->RenderScene();
+		game->TickActors();
 		game->ExecCallbacks();
 
 		game->UpdatePhysics();

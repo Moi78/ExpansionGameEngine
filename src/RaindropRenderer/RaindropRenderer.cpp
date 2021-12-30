@@ -206,18 +206,16 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)0);
 	m_final_pass_selector_s->UnbindBuffer();
 
-	if constexpr (RENDER_DEBUG_ENABLED) {
-		RD_ShaderLoader* shad = m_api->CreateShader();
-		shad->compileShaderFromFile(
-			m_engineDir + "/Shaders" + folder + "Debug." + vertEXT + "",
-			m_engineDir + "/Shaders" + folder + "Debug." + fragEXT + ""
-		);
+	RD_ShaderLoader* shad = m_api->CreateShader();
+	shad->compileShaderFromFile(
+		m_engineDir + "/Shaders" + folder + "Debug." + vertEXT + "",
+		m_engineDir + "/Shaders" + folder + "Debug." + fragEXT + ""
+	);
 
-		m_dbgMat = new RD_ShaderMaterial(shad, this);
+	m_dbgMat = new RD_ShaderMaterial(shad, this);
 
-		m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, m_dbgMat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
-		m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
-	}
+	m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, m_dbgMat, vec3f(0.0f, 0.0f, 0.0f), vec3f(0.0f, 0.0f, 0.0f), vec3f(0.3f, 0.3f, 0.3f));
+	m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
 
 	ambientColor = vec3f(1.0f, 1.0f, 1.0f);
 
@@ -447,32 +445,30 @@ void RaindropRenderer::SwitchShader(RD_ShaderLoader* shader) {
 }
 
 void RaindropRenderer::RenderDbg(RD_Camera* cam) {
-	if constexpr (RENDER_DEBUG_ENABLED) {
-		bool rEnableLighting = true;
+	bool rEnableLighting = true;
 
-		if (IsFeatureEnabled(RendererFeature::Lighting)) {
-			DisableFeature(RendererFeature::Lighting);
-		}
-		else {
-			rEnableLighting = false;
-		}
-
-		m_gbuffer->DebugMode();
-
-		m_api->SetFilledMode(FillingMode::WIREFRAME);
-
-		for (auto* plight : m_pt_lights) {
-			m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
-
-			m_DBG_light_mdl->SetPosition(plight->GetPosition());
-			m_DBG_light_mdl->render();
-		}
-
-		m_api->SetFilledMode(FillingMode::FILLED);
-
-		if(rEnableLighting)
-			EnableFeature(RendererFeature::Lighting);
+	if (IsFeatureEnabled(RendererFeature::Lighting)) {
+		DisableFeature(RendererFeature::Lighting);
 	}
+	else {
+		rEnableLighting = false;
+	}
+
+	m_gbuffer->DebugMode();
+
+	m_api->SetFilledMode(FillingMode::WIREFRAME);
+
+	for (auto* plight : m_pt_lights) {
+		m_DBG_light_mdl->GetMaterial()->GetShader()->useShader();
+
+		m_DBG_light_mdl->SetPosition(plight->GetPosition());
+		m_DBG_light_mdl->render();
+	}
+
+	m_api->SetFilledMode(FillingMode::FILLED);
+
+	if(rEnableLighting)
+		EnableFeature(RendererFeature::Lighting);
 }
 
 void RaindropRenderer::UpdatePointsLighting() {

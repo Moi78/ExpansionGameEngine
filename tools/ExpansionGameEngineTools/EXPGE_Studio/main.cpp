@@ -21,7 +21,7 @@ extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
 
 int main(int argc, char* argv[]) {
 	//EXPGE Renderer
-	EXP_GameInfo gi;
+	EXP_GameInfo gi{};
 	gi.GameBaseResolution = { 1280, 720 };
 	gi.GameName = "Expansion Game Engine - Studio";
 	gi.RenderingAPI = API::OPENGL4;
@@ -105,6 +105,8 @@ int main(int argc, char* argv[]) {
 	ImFont* fnt = io.Fonts->AddFontFromFileTTF("studio/font/open_sans.ttf", 17.0f);
 	io.Fonts->Fonts[0] = fnt;
 
+	game->ToggleDebugRendering(true);
+
 	while ((!game->GetRenderer()->WantToClose()) && (!game->GetCloseOverride())) {
 		game->RenderScene();
 		
@@ -117,6 +119,7 @@ int main(int argc, char* argv[]) {
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+		game->TickActors();
 		game->ExecCallbacks();
 
 		game->EndFrame();

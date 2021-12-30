@@ -204,5 +204,9 @@ vec3f EXP_CharControllerCapsule::GetWorldPosition() {
 }
 
 void EXP_CharControllerCapsule::AddMovementInput(vec3f dir) {
-	m_capsule->SetLinearVelocity(dir * 10.0f);
+	m_capsule->SetLinearVelocity(dir);
+}
+
+void EXP_CharControllerCapsule::StopMovement() {
+	m_capsule->SetLinearVelocity(vec3f(0.0f, 0.0f, -9.18f)); //Need to use game's gravity value !!!
 }
