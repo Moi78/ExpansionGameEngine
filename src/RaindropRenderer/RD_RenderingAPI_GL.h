@@ -41,6 +41,7 @@ public:
 	virtual bool WantToClose();
 
 	virtual bool GetKeyPress(int key);
+	virtual bool GetKeyRelease(int key);
 	virtual bool GetMouseButton(int button);
 
 	virtual double GetCursorPosX();

@@ -95,6 +95,10 @@ bool RD_WindowingSystemGLFW::GetKeyPress(int key) {
 	return glfwGetKey(m_win, key) == GLFW_PRESS;
 }
 
+bool RD_WindowingSystemGLFW::GetKeyRelease(int key) {
+	return glfwGetKey(m_win, key) == GLFW_RELEASE;
+}
+
 bool RD_WindowingSystemGLFW::GetMouseButton(int button) {
 	return glfwGetMouseButton(m_win, button) == GLFW_PRESS;
 }

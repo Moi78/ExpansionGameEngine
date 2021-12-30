@@ -17,6 +17,9 @@
 
 #endif //_WIN32
 
+#define VEC3F_TO_BTVEC(vec) btVector3(vec.getX(), vec.getY(), vec.getZ())
+#define BTVEC_TO_VEC3F(vec) vec3f(vec.x(), vec.y(), vec.z())
+
 #include <iostream>
 
 #include <vec3.h>
@@ -24,7 +27,8 @@
 
 #include "EXP_Game.h"
 
-#include <PxPhysicsAPI.h>
+#include <bullet/btBulletCollisionCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
 
 //Forward Declaration
 class EXP_PhysicsHandler;
@@ -41,25 +45,29 @@ public:
 	EXP_RigidBody(EXP_Game* game, vec3f pos, vec3f rot, vec3f scale, float mass, bool kinematic = false, EXP_PhysicsMaterial mat = {});
 	virtual ~EXP_RigidBody();
 
-	physx::PxRigidActor* GetBody();
 	vec3f GetWorldPosition();
+	btRigidBody* GetBody();
 
 	void AddMovementInput(vec3f direction, float scale);
 	void FreezeRotationAxis(bool X, bool Y, bool Z);
 	void FreezePositionAxis(bool X, bool Y, bool Z);
+
 	vec3f GetLinearVelocity();
+	void SetLinearVelocity(vec3f vel);
 
 	virtual void ConstructShape();
 
 protected:
 	vec3f m_pos, m_rot, m_scale;
-	physx::PxRigidDynamic* m_body;
-	physx::PxRigidStatic* m_body_static; //UGLYYYYYYY
 
 	EXP_PhysicsMaterial m_mat;
 
 	float m_mass;
 	bool m_isKinematic;
+
+	btRigidBody* m_body;
+	btCollisionShape* m_shp;
+	btMotionState* m_motionState;
 
 	EXP_Game* m_game;
 };
@@ -97,43 +105,43 @@ public:
 	virtual void ConstructShape() override;
 
 private:
-	std::vector<physx::PxVec3> m_verticies;
+	std::vector<vec3f> m_verticies;
 	std::vector<int32_t> m_indicies;
 };
 
 class EXPGE_API EXP_CharacterController {
 public:
-	EXP_CharacterController() {
-		m_controller = nullptr;
-	};
+	EXP_CharacterController() {}
 
 	virtual ~EXP_CharacterController() {}
 
 	virtual void AddMovementInput(vec3f dir) = 0;
+	virtual void StopMovement() = 0;
 	virtual vec3f GetWorldPosition() = 0;
 
 	virtual void ConstructController() = 0;
-
-protected:
-	physx::PxController* m_controller;
-	physx::PxControllerFilters m_filters;
 };
 
 class EXPGE_API EXP_CharControllerCapsule : public EXP_CharacterController {
 public:
-	EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, float height, float radius, float mass, EXP_PhysicsMaterial mat = {});
+	EXP_CharControllerCapsule(EXP_Game* game, vec3f pos, vec3f rot, float height, float radius, float mass, EXP_PhysicsMaterial mat = {});
 	virtual ~EXP_CharControllerCapsule();
 
-	virtual vec3f GetWorldPosition();
-	virtual void AddMovementInput(vec3f dir);
+	virtual vec3f GetWorldPosition() override;
+
+	virtual void AddMovementInput(vec3f dir) override;
+	virtual void StopMovement() override;
 
 	virtual void ConstructController() override;
 
 private:
 	EXP_Game* m_game;
 	float m_height, m_radius;
+
+	EXP_RB_Capsule* m_capsule;
 	
 	vec3f m_pos;
+	vec3f m_rot;
 	EXP_PhysicsMaterial m_mat;
 };
 

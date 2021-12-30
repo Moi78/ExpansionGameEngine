@@ -284,6 +284,7 @@ int main(int argc, char* argv[]) {
 			saveFinalMaterial.Render(game->GetRenderer());
 		}
 
+		game->TickActors();
 		game->ExecCallbacks();
 
 		ImGui::End();

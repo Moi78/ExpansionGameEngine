@@ -6,12 +6,7 @@ EXP_PhysicsHandler::EXP_PhysicsHandler(vec3f gravity, int maxFramerate) : m_grav
 }
 
 EXP_PhysicsHandler::~EXP_PhysicsHandler() {
-	PxCloseExtensions();
-	m_controller_man->release();
-	m_physics->release();
-	m_PVD->release();
-	m_cooker->release();
-	m_fnd->release();
+	delete m_world;
 
 	std::cout << "Shutted down physics engine" << std::endl;
 }
@@ -19,85 +14,30 @@ EXP_PhysicsHandler::~EXP_PhysicsHandler() {
 void EXP_PhysicsHandler::InitWorld() {
     std::cout << "Initializing Physics Engine" << std::endl;
     
-	static physx::PxDefaultErrorCallback m_errCallback;
-	static physx::PxDefaultAllocator m_allocCallback;
+	btDefaultCollisionConfiguration* collConf = new btDefaultCollisionConfiguration();
+	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collConf);
+	btBroadphaseInterface* overlappingCache = new btDbvtBroadphase();
+	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
 
-	m_fnd = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocCallback, m_errCallback);
-	if (!m_fnd) {
-		dispErrorMessageBox(StrToWStr("Failed to create PxFoundation !"));
-		return;
-	}
-	else {
-		std::cout << "Created PxFoundation." << std::endl;
-	}
-
-	m_PVD = physx::PxCreatePvd(*m_fnd);
-	physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
-	m_PVD->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
-
-	m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_fnd, physx::PxTolerancesScale(), true, m_PVD);
-	if (!m_physics) {
-		dispErrorMessageBox(StrToWStr("Failed to create PxPhysics !"));
-		return;
-	}
-	else {
-		std::cout << "Created PxPhysics." << std::endl;
-	}
-
-	m_cooker = PxCreateCooking(PX_PHYSICS_VERSION, *m_fnd, physx::PxCookingParams(physx::PxTolerancesScale()));
-	if (!m_cooker) {
-		dispErrorMessageBox(StrToWStr("Failed to create PxCooking !"));
-		return;
-	}
-	else {
-		std::cout << "Created PxCooking." << std::endl;
-	}
-
-	if (!PxInitExtensions(*m_physics, m_PVD)) {
-		dispErrorMessageBox(StrToWStr("PxInitExtension failed !"));
-		return;
-	}
-	else {
-		std::cout << "Initialized Extensions." << std::endl;
-	}
-
-	physx::PxSceneDesc desc = physx::PxSceneDesc(physx::PxTolerancesScale());
-	desc.gravity = physx::PxVec3(m_gravity.getX(), m_gravity.getY(), m_gravity.getZ());
-	desc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(GetPrefferedNumberOfThreads());
-	desc.filterShader = physx::PxDefaultSimulationFilterShader;
-
-	m_world = m_physics->createScene(desc);
-	if (!m_world) {
-		dispErrorMessageBox(StrToWStr("Failed to create PxScene."));
-		return;
-	}
-	else {
-		std::cout << "Created PxScene." << std::endl;
-	}
-
-	m_controller_man = PxCreateControllerManager(*m_world);
-	if (!m_controller_man) {
-		dispErrorMessageBox(StrToWStr("Failed to create PxControllerManager."));
-		return;
-	}
-	else {
-		std::cout << "Created PxControllerManager." << std::endl;
-	}
+	m_world = new btDiscreteDynamicsWorld(dispatcher, overlappingCache, solver, collConf);
+	m_world->setGravity(btVector3(m_gravity.getX(), m_gravity.getY(), m_gravity.getZ()));
 }
 
 void EXP_PhysicsHandler::UpdateWorld() {
-	m_world->simulate(1.0f / 60.0f);
-	m_world->fetchResults(true);
+	m_world->stepSimulation(m_updtTime);
+	m_world->performDiscreteCollisionDetection();
 }
 
 void EXP_PhysicsHandler::RegisterRigidBody(EXP_RigidBody* rb) {
 	std::cout << "Registering new rigid body." << std::endl;
-	m_world->addActor(*rb->GetBody());
+	
+	m_world->addRigidBody(rb->GetBody());
+
 	m_bodies.push_back(rb);
 }
 
 void EXP_PhysicsHandler::RemoveBodyFromWorld(EXP_RigidBody* bd) {
-	m_world->removeActor(*bd->GetBody());
+	m_world->removeRigidBody(bd->GetBody());
 
 	const int index = GetElemIndex<EXP_RigidBody*>(m_bodies, bd);
 
@@ -109,10 +49,6 @@ void EXP_PhysicsHandler::RemoveBodyFromWorld(EXP_RigidBody* bd) {
 	}
 
 	delete bd;
-}
-
-void EXP_PhysicsHandler::PurgeControllers() {
-	m_controller_man->purgeControllers();
 }
 
 int EXP_PhysicsHandler::GetPrefferedNumberOfThreads() {

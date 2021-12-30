@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "EXP_Callbacks.h"
 
-EXP_KeyboardCallback::EXP_KeyboardCallback(EXP_Game* gameinstance, std::function<void()> func, int key, bool waitRelease) : RD_Callback(func) {
+EXP_KeyboardCallback::EXP_KeyboardCallback(EXP_Game* gameinstance, std::function<void()> func, int key, bool waitRelease, bool onKeyUp) : RD_Callback(func) {
 	m_key = key;
 	m_gameinstance = gameinstance;
 	m_waitRealease = waitRelease;
 	m_released = true;
+
+	m_onKeyUp = onKeyUp;
 
 	m_win = gameinstance->GetRenderer()->GetRenderingAPI()->GetWindowingSystem();
 
@@ -21,17 +23,37 @@ void EXP_KeyboardCallback::UpdateCallback() {
 		if (m_win->GetKeyPress(m_key)) {
 			if (m_released) {
 				m_released = false;
-				Call();
+				m_called = false;
+
+				if(!m_onKeyUp)
+					Call();
 			}
 		}
 		else {
 			m_released = true;
+
+			if (m_onKeyUp) {
+				CallOnce();
+			}
 		}
 	}
 	else {
 		if (m_win->GetKeyPress(m_key)) {
-			Call();
+			m_called = false;
+			if(!m_onKeyUp)
+				Call();
 		}
+		else {
+			CallOnce();
+		}
+	}
+}
+
+void EXP_KeyboardCallback::CallOnce() {
+	if (!m_called) {
+		Call();
+
+		m_called = true;
 	}
 }
 

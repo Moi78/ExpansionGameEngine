@@ -15,6 +15,12 @@ EXP_Game::EXP_Game(const EXP_GameInfo& gameinfo, const vec3f& refreshColor) {
 	m_currentCamera = nullptr;
 	m_error_flag = false;
 
+#ifdef _DEBUG
+	m_toggle_debug_rendering = true;
+#else
+	m_toggle_debug_rendering = false;
+#endif //_DEBUG
+
 	m_GameLib = std::make_unique<EXP_HotLoad>();
 
 	m_actors = {};
@@ -58,6 +64,10 @@ EXP_Game::EXP_Game(const std::string& gameinfo) {
 EXP_Game::~EXP_Game() {
 	UnloadCurrentMap();
 	m_soundEngine->shutdownAL();
+}
+
+void EXP_Game::ToggleDebugRendering(bool toggle) {
+	m_toggle_debug_rendering = toggle;
 }
 
 EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
@@ -205,7 +215,7 @@ void EXP_Game::RenderScene() {
 	//PostProcessing
 	m_rndr->RenderBeauty();
 
-	if constexpr(RENDER_DBG) {
+	if (m_toggle_debug_rendering) {
 		m_rndr->RenderDbg(m_currentCamera);
 	}
 
@@ -337,7 +347,9 @@ void EXP_Game::UnregisterKeyboardCallback(EXP_KeyboardCallback* kbcllbck, bool n
 void EXP_Game::UpdateCallbacks() {
 	m_hinput->UpdateKeyboardInput();
 	m_hinput->UpdateMouseInput();
+}
 
+void EXP_Game::TickActors() {
 	for (auto* act : m_actors) {
 		act->OnTick();
 	}

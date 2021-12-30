@@ -28,6 +28,8 @@ public:
 	void Roll();
 	void PrnPos();
 
+	void StopMove();
+
 	void DestroyActor();
 
 private:
@@ -39,6 +41,8 @@ private:
 	EXP_KeyboardCallback* m_destroy;
 	EXP_KeyboardCallback* m_roll;
 	EXP_KeyboardCallback* m_getpos;
+
+	EXP_KeyboardCallback* m_keyup;
 
 	EXP_StaticMesh* m_test;
 };
