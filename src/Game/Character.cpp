@@ -11,7 +11,7 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 	m_getpos = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::PrnPos), GLFW_KEY_T, true);
 	m_keyup = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(Character::StopMove), GLFW_KEY_W, false, true);
 
-	m_bound = new EXP_CharControllerCapsule(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(0.0f), 3.0f, 0.5f, 1.0f);
+	m_bound = new EXP_CharControllerCapsule(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(0.0f, 90.0f), 3.0f, 0.5f, 1.0f);
 	
 	m_test = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_met_blue.exmtl"), "/cactus.msh", vec3f(1.0f, 1.0f), vec3f(), vec3f(0.05f, 0.05f, 0.05f));
 	LinkComponent(m_test);
@@ -39,7 +39,7 @@ void Character::OnTick() {
 
 void Character::MoveForward() {
 	//AddWorldPos(m_cam->GetForwardVector() * 0.1f);
-	m_bound->AddMovementInput(m_cam->GetForwardVector() * 10.0f);
+	m_bound->AddMovementInput((m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 0.0f)) * vec3f(1.0f, 1.0f, -9.18f) * 10.0f);
 }
 
 void Character::DestroyActor() {

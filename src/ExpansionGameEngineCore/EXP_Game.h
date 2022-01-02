@@ -112,8 +112,10 @@ public:
 	void EndFrame() const;
 	
 	void UpdateCallbacks();
+	void TickActors();
 	void UpdateLevel() const;
 	void ProcessSignals();
+	void ToggleDebugRendering(bool toggle);
 
 	//Sounds
 	void UpdateSound() const;
@@ -168,6 +170,7 @@ private:
 	std::vector<EXP_Actor*> m_actors;
 
 	bool m_close_override;
+	bool m_toggle_debug_rendering;
 };
 
 #endif //_EXP_GAME_H__

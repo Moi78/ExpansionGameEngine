@@ -197,6 +197,7 @@ void EXP_CharControllerCapsule::ConstructController() {
 	m_capsule = new EXP_RB_Capsule(m_game, m_pos, m_rot, m_radius, m_height, 1.0f);
 	m_capsule->FreezeRotationAxis(true, true, false);
 	m_capsule->GetBody()->setRestitution(0.0f);
+	m_capsule->GetBody()->setSleepingThresholds(0, 0);
 }
 
 vec3f EXP_CharControllerCapsule::GetWorldPosition() {
