@@ -1,5 +1,4 @@
-#version 450 core
-#extension GL_ARB_bindless_texture : enable
+#version 420 core
 layout (location = 0) out vec4 LightPass;
 
 in vec2 UVcoords;
@@ -7,25 +6,15 @@ in vec2 UVcoords;
 //uniform sampler2D GUIscreen;
 
 //Passes
-#ifndef GL_ARB_bindless_texture
-	uniform sampler2D ssao;
-	uniform sampler2D ShadowPass;
+uniform sampler2D ssao;
+uniform sampler2D ShadowPass;
 
-	uniform sampler2D gPos;
-	uniform sampler2D gNormal;
-	uniform sampler2D gAlbedo;
-	uniform sampler2D gSpec;
-	uniform sampler2D gMetRoughAO;
-	uniform sampler2D gEmissive;
-#else
-	layout(std430, binding = 8) buffer BINDLESS_PASSES {
-		sampler2D passes[6];
-	};
-
-	layout(std430, binding = 9) buffer BINDLESS_SFX {
-		sampler2D passes_sfx[5];
-	};
-#endif //ARB_bindless_texture
+uniform sampler2D gPos;
+uniform sampler2D gNormal;
+uniform sampler2D gAlbedo;
+uniform sampler2D gSpec;
+uniform sampler2D gMetRoughAO;
+uniform sampler2D gEmissive;
 
 //Ambient
 layout(std140, binding = 2) uniform AMBIENT {
@@ -70,23 +59,13 @@ layout(std140, binding = 5) uniform CamData {
 
 float PI = 3.14159265359;
 
-#ifdef GL_ARB_bindless_texture
-	vec3 norm = normalize(texture(passes[1], UVcoords).rgb);
-	vec3 FragPos = texture(passes[0], UVcoords).rgb;
+vec3 norm = normalize(texture(gNormal, UVcoords).rgb);
+vec3 FragPos = texture(gPos, UVcoords).rgb;
 
-	vec3 Diffuse = texture(passes[2], UVcoords).rgb;
-	float Specular = texture(passes[2], UVcoords).a;
-	float SpecularExp = texture(passes[3], UVcoords).r;
-
-	vec4 metrao = texture(passes[4], UVcoords);
-#else 
-	vec3 norm = normalize(texture(gNorm, UVcoords).rgb);
-	vec3 FragPos = texture(gPos, UVcoords).rgb;
-
-	vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
-	float Specular = texture(gAlbedo, UVcoords).a;
-	float SpecularExp = texture(gSpec, UVcoords).r;
-#endif //GL_ARB_bindless_texture
+vec3 Diffuse = texture(gAlbedo, UVcoords).rgb;
+float Specular = texture(gAlbedo, UVcoords).a;
+float SpecularExp = texture(gSpec, UVcoords).r;
+vec3 metrao = texture(gMetRoughAO, UVcoords).rgb;
 
 float Rness = metrao.g;
 float Metllc = metrao.r;
@@ -193,11 +172,7 @@ vec3 CalcPointLight(int lightIndex) {
 void main() {
 	vec3 diffSpec = vec3(0.0);
 
-	#ifndef GL_ARB_bindless_texture
-		float shadow = texture(ShadowPass, UVcoords).r;
-	#else
-		float shadow = texture(passes_sfx[2], UVcoords).r;
-	#endif
+	float shadow = texture(ShadowPass, UVcoords).r;
 
 	for(int i = 0; i < nbrDirLight; i++) {
 		diffSpec += max(CalcDirLight(i), 0.0) * shadow;
@@ -207,11 +182,7 @@ void main() {
 		diffSpec += max(CalcPointLight(i), 0.0);
 	}
 
-	#ifndef GL_ARB_bindless_texture
-		float SSAO = texture(ssao, UVcoords).r;
-	#else
-		float SSAO = texture(passes_sfx[4], UVcoords).r;
-	#endif
+	float SSAO = texture(ssao, UVcoords).r;
 
 	vec3 ambient = (AmbientColor * AmbientStrength) * Diffuse * AO;
 	vec3 result = (diffSpec + ambient) * SSAO;
@@ -221,7 +192,7 @@ void main() {
 	result = pow(result, vec3(1.0 / 2.2));
 
 	//Emissive color
-	result += texture(passes[5], UVcoords).rgb;
+	result += texture(gEmissive, UVcoords).rgb;
 
 	LightPass = vec4(result, 1.0);
 }

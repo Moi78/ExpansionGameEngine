@@ -16,6 +16,18 @@
         },
 
         {
+            "type":"mesh",
+            "nameTag":"skybox",
+
+            "ref":"/meshes/skybox.msh",
+            "material":"/mat_skybox.exmtl",
+
+            "pos":[0, 0, 0],
+            "rot":[0, 0, 0],
+            "scale":[50, 50, 50]
+        },
+
+        {
             "type":"dlight",
             "nameTag":"sun",
 

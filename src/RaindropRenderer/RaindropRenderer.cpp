@@ -9,6 +9,7 @@
 #include "RD_PostProcess.h"
 #include "RD_Particles.h"
 #include "RD_Materials.h"
+#include "RD_Cubemap.h"
 
 #include "RD_RenderingAPI.h"
 #include "RD_RenderingAPI_GL.h"
@@ -159,7 +160,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	);
 
 	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
-	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 9);
+	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(6 * sizeof(uint64_t), 9);
 	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
 	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 12);
 	m_shadowmaps_s = m_api->CreateShaderStorageBuffer(10 * sizeof(uint64_t), 16);
@@ -205,6 +206,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_final_pass_selector_s->BindBuffer();
 	m_final_pass_selector_s->SetBufferSubData(0, sizeof(int), (void*)0);
 	m_final_pass_selector_s->UnbindBuffer();
+
+	m_env_cmap = m_api->CreateCubemap();
 
 	RD_ShaderLoader* shad = m_api->CreateShader();
 	shad->compileShaderFromFile(
@@ -289,6 +292,8 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_glyph_s;
 	delete m_final_pass_selector_s;
 
+	delete m_env_cmap;
+
 	//PBR related deletion
 	if (m_pipeline == Pipeline::PBR_ENGINE) {
 		delete m_ssao_buffer;
@@ -302,6 +307,7 @@ RaindropRenderer::~RaindropRenderer() {
 		delete m_ssao_noise_tex;
 		delete m_ssao_tex_handle_s;
 		delete m_bloom_buffera;
+		delete m_reflections_buffer;
 
 		delete m_ssao_u;
 	}
@@ -710,6 +716,12 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	m_bloom_bufferb->BuildFBO();
 
 	m_bloom_bufferb->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 3);
+
+	m_reflections_buffer = m_api->CreateFrameBuffer(width, height, true);
+	m_reflections_buffer->AddAttachement(IMGFORMAT_RGB, 1, WRAPMODE_REPEAT);
+	m_reflections_buffer->BuildFBO();
+
+	m_reflections_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 5);
 	
 	return true;
 }
@@ -737,13 +749,19 @@ void RaindropRenderer::RenderGbuff(RD_Camera* cam) {
 		
 		m_ssao_buffer->UnbindFBO();
 
-		m_light_pprocess->BindFBO();
+		m_reflections_buffer->BindFBO();
+
 		m_api->Clear(COLOR_BUFFER);
-		
-		RenderLightPass(cam->GetLocation());
 		RenderSSR();
 
+		m_reflections_buffer->UnbindFBO();
+
+		m_light_pprocess->BindFBO();
+		m_api->Clear(COLOR_BUFFER);
+
+		RenderLightPass(cam->GetLocation());
 		RenderBloom();
+
 	} else {
 		m_light_pprocess->BindFBO();
 		m_api->Clear(COLOR_BUFFER);
@@ -993,6 +1011,9 @@ void RaindropRenderer::RenderBloom() {
 
 void RaindropRenderer::RenderSSR() {
 	SwitchShader(m_ssr_shader);
+
+	m_env_cmap->BindTexture(0);
+	m_ssr_shader->SetInt("env_Cubemap", 0);
 
 	m_quad->RenderQuad();
 }
@@ -1334,6 +1355,9 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	m_bloom_bufferb->ChangeFramebufferSize(sx, sy);
 	m_bloom_bufferb->GetAttachementByIndex(0)->MakeTexBindless(this, m_final_passes_tex_handle_s, 3);
 
+	m_reflections_buffer->ChangeFramebufferSize(sx, sy);
+	m_reflections_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 5);
+
 	m_vp_pos = pos;
 	m_vp_size = size;
 
@@ -1453,4 +1477,8 @@ float RaindropRenderer::GetAmbientStrength() {
 
 vec3f RaindropRenderer::GetAmbientColor() {
 	return ambientColor;
+}
+
+void RaindropRenderer::MakeEnvCubemapFromTexs(std::array<std::string, 6> texs) {
+	m_env_cmap->BuildCubemapFromImages(texs);
 }

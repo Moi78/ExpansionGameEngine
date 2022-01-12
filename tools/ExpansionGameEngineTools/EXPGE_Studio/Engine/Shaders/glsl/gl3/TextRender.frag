@@ -1,5 +1,4 @@
-#version 450 core
-#extension GL_ARB_bindless_texture : enable
+#version 420 core
 layout (location = 0) out vec3 gPos;
 layout (location = 1) out vec3 gNorm;
 layout (location = 2) out vec4 gAlbedo;
@@ -10,13 +9,7 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec2 UVcoords;
 
-#ifndef GL_ARB_bindless_texture
 uniform sampler2D glyph;
-#else
-layout(std430, binding = 18) buffer GLYPH_TEX {
-	sampler2D glyph;
-};
-#endif //GL_ARB_bindless_texture
 
 layout(std140, binding = 19) uniform TXT_COLOR {
 	vec3 txtColor;

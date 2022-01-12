@@ -16,26 +16,17 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	m_txt = new EXP_TextSurface(game, "Hello", 512, "/nova.ttf", vec3f(0.0f, 0.0f, 2.0f), vec3f(), vec3f(0.2f, 0.2f, 0.2f), vec3f(1.0f, 0.5f, 0.5f));
 
-	//EXP_SMParticleEmitter* pe = new EXP_SMParticleEmitter(
-	//	game, game->GetShaderByFileRefInstanced("/shaders/mat_met_blue.exmtl"),
-	//	vec3f(0.0f, 0.0f, 1.0f), vec3f(), vec3f(1.f, 1.f, 1.f),
-	//	vec3f(0.0f, 0.5f, 1.0f), 5.0f, 0.02f, 3.0f
-	//);
-
-	//RD_ShaderLoader* sl_vert = m_game->GetRenderer()->GetRenderingAPI()->CreateShader();
-	//sl_vert->compileShaderFromFile("Content/cust_shad/Gshad_hmap.vert", "Content/cust_shad/mat.frag");
-	//
-	//RD_ShaderMaterial* mat = new RD_ShaderMaterial(sl_vert, m_game->GetRenderer());
-
-	//RD_Texture* tex = m_game->GetRenderer()->GetRenderingAPI()->CreateTexture();
-	//tex->LoadTexture("Content/heightmap.png");
-	//mat->AddTexture("tex", tex);
-
-	//mat->MakeSSBO();
-
-	//m_game->GetRenderer()->GetMaterialLibrary()->AddMaterialToLib(mat, "custom_mat_test");
-	//
-	//EXP_StaticMesh* smesh = new EXP_StaticMesh(game, mat, "/plane_sub.msh", vec3f(0.0f, 0.0f, 7.0f), vec3f(), vec3f(1.0f, 1.0f, 1.0f));
+	std::string game_pref = m_game->GetGameInfo().RootGameContentFolder;
+	m_game->GetRenderer()->MakeEnvCubemapFromTexs(
+		{
+			game_pref + "/Cubemap/px.png",
+			game_pref + "/Cubemap/nx.png",
+			game_pref + "/Cubemap/py.png",
+			game_pref + "/Cubemap/ny.png",
+			game_pref + "/Cubemap/pz.png",
+			game_pref + "/Cubemap/nz.png"
+		}
+	);
 
 	m_game->ToggleDebugRendering(true);
 }

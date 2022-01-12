@@ -1,20 +1,9 @@
-#version 450 core
-#extension GL_ARB_bindless_texture : enable
+#version 430 core
 layout (location = 0) out vec3 bloom;
 
 in vec2 UVcoords;
 
-#ifdef GL_ARB_bindless_texture
-    layout(std430, binding = 8) buffer BINDLESS_PASSES {
-        sampler2D passes[6];
-    };
-
-    layout(std430, binding = 12) buffer BINDLESS_FINAL_PASSES {
-        sampler2D fpasses[4];
-    };
-#else
-    uniform sampler2D gShaded;
-#endif //GL_ARB_bindless_texture
+uniform sampler2D gShaded;
 
 layout(std430, binding = 10) buffer BLUR_STATE {
 	vec3 dir;
@@ -41,16 +30,8 @@ vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
 
 void main() {
     if(first_pass) {
-        #ifndef GL_ARB_bindless_texture
-	        bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), dir.xy).rgb - threshold, 0, 1);
-	    #else
-	        bloom = clamp(blur13(passes[index], UVcoords, textureSize(passes[index], 0), dir.xy).rgb - threshold, 0, 1);
-        #endif
+	    bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), dir.xy).rgb - threshold, 0, 1);
     } else {
-        #ifndef GL_ARB_bindless_texture
-	        bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), dir.xy).rgb - threshold, 0, 1);
-	    #else
-	        bloom = clamp(blur13(fpasses[index], UVcoords, textureSize(fpasses[index], 0), dir.xy).rgb - threshold, 0, 1);
-        #endif
+	    bloom = clamp(blur13(gShaded, UVcoords, textureSize(gShaded, 0), dir.xy).rgb - threshold, 0, 1);
     }
 }

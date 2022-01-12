@@ -4,6 +4,8 @@
 #include <EXP_MapLoader.h>
 #include <EXP_StaticMesh.h>
 
+#include <RaindropRenderer.h>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -188,6 +190,17 @@ int main(int argc, char* argv[]) {
 
 	Filebrowser saveFinalMaterial(projRoot + contentPath);
 	saveFinalMaterial.AddFilter("exmtl");
+
+	game->GetRenderer()->MakeEnvCubemapFromTexs(
+		{
+			"mat_editor/cubemap/px.png",
+			"mat_editor/cubemap/nx.png",
+			"mat_editor/cubemap/ny.png",
+			"mat_editor/cubemap/py.png",
+			"mat_editor/cubemap/pz.png",
+			"mat_editor/cubemap/nz.png",
+		}
+	);
 
 	while ((!game->GetRenderer()->WantToClose())) {
 		game->RenderScene();

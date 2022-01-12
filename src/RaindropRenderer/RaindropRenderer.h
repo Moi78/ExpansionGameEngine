@@ -60,6 +60,7 @@ class RD_GUI_Manager;
 class RD_PostProcessEffect;
 class RD_TextRenderer;
 class RD_ParticleEmitter;
+class RD_Cubemap;
 
 class RD_RenderingAPI;
 
@@ -177,6 +178,8 @@ public:
 	int GetCurrentShaderStorageIndex();
 	void IncrementCurrentShaderStorageIndex();
 
+	void MakeEnvCubemapFromTexs(std::array<std::string, 6> texs);
+
 	//Debug
 	void RenderDbg(RD_Camera*);
 	float GetFramerate() const;
@@ -245,6 +248,7 @@ private:
 	RD_FrameBuffer* m_ssao_buffer;
 	RD_FrameBuffer* m_bloom_buffera;
 	RD_FrameBuffer* m_bloom_bufferb;
+	RD_FrameBuffer* m_reflections_buffer;
 
 	//Internals shaders (some aren't used and compiled if Pipeline is not PBR)
 	RD_ShaderLoader* m_shadowShader;
@@ -291,6 +295,8 @@ private:
 	RD_ShaderStorageBuffer* m_shadowmaps_s;
 	RD_ShaderStorageBuffer* m_glyph_s;
 	RD_ShaderStorageBuffer* m_final_pass_selector_s;
+
+	RD_Cubemap* m_env_cmap;
 
 	int m_current_shader_storage_index;
 	int m_current_selector;

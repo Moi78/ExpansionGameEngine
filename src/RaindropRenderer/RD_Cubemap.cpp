@@ -12,7 +12,6 @@ RD_Cubemap_GL::~RD_Cubemap_GL() {
 		glDeleteTextures(1, &m_texture);
 }
 
-
 void RD_Cubemap_GL::BuildCubemapFromImages(std::array<std::string, 6> face_filepath, const bool flipTex) {
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
