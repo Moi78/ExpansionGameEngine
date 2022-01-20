@@ -93,6 +93,9 @@
     <ClInclude Include="RD_Particles.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="RD_ReflectionCapture.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -165,6 +168,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="RD_Particles.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RD_ReflectionCapture.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

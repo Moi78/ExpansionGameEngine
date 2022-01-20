@@ -14,7 +14,7 @@
 
 #include "Character.h"
 
-#include <BD_SkeletonRW.h>
+#include <RD_ReflectionCapture.h>
 
 class MainLevel : public EXP_Level
 {
@@ -38,6 +38,8 @@ private:
 	EXP_TextSurface* m_txt;
 
 	Character* m_player;
+
+	RD_ReflectionCapture* m_cap;
 };
 
 EXPGE_LEVEL_HEADER(MainLevel);

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RD_Camera.h"
 
-RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll) : view(1.0f), projection(1.0f) {
+RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll, bool noInitUpdt) : view(1.0f), projection(1.0f) {
 	m_rndr = rndr; //Reference to renderer;
 	m_mat = rndr->GetRenderingAPI()->CreateUniformBuffer(129, 0);
 	m_camPos = rndr->GetRenderingAPI()->CreateUniformBuffer(12, 5);
@@ -17,7 +17,8 @@ RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, 
 	m_near = CamNear;
 	m_far = CamFar;
 
-	UpdateCamera();
+	if(!noInitUpdt)
+		UpdateCamera();
 }
 
 RD_Camera::~RD_Camera() {

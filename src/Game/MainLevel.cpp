@@ -6,6 +6,9 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 	m_game = game;
 	m_mloader = mloader;
 
+	m_cap = new RD_ReflectionCapture(m_game->GetRenderer(), vec3f(0.0f, 0.0f, 3.0f));
+	EXP_StaticMesh* vis = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_red.exmtl"), "/sphere.msh", vec3f(0.0f, 0.0f, 3.0f), vec3f(), vec3f(0.25f, 0.25f, 0.25f));
+
 	m_player = new Character(game);
 
 	m_ch_lvl = new EXP_KeyboardCallback(game, CL_VDFUNCPTR(MainLevel::ChangeLVL), GLFW_KEY_Y, true);
@@ -32,11 +35,12 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 }
 
 MainLevel::~MainLevel() {
-
+	delete m_cap;
 }
 
 void MainLevel::OnStart() {
 	std::cout << "Game started" << std::endl;
+	m_cap->RenderCapture();
 
 	//m_mloader->GetDirLightByName("sun")->SetShadowCasting(false);
 
