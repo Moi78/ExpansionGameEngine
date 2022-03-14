@@ -31,15 +31,17 @@ void Character::OnStart() {
 }
 
 void Character::OnTick() {
-	SetWorldPos(m_bound->GetWorldPosition());
+	//SetWorldPos(m_bound->GetWorldPosition());
 
 	m_cam->AddPitch(m_game->GetInputHandler()->GetMouseYaxis() / -10);
 	m_cam->AddYaw(m_game->GetInputHandler()->GetMouseXaxis() / -10);
+
+	//m_cam->RotateCamera(vec3f(0.0f, 0.0f, 0.1f));
 }
 
 void Character::MoveForward() {
-	//AddWorldPos(m_cam->GetForwardVector() * 0.1f);
-	m_bound->AddMovementInput((m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 0.0f)) * vec3f(1.0f, 1.0f, -9.18f) * 10.0f);
+	AddWorldPos(m_cam->GetForwardVector() * 0.1f);
+	//m_bound->AddMovementInput((m_cam->GetForwardVector() * vec3f(1.0f, 1.0f, 0.0f)) * vec3f(1.0f, 1.0f, -9.18f) * 10.0f);
 }
 
 void Character::DestroyActor() {

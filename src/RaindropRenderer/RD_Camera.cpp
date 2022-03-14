@@ -3,8 +3,8 @@
 
 RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll, bool noInitUpdt) : view(1.0f), projection(1.0f) {
 	m_rndr = rndr; //Reference to renderer;
-	m_mat = rndr->GetRenderingAPI()->CreateUniformBuffer(129, 0);
-	m_camPos = rndr->GetRenderingAPI()->CreateUniformBuffer(12, 5);
+	m_mat = rndr->GetCameraMatrixBuffer();
+	m_camPos = rndr->GetCameraPosBuffer();
 
 	m_pos = position; //Camera position
 	m_subject = vec3f(); //Camera center of view

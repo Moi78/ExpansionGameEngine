@@ -49,10 +49,12 @@ void MainLevel::OnStart() {
 	//m_game->GetRenderer()->SetAmbientColor(vec3f(0.0f, 0.2f, 0.8f));
 
 	//m_game->GetRenderer()->SetVSync(false);
+
+	//m_game->GetRenderer()->DisableFeature(RendererFeature::SSAO);
 }
 
 void MainLevel::OnTick() {
-	m_mloader->GetStaticMeshByName("rock1_1")->SetPosition(m_test->GetWorldPosition());
+	//m_mloader->GetStaticMeshByName("rock1_1")->SetPosition(m_test->GetWorldPosition());
 }
 
 void MainLevel::ChangeLVL() {

@@ -95,7 +95,6 @@ void RD_Texture_GL::CreateAndAttachToFramebuffer(int w, int h, unsigned int FBO,
 
 	GetGLformat(format, scaleMode, wrapmode, &formatGL, &typeGL, &scaleMde, &wrapmde);
 
-
 	int format2;
 	if (format == IMGFORMAT_DEPTH) {
 		format2 = GL_DEPTH_COMPONENT;

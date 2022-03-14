@@ -6,6 +6,7 @@ layout (location = 2) out vec4 gAlbedo;
 layout (location = 3) out float gSpec;
 layout (location = 4) out vec3 gMetRoughAO;
 layout (location = 5) out vec3 gEmissive;
+layout (location = 6) out float gDepth;
 
 in vec3 Normal;
 in vec3 Tan;
@@ -15,3 +16,9 @@ in vec3 FragPos;
 in vec2 UVcoord;
 
 #define TEXTURE(id, index, UV) texture(tex[index], UV)
+
+const float near = 0.01;
+const float far = 1000.0;
+
+float ndc = gl_FragCoord.z * 2.0 - 1.0;
+gDepth = (2.0 * near * far) / (far + near - ndc * (far - near));

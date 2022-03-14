@@ -159,7 +159,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 		m_engineDir+  "/Shaders" + folder + "ShadowBlur." + fragEXT + ""
 	);
 
-	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(768, 8);
+	m_gbuff_tex_handles_s = m_api->CreateShaderStorageBuffer(7 * 2 * sizeof(uint64_t), 8);
 	m_sfx_tex_handles_s = m_api->CreateShaderStorageBuffer(6 * sizeof(uint64_t), 9);
 	m_blur_state_s = m_api->CreateShaderStorageBuffer(sizeof(ShaderBlurState), 10);
 	m_final_passes_tex_handle_s = m_api->CreateShaderStorageBuffer(5 * sizeof(uint64_t), 12);
@@ -175,6 +175,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_lightspace_u = m_api->CreateUniformBuffer(10 * 16 * sizeof(float), 15);
 	m_lightcount_u = m_api->CreateUniformBuffer(sizeof(int), 17);
 	m_text_color_u = m_api->CreateUniformBuffer(3 * sizeof(float), 19);
+
+	m_camera_matrix_u = m_api->CreateUniformBuffer(129, 0);
+	m_camera_location_u = m_api->CreateUniformBuffer(12, 5);
 
 	m_shadows_buffer = m_api->CreateFrameBuffer(GetViewportSize().getX(), GetViewportSize().getY(), true);
 	m_shadows_buffer->AddAttachement(IMGFORMAT_RGB);
@@ -282,6 +285,8 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_lightspace_u;
 	delete m_lightcount_u;
 	delete m_text_color_u;
+	delete m_camera_location_u;
+	delete m_camera_matrix_u;
 
 	//Deleting shader storage buffers
 	delete m_gbuff_tex_handles_s;
@@ -684,7 +689,7 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 
 	m_gbuffer->BuildFBO();
 	
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 7; i++) {
 		m_gbuffer->GetAttachementByIndex(i)->MakeTexBindless(this, m_gbuff_tex_handles_s, i);
 	}
 
@@ -697,9 +702,9 @@ bool RaindropRenderer::CreateGbuff_PBR() {
 	
 	m_ssao_buffer = m_api->CreateFrameBuffer(width, height, true);
 	//SSAO Texture
-	m_ssao_buffer->AddAttachement(IMGFORMAT_R16F);
+	m_ssao_buffer->AddAttachement(IMGFORMAT_RGB16F);
 	//SSAO-Blur Texture
-	m_ssao_buffer->AddAttachement(IMGFORMAT_R16F);
+	m_ssao_buffer->AddAttachement(IMGFORMAT_RGB16F);
 	m_ssao_buffer->BuildFBO();
 
 	m_ssao_buffer->GetAttachementByIndex(0)->MakeTexBindless(this, m_sfx_tex_handles_s, 3);
@@ -1481,4 +1486,12 @@ vec3f RaindropRenderer::GetAmbientColor() {
 
 void RaindropRenderer::MakeEnvCubemapFromTexs(std::array<std::string, 6> texs) {
 	m_env_cmap->BuildCubemapFromImages(texs);
+}
+
+RD_UniformBuffer* RaindropRenderer::GetCameraMatrixBuffer() {
+	return m_camera_matrix_u;
+}
+
+RD_UniformBuffer* RaindropRenderer::GetCameraPosBuffer() {
+	return m_camera_location_u;
 }

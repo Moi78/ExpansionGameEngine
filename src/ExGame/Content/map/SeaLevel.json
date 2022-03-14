@@ -1,0 +1,150 @@
+{
+	"AmbientColor" : 
+	[
+		1.0,
+		1.0,
+		1.0
+	],
+	"AmbientStrength" : 0.0099999997764825821,
+	"MapLevelCodeObjectName" : "MainLevel",
+	"nodes" : 
+	[
+		{
+			"material" : "/shaders/mat_hdri_night.exmtl",
+			"nameTag" : "skydome",
+			"pos" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"ref" : "/test_dome.msh",
+			"rot" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				500.0,
+				500.0,
+				500.0
+			],
+			"type" : "mesh"
+		},
+		{
+			"material" : "/shaders/mat_ocean.exmtl",
+			"nameTag" : "ocean",
+			"pos" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"ref" : "/ocean.msh",
+			"rot" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			],
+			"type" : "mesh"
+		},
+		{
+			"material" : "/shaders/mat_red.exmtl",
+			"nameTag" : "staticMesh2",
+			"pos" : 
+			[
+				0.0,
+				0.0,
+				5.0
+			],
+			"ref" : "/sphere.msh",
+			"rot" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			],
+			"type" : "mesh"
+		},
+		{
+			"material" : "/shaders/mat_red.exmtl",
+			"nameTag" : "staticMesh3",
+			"pos" : 
+			[
+				-0.5,
+				0.5,
+				5.0
+			],
+			"ref" : "/sphere.msh",
+			"rot" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			],
+			"type" : "mesh"
+		},
+		{
+			"material" : "/shaders/mat_red.exmtl",
+			"nameTag" : "staticMesh4",
+			"pos" : 
+			[
+				0.0,
+				0.0,
+				5.0
+			],
+			"ref" : "/plane_sub.msh",
+			"rot" : 
+			[
+				0.0,
+				0.0,
+				0.0
+			],
+			"scale" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			],
+			"type" : "mesh"
+		},
+		{
+			"brightness" : 1.0,
+			"color" : 
+			[
+				1.0,
+				1.0,
+				1.0
+			],
+			"dir" : 
+			[
+				-1.0,
+				-0.77300000190734863,
+				-1.0
+			],
+			"nameTag" : "sun",
+			"type" : "dlight"
+		}
+	]
+}

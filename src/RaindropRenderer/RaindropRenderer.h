@@ -134,6 +134,9 @@ public:
 	void PushModelMatrix(mat4f& model);
 	void PushLightProjViewMatrices(mat4f& lview, mat4f& lproj);
 
+	RD_UniformBuffer* GetCameraMatrixBuffer();
+	RD_UniformBuffer* GetCameraPosBuffer();
+
 	RD_ShaderStorageBuffer* GetGlyphTexHandle();
 	RD_UniformBuffer* GetTextColorUniform();
 
@@ -285,6 +288,8 @@ private:
 	RD_UniformBuffer* m_lightspace_u;
 	RD_UniformBuffer* m_lightcount_u;
 	RD_UniformBuffer* m_text_color_u;
+	RD_UniformBuffer* m_camera_matrix_u;
+	RD_UniformBuffer* m_camera_location_u;
 
 	//ShaderStorage
 	RD_ShaderStorageBuffer* m_gbuff_tex_handles_s;
