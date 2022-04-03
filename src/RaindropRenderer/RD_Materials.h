@@ -42,7 +42,9 @@ public:
 	void RegisterMeshReference(RD_Mesh* msh);
 	void UnregisterMeshReference(RD_Mesh* msh);
 	void UnregisterAllMeshes();
+
 	void DrawMeshes();
+	void DrawMeshesShadow();
 
 	void DeleteMaterial();
 

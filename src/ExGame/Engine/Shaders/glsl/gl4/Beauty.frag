@@ -21,11 +21,5 @@ layout(std430, binding = 8) buffer BINDLESS_PASSES {
 };
 
 void main() {
-    vec4 light_bloom = texture(fpasses[selector], UVcoords);
-
-    vec2 metrough = texture(passes[4], UVcoords).rg;
-
-    vec4 reflections = light_bloom + ((light_bloom + 1 - metrough.g) * texture(sfx_passes[5], UVcoords) * metrough.r * (1 - metrough.g));
-
-    FragColor = vec4(reflections.rgb, 1.0);
+    FragColor = vec4(texture(sfx_passes[0], UVcoords).rgb, 1.0);
 }

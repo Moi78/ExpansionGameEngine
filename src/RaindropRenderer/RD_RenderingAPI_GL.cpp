@@ -2,6 +2,8 @@
 #include "RD_RenderingAPI_GL.h"
 #include "RD_RenderingAPI.h"
 
+#include "RD_Texture.h"
+
 //---------------------------------------------  RD_WindowingSystemGLFW  ---------------------------------------------
 
 #ifdef BUILD_OPENGL

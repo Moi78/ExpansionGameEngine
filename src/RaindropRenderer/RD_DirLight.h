@@ -23,6 +23,8 @@
 #include "RaindropRenderer.h"
 #include "RD_FrameBuffer.h"
 #include "RD_RenderingAPI.h"
+#include "RD_MaterialLibrary.h"
+#include "RD_RenderingPipelinePBR.h"
 
 class RAINDROPRENDERER_API RD_DirLight
 {
@@ -42,31 +44,38 @@ public:
 	void SetShadowCasting(bool scast);
 	bool GetShadowCasting() const;
 
-	void DepthRender(RaindropRenderer*, vec3f CamPos);
+	void DepthRender(RD_RenderingAPI* rndr, RD_ShaderLoader* shadowShader, RD_MaterialLibrary* sceneData, vec3f CamPos);
 	void SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual);
 	mat4f GetLightSpace() const;
 	RD_Texture* GetDepthTexID() const;
+
+	void SendOnBuffer(RD_UniformBuffer* ubo, int idx, int offset);
 
 	void Cleanup(RaindropRenderer* rndr);
 
 	void SetNearFarPlanes(float nearp, float farp);
 private:
+	RaindropRenderer* m_rndr;
+
 	vec3f m_dir;
 	vec3f m_color;
 	float m_brightness;
-
-	unsigned int m_depthMapTEX;
-	unsigned int m_depthMapFBO;
 
 	float m_far_plane, m_near_plane;
 
 	RD_FrameBuffer* m_fbo;
 
 	unsigned int m_shadowQuality;
-
 	bool m_shadowCaster;
 
 	mat4f m_lspace;
+};
+
+struct GLSLDirLight {
+	float dir[3];
+	float __pad;
+	float color[3];
+	float brightness;
 };
 
 #endif //_DIR_LIGHT_H__

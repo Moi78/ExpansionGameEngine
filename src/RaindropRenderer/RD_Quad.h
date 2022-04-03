@@ -13,20 +13,19 @@
 		#define RAINDROPRENDERER_API
 #endif
 
-#include "RaindropRenderer.h"
 #include "RD_RenderingAPI.h"
 
 class RAINDROPRENDERER_API RD_Quad
 {
 public:
-	RD_Quad(RaindropRenderer* rndr);
+	RD_Quad(RD_RenderingAPI* rndr);
 	~RD_Quad();
 
 	void RenderQuad();
 	virtual void Bufferize();
 
 protected:
-	RaindropRenderer* m_rndr;
+	RD_RenderingAPI* m_api;
 	RD_RenderingAPI_VertexBuffer* m_vbuff;
 };
 

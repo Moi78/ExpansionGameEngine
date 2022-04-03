@@ -41,15 +41,17 @@ void RD_ShaderMaterial::MakeSSBO() {
 		delete m_texture_buffer;
 	}
 
+	/*
 	m_texture_buffer = m_rndr->GetRenderingAPI()->CreateShaderStorageBuffer(
 		m_textures.size() * sizeof(uint64_t), m_rndr->GetCurrentShaderStorageIndex()
 	);
 	m_shader->SetShaderStorageID(m_rndr->GetCurrentShaderStorageIndex(), "TEXTURES");
 	m_rndr->IncrementCurrentShaderStorageIndex();
+	*/
 
 	int index = 0;
 	for (auto t : m_textures) {
-		t.second->MakeTexBindless(m_rndr, m_texture_buffer, index);
+		//t.second->MakeTexBindless(m_rndr, m_texture_buffer, index);
 		index++;
 	}
 }
@@ -79,6 +81,12 @@ void RD_ShaderMaterial::DrawMeshes() {
 
 	for (auto m : m_meshes_references) {
 		m->render();
+	}
+}
+
+void RD_ShaderMaterial::DrawMeshesShadow() {
+	for (auto m : m_meshes_references) {
+		m->renderShadows(m_shader);
 	}
 }
 

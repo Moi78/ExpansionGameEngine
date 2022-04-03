@@ -62,13 +62,10 @@ public:
 private:
 	void ComputeYPR();
 
-	mat4f projection;
-	mat4f view;
-
 	RaindropRenderer* m_rndr;
 
-	RD_UniformBuffer* m_mat;
-	RD_UniformBuffer* m_camPos;
+	mat4f projection;
+	mat4f view;
 
 	float FOV;
 	float m_near;

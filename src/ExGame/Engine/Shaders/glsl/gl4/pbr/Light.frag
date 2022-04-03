@@ -35,6 +35,8 @@ layout(std140, binding = 3) uniform PointLightData {
 };
 
 //Dir Light
+const int MAX_DIR_LIGHTS = 10;
+
 struct DirLight {
 	vec3 Dir;
 	vec3 Color;
@@ -43,7 +45,7 @@ struct DirLight {
 
 layout(std140, binding = 4) uniform DirLightData {
 	int nbrDirLight;
-	DirLight dlights[10];
+	DirLight dlights[MAX_DIR_LIGHTS];
 };
 
 layout(std140, binding = 5) uniform CamData {
@@ -180,7 +182,8 @@ void main() {
 		diffSpec += max(CalcPointLight(i), 0.0);
 	}
 
-	float SSAO = texture(passes_sfx[4], UVcoords).r;
+	//float SSAO = texture(passes_sfx[4], UVcoords).r;
+	float SSAO = 1;
 
 	vec3 ambient = (AmbientColor * AmbientStrength) * Diffuse * AO;
 	vec3 result = (diffSpec + ambient) * SSAO;

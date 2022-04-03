@@ -186,6 +186,8 @@
     <ClInclude Include="RD_ReflectionCapture.h" />
     <ClInclude Include="RD_RenderingAPI.h" />
     <ClInclude Include="RD_RenderingAPI_GL.h" />
+    <ClInclude Include="RD_RenderingPipeline.h" />
+    <ClInclude Include="RD_RenderingPipelinePBR.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
     <ClInclude Include="RD_Structs.h" />
     <ClInclude Include="RD_TextRenderer.h" />
@@ -219,6 +221,7 @@
     <ClCompile Include="RD_Quad.cpp" />
     <ClCompile Include="RD_ReflectionCapture.cpp" />
     <ClCompile Include="RD_RenderingAPI_GL.cpp" />
+    <ClCompile Include="RD_RenderingPipelinePBR.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />
     <ClCompile Include="RD_TextRenderer.cpp" />
     <ClCompile Include="RD_Texture.cpp" />

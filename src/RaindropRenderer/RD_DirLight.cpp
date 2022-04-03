@@ -7,6 +7,8 @@ RD_DirLight::RD_DirLight(RaindropRenderer* rndr, vec3f dir, vec3f color, float b
 
 	m_far_plane = 100.0f;
 	m_near_plane = -10.0f;
+
+	m_rndr = rndr;
 }
 
 RD_DirLight::~RD_DirLight() {
@@ -37,31 +39,40 @@ vec3f RD_DirLight::GetLightDir() {
 	return m_dir;
 }
 
-void RD_DirLight::DepthRender(RaindropRenderer* rndr, vec3f CamPos) {
+void RD_DirLight::DepthRender(
+	RD_RenderingAPI* rndr,
+	RD_ShaderLoader* shadowShader,
+	RD_MaterialLibrary* sceneData,
+	vec3f CamPos
+) {
 	if (!m_shadowCaster)
 		return;
 
-	rndr->SwitchShader(rndr->GetShadowShader());
-
 	mat4f lightProj = ProjOrtho(-30.0f, 30.0f, -30.0f, 30.0f, m_near_plane, m_far_plane);
 
-	vec3f fpos = (m_dir * -5) + CamPos;
+	vec3f fpos = (m_dir * -2) + CamPos;
 	mat4f lightView = LookAt<float>(fpos, CamPos, vec3f(0.0f, 0.0f, 1.0f));
 
-	rndr->PushLightProjViewMatrices(lightView, lightProj);
+	m_rndr->PushLightProjView(lightProj, lightView);
 	m_lspace = lightProj * lightView;
 
-	rndr->GetRenderingAPI()->SetViewportSize(m_shadowQuality, m_shadowQuality, 0, 0);
+	rndr->SetViewportSize(m_shadowQuality, m_shadowQuality, 0, 0);
 
 	m_fbo->BindFBO();
-	rndr->GetRenderingAPI()->Clear(DEPTH_BUFFER);
+	rndr->Clear(DEPTH_BUFFER);
 
-	rndr->RenderShadowMeshes();
+	for (auto m : sceneData->GetRawVector()) {
+		m.second->DrawMeshesShadow();
+	}
 
 	m_fbo->UnbindFBO();
 
-	rndr->GetRenderingAPI()->SetViewportSize(rndr->GetViewportSize().getX(), rndr->GetViewportSize().getY(), 0, 0);
-	rndr->GetRenderingAPI()->Clear(DEPTH_BUFFER | COLOR_BUFFER);
+	rndr->SetViewportSize(
+		rndr->GetWindowingSystem()->GetWidth(),
+		rndr->GetWindowingSystem()->GetHeight(), 0, 0
+	);
+	
+	rndr->Clear(DEPTH_BUFFER | COLOR_BUFFER);
 }
 
 void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual) {
@@ -71,7 +82,9 @@ void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual)
 	m_fbo->AddAttachement(IMGFORMAT_DEPTH, SCALEMODE_LINEAR);
 	m_fbo->BuildFBO();
 
-	m_fbo->GetAttachementByIndex(0)->MakeTexBindless(rndr, rndr->GetShadowMapsBufferHandle(), rndr->GetDirLightsCount());
+	RD_RenderingAPI* api = rndr->GetRenderingAPI();
+	RD_RenderingPipeline* pline = rndr->GetRenderingPipeline();
+	m_fbo->GetAttachementByIndex(0)->MakeTexBindless(api, pline->GetShadowMapBufferHandle(), rndr->GetDirLightsCount());
 }
 
 mat4f RD_DirLight::GetLightSpace() const {
@@ -97,4 +110,17 @@ bool RD_DirLight::GetShadowCasting() const {
 void RD_DirLight::SetNearFarPlanes(float nearp, float farp) {
 	m_near_plane = nearp;
 	m_far_plane = farp;
+}
+
+void RD_DirLight::SendOnBuffer(RD_UniformBuffer* ubo, int idx, int offset) {
+	GLSLDirLight dlight_data = {
+		{ m_dir.getX(), m_dir.getY(), m_dir.getZ() },
+		0,
+		{ m_color.getX(), m_color.getY(), m_color.getZ() },
+		m_brightness
+	};
+
+	ubo->BindBuffer();
+	ubo->SetBufferSubData(idx * sizeof(GLSLDirLight) + offset, sizeof(GLSLDirLight), (void*)&dlight_data);
+	ubo->UnbindBuffer();
 }

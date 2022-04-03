@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "RD_Quad.h"
 
-RD_Quad::RD_Quad(RaindropRenderer* rndr) {
-	m_rndr = rndr;
+RD_Quad::RD_Quad(RD_RenderingAPI* api) {
+	m_api = api;
 
-	m_vbuff = rndr->GetRenderingAPI()->CreateVertexBuffer();
+	m_vbuff = api->CreateVertexBuffer();
 }
 
 RD_Quad::~RD_Quad() {
@@ -25,6 +25,6 @@ void RD_Quad::Bufferize() {
 
 void RD_Quad::RenderQuad() {
 	m_vbuff->BindBuffer();
-	m_rndr->GetRenderingAPI()->DrawVB(m_vbuff, DrawMode::TRIANGLES_STRIP);
+	m_api->DrawVB(m_vbuff, DrawMode::TRIANGLES_STRIP);
 	m_vbuff->UnbindBuffer();
 }

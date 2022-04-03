@@ -74,7 +74,6 @@ void RD_Mesh::renderShadows(RD_ShaderLoader* shadowShader) {
 	if (!m_shadowCaster)
 		return;
 
-	//shadowShader->SetMatrix("model", m_mdl);
 	m_rndr->PushModelMatrix(m_mdl);
 
 	m_buffer->BindBuffer();
@@ -151,9 +150,6 @@ vec3f RD_Mesh::GetLocation() {
 
 void RD_Mesh::Update() {
 	//Local transform
-	/*glm::mat4 translate = glm::mat4(1.0f);
-	glm::mat4 scale = glm::mat4(1.0f);
-	glm::mat4 rotation = glm::mat4(1.0f);*/
 	mat4f translate(1.0f);
 	mat4f scale(1.0f);
 	mat4f rotation(1.0f);
@@ -165,8 +161,6 @@ void RD_Mesh::Update() {
 	scale = ScaleMatrix(scale, m_scale);
 
 	//Rotation
-	/*glm::quat rot(glm::radians(glm::vec3(m_rotation.getX(), m_rotation.getY(), m_rotation.getZ())));
-	rotation = glm::toMat4(rot);*/
 	rotation = RotateMatrix(rotation, m_rotation);
 
 	m_mdl = translate * rotation * scale;

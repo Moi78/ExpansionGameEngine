@@ -11,6 +11,7 @@
 #endif //_WIN32
 
 #include <string>
+#include <RD_RenderingPipeline.h>
 
 struct EXPGE_API EXP_Resolution {
 	int x;
@@ -23,7 +24,7 @@ struct EXPGE_API EXP_GameInfo {
 
 	EXP_Resolution GameBaseResolution = { 1280, 720 };
 	API RenderingAPI = API::OPENGL4;
-	Pipeline RenderingPipeline = Pipeline::LAMBERT_ENGINE;
+	RD_RenderingPipeline* Pipeline;
 
 	std::string GameLib = "Game.dll";
 

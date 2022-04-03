@@ -95,18 +95,18 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 
 	EXP_Resolution res = { TargetRoot["GameBaseResolution"][0].asInt(), TargetRoot["GameBaseResolution"][1].asInt()};
 
-	Pipeline pline;
+	RD_RenderingPipeline* pline;
 	if (TargetRoot["RenderingPipeline"].asString() == "pbr") {
 		std::cout << "Loading PBR engine." << std::endl;
-		pline = Pipeline::PBR_ENGINE;
+		pline = new RD_RenderingPipelinePBR();
 	}
 	else if(TargetRoot["RenderingPipeline"].asString() == "lambert") {
-		std::cout << "Loading Lambert engine." << std::endl;
-		pline = Pipeline::LAMBERT_ENGINE;
+		std::cout << "Loading Lambert engine. No Lambert engine implmented yet." << std::endl;
+		exit(-2);
 	}
 	else {
 		std::cout << "Loading Lambert engine." << std::endl;
-		pline = Pipeline::LAMBERT_ENGINE;
+		pline = new RD_RenderingPipelinePBR();
 	}
 
 	API api;
@@ -129,8 +129,8 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 	gi.GameBaseResolution = res;
 	gi.GameLib = GameLib;
 	gi.StartupMap = startupMap;
-	gi.RenderingPipeline = pline;
 	gi.RenderingAPI = api;
+	gi.Pipeline = pline;
 
 	return gi;
 }
@@ -143,7 +143,7 @@ void EXP_Game::InitGame(const vec3f& refreshColor, const EXP_GameInfo& gameinfo)
 
 	m_rndr = std::make_shared<RaindropRenderer>(m_res.x, m_res.y,
 												gameinfo.GameName,
-												gameinfo.RenderingAPI, gameinfo.RenderingPipeline,
+												gameinfo.RenderingAPI, gameinfo.Pipeline,
 												60,
 												false,
 												gameinfo.RootEngineContentFolder);
@@ -206,18 +206,13 @@ void EXP_Game::RenderScene() {
 		return;
 
 	const vec3f CamLoc = m_currentCamera->GetLocation();
-    
-	//Process shadows
-	m_rndr->RenderLightsDepth(CamLoc);
-	//GBuff
-	m_rndr->RenderGbuff(m_currentCamera);
 
-	//PostProcessing
-	m_rndr->RenderBeauty();
+	m_rndr->RenderShadows(CamLoc);
+	m_rndr->RenderScene();
 
-	if (m_toggle_debug_rendering) {
-		m_rndr->RenderDbg(m_currentCamera);
-	}
+	//if (m_toggle_debug_rendering) {
+	//	m_rndr->RenderDbg(m_currentCamera);
+	//}
 
 	//Process other threads signals... what a terribleness
 	ProcessSignals();
@@ -228,18 +223,7 @@ void EXP_Game::EndFrame() const {
 }
 
 void EXP_Game::ProcessSignals() {
-	if (m_sigClearMatMan) {
-		m_rndr->GetMaterialLibrary()->ClearLibrary();
 
-		m_sigClearMatMan = false;
-	}
-
-	if (m_sigLevelFinalCleanup) {
-		m_rndr->EmptyFramebufferGarbageCollector();
-		m_rndr->EmptyTextureGarbageCollector();
-
-		m_sigLevelFinalCleanup = false;
-	}
 }
 
 void EXP_Game::ExecCallbacks() {
@@ -424,7 +408,7 @@ void EXP_Game::UnloadCurrentMap() {
 	m_rndr->UnregisterAllMeshes();
 	m_rndr->UnregisterAllParticleEmitters();
 	
-	m_rndr->GetMaterialLibrary()->ClearLibrary();
+	//m_rndr->GetMaterialLibrary()->ClearLibrary();
 
 	//m_physicsHandler->PurgeControllers();
     
@@ -436,7 +420,7 @@ void EXP_Game::UnloadCurrentMap() {
 void EXP_Game::LoadMap(const std::string& map) {
 	UnloadCurrentMap();
     
-    if(!m_rndr->GetMaterialLibrary()->DoMaterialExists("text")) {
+    /*if (!m_rndr->GetMaterialLibrary()->DoMaterialExists("text")) {
         //Essential Material
         RD_ShaderLoader* ld = m_rndr->GetRenderingAPI()->CreateShader();
         ld->compileShaderFromFile(
@@ -450,7 +434,8 @@ void EXP_Game::LoadMap(const std::string& map) {
 	if (!m_rndr->GetMaterialLibrary()->DoMaterialExists(m_gameinfo.RootEngineContentFolder + "/Materials/default_mat.exmtl")) {
 		m_rndr->FetchShaderFromFile(m_gameinfo.RootEngineContentFolder + "/Materials/default_mat.exmtl");
 	}
-    
+    */
+
 	m_PlayingMap->LoadMap(m_gameinfo.RootGameContentFolder + map);
 
 	m_PlayingMap->GetLevelCode()->OnStart();
@@ -502,9 +487,9 @@ RD_ShaderMaterial* EXP_Game::GetShaderByFileRefInstanced(const std::string& ref)
 		return nullptr;
 	}
 
-	if (m_rndr->GetMaterialLibrary()->DoMaterialExists(ref)) {
-		return m_rndr->GetMaterialLibrary()->GetMaterialByName(ref);
-	}
+	//if (m_rndr->GetMaterialLibrary()->DoMaterialExists(ref)) {
+	//	return m_rndr->GetMaterialLibrary()->GetMaterialByName(ref);
+	//}
 
 	std::string folder, vertEXT;
 	bool legacy = false;

@@ -104,6 +104,7 @@ private:
 	T m_xyzw[4];
 };
 
+
 typedef vec4<float> vec4f;
 typedef vec4<int> vec4i;
 typedef vec4<double> vec4d;

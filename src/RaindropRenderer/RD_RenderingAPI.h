@@ -13,7 +13,6 @@
 #include <iostream>
 #include <string>
 
-#include "RD_Texture.h"
 #include "RD_FrameBuffer.h"
 #include "RD_ShaderLoader.h"
 #include "RD_Cubemap.h"
@@ -31,6 +30,8 @@ enum FillingMode {
 	FILLED,
 	WIREFRAME
 };
+
+class RD_Texture;
 
 class RD_API RD_RenderingAPI_VertexElemBuffer {
 public:

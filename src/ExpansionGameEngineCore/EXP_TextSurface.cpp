@@ -13,7 +13,7 @@ EXP_TextSurface::EXP_TextSurface(
 	RD_Mesh(game->GetRenderer(), nullptr, pos, rot, scale, true)
 {
 	m_game = game;
-	RD_Mesh::m_mat = game->GetRenderer()->GetMaterialLibrary()->GetMaterialByName("text");
+	//RD_Mesh::m_mat = game->GetRenderer()->GetMaterialLibrary()->GetMaterialByName("text");
 	m_color = color;
 	m_mat->RegisterMeshReference(reinterpret_cast<RD_Mesh*>(this));
 
@@ -112,6 +112,7 @@ void EXP_TextSurface::render() {
 			continue;
 		}
 
+		/*
 		m_rndr->PushModelMatrix(m_letters_prop[i]);
 
 		if (m_txtRndr->GetGlyphTexture(c)->BindTexture(0)) {
@@ -125,6 +126,7 @@ void EXP_TextSurface::render() {
 		}
 
 		m_rndr->GetRenderingAPI()->Draw(m_buffer);
+		*/
 
 		i++;
 	}

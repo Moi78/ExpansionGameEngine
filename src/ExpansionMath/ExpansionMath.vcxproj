@@ -163,6 +163,7 @@
     <ClInclude Include="vec2.h" />
     <ClInclude Include="vec3.h" />
     <ClInclude Include="vec4.h" />
+    <ClInclude Include="vector_generic.h" />
     <ClInclude Include="volumes.h" />
   </ItemGroup>
   <ItemGroup>

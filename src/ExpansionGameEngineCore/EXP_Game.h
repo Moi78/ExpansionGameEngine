@@ -44,6 +44,7 @@
 #include <RD_Texture.h>
 #include <RD_MaterialLibrary.h>
 #include <RD_RenderingAPI_GL.h>
+#include <RD_RenderingPipelinePBR.h>
 
 #include <BD_MatRW.h>
 

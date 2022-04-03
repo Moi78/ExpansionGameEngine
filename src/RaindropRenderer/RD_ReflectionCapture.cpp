@@ -41,17 +41,17 @@ void RD_ReflectionCapture::RenderCapture() {
 
 	for (int i = 0; i < 6; i++) {
 		//Process shadows
-		m_rndr->RenderLightsDepth(m_cam->GetLocation());
+		//m_rndr->RenderLightsDepth(m_cam->GetLocation());
 		//GBuff
-		m_rndr->RenderGbuff(m_cam);
+		//m_rndr->RenderGbuff(m_cam);
 
 		//PostProcessing
 		m_fbs[i]->BindFBO();
-		m_rndr->RenderBeauty();
+		//m_rndr->RenderBeauty();
 		m_fbs[i]->UnbindFBO();
 
 		m_cam->RotateCamera(rots[i]);
 	}
 
-	m_rndr->ResizeViewport(vec2f(0.0f, 0.0f), vec2f(m_rndr->getWindowWidth(), m_rndr->getWindowHeigh()));
+	m_rndr->ResizeViewport(vec2f(0.0f, 0.0f), vec2f(m_rndr->GetWindowWidth(), m_rndr->GetWindowHeigh()));
 }

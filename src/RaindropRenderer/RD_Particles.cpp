@@ -111,7 +111,7 @@ void RD_SmallParticleEmitter::RenderParticles() {
 	m_shader->GetShader()->useShader();
 	m_shader->BindMaterial();
 	//m_shader->GetShader()->SetMatrix("model", m_matrix);
-	m_rndr->PushModelMatrix(m_matrix);
+	//m_rndr->PushModelMatrix(m_matrix);
 
 	m_vbuff->BindBuffer();
 	m_api->DrawInstanced(m_vbuff, m_particles.size(), DrawMode::TRIANGLES);

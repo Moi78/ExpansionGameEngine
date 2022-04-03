@@ -8,7 +8,7 @@ layout(std430, binding = 9) buffer BINDLESS_SFX {
 	sampler2D sfx_passes[4];
 };
 
-layout(std430, binding = 10) buffer BLUR_STATE {
+layout(std140, binding = 10) uniform BLUR_STATE {
 	vec3 dir;
 	int index;
 	int threshold;

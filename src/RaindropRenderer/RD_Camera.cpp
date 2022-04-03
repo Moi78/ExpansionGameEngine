@@ -3,8 +3,6 @@
 
 RD_Camera::RD_Camera(RaindropRenderer* rndr, float FOVinDegrees, float CamNear, float CamFar, vec3f position, vec3f YawPitchRoll, bool noInitUpdt) : view(1.0f), projection(1.0f) {
 	m_rndr = rndr; //Reference to renderer;
-	m_mat = rndr->GetCameraMatrixBuffer();
-	m_camPos = rndr->GetCameraPosBuffer();
 
 	m_pos = position; //Camera position
 	m_subject = vec3f(); //Camera center of view
@@ -33,37 +31,27 @@ void RD_Camera::UpdateCamera() {
 void RD_Camera::UpdateView() {
 	view = LookAt(m_pos, m_pos + m_subject, m_up); //View matrix
 
-	m_mat->BindBuffer();
-	m_mat->SetBufferSubData(64, 64, view.GetPTR());
-	m_mat->UnbindBuffer();
+	m_rndr->PushViewMatrix(view);
 }
 
 void RD_Camera::UpdateProj() {
 	projection = ProjPersp<float>(DEG_TO_RAD(FOV), (float)m_rndr->GetViewportSize().getX() / m_rndr->GetViewportSize().getY(), m_near, m_far);
 
-	m_mat->BindBuffer();
-	m_mat->SetBufferSubData(0, 64, projection.GetPTR());
-	m_mat->UnbindBuffer();
+	m_rndr->PushProjMatrix(projection);
 }
 
 void RD_Camera::UseCamera(RD_ShaderLoader* shader) {
-	m_mat->BindBuffer();
-	m_mat->SetBufferSubData(0, 64, projection.GetPTR());
-	m_mat->SetBufferSubData(64, 64, view.GetPTR());
-	m_mat->UnbindBuffer();
+	m_rndr->PushProjMatrix(projection);
+	m_rndr->PushViewMatrix(view);
 
-	m_camPos->BindBuffer();
-	m_camPos->SetBufferSubData(0, 12, m_pos.GetPTR());
-	m_camPos->UnbindBuffer();
+	m_rndr->PushCamPos(m_pos);
 }
 
 void RD_Camera::SetLocation(vec3f position) {
 	m_pos = position;
 	UpdateView();
 
-	m_camPos->BindBuffer();
-	m_camPos->SetBufferSubData(0, 12, m_pos.GetPTR());
-	m_camPos->UnbindBuffer();
+	m_rndr->PushCamPos(m_pos);
 }
 
 void RD_Camera::SetSubject(vec3f lookingAt) {

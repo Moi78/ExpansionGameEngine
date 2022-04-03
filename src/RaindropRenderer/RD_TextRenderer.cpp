@@ -40,7 +40,7 @@ bool RD_TextRenderer::LoadFont(const std::string& path, const int fontsize) {
 		m_characters[i].first = m_rndr->GetRenderingAPI()->CreateTexture();
 		m_characters[i].first->CreateTextureFromGlyph(bmp, w, h);
 
-		m_characters[i].first->MakeTexBindless(m_rndr, m_rndr->GetGlyphTexHandle(), 0);
+		//m_characters[i].first->MakeTexBindless(m_rndr, m_rndr->GetGlyphTexHandle(), 0);
 
 		m_characters[i].second = vec2f((float)w, (float)h);
 	}

@@ -3,7 +3,7 @@
 
 RD_PostProcessEffect::RD_PostProcessEffect(RaindropRenderer* rndr) {
 	m_shader = nullptr;
-	m_screen = std::make_unique<RD_Quad>(rndr);
+	m_screen = std::make_unique<RD_Quad>(rndr->GetRenderingAPI());
 	m_screen->Bufferize();
 }
 
