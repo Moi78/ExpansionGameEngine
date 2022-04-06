@@ -67,6 +67,9 @@ void RD_RenderingPipelinePBR::RenderScene(RD_RenderingAPI* api, RD_MaterialLibra
 	m_quad->RenderQuad();
 
 	m_light_fb->UnbindFBO();
+
+	m_beauty->useShader();
+	m_quad->RenderQuad();
 }
 
 void RD_RenderingPipelinePBR::RenderShadowMaps(RD_RenderingAPI* api, std::vector<RD_DirLight*> dlights, RD_MaterialLibrary* sceneData, vec3f camPos) {
@@ -232,6 +235,7 @@ void RD_RenderingPipelinePBR::CreateGBuff(RD_RenderingAPI* api) {
 	m_light_fb = api->CreateFrameBuffer(w, h, true);
 	m_light_fb->AddAttachement(IMGFORMAT_RGB16F);
 	m_light_fb->BuildFBO();
+	m_light_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 1);
 
 	m_shadow_fb = api->CreateFrameBuffer(w, h, true);
 	m_shadow_fb->AddAttachement(IMGFORMAT_RGB);
@@ -247,6 +251,11 @@ void RD_RenderingPipelinePBR::CreateGBuff(RD_RenderingAPI* api) {
 	m_shadow_blur_b->AddAttachement(IMGFORMAT_RGB);
 	m_shadow_blur_b->BuildFBO();
 	m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
+
+	m_final_passes = api->CreateFrameBuffer(w, h, true);
+	m_final_passes->AddAttachement(IMGFORMAT_RGB);
+	m_final_passes->BuildFBO();
+	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
 }
 
 void RD_RenderingPipelinePBR::InitUBO(RD_RenderingAPI* api) {

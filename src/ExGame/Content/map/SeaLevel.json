@@ -58,7 +58,7 @@
 			"type" : "mesh"
 		},
 		{
-			"material" : "/shaders/mat_red.exmtl",
+			"material" : "/shaders/mat_glow_green.exmtl",
 			"nameTag" : "staticMesh2",
 			"pos" : 
 			[

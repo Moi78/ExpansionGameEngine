@@ -64,6 +64,11 @@ private:
 	RD_FrameBuffer* m_shadow_blur_a;
 	RD_FrameBuffer* m_shadow_blur_b;
 
+	RD_FrameBuffer* m_bloom_a;
+	RD_FrameBuffer* m_bloom_b;
+
+	RD_FrameBuffer* m_final_passes;
+
 	//UBO/SSBO
 	RD_ShaderStorageBuffer* m_gbuff_handles;
 	RD_ShaderStorageBuffer* m_shadowmaps;
