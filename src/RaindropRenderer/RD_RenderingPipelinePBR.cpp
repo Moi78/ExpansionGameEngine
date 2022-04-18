@@ -68,6 +68,8 @@ void RD_RenderingPipelinePBR::RenderScene(RD_RenderingAPI* api, RD_MaterialLibra
 
 	m_light_fb->UnbindFBO();
 
+	ComputeBloom();
+
 	m_beauty->useShader();
 	m_quad->RenderQuad();
 }
@@ -256,6 +258,16 @@ void RD_RenderingPipelinePBR::CreateGBuff(RD_RenderingAPI* api) {
 	m_final_passes->AddAttachement(IMGFORMAT_RGB);
 	m_final_passes->BuildFBO();
 	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
+
+	m_bloom_a = api->CreateFrameBuffer(w, h, true);
+	m_bloom_a->AddAttachement(IMGFORMAT_RGB);
+	m_bloom_a->BuildFBO();
+	m_bloom_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 2);
+
+	m_bloom_b = api->CreateFrameBuffer(w, h, true);
+	m_bloom_b->AddAttachement(IMGFORMAT_RGB);
+	m_bloom_b->BuildFBO();
+	m_bloom_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 3);
 }
 
 void RD_RenderingPipelinePBR::InitUBO(RD_RenderingAPI* api) {
@@ -294,4 +306,30 @@ void RD_RenderingPipelinePBR::BlurShadow() {
 	m_quad->RenderQuad();
 
 	m_shadow_blur_b->UnbindFBO();
+}
+
+void RD_RenderingPipelinePBR::ComputeBloom() {
+	constexpr GLSL_BlurState st_one = { {0.0f, 1.0f, 0.0f}, 5, 0, 1 };
+	constexpr GLSL_BlurState st_a = { {0.0f, 0.0f, 1.0f}, 2, 0, 0 };
+	constexpr GLSL_BlurState st_b = { {0.0f, 1.0f, 0.0f}, 0, 0, 0 };
+
+	m_bloom->useShader();
+
+	m_bloom_a->BindFBO();
+
+	m_blurState->BindBuffer();
+	m_blurState->SetBufferSubData(0, sizeof(GLSL_BlurState), (void*)&st_one);
+	m_blurState->UnbindBuffer();
+
+	m_quad->RenderQuad();
+
+	m_bloom_b->BindFBO();
+
+	m_blurState->BindBuffer();
+	m_blurState->SetBufferSubData(0, sizeof(GLSL_BlurState), (void*)&st_a);
+	m_blurState->UnbindBuffer();
+
+	m_quad->RenderQuad();
+
+	m_bloom_b->UnbindFBO();
 }

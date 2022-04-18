@@ -12,11 +12,11 @@ layout(std430, binding = 12) buffer BINDLESS_FINAL_PASSES {
     sampler2D fpasses[4];
 };
 
-layout(std430, binding = 10) buffer BLUR_STATE {
+layout(std140, binding = 10) uniform BLUR_STATE {
 	vec3 dir;
 	int index;
     int threshold;
-    bool first_pass;
+    bool is_first_pass;
 };
 
 //From https://github.com/Jam3/glsl-fast-gaussian-blur/blob/master/13.glsl
@@ -36,9 +36,9 @@ vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
 }
 
 void main() {
-    if(first_pass) {
-	    bloom = clamp(blur13(passes[index], UVcoords, textureSize(passes[index], 0), dir.xy).rgb - threshold, 0, 1);
+    if(is_first_pass) {
+        bloom = clamp(blur13(passes[5], UVcoords, textureSize(passes[5], 0), dir.xy).rgb - threshold, 0, 1);
     } else {
-	    bloom = clamp(blur13(fpasses[index], UVcoords, textureSize(fpasses[index], 0), dir.xy).rgb - threshold, 0, 1);
+        bloom = clamp(blur13(fpasses[index], UVcoords, textureSize(fpasses[index], 0), dir.xy).rgb - threshold, 0, 1);
     }
 }

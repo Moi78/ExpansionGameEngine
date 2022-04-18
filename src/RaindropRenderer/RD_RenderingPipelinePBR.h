@@ -35,6 +35,7 @@ private:
 	void InitUBO(RD_RenderingAPI* api);
 
 	void BlurShadow();
+	void ComputeBloom();
 
 	RD_Quad* m_quad;
 
@@ -83,6 +84,7 @@ struct GLSL_BlurState {
 	float dir[3];
 	int index;
 	int threshold;
+	bool fpass = false;
 };
 
 #endif //_RD_RENDERING_PIPELINE_PBR_H__
