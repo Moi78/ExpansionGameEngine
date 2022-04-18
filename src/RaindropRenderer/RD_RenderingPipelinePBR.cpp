@@ -295,3 +295,24 @@ void RD_RenderingPipelinePBR::BlurShadow() {
 
 	m_shadow_blur_b->UnbindFBO();
 }
+
+void RD_RenderingPipelinePBR::ResizeFramebuffers(RD_RenderingAPI* api, const int w, const int h) {
+	m_gbuff->ChangeFramebufferSize(w, h);
+	m_light_fb->ChangeFramebufferSize(w, h);
+	m_shadow_fb->ChangeFramebufferSize(w, h);
+	m_shadow_blur_a->ChangeFramebufferSize(w, h);
+	m_shadow_blur_b->ChangeFramebufferSize(w, h);
+	//m_bloom_a->ChangeFramebufferSize(w, h);
+	//m_bloom_b->ChangeFramebufferSize(w, h);
+	m_final_passes->ChangeFramebufferSize(w, h);
+
+	for (int i = 0; i < 7; i++) {
+		m_gbuff->GetAttachementByIndex(i)->MakeTexBindless(api, m_gbuff_handles, i);
+	}
+
+	m_light_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 1);
+	m_shadow_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 0);
+	m_shadow_blur_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 1);
+	m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
+	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
+}

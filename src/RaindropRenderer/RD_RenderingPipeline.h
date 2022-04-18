@@ -24,6 +24,8 @@ public:
 	virtual void RenderScene(RD_RenderingAPI* api, RD_MaterialLibrary* sceneMeshData) = 0;
 	virtual void RenderShadowMaps(RD_RenderingAPI* api, std::vector<RD_DirLight*> dlights, RD_MaterialLibrary* sceneData, vec3f camPos) = 0;
 
+	virtual void ResizeFramebuffers(RD_RenderingAPI* api, const int w, const int h) = 0;
+
 	virtual RD_ShaderStorageBuffer* GetShadowMapBufferHandle() = 0;
 };
 
