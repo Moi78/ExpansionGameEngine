@@ -210,6 +210,7 @@ private:
 	RD_UniformBuffer* m_camera_location_u;
 	RD_UniformBuffer* m_ambient_u;
 	RD_UniformBuffer* m_dirLightData_u;
+	RD_UniformBuffer* m_quadzone_u;
 
 	RD_Cubemap* m_env_cmap;
 
@@ -241,6 +242,11 @@ struct ShaderBlurState {
 	int index;
 	int threshold = 0;
 	int first_pass = 0;
+};
+
+struct GLSL_QuadZone {
+	float pos[2];
+	float scale[2];
 };
 
 #endif // !_RAINDROP_RENDERER_H__

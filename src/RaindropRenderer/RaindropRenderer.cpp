@@ -71,6 +71,12 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_text_color_u = m_api->CreateUniformBuffer(3 * sizeof(float), 19);
 	m_ambient_u = m_api->CreateUniformBuffer(4 * sizeof(float), 2);
 	m_dirLightData_u = m_api->CreateUniformBuffer(sizeof(int) + 10 * sizeof(GLSLDirLight), 4);
+	m_quadzone_u = m_api->CreateUniformBuffer(sizeof(GLSL_QuadZone), 20);
+
+	GLSL_QuadZone init_q = { {0, 0}, {1, 1} };
+	m_quadzone_u->BindBuffer();
+	m_quadzone_u->SetBufferSubData(0, sizeof(GLSL_QuadZone), (void*)&init_q);
+	m_quadzone_u->UnbindBuffer();
 
 	m_camera_matrix_u = m_api->CreateUniformBuffer(129, 0);
 	m_camera_location_u = m_api->CreateUniformBuffer(4 * sizeof(float), 5);
@@ -473,7 +479,7 @@ void RaindropRenderer::ResizeViewport(vec2f pos, vec2f size) {
 	
 	m_api->SetViewportSize(sx, sy, pos.getX(), pos.getY());
 
-	// TO REWRITE
+	m_pipeline->ResizeFramebuffers(m_api.get(), sx, sy);
 
 	m_vp_pos = pos;
 	m_vp_size = size;
@@ -599,8 +605,6 @@ void RaindropRenderer::PushCamPos(vec3f pos) {
 	m_camera_location_u->BindBuffer();
 	m_camera_location_u->SetBufferSubData(0, 12, pos.GetPTR());
 	m_camera_location_u->UnbindBuffer();
-
-	pos.DBGPrint();
 }
 
 void RaindropRenderer::PushModelMatrix(mat4f mdl) {
