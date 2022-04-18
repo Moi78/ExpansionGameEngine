@@ -328,7 +328,6 @@ void RD_RenderingPipelinePBR::ResizeFramebuffers(RD_RenderingAPI* api, const int
 	m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
 	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
 }
-}
 
 void RD_RenderingPipelinePBR::ComputeBloom() {
 	constexpr GLSL_BlurState st_one = { {0.0f, 1.0f, 0.0f}, 5, 0, 1 };
