@@ -86,18 +86,6 @@
     <None Include="Engine\Shaders\glsl\gl4\TextRender.vert">
       <Filter>GLSL\GL4</Filter>
     </None>
-    <None Include="Engine\Shaders\glsl\gl4\pbr\bloom.frag">
-      <Filter>GLSL\GL4\PBR</Filter>
-    </None>
-    <None Include="Engine\Shaders\glsl\gl4\pbr\bloom.vert">
-      <Filter>GLSL\GL4\PBR</Filter>
-    </None>
-    <None Include="Engine\Shaders\glsl\gl4\pbr\BloomApply.frag">
-      <Filter>GLSL\GL4\PBR</Filter>
-    </None>
-    <None Include="Engine\Shaders\glsl\gl4\pbr\BloomApply.vert">
-      <Filter>GLSL\GL4\PBR</Filter>
-    </None>
     <None Include="Engine\Shaders\glsl\gl4\pbr\Light.frag">
       <Filter>GLSL\GL4\PBR</Filter>
     </None>

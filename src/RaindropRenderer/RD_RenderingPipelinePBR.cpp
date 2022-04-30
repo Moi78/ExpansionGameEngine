@@ -13,8 +13,6 @@ RD_RenderingPipelinePBR::~RD_RenderingPipelinePBR() {
 	delete m_shadow_blur_a;
 	delete m_shadow_blur_b;
 
-	delete m_bloom;
-	delete m_bloomApply;
 	delete m_light;
 	delete m_beauty;
 	delete m_shadow;
@@ -67,8 +65,6 @@ void RD_RenderingPipelinePBR::RenderScene(RD_RenderingAPI* api, RD_MaterialLibra
 	m_quad->RenderQuad();
 
 	m_light_fb->UnbindFBO();
-
-	ComputeBloom();
 
 	m_beauty->useShader();
 	m_quad->RenderQuad();

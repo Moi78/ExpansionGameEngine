@@ -59,10 +59,6 @@
     <None Include="Engine\Shaders\glsl\gl4\Light.frag" />
     <None Include="Engine\Shaders\glsl\gl4\Light.vert" />
     <None Include="Engine\Shaders\glsl\gl4\Particles.vert" />
-    <None Include="Engine\Shaders\glsl\gl4\pbr\bloom.frag" />
-    <None Include="Engine\Shaders\glsl\gl4\pbr\bloom.vert" />
-    <None Include="Engine\Shaders\glsl\gl4\pbr\BloomApply.frag" />
-    <None Include="Engine\Shaders\glsl\gl4\pbr\BloomApply.vert" />
     <None Include="Engine\Shaders\glsl\gl4\pbr\Light.frag" />
     <None Include="Engine\Shaders\glsl\gl4\pbr\Light.vert" />
     <None Include="Engine\Shaders\glsl\gl4\pbr\SSAO.frag" />
