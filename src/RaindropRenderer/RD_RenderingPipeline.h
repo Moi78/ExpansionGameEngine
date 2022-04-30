@@ -27,6 +27,8 @@ public:
 	virtual void ResizeFramebuffers(RD_RenderingAPI* api, const int w, const int h) = 0;
 
 	virtual RD_ShaderStorageBuffer* GetShadowMapBufferHandle() = 0;
+
+	virtual RD_ShaderLoader* DebugStart() = 0;
 };
 
 #endif //__RD_RENDERING_PIPELINE_H__

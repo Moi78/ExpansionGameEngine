@@ -20,6 +20,8 @@
 
 #include <vec3.h>
 
+class RD_UniformBuffer;
+
 class RAINDROPRENDERER_API RD_PointLight
 {
 public:
@@ -40,6 +42,8 @@ public:
 
 	int GetLightIndex();
 
+	void SendOnBuffer(RD_UniformBuffer* ubo, int idx, int offset);
+
 private:
 	void SetLightIndex(int nIndex);
 
@@ -49,6 +53,13 @@ private:
 	float m_radius;
 
 	int m_lightIndex;
+};
+
+struct GLSLPointLight {
+	float pos[3];
+	float brightness;
+	float color[3];
+	float radius;
 };
 
 #endif

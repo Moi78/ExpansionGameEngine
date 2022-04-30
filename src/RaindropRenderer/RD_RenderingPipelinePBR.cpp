@@ -21,6 +21,7 @@ RD_RenderingPipelinePBR::~RD_RenderingPipelinePBR() {
 	delete m_ssao;
 	delete m_ssaoBlur;
 	delete m_reflections;
+	delete m_debug;
 
 	delete m_gbuff_handles;
 	delete m_shadowmaps;
@@ -177,6 +178,12 @@ void RD_RenderingPipelinePBR::CompileShaders(RD_RenderingAPI* api, std::string e
 		shaderPath + "pbr/SSR" + shaderFragExt
 	);
 
+	m_debug = api->CreateShader();
+	m_debug->compileShaderFromFile(
+		shaderPath + "Debug" + shaderVertExt,
+		shaderPath + "Debug" + shaderFragExt
+	);
+
 	m_gbuff_handles = api->CreateShaderStorageBuffer(sizeof(uint64_t) * 7 * 2, 8);
 	m_shadowmaps = api->CreateShaderStorageBuffer(sizeof(uint64_t) * 10 * 2, 16);
 	m_sfx_handles = api->CreateShaderStorageBuffer(sizeof(uint64_t) * 5 * 2, 9);
@@ -299,4 +306,11 @@ void RD_RenderingPipelinePBR::ResizeFramebuffers(RD_RenderingAPI* api, const int
 	m_shadow_blur_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 1);
 	m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
 	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
+}
+
+RD_ShaderLoader* RD_RenderingPipelinePBR::DebugStart() {
+	m_debug->useShader();
+	m_gbuff->DebugMode();
+
+	return m_debug;
 }

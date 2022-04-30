@@ -210,9 +210,9 @@ void EXP_Game::RenderScene() {
 	m_rndr->RenderShadows(CamLoc);
 	m_rndr->RenderScene();
 
-	//if (m_toggle_debug_rendering) {
-	//	m_rndr->RenderDbg(m_currentCamera);
-	//}
+	if (m_toggle_debug_rendering) {
+		m_rndr->RenderDebug();
+	}
 
 	//Process other threads signals... what a terribleness
 	ProcessSignals();
@@ -408,7 +408,7 @@ void EXP_Game::UnloadCurrentMap() {
 	m_rndr->UnregisterAllMeshes();
 	m_rndr->UnregisterAllParticleEmitters();
 	
-	//m_rndr->GetMaterialLibrary()->ClearLibrary();
+	m_rndr->GetMaterialLibrary()->ClearLibrary();
 
 	//m_physicsHandler->PurgeControllers();
     

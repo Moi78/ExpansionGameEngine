@@ -31,6 +31,8 @@ public:
 
 	virtual RD_ShaderStorageBuffer* GetShadowMapBufferHandle();
 
+	virtual RD_ShaderLoader* DebugStart();
+
 private:
 	void CompileShaders(RD_RenderingAPI* api, std::string engineDir);
 	void CreateGBuff(RD_RenderingAPI* api);
@@ -52,6 +54,8 @@ private:
 	RD_ShaderLoader* m_ssaoBlur;
 
 	RD_ShaderLoader* m_reflections;
+
+	RD_ShaderLoader* m_debug;
 
 	//Framebuffers
 	Gbuff m_gbuff_struct;

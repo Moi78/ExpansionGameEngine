@@ -13,7 +13,7 @@ Character::Character(EXP_Game* game) : EXP_Actor(game, vec3f(0.0f, 0.0f, 0.0f), 
 
 	m_bound = new EXP_CharControllerCapsule(game, vec3f(0.0f, 0.0f, 10.0f), vec3f(0.0f, 90.0f), 3.0f, 0.5f, 1.0f);
 	
-	m_test = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_met_blue.exmtl"), "/cactus.msh", vec3f(1.0f, 1.0f), vec3f(), vec3f(0.05f, 0.05f, 0.05f));
+	m_test = new EXP_StaticMesh(game, game->GetShaderByFileRef("/shaders/mat_cactus.exmtl"), "/cactus.msh", vec3f(1.0f, 1.0f), vec3f(), vec3f(0.05f, 0.05f, 0.05f));
 	LinkComponent(m_test);
 }
 

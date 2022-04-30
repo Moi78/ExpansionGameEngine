@@ -24,8 +24,8 @@ const int MAX_POINT_LIGHTS = 243;
 
 struct PointLight {
 	vec3 LightPos;
-	vec3 LightColor;
 	float LightBrightness;
+	vec3 LightColor;
 	float LightRadius;
 };
 

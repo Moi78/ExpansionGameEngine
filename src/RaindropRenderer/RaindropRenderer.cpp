@@ -71,6 +71,7 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_text_color_u = m_api->CreateUniformBuffer(3 * sizeof(float), 19);
 	m_ambient_u = m_api->CreateUniformBuffer(4 * sizeof(float), 2);
 	m_dirLightData_u = m_api->CreateUniformBuffer(sizeof(int) + 10 * sizeof(GLSLDirLight), 4);
+	m_pointLightData_u = m_api->CreateUniformBuffer(sizeof(int) + 243 * sizeof(GLSLPointLight), 3);
 	m_quadzone_u = m_api->CreateUniformBuffer(sizeof(GLSL_QuadZone), 20);
 
 	GLSL_QuadZone init_q = { {0, 0}, {1, 1} };
@@ -117,6 +118,9 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 
 	m_need_cam_updt = false;
 
+	m_DBG_light_mdl = std::make_unique<RD_Mesh>(this, nullptr, vec3f(), vec3f(), vec3f(0.1f, 0.1f, 0.1f), true);
+	m_DBG_light_mdl->loadMesh(m_engineDir + "/Meshes/Light.msh");
+
 	pline->InitPipeline(m_api.get(), m_engineDir);
 }
 
@@ -139,6 +143,7 @@ RaindropRenderer::~RaindropRenderer() {
 	delete m_text_color_u;
 	delete m_camera_location_u;
 	delete m_camera_matrix_u;
+	delete m_pointLightData_u;
 
 	delete m_env_cmap;
 
@@ -225,7 +230,7 @@ void RaindropRenderer::UpdateDirLighting(const bool lspace_only) {
 		return;
 
 	int i = 0;
-	int sc_l = 0;
+	int sc_l = 0; // Number of shadow sasting lights
 	for (auto dl : m_DirLights) {
 		dl->SendOnBuffer(m_dirLightData_u, i, 16);
 		i++;
@@ -247,6 +252,15 @@ void RaindropRenderer::UpdatePointsLighting() {
 		return;
 
 	// TO REWRITE
+	int i = 0;
+	for (auto pl : m_pt_lights) {
+		pl->SendOnBuffer(m_pointLightData_u, i, 16);
+		i++;
+	}
+
+	m_pointLightData_u->BindBuffer();
+	m_pointLightData_u->SetBufferSubData(0, sizeof(int), (void*)&i);
+	m_pointLightData_u->UnbindBuffer();
 }
 
 void RaindropRenderer::FillFeaturesArray() {
@@ -630,4 +644,20 @@ void RaindropRenderer::IncrementCurrentSSBOIdx() {
 
 int RaindropRenderer::GetCurrentSSBOIdx() {
 	return m_current_shader_storage_index;
+}
+
+void RaindropRenderer::RenderDebug() {
+	RD_ShaderLoader* dbg = m_pipeline->DebugStart();
+
+	m_api->SetFilledMode(FillingMode::WIREFRAME);
+
+	for (auto* plight : m_pt_lights) {
+		dbg->useShader();
+		dbg->SetVec3("debugColor", plight->GetColor());
+
+		m_DBG_light_mdl->SetPosition(plight->GetPosition());
+		m_DBG_light_mdl->render();
+	}
+
+	m_api->SetFilledMode(FillingMode::FILLED);
 }

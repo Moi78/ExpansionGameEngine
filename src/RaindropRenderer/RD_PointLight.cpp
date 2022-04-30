@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RD_PointLight.h"
+#include "RD_RenderingAPI.h"
 
 RD_PointLight::RD_PointLight(vec3f position, vec3f color, float brightness, float radius) {
 	m_pos = position;
@@ -52,4 +53,17 @@ void RD_PointLight::SetLightRadius(float nRad) {
 
 float RD_PointLight::GetLightRadius() {
 	return m_radius;
+}
+
+void RD_PointLight::SendOnBuffer(RD_UniformBuffer* ubo, int idx, int offset) {
+	GLSLPointLight plight_data = {
+		{ m_pos.getX(), m_pos.getY(), m_pos.getZ() },
+		m_brightness,
+		{ m_color.getX(), m_color.getY(), m_color.getZ() },
+		m_radius
+	};
+
+	ubo->BindBuffer();
+	ubo->SetBufferSubData(idx * sizeof(GLSLPointLight) + offset, sizeof(GLSLPointLight), (void*)&plight_data);
+	ubo->UnbindBuffer();
 }

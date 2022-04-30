@@ -48,7 +48,7 @@ void RD_DirLight::DepthRender(
 	if (!m_shadowCaster)
 		return;
 
-	mat4f lightProj = ProjOrtho(-30.0f, 30.0f, -30.0f, 30.0f, m_near_plane, m_far_plane);
+	mat4f lightProj = ProjOrtho(-10.0f, 10.0f, -10.0f, 10.0f, m_near_plane, m_far_plane);
 
 	vec3f fpos = (m_dir * -2) + CamPos;
 	mat4f lightView = LookAt<float>(fpos, CamPos, vec3f(0.0f, 0.0f, 1.0f));
