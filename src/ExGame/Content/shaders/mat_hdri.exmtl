@@ -1,11 +1,11 @@
 {
-	"glsl" : "#version 450 core\n#extension GL_ARB_bindless_texture : enable\nlayout (location = 0) out vec3 gPos;\nlayout (location = 1) out vec3 gNorm;\nlayout (location = 2) out vec4 gAlbedo;\nlayout (location = 3) out float gSpec;\nlayout (location = 4) out vec3 gMetRoughAO;\nlayout (location = 5) out vec3 gEmissive;\n\nin vec3 Normal;\nin vec3 Tan;\nin vec3 Bitan;\n\nin vec3 FragPos;\nin vec2 UVcoord;\n\n#define TEXTURE(id, index, UV) texture(tex[index], UV)\n\n#ifndef GL_ARB_bindless_texture\nuniform sampler2D tex4;\n#else\nlayout (std430) buffer TEXTURES {\nsampler2D tex[1];\n};\n#endif\n\nvoid main() {\ngAlbedo = vec4(vec3(0.000000,0.000000,0.000000), 0.0);\ngPos = FragPos;\ngNorm = Normal;\ngSpec = 0.0;\ngMetRoughAO = vec3(0.0,0.0,(0.000000));\ngEmissive = TEXTURE(4, 0, (UVcoord)).rgb;\n}",
-	"glsl_leg" : "#version 450 core\nlayout (location = 0) out vec3 gPos;\nlayout (location = 1) out vec3 gNorm;\nlayout (location = 2) out vec4 gAlbedo;\nlayout (location = 3) out float gSpec;\nlayout (location = 4) out vec3 gMetRoughAO;\nlayout (location = 5) out vec3 gEmissive;\n\nin vec3 Normal;\nin vec3 Tan;\nin vec3 Bitan;\n\nin vec3 FragPos;\nin vec2 UVcoord;\nuniform sampler2D tex4;\nvoid main() {\ngAlbedo = vec4(vec3(0.000000,0.000000,0.000000), 0.0);\ngPos = FragPos;\ngNorm = Normal;\ngSpec = 0.0;\ngMetRoughAO = vec3(0.0,0.0,(0.000000));\ngEmissive = texture(tex4,UVcoord).rgb;\n}",
+	"glsl" : "#version 450 core\n#extension GL_ARB_bindless_texture : enable\nlayout (location = 0) out vec3 gPos;\nlayout (location = 1) out vec3 gNorm;\nlayout (location = 2) out vec4 gAlbedo;\nlayout (location = 3) out float gSpec;\nlayout (location = 4) out vec3 gMetRoughAO;\nlayout (location = 5) out vec3 gEmissive;\n\nin vec3 Normal;\nin vec3 Tan;\nin vec3 Bitan;\n\nin vec3 FragPos;\nin vec2 UVcoord;\n\n#define TEXTURE(id, index, UV) texture(tex[index], UV)\n\n#ifndef GL_ARB_bindless_texture\nuniform sampler2D tex11;\n#else\nlayout (std430) buffer TEXTURES {\nsampler2D tex[1];\n};\n#endif\n\nvoid main() {\ngAlbedo = vec4(vec3(0.000000,0.000000,0.000000), 0.0);\ngPos = FragPos;\ngNorm = Normal;\ngSpec = 0.0;\ngMetRoughAO = vec3(0.0,0.0,(0.000000));\ngEmissive = TEXTURE(11, 0, (UVcoord)).rgb;\n}",
+	"glsl_leg" : "#version 450 core\nlayout (location = 0) out vec3 gPos;\nlayout (location = 1) out vec3 gNorm;\nlayout (location = 2) out vec4 gAlbedo;\nlayout (location = 3) out float gSpec;\nlayout (location = 4) out vec3 gMetRoughAO;\nlayout (location = 5) out vec3 gEmissive;\n\nin vec3 Normal;\nin vec3 Tan;\nin vec3 Bitan;\n\nin vec3 FragPos;\nin vec2 UVcoord;\nuniform sampler2D tex11;\nvoid main() {\ngAlbedo = vec4(vec3(0.000000,0.000000,0.000000), 0.0);\ngPos = FragPos;\ngNorm = Normal;\ngSpec = 0.0;\ngMetRoughAO = vec3(0.0,0.0,(0.000000));\ngEmissive = texture(tex11,UVcoord).rgb;\n}",
 	"textures" : 
 	[
 		{
-			"param" : "tex4",
-			"path" : "/hdri.png",
+			"param" : "tex11",
+			"path" : "/sky.jpg",
 			"texOffset" : 0
 		}
 	]

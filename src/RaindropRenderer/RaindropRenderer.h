@@ -84,7 +84,10 @@ public:
 	bool IsVSyncActivated() const;
 
 	bool DoNeedCamUpdate();
-	
+
+	void IncrementCurrentSSBOIdx();
+	int GetCurrentSSBOIdx();
+
 	std::string GetEngineDir() const;
 
 	double GetLastDeltaTime() const;

@@ -37,14 +37,10 @@ private:
 	void InitUBO(RD_RenderingAPI* api);
 
 	void BlurShadow();
-	void ComputeBloom();
 
 	RD_Quad* m_quad;
 
 	//Shaders
-	RD_ShaderLoader* m_bloom;
-	RD_ShaderLoader* m_bloomApply;
-
 	RD_ShaderLoader* m_light;
 	RD_ShaderLoader* m_beauty;
 
@@ -67,9 +63,6 @@ private:
 	RD_FrameBuffer* m_shadow_blur_a;
 	RD_FrameBuffer* m_shadow_blur_b;
 
-	RD_FrameBuffer* m_bloom_a;
-	RD_FrameBuffer* m_bloom_b;
-
 	RD_FrameBuffer* m_final_passes;
 
 	//UBO/SSBO
@@ -85,7 +78,7 @@ private:
 struct GLSL_BlurState {
 	float dir[3];
 	int index;
-	int threshold;
+	float threshold;
 	bool fpass = false;
 };
 

@@ -623,3 +623,11 @@ void RaindropRenderer::PushLightProjView(mat4f lightproj, mat4f lightview) {
 RD_RenderingPipeline* RaindropRenderer::GetRenderingPipeline() const {
 	return m_pipeline;
 }
+
+void RaindropRenderer::IncrementCurrentSSBOIdx() {
+	m_current_shader_storage_index++;
+}
+
+int RaindropRenderer::GetCurrentSSBOIdx() {
+	return m_current_shader_storage_index;
+}

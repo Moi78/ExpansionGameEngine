@@ -10,7 +10,7 @@
 	"nodes" : 
 	[
 		{
-			"material" : "/shaders/mat_hdri_night.exmtl",
+			"material" : "/shaders/mat_hdri.exmtl",
 			"nameTag" : "skydome",
 			"pos" : 
 			[

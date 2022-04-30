@@ -133,18 +133,6 @@ void RD_RenderingPipelinePBR::CompileShaders(RD_RenderingAPI* api, std::string e
 		shaderVertExt = ".vert";
 	}
 
-	m_bloom = api->CreateShader();
-	m_bloom->compileShaderFromFile(
-		shaderPath + "pbr/bloom" + shaderVertExt,
-		shaderPath + "pbr/bloom" + shaderFragExt
-	);
-
-	m_bloomApply = api->CreateShader();
-	m_bloomApply->compileShaderFromFile(
-		shaderPath + "pbr/BloomApply" + shaderVertExt,
-		shaderPath + "pbr/BloomApply" + shaderFragExt
-	);
-
 	m_light = api->CreateShader();
 	m_light->compileShaderFromFile(
 		shaderPath + "pbr/Light" + shaderVertExt,
@@ -258,16 +246,6 @@ void RD_RenderingPipelinePBR::CreateGBuff(RD_RenderingAPI* api) {
 	m_final_passes->AddAttachement(IMGFORMAT_RGB);
 	m_final_passes->BuildFBO();
 	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
-
-	m_bloom_a = api->CreateFrameBuffer(w, h, true);
-	m_bloom_a->AddAttachement(IMGFORMAT_RGB);
-	m_bloom_a->BuildFBO();
-	m_bloom_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 2);
-
-	m_bloom_b = api->CreateFrameBuffer(w, h, true);
-	m_bloom_b->AddAttachement(IMGFORMAT_RGB);
-	m_bloom_b->BuildFBO();
-	m_bloom_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 3);
 }
 
 void RD_RenderingPipelinePBR::InitUBO(RD_RenderingAPI* api) {
@@ -314,8 +292,6 @@ void RD_RenderingPipelinePBR::ResizeFramebuffers(RD_RenderingAPI* api, const int
 	m_shadow_fb->ChangeFramebufferSize(w, h);
 	m_shadow_blur_a->ChangeFramebufferSize(w, h);
 	m_shadow_blur_b->ChangeFramebufferSize(w, h);
-	//m_bloom_a->ChangeFramebufferSize(w, h);
-	//m_bloom_b->ChangeFramebufferSize(w, h);
 	m_final_passes->ChangeFramebufferSize(w, h);
 
 	for (int i = 0; i < 7; i++) {
@@ -327,30 +303,4 @@ void RD_RenderingPipelinePBR::ResizeFramebuffers(RD_RenderingAPI* api, const int
 	m_shadow_blur_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 1);
 	m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
 	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
-}
-
-void RD_RenderingPipelinePBR::ComputeBloom() {
-	constexpr GLSL_BlurState st_one = { {0.0f, 1.0f, 0.0f}, 5, 0, 1 };
-	constexpr GLSL_BlurState st_a = { {0.0f, 0.0f, 1.0f}, 2, 0, 0 };
-	constexpr GLSL_BlurState st_b = { {0.0f, 1.0f, 0.0f}, 0, 0, 0 };
-
-	m_bloom->useShader();
-
-	m_bloom_a->BindFBO();
-
-	m_blurState->BindBuffer();
-	m_blurState->SetBufferSubData(0, sizeof(GLSL_BlurState), (void*)&st_one);
-	m_blurState->UnbindBuffer();
-
-	m_quad->RenderQuad();
-
-	m_bloom_b->BindFBO();
-
-	m_blurState->BindBuffer();
-	m_blurState->SetBufferSubData(0, sizeof(GLSL_BlurState), (void*)&st_a);
-	m_blurState->UnbindBuffer();
-
-	m_quad->RenderQuad();
-
-	m_bloom_b->UnbindFBO();
 }
