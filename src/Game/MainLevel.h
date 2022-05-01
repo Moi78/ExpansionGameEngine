@@ -40,6 +40,8 @@ private:
 	Character* m_player;
 
 	RD_ReflectionCapture* m_cap;
+
+	float m_count;
 };
 
 EXPGE_LEVEL_HEADER(MainLevel);

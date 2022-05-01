@@ -648,6 +648,11 @@ int RaindropRenderer::GetCurrentSSBOIdx() {
 
 void RaindropRenderer::RenderDebug() {
 	RD_ShaderLoader* dbg = m_pipeline->DebugStart();
+	m_api->SetViewportSize(
+		m_vp_size.getX() * m_vp_scale.getX(), //Scale
+		m_vp_size.getY() * m_vp_scale.getY(),
+		(m_vp_size.getX() - (m_vp_size.getX() * m_vp_scale.getX())) / 2, // Pos
+		(m_vp_size.getY() - (m_vp_size.getY() * m_vp_scale.getY())) / 2);
 
 	m_api->SetFilledMode(FillingMode::WIREFRAME);
 
@@ -660,4 +665,20 @@ void RaindropRenderer::RenderDebug() {
 	}
 
 	m_api->SetFilledMode(FillingMode::FILLED);
+
+	m_api->SetViewportSize(m_vp_size.getX(), m_vp_size.getX(), 0, 0);
+}
+
+void RaindropRenderer::SetQuadzone(vec2f pos, vec2f scale) {
+	GLSL_QuadZone init_q = { {pos.getX(), pos.getY()}, {scale.getX(), scale.getY()}};
+	m_quadzone_u->BindBuffer();
+	m_quadzone_u->SetBufferSubData(0, sizeof(GLSL_QuadZone), (void*)&init_q);
+	m_quadzone_u->UnbindBuffer();
+
+	m_vp_scale = scale;
+	m_need_cam_updt = true;
+}
+
+vec2f RaindropRenderer::GetViewportScale() const {
+	return m_vp_scale;
 }

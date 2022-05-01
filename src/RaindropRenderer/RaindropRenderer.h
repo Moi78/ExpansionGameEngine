@@ -106,6 +106,9 @@ public:
 
 	vec2f GetViewportSize() const;
 	vec2f GetViewportPos() const;
+	vec2f GetViewportScale() const;
+
+	void SetQuadzone(vec2f pos, vec2f scale);
 
 	RD_Texture* GetBlankTexture() const;
 	RD_UniformBuffer* GetTextColorUniform();
@@ -222,7 +225,7 @@ private:
 	int m_current_shader_storage_index;
 	int m_current_selector;
 
-	vec2f m_vp_size, m_vp_pos;
+	vec2f m_vp_size, m_vp_pos, m_vp_scale;
 
 	//Ressource management
 	std::unique_ptr<RD_MaterialLibrary> m_matlib;

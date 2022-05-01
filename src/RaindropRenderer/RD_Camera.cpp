@@ -35,7 +35,13 @@ void RD_Camera::UpdateView() {
 }
 
 void RD_Camera::UpdateProj() {
-	projection = ProjPersp<float>(DEG_TO_RAD(FOV), (float)m_rndr->GetViewportSize().getX() / m_rndr->GetViewportSize().getY(), m_near, m_far);
+	vec2f vp_scale = m_rndr->GetViewportScale();
+
+	projection = ProjPersp<float>(
+		DEG_TO_RAD(FOV),
+		(float)(m_rndr->GetViewportSize().getX() * vp_scale.getX()) / (m_rndr->GetViewportSize().getY() * vp_scale.getY()),
+		m_near, m_far
+	);
 
 	m_rndr->PushProjMatrix(projection);
 }
