@@ -32,8 +32,6 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 	);
 
 	m_game->ToggleDebugRendering(true);
-
-	m_count = 0.0f;
 }
 
 MainLevel::~MainLevel() {
@@ -56,9 +54,7 @@ void MainLevel::OnStart() {
 }
 
 void MainLevel::OnTick() {
-	//m_mloader->GetStaticMeshByName("rock1_1")->SetPosition(m_test->GetWorldPosition());
-
-	m_count += 0.001f;
+	//m_mloader->GetStaticMeshByName("rock1_1")->SetPosition(m_test->GetWorldPosition())
 }
 
 void MainLevel::ChangeLVL() {

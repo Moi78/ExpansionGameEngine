@@ -48,6 +48,9 @@ void RD_RenderingPipelinePBR::RenderScene(RD_RenderingAPI* api, RD_MaterialLibra
 	}
 
 	m_gbuff->UnbindFBO();
+	if (m_gbuff->IsFBMultisampled()) {
+		m_gbuff->MultisampledToIntermediate();
+	}
 
 	m_light_fb->BindFBO();
 	api->Clear(COLOR_BUFFER);
@@ -197,6 +200,7 @@ void RD_RenderingPipelinePBR::CreateGBuff(RD_RenderingAPI* api) {
 	h = api->GetWindowingSystem()->GetHeight();
 
 	m_gbuff = api->CreateFrameBuffer(w, h, false);
+	m_gbuff->SetMultisampled(false);
 
 	m_gbuff->AddAttachement(IMGFORMAT_RGB16F); // Position
 	m_gbuff_struct.gPos = 0;

@@ -79,6 +79,8 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	m_quadzone_u->SetBufferSubData(0, sizeof(GLSL_QuadZone), (void*)&init_q);
 	m_quadzone_u->UnbindBuffer();
 
+	m_vp_scale = vec2f(1.0f, 1.0f);
+
 	m_camera_matrix_u = m_api->CreateUniformBuffer(129, 0);
 	m_camera_location_u = m_api->CreateUniformBuffer(4 * sizeof(float), 5);
 	

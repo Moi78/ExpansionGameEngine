@@ -197,7 +197,7 @@ void RD_Texture_GL::CreateAndAttachToFramebufferMS(
 		format2 = GL_RGB;
 	}
 
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, formatGL, w, h, GL_TRUE);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 16, formatGL, w, h, GL_TRUE);
 
 	if (format != IMGFORMAT_DEPTH) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D_MULTISAMPLE, m_ms_texture, 0);
