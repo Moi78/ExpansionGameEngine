@@ -1,5 +1,4 @@
 #pragma once
-
 #ifdef _WIN32
 #ifdef RAINDROPRENDERER_EXPORTS
 #define RD_API __declspec(dllexport)
@@ -10,29 +9,22 @@
 #define RD_API
 #endif //_WIN32
 
-#ifdef BUILD_OPENGL
+#ifdef BUILD_VULKAN
 
-#include "RD_RenderingAPI.h"
-
-#include "RaindropRenderer.h"
-#include "RD_Texture.h"
-#include "RD_FrameBuffer.h"
-
-#include "BulldozerFileManager.h"
+#include <optional>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
+#include <vulkan/vulkan.hpp>
 
-#include <iostream>
-#include <string>
+#include "RD_RenderingAPI.h"
 
-class RD_API RD_WindowingSystemGLFW : public RD_WindowingSystem {
+class RD_API RD_WindowingSystemGLFW_Vk : public RD_WindowingSystem {
 public:
-	RD_WindowingSystemGLFW(RaindropRenderer* rndr);
-	virtual ~RD_WindowingSystemGLFW();
+	RD_WindowingSystemGLFW_Vk(RaindropRenderer* rndr);
+	virtual ~RD_WindowingSystemGLFW_Vk();
 
-	virtual bool OpenWindow(std::string name, int w, int h, int api_major = 4, int api_minor = 5);
+	virtual bool OpenWindow(std::string name, int w, int h);
 	virtual void SetFullscreenMode(bool mode);
 
 	virtual int GetHeight();
@@ -54,6 +46,9 @@ public:
 	virtual void CaptureCursor(bool mode);
 	virtual void SetVSync(const bool vsync);
 
+	int GetExtensionsCount();
+	const char** GetExtensionsNames();
+
 	GLFWwindow* GetWindow();
 
 private:
@@ -61,12 +56,10 @@ private:
 	RaindropRenderer* m_rndr;
 };
 
-void glfwWinCallback(GLFWwindow* win, int w, int h);
-
-class RD_API RD_RenderingAPI_VertexElemBufferGL : public RD_RenderingAPI_VertexElemBuffer {
+class RD_API RD_RenderingAPI_VertexElemBufferVk : public RD_RenderingAPI_VertexElemBuffer {
 public:
-	RD_RenderingAPI_VertexElemBufferGL();
-	virtual ~RD_RenderingAPI_VertexElemBufferGL();
+	RD_RenderingAPI_VertexElemBufferVk();
+	virtual ~RD_RenderingAPI_VertexElemBufferVk();
 
 	virtual void CreateBuffer();
 	virtual void FillBufferData(float* data, int count, unsigned int* elemData, int elemCount);
@@ -78,13 +71,13 @@ public:
 	virtual unsigned int GetElementCount();
 
 private:
-	unsigned int VAO, VBO, EBO, elem_count;
+	unsigned int elem_count;
 };
 
-class RD_API RD_RenderingAPI_VertexBufferGL : public RD_RenderingAPI_VertexBuffer {
+class RD_API RD_RenderingAPI_VertexBufferVk : public RD_RenderingAPI_VertexBuffer {
 public:
-	RD_RenderingAPI_VertexBufferGL();
-	virtual ~RD_RenderingAPI_VertexBufferGL();
+	RD_RenderingAPI_VertexBufferVk();
+	virtual ~RD_RenderingAPI_VertexBufferVk();
 
 	virtual void CreateBuffer();
 	virtual void FillBufferData(float* data, int count);
@@ -98,38 +91,38 @@ protected:
 	unsigned int VAO, VBO, float_count;
 };
 
-class RD_API RD_RenderingAPI_VertexBufferInstancedGL :
-	public RD_RenderingAPI_VertexBufferGL,
+class RD_API RD_RenderingAPI_VertexBufferInstancedVk :
+	public RD_RenderingAPI_VertexBufferVk,
 	public RD_RenderingAPI_VertexBufferInstanced {
 public:
-	RD_RenderingAPI_VertexBufferInstancedGL();
-	virtual ~RD_RenderingAPI_VertexBufferInstancedGL();
+	RD_RenderingAPI_VertexBufferInstancedVk();
+	virtual ~RD_RenderingAPI_VertexBufferInstancedVk();
 
 	virtual void SetVertexAttr(float* data, DataTypes type, const int count, const int divisor, const int arrayID);
 	virtual void UpdateBufferData(float* data, const int count, const int arrayID);
 
 	virtual void CreateBuffer() override {
-		RD_RenderingAPI_VertexBufferGL::CreateBuffer();
+		RD_RenderingAPI_VertexBufferVk::CreateBuffer();
 	}
 
 	virtual void FillBufferData(float* data, int count) override {
-		RD_RenderingAPI_VertexBufferGL::FillBufferData(data, count);
+		RD_RenderingAPI_VertexBufferVk::FillBufferData(data, count);
 	}
 
 	virtual void DeleteBuffer() override {
-		RD_RenderingAPI_VertexBufferGL::DeleteBuffer();
+		RD_RenderingAPI_VertexBufferVk::DeleteBuffer();
 	}
 
 	virtual void BindBuffer() override {
-		RD_RenderingAPI_VertexBufferGL::BindBuffer();
+		RD_RenderingAPI_VertexBufferVk::BindBuffer();
 	}
 
 	virtual void UnbindBuffer() override {
-		RD_RenderingAPI_VertexBufferGL::UnbindBuffer();
+		RD_RenderingAPI_VertexBufferVk::UnbindBuffer();
 	}
 
 	virtual unsigned int GetFloatCount() override {
-		return RD_RenderingAPI_VertexBufferGL::GetFloatCount();
+		return RD_RenderingAPI_VertexBufferVk::GetFloatCount();
 	}
 
 private:
@@ -137,15 +130,19 @@ private:
 	unsigned int m_dataSize;
 };
 
-class RD_API RD_RenderingAPI_GL : public RD_RenderingAPI {
+struct QueueFamilyIndices {
+	std::optional<uint32_t> graphicsFamily;
+};
+
+class RD_API RD_RenderingAPI_Vk : public RD_RenderingAPI {
 public:
-	RD_RenderingAPI_GL(RaindropRenderer* rndr, const bool legacy = false);
-	virtual ~RD_RenderingAPI_GL();
+	RD_RenderingAPI_Vk(RaindropRenderer* rndr);
+	virtual ~RD_RenderingAPI_Vk();
 
 	virtual bool InitializeAPI(int w, int h, std::string wname);
 	virtual RD_WindowingSystem* GetWindowingSystem();
 
-	virtual RD_RenderingAPI_VertexElemBufferGL* CreateVertexElemBuffer();
+	virtual RD_RenderingAPI_VertexElemBuffer* CreateVertexElemBuffer();
 	virtual RD_RenderingAPI_VertexBuffer* CreateVertexBuffer();
 	virtual RD_RenderingAPI_VertexBufferInstanced* CreateVertexBufferInstanced();
 	virtual RD_Texture* CreateTexture();
@@ -171,15 +168,41 @@ public:
 	virtual int GetMaxTextureCount();
 	virtual bool AreBindlessTexturesAvailable();
 
-	virtual API GetAPIType() { return m_legacy ? API::OPENGL3 : API::OPENGL4; }
+	virtual API GetAPIType() { return API::VULKAN; }
 
 private:
-	RD_WindowingSystemGLFW* m_win_sys;
+	bool CreateVkInst();
+	bool CheckRequestedValidationLayers(std::vector<std::string> layers);
+	bool SetupDebugMessenger();
+	void PickPhysicalDevice();
+	bool CreateDevice();
+	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice dev);
+
+	std::vector<const char*> GetRequiredExtensions();
+	bool IsDeviceSuitable(VkPhysicalDevice dev);
+
+	VkInstance m_inst;
+	VkPhysicalDevice m_dev;
+	VkDevice m_ldev;
+	VkQueue m_gfx_queue;
+
+	VkDebugUtilsMessengerEXT m_cbck_dbg;
+
+	RD_WindowingSystemGLFW_Vk* m_win_sys;
 
 	bool m_bindless_tex_available;
-	bool m_legacy;
+	bool m_validationLayers;
 };
 
-bool CheckExtensionAvailability(std::string ext);
+static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
+	VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+	VkDebugUtilsMessageTypeFlagsEXT messageType,
+	const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+	void* pUserData) {
 
-#endif //BUILD_OPENGL
+	std::cerr << "Validation Layer: " << pCallbackData->pMessage << std::endl;
+
+	return VK_FALSE;
+}
+
+#endif //BUILD_VULKAN

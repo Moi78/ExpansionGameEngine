@@ -121,20 +121,20 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>BUILD_OPENGL;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_OPENGL;BUILD_VULKAN;_DEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>stb\;..\libs\JSONCPP\include;..\ExpansionMath;..\libs\GL\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.211.0\Include;stb\;..\libs\JSONCPP\include;..\ExpansionMath;..\libs\GL\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;glew32.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.211.0\Lib;..\libs\GL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;glew32.lib;glfw3dll.lib;OpenGL32.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -144,12 +144,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>BUILD_OPENGL;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILD_OPENGL;BUILD_VULKAN;NDEBUG;RAINDROPRENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>stb\;..\libs\JSONCPP\include;..\ExpansionMath;..\libs\GL\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.211.0\Include;stb\;..\libs\JSONCPP\include;..\ExpansionMath;..\libs\GL\include;..\BulldozerFileManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -158,8 +158,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\libs\GL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;glew32.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.3.211.0\Lib;..\libs\GL\lib;..\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BulldozerFileManager.lib;ExpansionMath.lib;glew32.lib;glfw3dll.lib;OpenGL32.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -186,6 +186,7 @@
     <ClInclude Include="RD_ReflectionCapture.h" />
     <ClInclude Include="RD_RenderingAPI.h" />
     <ClInclude Include="RD_RenderingAPI_GL.h" />
+    <ClInclude Include="RD_RenderingAPI_Vk.h" />
     <ClInclude Include="RD_RenderingPipeline.h" />
     <ClInclude Include="RD_RenderingPipelinePBR.h" />
     <ClInclude Include="RD_ShaderLoader.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="RD_Quad.cpp" />
     <ClCompile Include="RD_ReflectionCapture.cpp" />
     <ClCompile Include="RD_RenderingAPI_GL.cpp" />
+    <ClCompile Include="RD_RenderingAPI_Vk.cpp" />
     <ClCompile Include="RD_RenderingPipelinePBR.cpp" />
     <ClCompile Include="RD_ShaderLoader.cpp" />
     <ClCompile Include="RD_TextRenderer.cpp" />

@@ -116,6 +116,9 @@ EXP_GameInfo EXP_Game::CreateGameInfoFromJSON(const std::string& file) {
 	else if (TargetRoot["RenderingAPI"].asString() == "OGL4") {
 		api = API::OPENGL4;
 	}
+	else if (TargetRoot["RenderingAPI"].asString() == "Vk") {
+		api = API::VULKAN;
+	}
 	else {
 		api = API::OPENGL4;
 	}

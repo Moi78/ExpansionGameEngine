@@ -14,6 +14,7 @@
 
 #include "RD_RenderingAPI.h"
 #include "RD_RenderingAPI_GL.h"
+#include "RD_RenderingAPI_Vk.h"
 
 RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api, RD_RenderingPipeline* pline, int maxFramerate, bool minInit, std::string engineDir) : m_vp_size(w, h), m_vp_pos(0.0f, 0.0f) {
 	FillFeaturesArray();
@@ -31,6 +32,10 @@ RaindropRenderer::RaindropRenderer(int w, int h, std::string windowName, API api
 	else if (api == API::OPENGL3) {
 		std::cout << "Using OGL3." << std::endl;
 		m_api = std::make_unique<RD_RenderingAPI_GL>(this, true);
+	}
+	else if (api == API::VULKAN) {
+		std::cout << "Using Vk" << std::endl;
+		m_api = std::make_unique<RD_RenderingAPI_Vk>(this);
 	}
 
 	m_error_flag = false;

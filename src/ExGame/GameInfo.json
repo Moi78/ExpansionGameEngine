@@ -4,7 +4,7 @@
         "RootGameContentFolder":"Content",
         "GameBaseResolution":[1280, 720],
         "RenderingPipeline":"pbr",
-        "RenderingAPI":"OGL4",
+        "RenderingAPI":"Vk",
 
         "GameBin":"../x64/Debug/Game.dll",
 
