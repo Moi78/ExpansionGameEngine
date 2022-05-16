@@ -1,21 +1,29 @@
 #pragma once
 #ifdef _WIN32
-#ifdef RAINDROPRENDERER_EXPORTS
-#define RD_API __declspec(dllexport)
+	#ifdef RAINDROPRENDERER_EXPORTS
+		#define RD_API __declspec(dllexport)
+	#else
+		#define RD_API __declspec(dllimport)
+	#endif //RAINDROPRENDERER_EXPORTS
+
+	#define VK_USE_PLATFORM_WIN32_KHR
 #else
-#define RD_API __declspec(dllimport)
-#endif //RAINDROPRENDERER_EXPORTS
-#else
-#define RD_API
+	#define RD_API
 #endif //_WIN32
 
 #ifdef BUILD_VULKAN
 
 #include <optional>
+#include <set>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.hpp>
+
+#ifdef _WIN32
+	#define GLFW_EXPOSE_NATIVE_WIN32
+	#include <GLFW/glfw3native.h>
+#endif //_WIN32
 
 #include "RD_RenderingAPI.h"
 
@@ -23,8 +31,10 @@ class RD_API RD_WindowingSystemGLFW_Vk : public RD_WindowingSystem {
 public:
 	RD_WindowingSystemGLFW_Vk(RaindropRenderer* rndr);
 	virtual ~RD_WindowingSystemGLFW_Vk();
+	void CleanupVK(VkInstance inst);
 
 	virtual bool OpenWindow(std::string name, int w, int h);
+	VkResult CreateWindowSurface(VkInstance inst);
 	virtual void SetFullscreenMode(bool mode);
 
 	virtual int GetHeight();
@@ -50,10 +60,13 @@ public:
 	const char** GetExtensionsNames();
 
 	GLFWwindow* GetWindow();
+	VkSurfaceKHR GetSurfaceHandle();
 
 private:
 	GLFWwindow* m_win;
 	RaindropRenderer* m_rndr;
+
+	VkSurfaceKHR m_surface;
 };
 
 class RD_API RD_RenderingAPI_VertexElemBufferVk : public RD_RenderingAPI_VertexElemBuffer {
@@ -130,8 +143,15 @@ private:
 	unsigned int m_dataSize;
 };
 
+bool CheckDeviceExtensionSupport(VkPhysicalDevice dev);
+
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> presentationFamily;
+
+	bool IsComplete(VkPhysicalDevice dev) {
+		return graphicsFamily.has_value() && presentationFamily.has_value() && CheckDeviceExtensionSupport(dev);
+	}
 };
 
 class RD_API RD_RenderingAPI_Vk : public RD_RenderingAPI {
@@ -182,9 +202,12 @@ private:
 	bool IsDeviceSuitable(VkPhysicalDevice dev);
 
 	VkInstance m_inst;
+	
 	VkPhysicalDevice m_dev;
 	VkDevice m_ldev;
+	
 	VkQueue m_gfx_queue;
+	VkQueue m_present_queue;
 
 	VkDebugUtilsMessengerEXT m_cbck_dbg;
 

@@ -142,4 +142,52 @@ private:
 
 #endif //BUILD_OPENGL
 
+#ifdef BUILD_VULKAN
+
+class RAINDROPRENDERER_API RD_ShaderLoader_Vk : public RD_ShaderLoader {
+public:
+	RD_ShaderLoader_Vk() {}
+	virtual ~RD_ShaderLoader_Vk() {};
+
+	virtual void compileShaderFromFile(std::string vertexShaderFile, std::string fragmentShaderFile) {};
+	virtual void CompileShaderFromCode(std::string vertexCode, std::string fragmentCode) {};
+
+	virtual void useShader() {};
+
+	virtual void SetBool(const std::string& name, bool value) {};
+	virtual void SetInt(const std::string& name, int value) {};
+	virtual void SetFloat(const std::string& name, float value) {};
+	virtual void SetMatrix(const std::string& name, mat4f matrix) {};
+	virtual void SetVec3(const std::string& name, vec3f vec) {};
+
+	virtual void SetUniformID(const int id, const std::string& name) {};
+	virtual void SetShaderStorageID(const int id, const std::string& name) {};
+
+	virtual unsigned int GetProgID() { return 0; };
+};
+
+class RAINDROPRENDERER_API RD_UniformBuffer_Vk : public RD_UniformBuffer {
+public:
+	RD_UniformBuffer_Vk(const size_t bufferSize, const int binding) {}
+	virtual ~RD_UniformBuffer_Vk() {}
+
+	virtual void SetBufferSubData(const int offset, const size_t size, void* data) {};
+
+	virtual void BindBuffer() {};
+	virtual void UnbindBuffer() {};
+};
+
+class RAINDROPRENDERER_API RD_ShaderStorageBuffer_Vk : public RD_ShaderStorageBuffer {
+public:
+	RD_ShaderStorageBuffer_Vk(const size_t bufferSize, const int binding) {}
+	virtual ~RD_ShaderStorageBuffer_Vk() {}
+
+	virtual void SetBufferSubData(const int offset, const size_t size, void* data) {};
+
+	virtual void BindBuffer() {};
+	virtual void UnbindBuffer() {};
+};
+
+#endif //BUILD_VULKAN
+
 #endif //_RD_SHADER_LOADER_H__

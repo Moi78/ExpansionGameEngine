@@ -127,4 +127,44 @@ private:
 
 #endif //BUILD_OPENGL
 
+#ifdef BUILD_VULKAN
+
+class RAINDROP_RENDERER_API RD_FrameBuffer_Vk : public RD_FrameBuffer
+{
+public:
+	RD_FrameBuffer_Vk(int w, int h, bool nodepth) {}
+	virtual ~RD_FrameBuffer_Vk() {};
+
+	virtual unsigned int GetFBO() { return 0; };
+
+	virtual void BindFBO() {};
+	virtual void BindNonMSFBO() {};
+	virtual void UnbindFBO() {};
+
+	virtual int GetNumberOfAttachements() { return 0; };
+	virtual RD_Texture* GetAttachementByIndex(int index) { return nullptr; };
+	virtual bool IsFBMultisampled() { return false; };
+
+	virtual void AddAttachement(unsigned int format, unsigned int scaleMode = SCALEMODE_LINEAR, unsigned int wrapmode = WRAPMODE_REPEAT) {};
+	virtual void BuildFBO() {};
+
+	virtual void SetMultisampled(bool state) {};
+	virtual void MultisampledToIntermediate() {};
+
+	virtual void ConfigureRenderbuffer(int storage, int attachement) {};
+
+	virtual void ChangeFramebufferSize(int nw, int nh) {};
+
+	virtual void DebugMode() {};
+
+	virtual void BindWrite() {};
+	virtual void BindRead() {};
+
+private:
+	virtual void CreateFBO() {};
+};
+
+#endif // BUILD_VULKAN
+
+
 #endif //_RD_FRAME_BUFFER_H__

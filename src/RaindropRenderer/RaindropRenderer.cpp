@@ -434,6 +434,9 @@ RD_ShaderMaterial* RaindropRenderer::FetchShaderFromFile(const std::string& ref,
 		folder = "/glsl/gl4/";
 		vertEXT = "vert";
 		break;
+	case API::VULKAN:
+		folder = "/glsl/gl4/";
+		vertEXT = "vert";
 	default:
 		break;
 	}

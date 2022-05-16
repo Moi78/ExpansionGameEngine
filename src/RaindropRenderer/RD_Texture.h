@@ -158,4 +158,56 @@ private:
 
 #endif //BUILD_OPENGL
 
+#ifdef BUILD_VULKAN
+
+class RAINDROPRENDERER_API RD_Texture_Vk : public RD_Texture
+{
+public:
+	RD_Texture_Vk() {}
+	virtual ~RD_Texture_Vk() {};
+
+	virtual void LoadTexture(const std::string& tex, bool flipTex = true) {};
+	virtual void GenerateColorTex(vec3f color) {};
+	virtual void CreateTextureFromPixels(
+		void* pixels,
+		int w,
+		int h,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int wrapmode = WRAPMODE_REPEAT) {};
+
+	virtual void CreateTextureFromGlyph(
+		void* data,
+		const int w,
+		const int h
+	) {};
+
+	virtual void CreateAndAttachToFramebuffer(
+		int w, int h,
+		unsigned int FBO,
+		unsigned int attachement = 0,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int scaleMode = SCALEMODE_LINEAR,
+		unsigned int wrapmode = WRAPMODE_REPEAT) {};
+
+	virtual void CreateAndAttachToFramebufferMS(
+		int w, int h,
+		unsigned int FBO,
+		unsigned int attachement = 0,
+		unsigned int format = IMGFORMAT_RGB,
+		unsigned int scaleMode = SCALEMODE_LINEAR,
+		unsigned int wrapmode = WRAPMODE_REPEAT) {};
+
+	virtual bool BindTexture(unsigned int tex_unit) { return true; };
+	virtual bool IsBindless() { return false; };
+	virtual void MakeTexBindless(RD_RenderingAPI* api, RD_ShaderStorageBuffer* ssbo, const int index) {};
+	virtual uint64_t GetTextureHandle() { return 0; };
+
+	virtual unsigned int GetTextureID() { return 0; };
+	virtual unsigned int GetTextureMSID() { return 0; };
+
+	virtual void DeleteTexture() {};
+};
+
+#endif //BUILD_VULKAN
+
 #endif //_RD_TEXTURE_H__

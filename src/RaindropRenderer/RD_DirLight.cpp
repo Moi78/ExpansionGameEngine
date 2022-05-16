@@ -84,7 +84,7 @@ void RD_DirLight::SetUpShadowFB(RaindropRenderer* rndr, unsigned int shadowQual)
 
 	RD_RenderingAPI* api = rndr->GetRenderingAPI();
 	RD_RenderingPipeline* pline = rndr->GetRenderingPipeline();
-	m_fbo->GetAttachementByIndex(0)->MakeTexBindless(api, pline->GetShadowMapBufferHandle(), rndr->GetDirLightsCount());
+	//m_fbo->GetAttachementByIndex(0)->MakeTexBindless(api, pline->GetShadowMapBufferHandle(), rndr->GetDirLightsCount());
 }
 
 mat4f RD_DirLight::GetLightSpace() const {

@@ -508,6 +508,8 @@ RD_ShaderMaterial* EXP_Game::GetShaderByFileRefInstanced(const std::string& ref)
 		vertEXT = "vert";
 		break;
 	case VULKAN:
+		folder = "/glsl/gl4/";
+		vertEXT = "vert";
 		break;
 	case DIRECTX:
 		break;

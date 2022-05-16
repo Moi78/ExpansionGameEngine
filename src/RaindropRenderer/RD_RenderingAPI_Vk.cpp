@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "RD_RenderingAPI_Vk.h"
 
+//---------------------------------------
+
+std::vector<const char*> requestedExtensions = {
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
 // ------------ Vulkan Funcs ------------
 
 VkResult vkCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
@@ -29,6 +35,10 @@ RD_WindowingSystemGLFW_Vk::RD_WindowingSystemGLFW_Vk(RaindropRenderer* rndr) {
 RD_WindowingSystemGLFW_Vk::~RD_WindowingSystemGLFW_Vk() {
 	glfwDestroyWindow(m_win);
 	glfwTerminate();
+}
+
+void RD_WindowingSystemGLFW_Vk::CleanupVK(VkInstance inst) {
+	vkDestroySurfaceKHR(inst, m_surface, nullptr);
 }
 
 bool RD_WindowingSystemGLFW_Vk::OpenWindow(std::string name, int w, int h) {
@@ -143,6 +153,22 @@ const char** RD_WindowingSystemGLFW_Vk::GetExtensionsNames() {
 	return glfwGetRequiredInstanceExtensions(&count);
 }
 
+VkResult RD_WindowingSystemGLFW_Vk::CreateWindowSurface(VkInstance inst) {
+	assert(m_win != nullptr && "A window must be opened to create a surface");
+
+	VkWin32SurfaceCreateInfoKHR cInfo{};
+	cInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	cInfo.hwnd = glfwGetWin32Window(m_win);
+	cInfo.hinstance = GetModuleHandle(nullptr);
+
+	VkResult res = vkCreateWin32SurfaceKHR(inst, &cInfo, nullptr, &m_surface);
+	return res;
+}
+
+VkSurfaceKHR RD_WindowingSystemGLFW_Vk::GetSurfaceHandle() {
+	return m_surface;
+}
+
 // ---------- RD_RenderingAPI_VertexElemBufferVk -----------
 
 RD_RenderingAPI_VertexElemBufferVk::RD_RenderingAPI_VertexElemBufferVk() {
@@ -241,6 +267,8 @@ RD_RenderingAPI_Vk::~RD_RenderingAPI_Vk() {
 	if (m_validationLayers) {
 		vkDestroyDebugUtilsMessengerEXT(m_inst, m_cbck_dbg, nullptr);
 	}
+
+	m_win_sys->CleanupVK(m_inst);
 	vkDestroyInstance(m_inst, nullptr);
 
 	delete m_win_sys;
@@ -257,6 +285,11 @@ bool RD_RenderingAPI_Vk::InitializeAPI(int w, int h, std::string wname) {
 		if (!SetupDebugMessenger()) {
 			return false;
 		}
+	}
+
+	if (m_win_sys->CreateWindowSurface(m_inst) != VK_SUCCESS) {
+		dispErrorMessageBox(L"Failed to create window surface.");
+		return false;
 	}
 
 	PickPhysicalDevice();
@@ -300,21 +333,28 @@ void RD_RenderingAPI_Vk::PickPhysicalDevice() {
 bool RD_RenderingAPI_Vk::CreateDevice() {
 	QueueFamilyIndices ind = FindQueueFamilies(m_dev);
 
-	VkDeviceQueueCreateInfo cInfo{};
-	cInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	cInfo.queueCount = 1;
-	cInfo.queueFamilyIndex = ind.graphicsFamily.value();
+	std::vector<VkDeviceQueueCreateInfo> devCInfo;
+	std::set<uint32_t> uniqueQFam = { ind.graphicsFamily.value(), ind.presentationFamily.value() };
 
 	float prio = 1.0f;
-	cInfo.pQueuePriorities = &prio;
+	for (uint32_t qFam : uniqueQFam) {
+		VkDeviceQueueCreateInfo cInfo{};
+		cInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		cInfo.queueCount = 1;
+		cInfo.queueFamilyIndex = qFam;
+		cInfo.pQueuePriorities = &prio;
+		devCInfo.push_back(cInfo);
+	}
 
 	VkPhysicalDeviceFeatures features{};
 
 	VkDeviceCreateInfo devcInfo{};
 	devcInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	devcInfo.pQueueCreateInfos = &cInfo;
-	devcInfo.queueCreateInfoCount = 1;
+	devcInfo.pQueueCreateInfos = devCInfo.data();
+	devcInfo.queueCreateInfoCount = static_cast<uint32_t>(devCInfo.size());
 	devcInfo.pEnabledFeatures = &features;
+	devcInfo.enabledExtensionCount = static_cast<uint32_t>(requestedExtensions.size());
+	devcInfo.ppEnabledExtensionNames = requestedExtensions.data();
 
 	VkResult res = vkCreateDevice(m_dev, &devcInfo, nullptr, &m_ldev);
 	if (res != VK_SUCCESS) {
@@ -323,6 +363,7 @@ bool RD_RenderingAPI_Vk::CreateDevice() {
 	}
 
 	vkGetDeviceQueue(m_ldev, ind.graphicsFamily.value(), 0, &m_gfx_queue);
+	vkGetDeviceQueue(m_ldev, ind.presentationFamily.value(), 0, &m_present_queue);
 
 	return true;
 }
@@ -342,6 +383,12 @@ QueueFamilyIndices RD_RenderingAPI_Vk::FindQueueFamilies(VkPhysicalDevice dev) {
 			indices.graphicsFamily = i;
 		}
 
+		VkBool32 presSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(m_dev, i, m_win_sys->GetSurfaceHandle(), &presSupport);
+		if (presSupport) {
+			indices.presentationFamily = i;
+		}
+
 		i++;
 	}
 
@@ -357,7 +404,7 @@ bool RD_RenderingAPI_Vk::IsDeviceSuitable(VkPhysicalDevice dev) {
 
 	QueueFamilyIndices qFam = FindQueueFamilies(dev);
 
-	return (prop.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) && (qFam.graphicsFamily.has_value());
+	return (prop.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) && qFam.IsComplete(m_dev);
 }
 
 bool RD_RenderingAPI_Vk::CreateVkInst() {
@@ -384,7 +431,7 @@ bool RD_RenderingAPI_Vk::CreateVkInst() {
 	cInfo.pApplicationInfo = &appInfo;
 
 	auto extensions = GetRequiredExtensions();
-	cInfo.enabledExtensionCount = extensions.size();
+	cInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	cInfo.ppEnabledExtensionNames = extensions.data();
 
 	std::vector<const char*> layersC;
@@ -479,15 +526,15 @@ RD_RenderingAPI_VertexBufferInstanced* RD_RenderingAPI_Vk::CreateVertexBufferIns
 }
 
 RD_Texture* RD_RenderingAPI_Vk::CreateTexture() {
-	return nullptr;
+	return new RD_Texture_Vk();
 }
 
 RD_FrameBuffer* RD_RenderingAPI_Vk::CreateFrameBuffer(int w, int h, bool nodepth) {
-	return nullptr;
+	return new RD_FrameBuffer_Vk(w, h, nodepth);
 }
 
 RD_ShaderLoader* RD_RenderingAPI_Vk::CreateShader() {
-	return nullptr;
+	return new RD_ShaderLoader_Vk();
 }
 
 RD_Cubemap* RD_RenderingAPI_Vk::CreateCubemap() {
@@ -495,11 +542,11 @@ RD_Cubemap* RD_RenderingAPI_Vk::CreateCubemap() {
 }
 
 RD_UniformBuffer* RD_RenderingAPI_Vk::CreateUniformBuffer(const size_t buffersize, const int binding) {
-	return nullptr;
+	return new RD_UniformBuffer_Vk(buffersize, binding);
 }
 
 RD_ShaderStorageBuffer* RD_RenderingAPI_Vk::CreateShaderStorageBuffer(const size_t bufferSize, const int binding) {
-	return nullptr;
+	return new RD_ShaderStorageBuffer_Vk(bufferSize, binding);
 }
 
 void RD_RenderingAPI_Vk::SetViewportSize(int w, int h, int x, int y) {
@@ -544,4 +591,21 @@ int RD_RenderingAPI_Vk::GetMaxTextureCount() {
 
 bool RD_RenderingAPI_Vk::AreBindlessTexturesAvailable() {
 	return true;
+}
+
+//------------------------------------------------------------
+
+bool CheckDeviceExtensionSupport(VkPhysicalDevice dev) {
+	uint32_t extCount = 0;
+	vkEnumerateDeviceExtensionProperties(dev, nullptr, &extCount, nullptr);
+
+	std::vector<VkExtensionProperties> availExt(extCount);
+	vkEnumerateDeviceExtensionProperties(dev, nullptr, &extCount, availExt.data());
+
+	std::set<std::string> reqExt(requestedExtensions.begin(), requestedExtensions.end());
+	for (auto& ext : availExt) {
+		reqExt.erase(ext.extensionName);
+	}
+
+	return reqExt.empty();
 }

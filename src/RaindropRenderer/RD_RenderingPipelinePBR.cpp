@@ -57,14 +57,14 @@ void RD_RenderingPipelinePBR::RenderScene(RD_RenderingAPI* api, RD_MaterialLibra
 
 	m_light->useShader();
 
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gAlbedo)->BindTexture(0)) m_light->SetInt("gAlbedo", 0);
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gNorm)->BindTexture(1)) m_light->SetInt("gNorm", 1);
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gPos)->BindTexture(2)) m_light->SetInt("gPos", 2);
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gSpec)->BindTexture(3)) m_light->SetInt("gSpec", 3);
-	if (m_shadow_blur_b->GetAttachementByIndex(0)->BindTexture(4)) m_light->SetInt("shadowPass", 4); // SHADOW PASS
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gMetRoughAO)->BindTexture(5)) m_light->SetInt("gMetRoughAO", 5);
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gAlbedo)->BindTexture(6)) m_light->SetInt("", 6); // SSAO
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gEmissive)->BindTexture(7)) m_light->SetInt("gEmissive", 7);
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gAlbedo)->BindTexture(0)) m_light->SetInt("gAlbedo", 0);
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gNorm)->BindTexture(1)) m_light->SetInt("gNorm", 1);
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gPos)->BindTexture(2)) m_light->SetInt("gPos", 2);
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gSpec)->BindTexture(3)) m_light->SetInt("gSpec", 3);
+	//if (m_shadow_blur_b->GetAttachementByIndex(0)->BindTexture(4)) m_light->SetInt("shadowPass", 4); // SHADOW PASS
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gMetRoughAO)->BindTexture(5)) m_light->SetInt("gMetRoughAO", 5);
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gAlbedo)->BindTexture(6)) m_light->SetInt("", 6); // SSAO
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gEmissive)->BindTexture(7)) m_light->SetInt("gEmissive", 7);
 
 	m_quad->RenderQuad();
 
@@ -85,9 +85,9 @@ void RD_RenderingPipelinePBR::RenderShadowMaps(RD_RenderingAPI* api, std::vector
 
 		dlight->DepthRender(api, m_shadow, sceneData, camPos);
 
-		if (dlight->GetDepthTexID()->BindTexture(texID)) {
-			m_shadowCalc->SetInt("ShadowMap[" + std::to_string(i) + "]", texID);
-		}
+		//if (dlight->GetDepthTexID()->BindTexture(texID)) {
+		//	m_shadowCalc->SetInt("ShadowMap[" + std::to_string(i) + "]", texID);
+		//}
 
 		texID++, i++;
 	}
@@ -99,9 +99,9 @@ void RD_RenderingPipelinePBR::RenderShadowMaps(RD_RenderingAPI* api, std::vector
 	}
 	m_lspace_mats->UnbindBuffer();
 
-	if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gPos)->BindTexture(texID)) {
-		m_shadowCalc->SetInt("gPos", texID);
-	}
+	//if (m_gbuff->GetAttachementByIndex(m_gbuff_struct.gPos)->BindTexture(texID)) {
+	//	m_shadowCalc->SetInt("gPos", texID);
+	//}
 
 	m_shadowCalc->useShader();
 	m_shadow_fb->BindFBO();
@@ -226,33 +226,33 @@ void RD_RenderingPipelinePBR::CreateGBuff(RD_RenderingAPI* api) {
 	m_gbuff->BuildFBO();
 
 	for (int i = 0; i < 7; i++) {
-		m_gbuff->GetAttachementByIndex(i)->MakeTexBindless(api, m_gbuff_handles, i);
+		//m_gbuff->GetAttachementByIndex(i)->MakeTexBindless(api, m_gbuff_handles, i);
 	}
 
 	m_light_fb = api->CreateFrameBuffer(w, h, true);
 	m_light_fb->AddAttachement(IMGFORMAT_RGB16F);
 	m_light_fb->BuildFBO();
-	m_light_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 1);
+	//m_light_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 1);
 
 	m_shadow_fb = api->CreateFrameBuffer(w, h, true);
 	m_shadow_fb->AddAttachement(IMGFORMAT_RGB);
 	m_shadow_fb->BuildFBO();
-	m_shadow_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 0);
+	//m_shadow_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 0);
 
 	m_shadow_blur_a = api->CreateFrameBuffer(w, h, true);
 	m_shadow_blur_a->AddAttachement(IMGFORMAT_RGB);
 	m_shadow_blur_a->BuildFBO();
-	m_shadow_blur_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 1);
+	//m_shadow_blur_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 1);
 
 	m_shadow_blur_b = api->CreateFrameBuffer(w, h, true);
 	m_shadow_blur_b->AddAttachement(IMGFORMAT_RGB);
 	m_shadow_blur_b->BuildFBO();
-	m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
+	//m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
 
 	m_final_passes = api->CreateFrameBuffer(w, h, true);
 	m_final_passes->AddAttachement(IMGFORMAT_RGB);
 	m_final_passes->BuildFBO();
-	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
+	//m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
 }
 
 void RD_RenderingPipelinePBR::InitUBO(RD_RenderingAPI* api) {
@@ -270,9 +270,9 @@ void RD_RenderingPipelinePBR::BlurShadow() {
 
 	m_shadowBlur->useShader();
 
-	if (m_shadow_fb->GetAttachementByIndex(0)->BindTexture(0)) {
-		m_shadowBlur->SetInt("baseImage", 0);
-	}
+	//if (m_shadow_fb->GetAttachementByIndex(0)->BindTexture(0)) {
+	//	m_shadowBlur->SetInt("baseImage", 0);
+	//}
 
 	m_shadow_blur_a->BindFBO();
 
@@ -302,14 +302,14 @@ void RD_RenderingPipelinePBR::ResizeFramebuffers(RD_RenderingAPI* api, const int
 	m_final_passes->ChangeFramebufferSize(w, h);
 
 	for (int i = 0; i < 7; i++) {
-		m_gbuff->GetAttachementByIndex(i)->MakeTexBindless(api, m_gbuff_handles, i);
+		//m_gbuff->GetAttachementByIndex(i)->MakeTexBindless(api, m_gbuff_handles, i);
 	}
 
-	m_light_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 1);
-	m_shadow_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 0);
-	m_shadow_blur_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 1);
-	m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
-	m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
+	//m_light_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 1);
+	//m_shadow_fb->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 0);
+	//m_shadow_blur_a->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 1);
+	//m_shadow_blur_b->GetAttachementByIndex(0)->MakeTexBindless(api, m_sfx_handles, 2);
+	//m_final_passes->GetAttachementByIndex(0)->MakeTexBindless(api, m_final_passes_handle, 0);
 }
 
 RD_ShaderLoader* RD_RenderingPipelinePBR::DebugStart() {

@@ -19,6 +19,7 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 
 	//m_txt = new EXP_TextSurface(game, "Hello", 512, "/nova.ttf", vec3f(0.0f, 0.0f, 2.0f), vec3f(), vec3f(0.2f, 0.2f, 0.2f), vec3f(1.0f, 0.5f, 0.5f));
 
+	/*
 	std::string game_pref = m_game->GetGameInfo().RootGameContentFolder;
 	m_game->GetRenderer()->MakeEnvCubemapFromTexs(
 		{
@@ -30,6 +31,7 @@ MainLevel::MainLevel(EXP_Game* game, EXP_MapLoader* mloader) : EXP_Level(true, t
 			game_pref + "/Cubemap/nz.png"
 		}
 	);
+	*/
 
 	m_game->ToggleDebugRendering(true);
 }
