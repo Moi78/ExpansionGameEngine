@@ -15,6 +15,8 @@
 
 #include <optional>
 #include <set>
+#include <limits>
+#include <algorithm>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -27,6 +29,12 @@
 
 #include "RD_RenderingAPI.h"
 
+struct RD_SwapChainDetails {
+	VkSurfaceCapabilitiesKHR cap;
+	std::vector<VkSurfaceFormatKHR> fmt;
+	std::vector<VkPresentModeKHR> pmode;
+};
+
 class RD_API RD_WindowingSystemGLFW_Vk : public RD_WindowingSystem {
 public:
 	RD_WindowingSystemGLFW_Vk(RaindropRenderer* rndr);
@@ -35,6 +43,10 @@ public:
 
 	virtual bool OpenWindow(std::string name, int w, int h);
 	VkResult CreateWindowSurface(VkInstance inst);
+	RD_SwapChainDetails QuerySwapchainSupport(VkPhysicalDevice dev);
+	VkSurfaceFormatKHR ChooseSwapFormat(const std::vector<VkSurfaceFormatKHR> availFmt);
+	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availPmodes);
+	VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR& cap);
 	virtual void SetFullscreenMode(bool mode);
 
 	virtual int GetHeight();

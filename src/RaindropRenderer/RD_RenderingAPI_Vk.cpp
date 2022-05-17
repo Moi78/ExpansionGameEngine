@@ -73,12 +73,12 @@ void RD_WindowingSystemGLFW_Vk::SetFullscreenMode(bool mode) {
 }
 
 int RD_WindowingSystemGLFW_Vk::GetHeight() {
-	glfwGetWindowSize(m_win, NULL, &m_h);
+	glfwGetFramebufferSize(m_win, NULL, &m_h);
 	return m_h;
 }
 
 int RD_WindowingSystemGLFW_Vk::GetWidth() {
-	glfwGetWindowSize(m_win, &m_w, NULL);
+	glfwGetFramebufferSize(m_win, &m_w, NULL);
 	return m_w;
 }
 
@@ -167,6 +167,74 @@ VkResult RD_WindowingSystemGLFW_Vk::CreateWindowSurface(VkInstance inst) {
 
 VkSurfaceKHR RD_WindowingSystemGLFW_Vk::GetSurfaceHandle() {
 	return m_surface;
+}
+
+RD_SwapChainDetails RD_WindowingSystemGLFW_Vk::QuerySwapchainSupport(VkPhysicalDevice dev) {
+	assert(m_surface != VK_NULL_HANDLE && "Surface must be initialized.");
+
+	RD_SwapChainDetails details{};
+
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(dev, m_surface, &details.cap);
+
+	uint32_t fmt_count;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(dev, m_surface, &fmt_count, nullptr);
+
+	if (fmt_count != 0) {
+		details.fmt.resize(fmt_count);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(dev, m_surface, &fmt_count, details.fmt.data());
+	}
+
+	uint32_t pres_mode_count;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(dev, m_surface, &pres_mode_count, nullptr);
+
+	if (pres_mode_count != 0) {
+		details.pmode.resize(pres_mode_count);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(dev, m_surface, &pres_mode_count, details.pmode.data());
+	}
+
+	return details;
+}
+
+VkSurfaceFormatKHR RD_WindowingSystemGLFW_Vk::ChooseSwapFormat(const std::vector<VkSurfaceFormatKHR> availFmt) {
+	for (const auto& fmt : availFmt) {
+		if (fmt.format == VK_FORMAT_R8G8B8_SRGB && fmt.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR) {
+			return fmt;
+		}
+	}
+
+	return availFmt[0]; // If the format that I want is not listed...
+}
+
+VkPresentModeKHR RD_WindowingSystemGLFW_Vk::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availPmodes) {
+	for (auto& pmode : availPmodes) {
+		if (pmode == VK_PRESENT_MODE_MAILBOX_KHR) {
+			return pmode;
+		}
+	}
+
+	return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+#undef max
+VkExtent2D RD_WindowingSystemGLFW_Vk::ChooseSwapExtent(VkSurfaceCapabilitiesKHR& cap) {
+	if (cap.currentExtent.width != std::numeric_limits<uint32_t>::max() && cap.currentExtent.height != std::numeric_limits<uint32_t>::max()) {
+		return cap.currentExtent;
+	}
+	else {
+		int w, h;
+		h = GetHeight();
+		w = GetWidth();
+
+		VkExtent2D ext = {
+			w,
+			h
+		};
+
+		ext.height = std::clamp(ext.height, cap.minImageExtent.height, cap.maxImageExtent.height);
+		ext.width = std::clamp(ext.width, cap.minImageExtent.width, cap.maxImageExtent.width);
+
+		return ext;
+	}
 }
 
 // ---------- RD_RenderingAPI_VertexElemBufferVk -----------
@@ -384,7 +452,7 @@ QueueFamilyIndices RD_RenderingAPI_Vk::FindQueueFamilies(VkPhysicalDevice dev) {
 		}
 
 		VkBool32 presSupport = false;
-		vkGetPhysicalDeviceSurfaceSupportKHR(m_dev, i, m_win_sys->GetSurfaceHandle(), &presSupport);
+		vkGetPhysicalDeviceSurfaceSupportKHR(dev, i, m_win_sys->GetSurfaceHandle(), &presSupport);
 		if (presSupport) {
 			indices.presentationFamily = i;
 		}
@@ -404,7 +472,12 @@ bool RD_RenderingAPI_Vk::IsDeviceSuitable(VkPhysicalDevice dev) {
 
 	QueueFamilyIndices qFam = FindQueueFamilies(dev);
 
-	return (prop.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) && qFam.IsComplete(m_dev);
+	RD_SwapChainDetails scDet{};
+	scDet = m_win_sys->QuerySwapchainSupport(dev);
+
+	bool isSwapchainSuitable = !(scDet.fmt.empty()) && !(scDet.pmode.empty());
+
+	return (prop.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) && qFam.IsComplete(dev) && isSwapchainSuitable;
 }
 
 bool RD_RenderingAPI_Vk::CreateVkInst() {
