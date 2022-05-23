@@ -5,6 +5,7 @@
 #ifdef _WIN32
 
 void dispErrorMessageBox(LPCWSTR Message) {
+	std::wcout << L"ERROR: " << Message << std::endl;
 	MessageBox(nullptr, Message, TEXT("ERROR !!!"), MB_ICONERROR | MB_OK);
 }
 

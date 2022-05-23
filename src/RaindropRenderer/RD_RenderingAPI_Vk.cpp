@@ -37,7 +37,8 @@ RD_WindowingSystemGLFW_Vk::~RD_WindowingSystemGLFW_Vk() {
 	glfwTerminate();
 }
 
-void RD_WindowingSystemGLFW_Vk::CleanupVK(VkInstance inst) {
+void RD_WindowingSystemGLFW_Vk::CleanupVK(VkInstance inst, VkDevice dev) {
+	vkDestroySwapchainKHR(dev, m_swapChain, nullptr);
 	vkDestroySurfaceKHR(inst, m_surface, nullptr);
 }
 
@@ -237,6 +238,54 @@ VkExtent2D RD_WindowingSystemGLFW_Vk::ChooseSwapExtent(VkSurfaceCapabilitiesKHR&
 	}
 }
 
+bool RD_WindowingSystemGLFW_Vk::CreateSwapChain(VkDevice dev, VkPhysicalDevice pdev, QueueFamilyIndices ind) {
+	RD_SwapChainDetails swDet = QuerySwapchainSupport(pdev);
+
+	VkSurfaceFormatKHR sfFormat = ChooseSwapFormat(swDet.fmt);
+	VkPresentModeKHR presMode = ChooseSwapPresentMode(swDet.pmode);
+	VkExtent2D extent = ChooseSwapExtent(swDet.cap);
+
+	uint32_t imgCount = swDet.cap.minImageCount + 1;
+	if (swDet.cap.maxImageCount > 0 && imgCount > swDet.cap.maxImageCount) {
+		imgCount = swDet.cap.maxImageCount;
+	}
+
+	VkSwapchainCreateInfoKHR cInfo{};
+	cInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	cInfo.surface = m_surface;
+	cInfo.minImageCount = imgCount;
+	cInfo.imageFormat = sfFormat.format;
+	cInfo.imageColorSpace = sfFormat.colorSpace;
+	cInfo.imageExtent = extent;
+	cInfo.imageArrayLayers = 1;
+	cInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+	uint32_t qFamInd[] = { ind.graphicsFamily.value(), ind.presentationFamily.value() };
+	if (ind.graphicsFamily != ind.presentationFamily) {
+		cInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+		cInfo.queueFamilyIndexCount = 2;
+		cInfo.pQueueFamilyIndices = qFamInd;
+	}
+	else {
+		cInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		cInfo.queueFamilyIndexCount = 0;
+		cInfo.pQueueFamilyIndices = nullptr;
+	}
+
+	cInfo.preTransform = swDet.cap.currentTransform;
+	cInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	cInfo.presentMode = presMode;
+	cInfo.clipped = VK_TRUE;
+	cInfo.oldSwapchain = VK_NULL_HANDLE;
+
+	if (vkCreateSwapchainKHR(dev, &cInfo, nullptr, &m_swapChain) == VK_SUCCESS) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 // ---------- RD_RenderingAPI_VertexElemBufferVk -----------
 
 RD_RenderingAPI_VertexElemBufferVk::RD_RenderingAPI_VertexElemBufferVk() {
@@ -331,12 +380,13 @@ RD_RenderingAPI_Vk::RD_RenderingAPI_Vk(RaindropRenderer* rndr) {
 }
 
 RD_RenderingAPI_Vk::~RD_RenderingAPI_Vk() {
+	m_win_sys->CleanupVK(m_inst, m_ldev);
+
 	vkDestroyDevice(m_ldev, nullptr);
 	if (m_validationLayers) {
 		vkDestroyDebugUtilsMessengerEXT(m_inst, m_cbck_dbg, nullptr);
 	}
 
-	m_win_sys->CleanupVK(m_inst);
 	vkDestroyInstance(m_inst, nullptr);
 
 	delete m_win_sys;
@@ -363,6 +413,12 @@ bool RD_RenderingAPI_Vk::InitializeAPI(int w, int h, std::string wname) {
 	PickPhysicalDevice();
 
 	if (!CreateDevice()) {
+		return false;
+	}
+
+	QueueFamilyIndices qFamInd = FindQueueFamilies(m_dev);
+	if (!m_win_sys->CreateSwapChain(m_ldev, m_dev, qFamInd)) {
+		dispErrorMessageBox(L"Failed to create swapchain.");
 		return false;
 	}
 

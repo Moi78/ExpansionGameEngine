@@ -29,17 +29,28 @@
 
 #include "RD_RenderingAPI.h"
 
+bool CheckDeviceExtensionSupport(VkPhysicalDevice dev);
+
 struct RD_SwapChainDetails {
 	VkSurfaceCapabilitiesKHR cap;
 	std::vector<VkSurfaceFormatKHR> fmt;
 	std::vector<VkPresentModeKHR> pmode;
 };
 
+struct QueueFamilyIndices {
+	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> presentationFamily;
+
+	bool IsComplete(VkPhysicalDevice dev) {
+		return graphicsFamily.has_value() && presentationFamily.has_value() && CheckDeviceExtensionSupport(dev);
+	}
+};
+
 class RD_API RD_WindowingSystemGLFW_Vk : public RD_WindowingSystem {
 public:
 	RD_WindowingSystemGLFW_Vk(RaindropRenderer* rndr);
 	virtual ~RD_WindowingSystemGLFW_Vk();
-	void CleanupVK(VkInstance inst);
+	void CleanupVK(VkInstance inst, VkDevice dev);
 
 	virtual bool OpenWindow(std::string name, int w, int h);
 	VkResult CreateWindowSurface(VkInstance inst);
@@ -47,6 +58,8 @@ public:
 	VkSurfaceFormatKHR ChooseSwapFormat(const std::vector<VkSurfaceFormatKHR> availFmt);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availPmodes);
 	VkExtent2D ChooseSwapExtent(VkSurfaceCapabilitiesKHR& cap);
+	bool CreateSwapChain(VkDevice dev, VkPhysicalDevice pdev, QueueFamilyIndices ind);
+
 	virtual void SetFullscreenMode(bool mode);
 
 	virtual int GetHeight();
@@ -79,6 +92,7 @@ private:
 	RaindropRenderer* m_rndr;
 
 	VkSurfaceKHR m_surface;
+	VkSwapchainKHR m_swapChain;
 };
 
 class RD_API RD_RenderingAPI_VertexElemBufferVk : public RD_RenderingAPI_VertexElemBuffer {
@@ -155,17 +169,6 @@ private:
 	unsigned int m_dataSize;
 };
 
-bool CheckDeviceExtensionSupport(VkPhysicalDevice dev);
-
-struct QueueFamilyIndices {
-	std::optional<uint32_t> graphicsFamily;
-	std::optional<uint32_t> presentationFamily;
-
-	bool IsComplete(VkPhysicalDevice dev) {
-		return graphicsFamily.has_value() && presentationFamily.has_value() && CheckDeviceExtensionSupport(dev);
-	}
-};
-
 class RD_API RD_RenderingAPI_Vk : public RD_RenderingAPI {
 public:
 	RD_RenderingAPI_Vk(RaindropRenderer* rndr);
@@ -208,6 +211,7 @@ private:
 	bool SetupDebugMessenger();
 	void PickPhysicalDevice();
 	bool CreateDevice();
+
 	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice dev);
 
 	std::vector<const char*> GetRequiredExtensions();
