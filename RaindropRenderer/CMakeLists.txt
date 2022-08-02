@@ -13,7 +13,7 @@ add_library(RaindropRenderer SHARED
     RD_RenderPass.cpp
     RD_Pipeline.h
     RD_Pipeline.cpp
-    RD_VertexBuffer.cpp RD_VertexBuffer.h)
+    RD_VertexBuffer.cpp RD_VertexBuffer.h RD_Buffer.h RD_Buffer.cpp)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(glfw3 3.3 REQUIRED FATAL_ERROR)

@@ -12,10 +12,13 @@
 
 #include <iostream>
 #include <memory>
+#include <optional>
 
 #include "RD_RenderPass.h"
 #include "RD_Pipeline.h"
 #include "RD_ShaderLoader.h"
+#include "RD_Buffer.h"
+#include "vec.h"
 
 class RD_DLLAPI RD_Windowing {
 public:
@@ -156,7 +159,7 @@ private:
 
     std::shared_ptr<RD_RenderPass> m_rpass;
     std::shared_ptr<RD_Pipeline> m_pline;
-    std::shared_ptr<RD_VertexBuffer_Vk> m_verticies;
+    std::shared_ptr<RD_VertexBuffer> m_verticies;
 
 	VkQueue m_gfxQueue;
 	VkQueue m_presentQueue;

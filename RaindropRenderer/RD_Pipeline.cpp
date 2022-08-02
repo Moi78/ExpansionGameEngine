@@ -196,8 +196,6 @@ void RD_Pipeline_Vk::BindSC(VkFramebuffer fb) {
     vkBeginCommandBuffer(m_cmdBuffer, &bInfo);
     m_rpass->BeginRenderPass(m_cmdBuffer, fb);
     vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
-
-    vkCmdDraw(m_cmdBuffer, 3, 1, 0, 0);
 }
 
 
@@ -240,7 +238,7 @@ void RD_Pipeline_Vk::DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) {
     vkCmdDraw(
             m_cmdBuffer, static_cast<uint32_t>(vb->GetBufferSize() / 8),
             1, 0, 0
-             );
+    );
 }
 
 #endif //BUILD_VULKAN

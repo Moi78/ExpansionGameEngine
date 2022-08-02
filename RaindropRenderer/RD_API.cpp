@@ -43,6 +43,7 @@ void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoD
     if(!surfaceNoDelete) {
         m_rpass.reset();
         m_pline.reset();
+        m_verticies.reset();
     }
 
 	if(!surfaceNoDelete) {
@@ -333,6 +334,8 @@ void RD_Windowing_GLFW::Present() {
 	std::shared_ptr<RD_Pipeline_Vk> plineVK = std::reinterpret_pointer_cast<RD_Pipeline_Vk>(m_pline);
 	plineVK->BindSC(m_scFbs[m_imgIdx]);
 
+    plineVK->DrawVertexBuffer(m_verticies);
+
 	m_pline->Unbind();
 	vkResetFences(m_dev, 1, &m_inFLight_f);
 
@@ -421,7 +424,14 @@ void RD_Windowing_GLFW::BuildBlitPipeline() {
     m_pline = m_api->CreatePipeline(m_rpass, blitShader);
     m_pline->BuildPipeline();
 
+    m_verticies = m_api->CreateVertexBuffer();
 
+    auto vData = MakeVertexData(
+            { vec3(0.0, -0.5, 0.0), vec3(0.5, 0.5, 0.0), vec3(-0.5, 0.5, 0.0) },
+            { vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0) },
+            { vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0)}
+    );
+    m_verticies->FillBufferData(vData);
 }
 
 // ------------------------------------------------------------------------------------
@@ -749,7 +759,7 @@ void RD_API_Vk::ProperQuit() {
 }
 
 std::shared_ptr<RD_VertexBuffer> RD_API_Vk::CreateVertexBuffer() {
-    return std::make_shared<RD_VertexBuffer_Vk>(m_ldev, m_dev);
+    return std::make_shared<RD_VertexBuffer_Vk>(m_ldev, m_dev, m_gfx_queue, m_pool);
 }
 
 //-----------------------------------
