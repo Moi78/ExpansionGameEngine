@@ -32,18 +32,18 @@ RD_VertexBuffer_Vk::~RD_VertexBuffer_Vk() {
 }
 
 bool RD_VertexBuffer_Vk::FillBufferData(std::vector<float>& vertexData) {
-    if(!m_stagingBuffer->BuildAndAllocateBuffer(vertexData.size() * sizeof(float), RD_BufferUsage::BUFF_VERTEX, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+    auto flags_ = static_cast<RD_BufferUsage>(RD_BufferUsage::BUFF_TRANSFER_SRC | RD_BufferUsage::BUFF_VERTEX);
+    if(!m_stagingBuffer->BuildAndAllocateBuffer(vertexData.size() * sizeof(float), flags_, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
         std::cerr << "ERROR: Failed to allocate vertex buffer." << std::endl;
         return false;
     }
 
     m_stagingBuffer->FillBufferData((void*)(vertexData.data()));
 
+    auto flags = static_cast<RD_BufferUsage>(RD_BufferUsage::BUFF_TRANSFER_DEST | RD_BufferUsage::BUFF_VERTEX);
+
     if(!m_buffer->BuildAndAllocateBuffer(vertexData.size() * sizeof(float),
-                                         static_cast<RD_BufferUsage>(
-                                                 RD_BufferUsage::BUFF_TRANSFER_DEST |
-                                                 RD_BufferUsage::BUFF_VERTEX
-                                                 ),
+                                        flags,
                                          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
     ) {
         std::cerr << "ERROR: Failed to allocate staging buffer." << std::endl;
@@ -70,6 +70,74 @@ void RD_VertexBuffer_Vk::BindBuffer(VkCommandBuffer cmd) {
 
     VkBuffer buff = m_buffer->GetBufferHandle();
     vkCmdBindVertexBuffers(cmd, 0, 1, &buff, &offset);
+}
+
+//-----------------------------------------------------
+
+RD_IndexedVertexBuffer_Vk::RD_IndexedVertexBuffer_Vk(
+        VkDevice dev, VkPhysicalDevice pdev, VkQueue gfxQueue, VkCommandPool cmdPool
+        ) : RD_VertexBuffer_Vk(dev, pdev, gfxQueue, cmdPool) {
+    m_indBuffer = std::make_unique<RD_Buffer_Vk>(dev, pdev, gfxQueue, cmdPool);
+    m_stagingIndBuffer = std::make_unique<RD_Buffer_Vk>(dev, pdev, gfxQueue, cmdPool);
+
+    m_nbrInd = 0;
+}
+
+RD_IndexedVertexBuffer_Vk::~RD_IndexedVertexBuffer_Vk() {
+
+}
+
+bool RD_IndexedVertexBuffer_Vk::FillBufferData(
+        std::vector<float> &vertexData, std::vector<uint32_t> indexData
+) {
+    if(!RD_VertexBuffer_Vk::FillBufferData(vertexData)) {
+        return false;
+    }
+
+    auto flags_ = static_cast<RD_BufferUsage>(RD_BufferUsage::BUFF_TRANSFER_SRC | RD_BufferUsage::BUFF_INDEX);
+    if(!m_stagingIndBuffer->BuildAndAllocateBuffer(indexData.size() * sizeof(uint32_t), flags_, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+        std::cerr << "ERROR: Failed to allocate vertex buffer." << std::endl;
+        return false;
+    }
+
+    m_stagingIndBuffer->FillBufferData((void*)(indexData.data()));
+
+    auto flags = static_cast<RD_BufferUsage>(RD_BufferUsage::BUFF_TRANSFER_DEST | RD_BufferUsage::BUFF_INDEX);
+
+    if(!m_indBuffer->BuildAndAllocateBuffer(indexData.size() * sizeof(uint32_t),
+                                         flags,
+                                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+            ) {
+        std::cerr << "ERROR: Failed to allocate staging buffer." << std::endl;
+
+        m_stagingIndBuffer.reset();
+        return false;
+    }
+    if(!m_indBuffer->CopyFromBuffer(m_stagingIndBuffer)) {
+        std::cerr << "ERROR: Failed to copy from staging buffer to actual buffer." << std::endl;
+
+        return false;
+    }
+
+    m_nbrInd = indexData.size();
+
+    return true;
+}
+
+size_t RD_IndexedVertexBuffer_Vk::GetBufferSize() {
+    return RD_VertexBuffer_Vk::GetBufferSize() + m_indBuffer->GetBufferSize();
+}
+
+void RD_IndexedVertexBuffer_Vk::BindBuffer(VkCommandBuffer cmd) {
+    RD_VertexBuffer_Vk::BindBuffer(cmd);
+
+    VkDeviceSize offset = {0};
+    VkBuffer handle = m_indBuffer->GetBufferHandle();
+    vkCmdBindIndexBuffer(cmd, handle, offset, VkIndexType::VK_INDEX_TYPE_UINT32);
+}
+
+uint32_t RD_IndexedVertexBuffer_Vk::GetNumberOfIndices() {
+    return m_nbrInd;
 }
 
 #endif //BUILD_VULKAN

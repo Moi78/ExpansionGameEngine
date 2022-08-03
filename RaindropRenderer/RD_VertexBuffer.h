@@ -16,6 +16,17 @@ public:
     virtual size_t GetBufferSize() = 0;
 };
 
+class RD_IndexedVertexBuffer {
+public:
+    RD_IndexedVertexBuffer() {};
+    virtual ~RD_IndexedVertexBuffer() {};
+
+    virtual bool FillBufferData(std::vector<float>& vertexData, std::vector<uint32_t> indexData) = 0;
+    virtual size_t GetBufferSize() = 0;
+
+    virtual uint32_t GetNumberOfIndices() = 0;
+};
+
 std::vector<float> MakeVertexData(std::vector<vec3> pos, std::vector<vec3> norm, std::vector<vec2> uv);
 
 #ifdef BUILD_VULKAN
@@ -30,11 +41,29 @@ public:
     bool FillBufferData(std::vector<float>& vertexData) override;
     size_t GetBufferSize() override;
 
-    void BindBuffer(VkCommandBuffer cmd);
+    virtual void BindBuffer(VkCommandBuffer cmd);
 
 private:
     std::unique_ptr<RD_Buffer_Vk> m_buffer;
     std::unique_ptr<RD_Buffer_Vk> m_stagingBuffer;
+};
+
+class RD_IndexedVertexBuffer_Vk : public RD_IndexedVertexBuffer, RD_VertexBuffer_Vk {
+public:
+    RD_IndexedVertexBuffer_Vk(VkDevice dev, VkPhysicalDevice pdev, VkQueue gfxQueue, VkCommandPool cmdPool);
+    ~RD_IndexedVertexBuffer_Vk() override;
+
+    bool FillBufferData(std::vector<float>& vertexData, std::vector<uint32_t> indexData) override;
+    size_t GetBufferSize() override;
+    uint32_t GetNumberOfIndices() override;
+
+    void BindBuffer(VkCommandBuffer cmd) override;
+
+private:
+    std::unique_ptr<RD_Buffer_Vk> m_indBuffer;
+    std::unique_ptr<RD_Buffer_Vk> m_stagingIndBuffer;
+
+    uint32_t m_nbrInd;
 };
 
 #endif //BUILD_VULKAN

@@ -241,4 +241,15 @@ void RD_Pipeline_Vk::DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) {
     );
 }
 
+void RD_Pipeline_Vk::DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) {
+    const std::shared_ptr<RD_IndexedVertexBuffer_Vk> vib = std::reinterpret_pointer_cast<RD_IndexedVertexBuffer_Vk>(vibuff);
+
+    vib->BindBuffer(m_cmdBuffer);
+    vkCmdDrawIndexed(
+        m_cmdBuffer,
+        vib->GetNumberOfIndices(),
+        1, 0, 0, 0
+    );
+}
+
 #endif //BUILD_VULKAN

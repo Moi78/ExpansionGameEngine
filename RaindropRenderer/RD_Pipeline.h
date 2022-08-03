@@ -20,6 +20,7 @@ public:
     virtual bool BuildPipeline() = 0;
 
     virtual void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) = 0;
+    virtual void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -42,6 +43,7 @@ public:
     void RebuildPipeline() override;
 
     void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) override;
+    void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) override;
 
 private:
     bool AllocCMDBuffer();
