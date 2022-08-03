@@ -4,6 +4,9 @@
 #include <RaindropRenderer.h>
 #include <RD_API.h>
 
+//Enabling Nvidia Optimus
+extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
+
 int main(int argc, char* argv[]) {
 	std::cout << "EXPANSION GAME ENGINE REWRITE" << std::endl;
 
