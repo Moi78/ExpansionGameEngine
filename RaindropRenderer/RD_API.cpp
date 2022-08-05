@@ -641,6 +641,11 @@ void RD_API_Vk::PickPhysicalDevice() {
 		}
 	}
 
+    if(m_dev == VK_NULL_HANDLE) {
+        std::cout << "No suitable devices..." << std::endl;
+        exit(-1);
+    }
+
 	VkPhysicalDeviceProperties prop;
 	vkGetPhysicalDeviceProperties(m_dev, &prop);
 	std::cout << "Using GPU : " << prop.deviceName << std::endl;
