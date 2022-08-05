@@ -4,6 +4,7 @@
 #include "RD_RenderPass.h"
 #include "RD_ShaderLoader.h"
 #include "RD_VertexBuffer.h"
+#include "RD_UniformBuffer.h"
 
 #include <iostream>
 #include <memory>
@@ -21,6 +22,8 @@ public:
 
     virtual void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) = 0;
     virtual void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) = 0;
+
+    virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -45,14 +48,25 @@ public:
     void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) override;
     void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) override;
 
+    void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) override;
+
 private:
     bool AllocCMDBuffer();
+    bool CreateDescriptorPool();
+    bool CreateDescriptorSet();
 
     VkDevice m_dev;
     VkCommandPool m_pool;
 
     std::shared_ptr<RD_RenderPass_Vk> m_rpass;
     std::shared_ptr<RD_ShaderLoader_Vk> m_shader;
+
+    std::vector<std::shared_ptr<RD_UniformBuffer>> m_uBuffs;
+
+    std::vector<VkDescriptorSetLayoutBinding> m_bindings;
+    VkDescriptorSet m_descSet;
+    VkDescriptorSetLayout m_descLayout;
+    VkDescriptorPool m_descPool;
 
     VkPipelineLayout m_layout;
     VkPipeline m_pipeline;

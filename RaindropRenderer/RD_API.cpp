@@ -422,6 +422,7 @@ void RD_Windowing_GLFW::BuildBlitPipeline() {
     m_rpass->BuildRenderpass(true);
 
     m_pline = m_api->CreatePipeline(m_rpass, blitShader);
+
     m_pline->BuildPipeline();
 
     m_verticies = m_api->CreateIndexedVertexBuffer();
@@ -770,6 +771,10 @@ std::shared_ptr<RD_VertexBuffer> RD_API_Vk::CreateVertexBuffer() {
 
 std::shared_ptr<RD_IndexedVertexBuffer> RD_API_Vk::CreateIndexedVertexBuffer() {
     return std::make_shared<RD_IndexedVertexBuffer_Vk>(m_ldev, m_dev, m_gfx_queue, m_pool);
+}
+
+std::shared_ptr<RD_UniformBuffer> RD_API_Vk::CreateUniformBuffer(uint32_t binding) {
+    return std::make_shared<RD_UniformBuffer_Vk>(m_ldev, m_dev, binding);
 }
 
 //-----------------------------------

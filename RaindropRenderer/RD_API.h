@@ -18,6 +18,7 @@
 #include "RD_Pipeline.h"
 #include "RD_ShaderLoader.h"
 #include "RD_Buffer.h"
+#include "RD_UniformBuffer.h"
 #include "vec.h"
 
 class RD_DLLAPI RD_Windowing {
@@ -56,6 +57,7 @@ public:
 	virtual std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader) = 0;
     virtual std::shared_ptr<RD_VertexBuffer> CreateVertexBuffer() = 0;
     virtual std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() = 0;
+    virtual std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) = 0;
 
 	virtual std::shared_ptr<RD_Windowing> GetWindowingSystem() = 0;
 };
@@ -183,6 +185,7 @@ public:
 	std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader) override;
     std::shared_ptr<RD_VertexBuffer> CreateVertexBuffer() override;
     std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() override;
+    std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) override;
 
 	std::shared_ptr<RD_Windowing> GetWindowingSystem() override;
 private:

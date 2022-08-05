@@ -8,6 +8,14 @@ RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, std::shared_pt
 
     m_rpass = std::reinterpret_pointer_cast<RD_RenderPass_Vk>(rpass);
     m_shader = std::reinterpret_pointer_cast<RD_ShaderLoader_Vk>(shader);
+
+    m_descSet = VK_NULL_HANDLE;
+    m_descLayout = VK_NULL_HANDLE;
+    m_descPool = VK_NULL_HANDLE;
+
+    m_cmdBuffer = VK_NULL_HANDLE;
+    m_layout = VK_NULL_HANDLE;
+    m_pipeline = VK_NULL_HANDLE;
 }
 
 RD_Pipeline_Vk::~RD_Pipeline_Vk() {
@@ -15,6 +23,8 @@ RD_Pipeline_Vk::~RD_Pipeline_Vk() {
 }
 
 void RD_Pipeline_Vk::CleanUp() {
+    vkDestroyDescriptorSetLayout(m_dev, m_descLayout, nullptr);
+    vkDestroyDescriptorPool(m_dev, m_descPool, nullptr);
     vkDestroyPipelineLayout(m_dev, m_layout, nullptr);
     vkDestroyPipeline(m_dev, m_pipeline, nullptr);
 }
@@ -131,6 +141,25 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     VkPipelineLayoutCreateInfo plineLayoutInfo{};
     plineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
+    //UNIFORM BUFFERS (If any)
+    if(!m_uBuffs.empty()) {
+        VkDescriptorSetLayoutCreateInfo bindingLayoutInfo{};
+        bindingLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        bindingLayoutInfo.bindingCount = m_bindings.size();
+        bindingLayoutInfo.pBindings = m_bindings.data();
+
+        if(vkCreateDescriptorSetLayout(m_dev, &bindingLayoutInfo, nullptr, &m_descLayout) != VK_SUCCESS) {
+            std::cerr << "ERROR: Failed to create descriptor set layout." << std::endl;
+        }
+
+        plineLayoutInfo.setLayoutCount = 1;
+        plineLayoutInfo.pSetLayouts = &m_descLayout;
+
+        if(CreateDescriptorPool()) {
+            CreateDescriptorSet();
+        }
+    }
+
     if(vkCreatePipelineLayout(m_dev, &plineLayoutInfo, nullptr, &m_layout) != VK_SUCCESS) {
         std::cerr << "Failed to create pipeline layout." << std::endl;
         return false;
@@ -163,6 +192,64 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     return AllocCMDBuffer();
 }
 
+bool RD_Pipeline_Vk::CreateDescriptorPool() {
+    VkDescriptorPoolSize poolSize{};
+    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSize.descriptorCount = m_bindings.size();
+
+    VkDescriptorPoolCreateInfo cInfo{};
+    cInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    cInfo.poolSizeCount = 1;
+    cInfo.pPoolSizes = &poolSize;
+    cInfo.maxSets = m_bindings.size();
+
+    if(vkCreateDescriptorPool(m_dev, &cInfo, nullptr, &m_descPool) != VK_SUCCESS) {
+        std::cerr << "ERROR: Failed to create descriptor pool." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool RD_Pipeline_Vk::CreateDescriptorSet() {
+    assert(m_descPool != VK_NULL_HANDLE && "Descriptor pool must have been created.");
+
+    VkDescriptorSetAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = m_descPool;
+    allocInfo.descriptorSetCount = 1;
+    allocInfo.pSetLayouts = &m_descLayout;
+
+    if(vkAllocateDescriptorSets(m_dev, &allocInfo, &m_descSet) != VK_SUCCESS) {
+        std::cerr << "ERROR: Failed to allocate descriptor sets." << std::endl;
+        return false;
+    }
+
+    for(int i = 0; i < m_bindings.size(); i++) {
+        std::shared_ptr<RD_UniformBuffer_Vk> vkUBuff = std::reinterpret_pointer_cast<RD_UniformBuffer_Vk>(m_uBuffs[i]);
+
+        VkDescriptorBufferInfo buffInfo{};
+        buffInfo.buffer = vkUBuff->GetBufferHandle();
+        buffInfo.offset = 0;
+        buffInfo.range = vkUBuff->GetBufferSize();
+
+        VkWriteDescriptorSet descW{};
+        descW.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descW.dstSet = m_descSet;
+        descW.dstBinding = vkUBuff->GetBinding();
+        descW.dstArrayElement = 0;
+        descW.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descW.descriptorCount = 1;
+        descW.pBufferInfo = &buffInfo;
+        descW.pImageInfo = nullptr;
+        descW.pTexelBufferView = nullptr;
+
+        vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
+    }
+
+    return true;
+}
+
 bool RD_Pipeline_Vk::AllocCMDBuffer() {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -185,6 +272,10 @@ void RD_Pipeline_Vk::Bind() {
     vkBeginCommandBuffer(m_cmdBuffer, &bInfo);
     m_rpass->BeginRenderPass(m_cmdBuffer);
     vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+
+    if(m_descSet != VK_NULL_HANDLE) {
+        vkCmdBindDescriptorSets(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, 1, &m_descSet, 0, nullptr);
+    }
 }
 
 void RD_Pipeline_Vk::BindSC(VkFramebuffer fb) {
@@ -196,8 +287,11 @@ void RD_Pipeline_Vk::BindSC(VkFramebuffer fb) {
     vkBeginCommandBuffer(m_cmdBuffer, &bInfo);
     m_rpass->BeginRenderPass(m_cmdBuffer, fb);
     vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
-}
 
+    if(m_descSet != VK_NULL_HANDLE) {
+        vkCmdBindDescriptorSets(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, 1, &m_descSet, 0, nullptr);
+    }
+}
 
 void RD_Pipeline_Vk::Unbind() {
     m_rpass->EndRenderPass(m_cmdBuffer);
@@ -250,6 +344,19 @@ void RD_Pipeline_Vk::DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuf
         vib->GetNumberOfIndices(),
         1, 0, 0, 0
     );
+}
+
+void RD_Pipeline_Vk::RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) {
+    m_uBuffs.push_back(buff);
+
+    VkDescriptorSetLayoutBinding bindLayout{};
+    bindLayout.binding = buff->GetBinding();
+    bindLayout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    bindLayout.descriptorCount = 1;
+    bindLayout.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    bindLayout.pImmutableSamplers = nullptr;
+
+    m_bindings.push_back(bindLayout);
 }
 
 #endif //BUILD_VULKAN

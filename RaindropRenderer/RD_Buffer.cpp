@@ -38,14 +38,16 @@ bool RD_Buffer_Vk::BuildAndAllocateBuffer(size_t size, RD_BufferUsage usage, int
             {RD_BufferUsage::BUFF_VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT},
             {RD_BufferUsage::BUFF_TRANSFER_DEST, VK_BUFFER_USAGE_TRANSFER_DST_BIT},
             {RD_BufferUsage::BUFF_TRANSFER_SRC, VK_BUFFER_USAGE_TRANSFER_SRC_BIT},
-            {RD_BufferUsage::BUFF_INDEX, VK_BUFFER_USAGE_INDEX_BUFFER_BIT}
+            {RD_BufferUsage::BUFF_INDEX, VK_BUFFER_USAGE_INDEX_BUFFER_BIT},
+            {RD_BufferUsage::BUFF_UNIFORM, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}
     };
 
     std::initializer_list<RD_BufferUsage> allUsages = {
             RD_BufferUsage::BUFF_VERTEX,
             RD_BufferUsage::BUFF_TRANSFER_DEST,
             RD_BufferUsage::BUFF_TRANSFER_SRC,
-            RD_BufferUsage::BUFF_INDEX
+            RD_BufferUsage::BUFF_INDEX,
+            RD_BufferUsage::BUFF_UNIFORM
     };
 
     VkBufferUsageFlags useFlag = 0;

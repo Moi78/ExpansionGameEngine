@@ -10,7 +10,8 @@ enum RD_BufferUsage {
     BUFF_VERTEX = 1,
     BUFF_TRANSFER_DEST = 2,
     BUFF_TRANSFER_SRC = 4,
-    BUFF_INDEX = 8
+    BUFF_INDEX = 8,
+    BUFF_UNIFORM = 16
 };
 
 class RD_Buffer {
