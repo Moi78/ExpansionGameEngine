@@ -13,7 +13,7 @@ add_library(RaindropRenderer SHARED
     RD_RenderPass.cpp
     RD_Pipeline.h
     RD_Pipeline.cpp
-    RD_VertexBuffer.cpp RD_VertexBuffer.h RD_Buffer.h RD_Buffer.cpp RD_UniformBuffer.cpp RD_UniformBuffer.h)
+    RD_VertexBuffer.cpp RD_VertexBuffer.h RD_Buffer.h RD_Buffer.cpp RD_UniformBuffer.cpp RD_UniformBuffer.h RD_Texture.cpp RD_Texture.h)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(glfw3 3.3 REQUIRED FATAL_ERROR)
@@ -25,5 +25,6 @@ target_link_libraries(RaindropRenderer glfw)
 target_include_directories(RaindropRenderer PUBLIC ${glfw_INCLUDE_DIRS})
 
 target_include_directories(RaindropRenderer PUBLIC "../ExpansionMath/")
+target_include_directories(RaindropRenderer PUBLIC "../third_party/")
 
 install(TARGETS RaindropRenderer RUNTIME DESTINATION bin)

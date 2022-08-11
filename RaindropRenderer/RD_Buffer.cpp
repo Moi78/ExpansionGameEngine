@@ -1,5 +1,7 @@
 #include "RD_Buffer.h"
 
+#ifdef BUILD_VULKAN
+
 uint32_t FindMemoryType(VkPhysicalDevice pdev, uint32_t filter, VkMemoryPropertyFlags memflags) {
     VkPhysicalDeviceMemoryProperties memProperties;
     vkGetPhysicalDeviceMemoryProperties(pdev, &memProperties);
@@ -11,6 +13,39 @@ uint32_t FindMemoryType(VkPhysicalDevice pdev, uint32_t filter, VkMemoryProperty
     }
 
     throw std::runtime_error("ERROR: Failed to find suitable memory type.");
+}
+
+VkCommandBuffer BeginOneTimeCommand(VkDevice dev, VkCommandPool cmdPool) {
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = cmdPool;
+    allocInfo.commandBufferCount = 1;
+
+    VkCommandBuffer commandBuffer;
+    vkAllocateCommandBuffers(dev, &allocInfo, &commandBuffer);
+
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+    return commandBuffer;
+}
+
+void EndOneTimeCommand(VkDevice dev, VkCommandPool cmdPool, VkCommandBuffer cmdBuffer, VkQueue gfxQueue) {
+    vkEndCommandBuffer(cmdBuffer);
+
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &cmdBuffer;
+
+    vkQueueSubmit(gfxQueue, 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueWaitIdle(gfxQueue);
+
+    vkFreeCommandBuffers(dev, cmdPool, 1, &cmdBuffer);
 }
 
 //-------------------------------------------------------------------------
@@ -150,3 +185,5 @@ bool RD_Buffer_Vk::CreateBuffer(size_t size, VkBufferUsageFlags usage) {
 
     return true;
 }
+
+#endif //BUILD_VULKAN

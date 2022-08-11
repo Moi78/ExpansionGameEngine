@@ -33,6 +33,8 @@ public:
 
 uint32_t FindMemoryType(VkPhysicalDevice pdev, uint32_t filter, VkMemoryPropertyFlags memflags);
 
+VkCommandBuffer BeginOneTimeCommand(VkDevice dev, VkCommandPool cmdPool);
+void EndOneTimeCommand(VkDevice dev, VkCommandPool cmdPool, VkCommandBuffer cmdBuffer, VkQueue gfxQueue);
 
 class RD_Buffer_Vk : public RD_Buffer {
 public:

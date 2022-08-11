@@ -141,12 +141,16 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     VkPipelineLayoutCreateInfo plineLayoutInfo{};
     plineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
-    //UNIFORM BUFFERS (If any)
-    if(!m_uBuffs.empty()) {
+    //UNIFORM BUFFERS // TEXTURE BUFFERS (If any)
+    if((!m_uBuffs.empty()) || (!m_texs.empty())) {
+        std::vector<VkDescriptorSetLayoutBinding> bindings;
+        bindings.insert(bindings.begin(), m_bindings.begin(), m_bindings.end());
+        bindings.insert(bindings.end(), m_bindings_tex.begin(), m_bindings_tex.end());
+
         VkDescriptorSetLayoutCreateInfo bindingLayoutInfo{};
         bindingLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-        bindingLayoutInfo.bindingCount = m_bindings.size();
-        bindingLayoutInfo.pBindings = m_bindings.data();
+        bindingLayoutInfo.bindingCount = bindings.size();
+        bindingLayoutInfo.pBindings = bindings.data();
 
         if(vkCreateDescriptorSetLayout(m_dev, &bindingLayoutInfo, nullptr, &m_descLayout) != VK_SUCCESS) {
             std::cerr << "ERROR: Failed to create descriptor set layout." << std::endl;
@@ -193,15 +197,29 @@ bool RD_Pipeline_Vk::BuildPipeline() {
 }
 
 bool RD_Pipeline_Vk::CreateDescriptorPool() {
+    std::vector<VkDescriptorPoolSize> psize;
+
     VkDescriptorPoolSize poolSize{};
     poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSize.descriptorCount = m_bindings.size();
 
+    if(poolSize.descriptorCount > 0) {
+        psize.push_back(poolSize);
+    }
+
+    VkDescriptorPoolSize poolSize_tex{};
+    poolSize_tex.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSize_tex.descriptorCount = m_bindings_tex.size();
+
+    if(poolSize_tex.descriptorCount > 0) {
+        psize.push_back(poolSize_tex);
+    }
+
     VkDescriptorPoolCreateInfo cInfo{};
     cInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    cInfo.poolSizeCount = 1;
-    cInfo.pPoolSizes = &poolSize;
-    cInfo.maxSets = m_bindings.size();
+    cInfo.poolSizeCount = psize.size();
+    cInfo.pPoolSizes = psize.data();
+    cInfo.maxSets = m_bindings.size() + m_bindings_tex.size();
 
     if(vkCreateDescriptorPool(m_dev, &cInfo, nullptr, &m_descPool) != VK_SUCCESS) {
         std::cerr << "ERROR: Failed to create descriptor pool." << std::endl;
@@ -242,6 +260,24 @@ bool RD_Pipeline_Vk::CreateDescriptorSet() {
         descW.descriptorCount = 1;
         descW.pBufferInfo = &buffInfo;
         descW.pImageInfo = nullptr;
+        descW.pTexelBufferView = nullptr;
+
+        vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
+    }
+
+    for(int i = 0; i < m_bindings_tex.size(); i++) {
+        std::shared_ptr<RD_Texture_Vk> vkTex = std::reinterpret_pointer_cast<RD_Texture_Vk>(m_texs[i]);
+
+        auto infos = vkTex->GetDescriptorInfo();
+
+        VkWriteDescriptorSet descW{};
+        descW.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descW.dstSet = m_descSet;
+        descW.dstBinding = m_bindings_tex[i].binding;
+        descW.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descW.descriptorCount = 1;
+        descW.pBufferInfo = nullptr;
+        descW.pImageInfo = &infos;
         descW.pTexelBufferView = nullptr;
 
         vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
@@ -357,6 +393,19 @@ void RD_Pipeline_Vk::RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& bu
     bindLayout.pImmutableSamplers = nullptr;
 
     m_bindings.push_back(bindLayout);
+}
+
+void RD_Pipeline_Vk::RegisterTexture(std::shared_ptr<RD_Texture> &tex, uint32_t binding) {
+    m_texs.push_back(tex);
+
+    VkDescriptorSetLayoutBinding bindLayout{};
+    bindLayout.binding = binding;
+    bindLayout.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    bindLayout.descriptorCount = 1;
+    bindLayout.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    bindLayout.pImmutableSamplers = nullptr;
+
+    m_bindings_tex.push_back(bindLayout);
 }
 
 #endif //BUILD_VULKAN

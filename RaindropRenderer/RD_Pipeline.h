@@ -5,9 +5,11 @@
 #include "RD_ShaderLoader.h"
 #include "RD_VertexBuffer.h"
 #include "RD_UniformBuffer.h"
+#include "RD_Texture.h"
 
 #include <iostream>
 #include <memory>
+#include <array>
 
 class RD_Pipeline {
 public:
@@ -24,6 +26,7 @@ public:
     virtual void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) = 0;
 
     virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) = 0;
+    virtual void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -49,6 +52,7 @@ public:
     void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) override;
 
     void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) override;
+    void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) override;
 
 private:
     bool AllocCMDBuffer();
@@ -62,8 +66,10 @@ private:
     std::shared_ptr<RD_ShaderLoader_Vk> m_shader;
 
     std::vector<std::shared_ptr<RD_UniformBuffer>> m_uBuffs;
+    std::vector<std::shared_ptr<RD_Texture>> m_texs;
 
     std::vector<VkDescriptorSetLayoutBinding> m_bindings;
+    std::vector<VkDescriptorSetLayoutBinding> m_bindings_tex;
     VkDescriptorSet m_descSet;
     VkDescriptorSetLayout m_descLayout;
     VkDescriptorPool m_descPool;

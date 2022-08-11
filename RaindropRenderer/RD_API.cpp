@@ -44,6 +44,8 @@ void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoD
         m_rpass.reset();
         m_pline.reset();
         m_verticies.reset();
+        m_test.reset();
+        m_grad.reset();
     }
 
 	if(!surfaceNoDelete) {
@@ -423,6 +425,14 @@ void RD_Windowing_GLFW::BuildBlitPipeline() {
 
     m_pline = m_api->CreatePipeline(m_rpass, blitShader);
 
+    m_test = m_api->CreateTexture();
+    m_test->LoadTextureFromFile("tex/test.jpg");
+    m_pline->RegisterTexture(m_test, 1);
+
+    m_grad = m_api->CreateTexture();
+    m_grad->LoadTextureFromFile("tex/grad.png");
+    m_pline->RegisterTexture(m_grad, 2);
+
     m_pline->BuildPipeline();
 
     m_verticies = m_api->CreateIndexedVertexBuffer();
@@ -668,6 +678,7 @@ bool RD_API_Vk::CreateDevice() {
 	}
 
 	VkPhysicalDeviceFeatures features{};
+    features.samplerAnisotropy = VK_TRUE;
 
 	VkDeviceCreateInfo devcInfo{};
 	devcInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -780,6 +791,10 @@ std::shared_ptr<RD_IndexedVertexBuffer> RD_API_Vk::CreateIndexedVertexBuffer() {
 
 std::shared_ptr<RD_UniformBuffer> RD_API_Vk::CreateUniformBuffer(uint32_t binding) {
     return std::make_shared<RD_UniformBuffer_Vk>(m_ldev, m_dev, binding);
+}
+
+std::shared_ptr<RD_Texture> RD_API_Vk::CreateTexture() {
+    return std::make_shared<RD_Texture_Vk>(m_ldev, m_dev, m_gfx_queue, m_pool);
 }
 
 //-----------------------------------
