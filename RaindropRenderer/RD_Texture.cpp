@@ -42,7 +42,7 @@ bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
 
     stbi_image_free(pixels);
 
-    if(!CreateImage(tx_w, tx_h)) {
+    if(!CreateImage(GetVKFormat(IMGFORMAT_RGBA), tx_w, tx_h)) {
         std::cerr << "ERROR: Failed to create image." << std::endl;
         return false;
     }
@@ -64,18 +64,44 @@ bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
     return true;
 }
 
-bool RD_Texture_Vk::CreateImage(int w, int h) {
+bool RD_Texture_Vk::CreateTextureFBReady(int format, int w, int h) {
+    VkFormat fmt = GetVKFormat(format);
+
+    if(!CreateImage(fmt, w, h, true)) {
+        return false;
+    }
+
+    auto cmdBuffer = BeginOneTimeCommand(m_dev, m_cmdPool);
+    TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    EndOneTimeCommand(m_dev, m_cmdPool, cmdBuffer, m_gfxQueue);
+
+    if(!CreateImageView()) {
+        return false;
+    }
+
+    if(!CreateImageSampler()) {
+        return false;
+    }
+
+    return true;
+}
+
+bool RD_Texture_Vk::CreateImage(VkFormat fmt, int w, int h, bool inFB) {
     VkImageCreateInfo cInfo{};
     cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     cInfo.imageType = VK_IMAGE_TYPE_2D;
     cInfo.extent = { static_cast<uint32_t>(w), static_cast<uint32_t>(h), 1 };
     cInfo.mipLevels = 1;
     cInfo.arrayLayers = 1;
-    cInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+    cInfo.format = fmt;
     cInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     cInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     cInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
     cInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+
+    if(inFB) {
+        cInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    }
 
     if(vkCreateImage(m_dev, &cInfo, nullptr, &m_imgHdl) != VK_SUCCESS) {
         std::cerr << "ERROR: Failed to create image." << std::endl;
@@ -128,6 +154,12 @@ void RD_Texture_Vk::TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout
 
         srcFlags = VK_PIPELINE_STAGE_TRANSFER_BIT;
         dstFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else if((from == VK_IMAGE_LAYOUT_UNDEFINED) && (to == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)) {
+        memBarrier.srcAccessMask = 0;
+        memBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        srcFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        dstFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     } else {
         std::cerr << "ERROR: Unsupported image transition." << std::endl;
         return;
@@ -222,4 +254,9 @@ VkDescriptorImageInfo RD_Texture_Vk::GetDescriptorInfo() {
     info.sampler = m_imgSampler;
 
     return info;
+}
+
+VkImageView RD_Texture_Vk::GetView() {
+    assert(m_imgView != VK_NULL_HANDLE);
+    return m_imgView;
 }

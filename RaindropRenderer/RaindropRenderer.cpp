@@ -1,7 +1,8 @@
 #include "RaindropRenderer.h"
 
-RaindropRenderer::RaindropRenderer(std::shared_ptr<RD_API> api, const int w, const int h, std::string wname) {
+RaindropRenderer::RaindropRenderer(std::shared_ptr<RD_API> api, std::shared_ptr<RD_RenderingPipeline> rpline, const int w, const int h, std::string wname) {
 	m_api = api;
+    m_rpline = rpline;
 
 	m_width = w;
 	m_height = h;
@@ -24,10 +25,30 @@ bool RaindropRenderer::InitRenderer() {
 		return false;
 	}
 
+    m_rpline->InitRenderingPipeline();
+
+    m_verticies = m_api->CreateIndexedVertexBuffer();
+
+    auto vData = MakeVertexData(
+            { vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(1.0, 1.0, 0.0), vec3(1.0, -1.0, 0.0) },
+            { vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0) },
+            { vec2(0.0, 1.0), vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(1.0, 0.0)}
+    );
+
+    std::vector<uint32_t> indices = {
+            0, 1, 2,
+            1, 3, 2
+    };
+
+    m_verticies->FillBufferData(vData, indices);
+
 	return true;
 }
 
 void RaindropRenderer::RenderScene() {
+    std::vector<std::shared_ptr<RD_IndexedVertexBuffer>> vbuff = {m_verticies};
+    m_rpline->RenderScene(vbuff);
+
 	m_api->GetWindowingSystem()->Present();
 }
 

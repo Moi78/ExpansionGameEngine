@@ -55,7 +55,7 @@ public:
 
 	virtual std::shared_ptr<RD_ShaderLoader> CreateShader() = 0;
 	virtual std::shared_ptr<RD_RenderPass> CreateRenderPass(std::vector<RD_Attachment> attachments, float width, float height) = 0;
-	virtual std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader) = 0;
+	virtual std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader, bool extSignaling = false) = 0;
     virtual std::shared_ptr<RD_VertexBuffer> CreateVertexBuffer() = 0;
     virtual std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() = 0;
     virtual std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) = 0;
@@ -166,9 +166,6 @@ private:
     std::shared_ptr<RD_Pipeline> m_pline;
     std::shared_ptr<RD_IndexedVertexBuffer> m_verticies;
 
-    std::shared_ptr<RD_Texture> m_test;
-    std::shared_ptr<RD_Texture> m_grad;
-
 	VkQueue m_gfxQueue;
 	VkQueue m_presentQueue;
 
@@ -187,7 +184,7 @@ public:
 
 	std::shared_ptr<RD_ShaderLoader> CreateShader() override;
 	std::shared_ptr<RD_RenderPass> CreateRenderPass(std::vector<RD_Attachment> attachments, float width, float height) override;
-	std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader) override;
+	std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader, bool extSignaling = false) override;
     std::shared_ptr<RD_VertexBuffer> CreateVertexBuffer() override;
     std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() override;
     std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) override;

@@ -1,28 +1,13 @@
 #include "RD_RenderPass.h"
+#include "RD_API.h"
 
 #ifdef BUILD_VULKAN
 
-RD_RenderPass_Vk::RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> attachments, float width, float height) {
+RD_RenderPass_Vk::RD_RenderPass_Vk(std::shared_ptr<RD_API> api, VkDevice dev, std::vector<RD_Attachment> attachments, float width, float height) {
     m_dev = dev;
     m_w = width;
     m_h = height;
-
-    std::map<int, VkFormat> map_formats {
-        {IMGFORMAT_R, VK_FORMAT_R8_SRGB},
-        {IMGFORMAT_RG, VK_FORMAT_R8G8_SRGB},
-        {IMGFORMAT_RGB, VK_FORMAT_R8G8B8_SRGB},
-        {IMGFORMAT_RGBA, VK_FORMAT_R8G8B8A8_SRGB},
-
-        {IMGFORMAT_R16F, VK_FORMAT_R32_SFLOAT},
-        {IMGFORMAT_RG16F, VK_FORMAT_R32G32_SFLOAT},
-        {IMGFORMAT_RGB16F, VK_FORMAT_R32G32B32_SFLOAT},
-        {IMGFORMAT_RGBA16F, VK_FORMAT_R32G32B32A32_SFLOAT},
-
-        {IMGFORMAT_DEPTH, VK_FORMAT_D32_SFLOAT},
-
-        {IMGFORMAT_BGRA, VK_FORMAT_B8G8R8A8_UNORM},
-        {IMGFORMAT_BGR, VK_FORMAT_B8G8R8_UNORM}
-    };
+    m_api = std::reinterpret_pointer_cast<RD_API_Vk>(api);
 
     std::map<int, VkSampleCountFlagBits> map_sample {
         {1, VK_SAMPLE_COUNT_1_BIT},
@@ -38,7 +23,7 @@ RD_RenderPass_Vk::RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> atta
         assert(att.sample_count != 0 && ((att.sample_count & (att.sample_count - 1)) == 0) && (att.sample_count <= 64) && "Sample count must be a power of 2 and between 0 and 64.");
 
         VkAttachmentDescription desc{};
-        desc.format = map_formats[att.format];
+        desc.format = GetVKFormat(att.format);
         desc.loadOp = att.do_clear ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         desc.samples = map_sample[att.sample_count];
         desc.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -49,9 +34,12 @@ RD_RenderPass_Vk::RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> atta
 
         m_att.push_back(desc);
     }
+
+    m_att_desc = attachments;
 }
 
 RD_RenderPass_Vk::~RD_RenderPass_Vk() {
+    vkDestroyFramebuffer(m_dev, m_fb, nullptr);
     vkDestroyRenderPass(m_dev, m_renderPass, nullptr);
 }
 
@@ -72,25 +60,25 @@ bool RD_RenderPass_Vk::BuildRenderpass(bool sc) {
     subpass.pColorAttachments = refs.data();
 
     std::vector<VkSubpassDependency> deps;
-    VkSubpassDependency dep{};
-    dep.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dep.dstSubpass = 0;
-    dep.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dep.srcAccessMask = 0;
-    dep.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dep.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-    deps.emplace_back(dep);
+    if(sc) {
+        VkSubpassDependency dep{};
+        dep.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dep.dstSubpass = 0;
+        dep.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dep.srcAccessMask = 0;
+        dep.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dep.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-    if(!sc) {
+        deps.emplace_back(dep);
+    } else {
         VkSubpassDependency dep_{};
-        dep_.srcSubpass = 0;
-        dep_.dstSubpass = VK_SUBPASS_EXTERNAL;
+        dep_.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dep_.dstSubpass = 0;
         dep_.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dep_.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
         dep_.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        dep_.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
-        dep_.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+        dep_.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
         deps.emplace_back(dep_);
     }
@@ -109,12 +97,10 @@ bool RD_RenderPass_Vk::BuildRenderpass(bool sc) {
         return false;
     }
 
-    if(!CreateImageViews()) {
-        return false;
-    }
-
-    if(!MakeFramebuffers()) {
-        return false;
+    if(!sc) {
+        if (!MakeFramebuffer()) {
+            return false;
+        }
     }
 
     return true;
@@ -127,14 +113,21 @@ void RD_RenderPass_Vk::BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB) 
 
     if(scFB != VK_NULL_HANDLE) {
         rpassInfo.framebuffer = scFB; // TO COMPLETE
+    } else {
+        rpassInfo.framebuffer = m_fb;
     }
 
     rpassInfo.renderArea.offset = {0, 0};
     rpassInfo.renderArea.extent = {(uint32_t)m_w, (uint32_t)m_h};
 
     constexpr VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-    rpassInfo.clearValueCount = 1;
-    rpassInfo.pClearValues = &clearColor;
+    std::vector<VkClearValue> clear;
+    for(auto& a : m_att) {
+        clear.push_back(clearColor);
+    }
+
+    rpassInfo.clearValueCount = clear.size();
+    rpassInfo.pClearValues = clear.data();
 
     vkCmdBeginRenderPass(cmd, &rpassInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
@@ -148,12 +141,29 @@ void RD_RenderPass_Vk::SetRenderpassSize(const int w, const int h) {
     m_h = h;
 }
 
-bool RD_RenderPass_Vk::CreateImageViews() {
+bool RD_RenderPass_Vk::MakeFramebuffer() {
+    std::vector<VkImageView> imgViews;
+    for(auto& a : m_att_desc) {
+        auto img = std::reinterpret_pointer_cast<RD_Texture_Vk>(m_api->CreateTexture());
+        img->CreateTextureFBReady(a.format, m_w, m_h);
 
-    return true;
-}
+        m_imgs.push_back(img);
+        imgViews.push_back(img->GetView());
+    }
 
-bool RD_RenderPass_Vk::MakeFramebuffers() {
+    VkFramebufferCreateInfo cInfo{};
+    cInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    cInfo.width = static_cast<uint32_t>(m_w);
+    cInfo.height = static_cast<uint32_t>(m_h);
+    cInfo.layers = 1;
+    cInfo.attachmentCount = m_att.size();
+    cInfo.pAttachments = imgViews.data();
+    cInfo.renderPass = m_renderPass;
+
+    if(vkCreateFramebuffer(m_dev, &cInfo, nullptr, &m_fb) != VK_SUCCESS) {
+        std::cerr << "ERROR: Failed to create framebuffer." << std::endl;
+        return false;
+    }
 
     return true;
 }

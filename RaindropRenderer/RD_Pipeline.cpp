@@ -2,9 +2,12 @@
 
 #ifdef BUILD_VULKAN
 
-RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, std::shared_ptr< RD_RenderPass > rpass, std::shared_ptr< RD_ShaderLoader > shader) {
+RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, VkQueue gfxQueue, std::shared_ptr< RD_RenderPass > rpass, std::shared_ptr< RD_ShaderLoader > shader, bool extSignaling) {
     m_dev = dev;
     m_pool = pool;
+    m_gfxQueue = gfxQueue;
+
+    m_extSignaling = extSignaling;
 
     m_rpass = std::reinterpret_pointer_cast<RD_RenderPass_Vk>(rpass);
     m_shader = std::reinterpret_pointer_cast<RD_ShaderLoader_Vk>(shader);
@@ -23,6 +26,7 @@ RD_Pipeline_Vk::~RD_Pipeline_Vk() {
 }
 
 void RD_Pipeline_Vk::CleanUp() {
+    vkDestroyFence(m_dev, m_fence, nullptr);
     vkDestroyDescriptorSetLayout(m_dev, m_descLayout, nullptr);
     vkDestroyDescriptorPool(m_dev, m_descPool, nullptr);
     vkDestroyPipelineLayout(m_dev, m_layout, nullptr);
@@ -131,11 +135,16 @@ bool RD_Pipeline_Vk::BuildPipeline() {
                                      VK_COLOR_COMPONENT_A_BIT;
     colorBlendState.blendEnable = VK_FALSE;
 
+    std::vector<VkPipelineColorBlendAttachmentState> blendAtt;
+    for(int i = 0; i < m_rpass->GetAttachmentCount(); i++) {
+        blendAtt.push_back(colorBlendState);
+    }
+
     VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
     colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     colorBlendInfo.logicOpEnable = VK_FALSE;
-    colorBlendInfo.attachmentCount = 1;
-    colorBlendInfo.pAttachments = &colorBlendState;
+    colorBlendInfo.attachmentCount = blendAtt.size();
+    colorBlendInfo.pAttachments = blendAtt.data();
 
     //PIPELINE LAYOUT
     VkPipelineLayoutCreateInfo plineLayoutInfo{};
@@ -189,8 +198,15 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     plineInfo.basePipelineIndex = -1;
 
     if(vkCreateGraphicsPipelines(m_dev, VK_NULL_HANDLE, 1, &plineInfo, nullptr, &m_pipeline) != VK_SUCCESS) {
-        std::cerr << "Failed to create a graphic pipeline." << std::endl;
+        std::cerr << "ERROR: Failed to create a graphic pipeline." << std::endl;
         return false;
+    }
+
+    if(!m_extSignaling) {
+        if(!BuildSyncObjects()) {
+            std::cerr << "ERROR: Failed to create sync objects for pipeline." << std::endl;
+            return false;
+        }
     }
 
     return AllocCMDBuffer();
@@ -305,6 +321,8 @@ void RD_Pipeline_Vk::Bind() {
     VkCommandBufferBeginInfo bInfo{};
     bInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
+    vkResetCommandBuffer(m_cmdBuffer, 0);
+
     vkBeginCommandBuffer(m_cmdBuffer, &bInfo);
     m_rpass->BeginRenderPass(m_cmdBuffer);
     vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
@@ -332,6 +350,13 @@ void RD_Pipeline_Vk::BindSC(VkFramebuffer fb) {
 void RD_Pipeline_Vk::Unbind() {
     m_rpass->EndRenderPass(m_cmdBuffer);
     vkEndCommandBuffer(m_cmdBuffer);
+
+    SubmitCMDSync();
+}
+
+void RD_Pipeline_Vk::UnbindSC() {
+    m_rpass->EndRenderPass(m_cmdBuffer);
+    vkEndCommandBuffer(m_cmdBuffer);
 }
 
 void RD_Pipeline_Vk::SubmitCMD(VkQueue queue, VkSemaphore waitSignal, VkSemaphore rndrFinished, VkFence inFlight) {
@@ -352,8 +377,27 @@ void RD_Pipeline_Vk::SubmitCMD(VkQueue queue, VkSemaphore waitSignal, VkSemaphor
     sbInfo.pCommandBuffers = &m_cmdBuffer;
 
     if(vkQueueSubmit(queue, 1, &sbInfo, inFlight) != VK_SUCCESS) {
-        std::cerr << "Failed to submit queue" << std::endl;
+        std::cerr << "ERROR: Failed to submit queue" << std::endl;
     }
+}
+
+void RD_Pipeline_Vk::SubmitCMDSync() {
+    vkResetFences(m_dev, 1, &m_fence);
+
+    VkSubmitInfo sbInfo{};
+    sbInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+    sbInfo.waitSemaphoreCount = 0;
+    sbInfo.signalSemaphoreCount = 0;
+
+    sbInfo.commandBufferCount = 1;
+    sbInfo.pCommandBuffers = &m_cmdBuffer;
+
+    if(vkQueueSubmit(m_gfxQueue, 1, &sbInfo, m_fence) != VK_SUCCESS) {
+        std::cerr << "ERROR: Failed to submit queue (sync)." << std::endl;
+    }
+
+    vkWaitForFences(m_dev, 1, &m_fence, VK_TRUE, UINT64_MAX);
 }
 
 void RD_Pipeline_Vk::RebuildPipeline() {
@@ -406,6 +450,24 @@ void RD_Pipeline_Vk::RegisterTexture(std::shared_ptr<RD_Texture> &tex, uint32_t 
     bindLayout.pImmutableSamplers = nullptr;
 
     m_bindings_tex.push_back(bindLayout);
+}
+
+bool RD_Pipeline_Vk::BuildSyncObjects() {
+    assert(!m_extSignaling && "This instance uses external signaling. No need to build sync objects.");
+
+    VkSemaphoreCreateInfo scInfo{};
+    scInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    VkFenceCreateInfo fcInfo{};
+    fcInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fcInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+    if(vkCreateFence(m_dev, &fcInfo, nullptr, &m_fence) != VK_SUCCESS) {
+        std::cerr << "ERROR: Failed to create fence." << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 #endif //BUILD_VULKAN

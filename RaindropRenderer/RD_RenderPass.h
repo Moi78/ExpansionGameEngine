@@ -1,24 +1,12 @@
 #ifndef _RD_RENDERPASS_H__
 #define _RD_RENDERPASS_H__
 
+#include "RD_Texture.h"
+#include "RD_ImageFormat.h"
+
 #include <iostream>
 #include <vector>
 #include <map>
-
-#define IMGFORMAT_R 1
-#define IMGFORMAT_RG 2
-#define IMGFORMAT_RGB 3
-#define IMGFORMAT_RGBA 4
-
-#define IMGFORMAT_R16F 5
-#define IMGFORMAT_RG16F 6
-#define IMGFORMAT_RGB16F 7
-#define IMGFORMAT_RGBA16F 8
-
-#define IMGFORMAT_DEPTH 9
-
-#define IMGFORMAT_BGRA 10
-#define IMGFORMAT_BGR 11
 
 struct RD_Attachment {
     int format;
@@ -35,15 +23,20 @@ public:
 
     virtual bool BuildRenderpass(bool sc) = 0;
     virtual void SetRenderpassSize(const int w, const int h) = 0;
+
+    virtual int GetAttachmentCount() = 0;
 };
 
 #ifdef BUILD_VULKAN
 
 #include <vulkan/vulkan.hpp>
 
+class RD_API;
+class RD_API_Vk;
+
 class RD_RenderPass_Vk : public RD_RenderPass {
 public:
-    RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> attachments, float width, float height);
+    RD_RenderPass_Vk(std::shared_ptr<RD_API> api, VkDevice dev, std::vector<RD_Attachment> attachments, float width, float height);
     ~RD_RenderPass_Vk() override;
 
     void BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB = VK_NULL_HANDLE);
@@ -64,18 +57,24 @@ public:
         return m_renderPass;
     }
 
+    int GetAttachmentCount() override {
+        return m_att_desc.size();
+    }
+
 private:
-    bool CreateImageViews();
-    bool MakeFramebuffers();
+    bool MakeFramebuffer();
+
+    std::shared_ptr<RD_API_Vk> m_api;
 
     VkFramebuffer m_fb;
-    std::vector<VkImageView> m_views;
-    std::vector<VkImage> m_images;
+    std::vector<std::shared_ptr<RD_Texture_Vk>> m_images;
+    std::vector<std::shared_ptr<RD_Texture_Vk>> m_imgs;
 
     VkDevice m_dev;
     VkRenderPass m_renderPass;
 
     std::vector<VkAttachmentDescription> m_att;
+    std::vector<RD_Attachment> m_att_desc;
     float m_w, m_h;
 };
 

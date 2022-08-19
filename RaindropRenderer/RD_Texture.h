@@ -7,6 +7,7 @@
 #include <filesystem>
 
 #include "RD_Buffer.h"
+#include "RD_ImageFormat.h"
 
 class RD_Texture {
 public:
@@ -14,6 +15,7 @@ public:
     virtual ~RD_Texture() {};
 
     virtual bool LoadTextureFromFile(std::string filePath) = 0;
+    virtual bool CreateTextureFBReady(int format, int w, int h) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -26,11 +28,13 @@ public:
     virtual ~RD_Texture_Vk();
 
     bool LoadTextureFromFile(std::string filePath) override;
+    bool CreateTextureFBReady(int format, int w, int h) override;
 
     VkDescriptorImageInfo GetDescriptorInfo();
+    VkImageView GetView();
 
 private:
-    bool CreateImage(int w, int h);
+    bool CreateImage(VkFormat fmt, int w, int h, bool inFB = false);
     bool CreateImageView();
     bool CreateImageSampler();
     void TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout from, VkImageLayout to);

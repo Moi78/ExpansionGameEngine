@@ -44,8 +44,6 @@ void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoD
         m_rpass.reset();
         m_pline.reset();
         m_verticies.reset();
-        m_test.reset();
-        m_grad.reset();
     }
 
 	if(!surfaceNoDelete) {
@@ -338,9 +336,8 @@ void RD_Windowing_GLFW::Present() {
 
     plineVK->DrawIndexedVertexBuffer(m_verticies);
 
-	m_pline->Unbind();
+	plineVK->UnbindSC();
 	vkResetFences(m_dev, 1, &m_inFLight_f);
-
 
 	plineVK->SubmitCMD(m_gfxQueue, m_imgAvail_s, m_rndrFinished_s, m_inFLight_f);
 
@@ -412,7 +409,7 @@ bool RD_Windowing_GLFW::WasResized() {
 
 void RD_Windowing_GLFW::BuildBlitPipeline() {
     std::shared_ptr<RD_ShaderLoader> blitShader = m_api->CreateShader();
-    blitShader->CompileShaderFromFile("shaders/bin/test.vspv", "shaders/bin/test.fspv");
+    blitShader->CompileShaderFromFile("shaders/bin/sc_blit.vspv", "shaders/bin/sc_blit.fspv");
 
     RD_Attachment att{};
     att.do_clear = true;
@@ -423,15 +420,7 @@ void RD_Windowing_GLFW::BuildBlitPipeline() {
     m_rpass = m_api->CreateRenderPass({att}, m_w, m_h);
     m_rpass->BuildRenderpass(true);
 
-    m_pline = m_api->CreatePipeline(m_rpass, blitShader);
-
-    m_test = m_api->CreateTexture();
-    m_test->LoadTextureFromFile("tex/test.jpg");
-    m_pline->RegisterTexture(m_test, 1);
-
-    m_grad = m_api->CreateTexture();
-    m_grad->LoadTextureFromFile("tex/grad.png");
-    m_pline->RegisterTexture(m_grad, 2);
+    m_pline = m_api->CreatePipeline(m_rpass, blitShader, true);
 
     m_pline->BuildPipeline();
 
@@ -518,11 +507,11 @@ std::shared_ptr<RD_ShaderLoader> RD_API_Vk::CreateShader() {
 }
 
 std::shared_ptr<RD_RenderPass> RD_API_Vk::CreateRenderPass ( std::vector<RD_Attachment> attachments, float width, float height ) {
-	return std::make_shared<RD_RenderPass_Vk>(m_ldev, attachments, width, height);
+	return std::make_shared<RD_RenderPass_Vk>(std::shared_ptr<RD_API>(this), m_ldev, attachments, width, height);
 }
 
-std::shared_ptr<RD_Pipeline> RD_API_Vk::CreatePipeline ( std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader ) {
-	return std::make_shared<RD_Pipeline_Vk>(m_ldev, m_pool, rpass, shader);
+std::shared_ptr<RD_Pipeline> RD_API_Vk::CreatePipeline ( std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader, bool extSignaling) {
+	return std::make_shared<RD_Pipeline_Vk>(m_ldev, m_pool, m_gfx_queue, rpass, shader, extSignaling);
 }
 
 std::shared_ptr<RD_Windowing> RD_API_Vk::GetWindowingSystem() {

@@ -15,6 +15,7 @@
 #include "RD_ShaderLoader.h"
 #include "RD_RenderPass.h"
 #include "RD_Pipeline.h"
+#include "RD_RenderingPipeline.h"
 
 #include <memory>
 #include <vector>
@@ -23,7 +24,7 @@
 class RD_DLLAPI RaindropRenderer
 {
 public:
-	RaindropRenderer(std::shared_ptr<RD_API> api, const int width, const int height, std::string wname);
+	RaindropRenderer(std::shared_ptr<RD_API> api, std::shared_ptr<RD_RenderingPipeline> rpline, const int width, const int height, std::string wname);
 	~RaindropRenderer();
 
 	bool InitRenderer();
@@ -35,6 +36,9 @@ public:
 
 private:
 	std::shared_ptr<RD_API> m_api;
+    std::shared_ptr<RD_RenderingPipeline> m_rpline;
+
+    std::shared_ptr<RD_IndexedVertexBuffer> m_verticies;
 
 	int m_width;
 	int m_height;

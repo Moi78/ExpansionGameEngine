@@ -35,7 +35,7 @@ public:
 
 class RD_Pipeline_Vk : public RD_Pipeline {
 public:
-    RD_Pipeline_Vk(VkDevice dev, VkCommandPool pool, std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader);
+    RD_Pipeline_Vk(VkDevice dev, VkCommandPool pool, VkQueue gfxQueue,std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader, bool extSignaling = false);
     ~RD_Pipeline_Vk() override;
     void CleanUp();
 
@@ -43,7 +43,10 @@ public:
     void Unbind() override;
 
     void BindSC(VkFramebuffer fb);
+    void UnbindSC();
+
     void SubmitCMD(VkQueue queue, VkSemaphore waitSignal, VkSemaphore rndrFinished, VkFence inFlight);
+    void SubmitCMDSync();
 
     bool BuildPipeline() override;
     void RebuildPipeline() override;
@@ -58,9 +61,14 @@ private:
     bool AllocCMDBuffer();
     bool CreateDescriptorPool();
     bool CreateDescriptorSet();
+    bool BuildSyncObjects();
 
     VkDevice m_dev;
     VkCommandPool m_pool;
+    VkQueue m_gfxQueue;
+
+    bool m_extSignaling;
+    VkFence m_fence;
 
     std::shared_ptr<RD_RenderPass_Vk> m_rpass;
     std::shared_ptr<RD_ShaderLoader_Vk> m_shader;
