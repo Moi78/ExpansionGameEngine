@@ -13,6 +13,7 @@ public:
 
     virtual bool BuildAndAllocateBuffer(size_t size) = 0;
     virtual bool FillBufferData(void* data) = 0;
+    virtual bool PartialFillBufferData(void* data, size_t size, size_t offset) = 0;
 
     virtual size_t GetBufferSize() = 0;
 
@@ -35,6 +36,7 @@ public:
 
     bool BuildAndAllocateBuffer(size_t size) override;
     bool FillBufferData(void* data) override;
+    bool PartialFillBufferData(void* data, size_t size, size_t offset) override;
 
     size_t GetBufferSize() override;
 

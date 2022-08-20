@@ -5,6 +5,7 @@ add_compile_definitions(BUILD_VULKAN)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_subdirectory("./ExpansionMath/")
 add_subdirectory("./RaindropRenderer/")
 add_subdirectory("./ExGame/")
 

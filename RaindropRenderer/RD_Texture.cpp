@@ -86,6 +86,14 @@ bool RD_Texture_Vk::CreateTextureFBReady(int format, int w, int h) {
     return true;
 }
 
+void RD_Texture_Vk::PrepareForRendering(VkCommandBuffer cmdBuff) {
+    TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+}
+
+void RD_Texture_Vk::PrepareForSampling(VkCommandBuffer cmdBuff) {
+    TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+}
+
 bool RD_Texture_Vk::CreateImage(VkFormat fmt, int w, int h, bool inFB) {
     VkImageCreateInfo cInfo{};
     cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -159,6 +167,18 @@ void RD_Texture_Vk::TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout
         memBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
         srcFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        dstFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    } else if((from == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) && (to == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)) {
+        memBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        memBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+        srcFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dstFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else if((from == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) && (to == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)) {
+        memBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        memBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        srcFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
         dstFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     } else {
         std::cerr << "ERROR: Unsupported image transition." << std::endl;

@@ -39,6 +39,8 @@ public:
 	virtual void Present() = 0;
     virtual void BuildBlitPipeline() = 0;
 
+    virtual void SetPresentTexture(std::shared_ptr<RD_Texture> tex) = 0;
+
 	virtual void PollEvents() = 0;
 };
 
@@ -105,6 +107,8 @@ public:
 
 	bool ResizeFrame(const int w, const int h) override;
 	bool WasResized() override;
+
+    void SetPresentTexture(std::shared_ptr<RD_Texture> tex) override;
 
 	VkResult CreateWindowSurface(VkInstance inst);
 	RD_SwapChainDetails QuerySwapchainSupport(VkPhysicalDevice dev);

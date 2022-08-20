@@ -18,7 +18,6 @@ bool RaindropRenderer::InitRenderer() {
 		return false;
 	}
 
-	//BuildPresentPipeline();
     m_api->GetWindowingSystem()->BuildBlitPipeline();
 
 	if(!m_api->MakeFramebuffers()) {

@@ -22,6 +22,7 @@ public:
     virtual size_t GetBufferSize() { return 0; };
 
     virtual bool FillBufferData(void* data) { return false; };
+    virtual bool PartialFillBufferData(void* data, size_t size, size_t offset) { return false; };
     virtual bool BuildAndAllocateBuffer(size_t size, RD_BufferUsage usage, int flags) { return false; };
 
     virtual bool CopyFromBuffer(std::unique_ptr<RD_Buffer>& src) { return false; };
@@ -43,6 +44,7 @@ public:
 
     bool BuildAndAllocateBuffer(size_t size, RD_BufferUsage usage, int flags) override;
     bool FillBufferData(void* data) override;
+    bool PartialFillBufferData(void* data, size_t size, size_t offset) override;
 
     VkBuffer GetBufferHandle();
     size_t GetBufferSize() override;

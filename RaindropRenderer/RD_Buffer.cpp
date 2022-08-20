@@ -126,6 +126,15 @@ bool RD_Buffer_Vk::FillBufferData(void* data) {
     return true;
 }
 
+bool RD_Buffer_Vk::PartialFillBufferData(void *data, size_t size, size_t offset) {
+    void* data_;
+    vkMapMemory(m_dev, m_buffMem, offset, size, 0, &data_);
+    memcpy(data_, data, size);
+    vkUnmapMemory(m_dev, m_buffMem);
+
+    return true;
+}
+
 VkBuffer RD_Buffer_Vk::GetBufferHandle() {
     return m_buff;
 }

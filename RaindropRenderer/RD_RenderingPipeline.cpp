@@ -26,12 +26,20 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline() {
     att2.sample_count = 1;
 
     m_rpass = m_api->CreateRenderPass({att, att2}, static_cast<float>(w), static_cast<float>(h));
-    m_rpass->BuildRenderpass(false);
+    m_rpass->BuildRenderpass(m_api.get(), false);
+
+    auto tex = m_rpass->GetAttachment(0);
+    m_api->GetWindowingSystem()->SetPresentTexture(tex);
+
+    m_cam = std::make_unique<RD_Camera>(m_api, 60.0f, vec3(-1.0f, -0.5f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
 
     std::shared_ptr<RD_ShaderLoader> shader = m_api->CreateShader();
     shader->CompileShaderFromFile("shaders/bin/base.vspv", "shaders/bin/base.fspv");
 
     m_plineGBuff = m_api->CreatePipeline(m_rpass, shader);
+
+    m_cam->SetupPipeline(m_plineGBuff);
+
     m_plineGBuff->BuildPipeline();
 
     return true;

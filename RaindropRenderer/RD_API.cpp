@@ -418,7 +418,7 @@ void RD_Windowing_GLFW::BuildBlitPipeline() {
     att.sample_count = 1;
 
     m_rpass = m_api->CreateRenderPass({att}, m_w, m_h);
-    m_rpass->BuildRenderpass(true);
+    m_rpass->BuildRenderpass(m_api, true);
 
     m_pline = m_api->CreatePipeline(m_rpass, blitShader, true);
 
@@ -440,12 +440,25 @@ void RD_Windowing_GLFW::BuildBlitPipeline() {
     m_verticies->FillBufferData(vData, indices);
 }
 
+void RD_Windowing_GLFW::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
+    m_pline->RegisterTexture(tex, 0);
+    m_pline->RebuildPipeline();
+}
+
 // ------------------------------------------------------------------------------------
 
 RD_API_Vk::RD_API_Vk() {
 	m_winsys = std::make_unique<RD_Windowing_GLFW>(this);
 
 	m_validationLayers = true;
+
+    m_pool = VK_NULL_HANDLE;
+    m_ldev = VK_NULL_HANDLE;
+    m_dev = VK_NULL_HANDLE;
+    m_inst = VK_NULL_HANDLE;
+    m_gfx_queue = VK_NULL_HANDLE;
+    m_present_queue = VK_NULL_HANDLE;
+    m_cbck_dbg = VK_NULL_HANDLE;
 }
 
 RD_API_Vk::~RD_API_Vk() {
@@ -507,7 +520,7 @@ std::shared_ptr<RD_ShaderLoader> RD_API_Vk::CreateShader() {
 }
 
 std::shared_ptr<RD_RenderPass> RD_API_Vk::CreateRenderPass ( std::vector<RD_Attachment> attachments, float width, float height ) {
-	return std::make_shared<RD_RenderPass_Vk>(std::shared_ptr<RD_API>(this), m_ldev, attachments, width, height);
+	return std::make_shared<RD_RenderPass_Vk>(m_ldev, attachments, width, height);
 }
 
 std::shared_ptr<RD_Pipeline> RD_API_Vk::CreatePipeline ( std::shared_ptr<RD_RenderPass> rpass, std::shared_ptr<RD_ShaderLoader> shader, bool extSignaling) {

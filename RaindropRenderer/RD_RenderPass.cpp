@@ -3,11 +3,12 @@
 
 #ifdef BUILD_VULKAN
 
-RD_RenderPass_Vk::RD_RenderPass_Vk(std::shared_ptr<RD_API> api, VkDevice dev, std::vector<RD_Attachment> attachments, float width, float height) {
+RD_RenderPass_Vk::RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> attachments, float width, float height) {
     m_dev = dev;
     m_w = width;
     m_h = height;
-    m_api = std::reinterpret_pointer_cast<RD_API_Vk>(api);
+
+    m_fb = VK_NULL_HANDLE;
 
     std::map<int, VkSampleCountFlagBits> map_sample {
         {1, VK_SAMPLE_COUNT_1_BIT},
@@ -43,7 +44,7 @@ RD_RenderPass_Vk::~RD_RenderPass_Vk() {
     vkDestroyRenderPass(m_dev, m_renderPass, nullptr);
 }
 
-bool RD_RenderPass_Vk::BuildRenderpass(bool sc) {
+bool RD_RenderPass_Vk::BuildRenderpass(RD_API* api, bool sc) {
     std::vector<VkAttachmentReference> refs(m_att.size());
 
     for(int i = 0; i < m_att.size(); i++) {
@@ -98,7 +99,7 @@ bool RD_RenderPass_Vk::BuildRenderpass(bool sc) {
     }
 
     if(!sc) {
-        if (!MakeFramebuffer()) {
+        if (!MakeFramebuffer(api)) {
             return false;
         }
     }
@@ -107,6 +108,11 @@ bool RD_RenderPass_Vk::BuildRenderpass(bool sc) {
 }
 
 void RD_RenderPass_Vk::BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB) {
+    for(auto& img : m_imgs) {
+        auto imgVK = std::reinterpret_pointer_cast<RD_Texture_Vk>(img);
+        imgVK->PrepareForRendering(cmd);
+    }
+
     VkRenderPassBeginInfo rpassInfo{};
     rpassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     rpassInfo.renderPass = m_renderPass;
@@ -134,6 +140,11 @@ void RD_RenderPass_Vk::BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB) 
 
 void RD_RenderPass_Vk::EndRenderPass(VkCommandBuffer cmd) {
     vkCmdEndRenderPass(cmd);
+
+    for(auto& img : m_imgs) {
+        auto imgVK = std::reinterpret_pointer_cast<RD_Texture_Vk>(img);
+        imgVK->PrepareForSampling(cmd);
+    }
 }
 
 void RD_RenderPass_Vk::SetRenderpassSize(const int w, const int h) {
@@ -141,10 +152,10 @@ void RD_RenderPass_Vk::SetRenderpassSize(const int w, const int h) {
     m_h = h;
 }
 
-bool RD_RenderPass_Vk::MakeFramebuffer() {
+bool RD_RenderPass_Vk::MakeFramebuffer(RD_API* api) {
     std::vector<VkImageView> imgViews;
     for(auto& a : m_att_desc) {
-        auto img = std::reinterpret_pointer_cast<RD_Texture_Vk>(m_api->CreateTexture());
+        auto img = std::reinterpret_pointer_cast<RD_Texture_Vk>(api->CreateTexture());
         img->CreateTextureFBReady(a.format, m_w, m_h);
 
         m_imgs.push_back(img);
@@ -166,6 +177,12 @@ bool RD_RenderPass_Vk::MakeFramebuffer() {
     }
 
     return true;
+}
+
+std::shared_ptr<RD_Texture> RD_RenderPass_Vk::GetAttachment(int index) {
+    assert(index < m_imgs.size() && "Bad index given");
+
+    return m_imgs[index];
 }
 
 #endif //BUILD_VULKAN

@@ -30,6 +30,9 @@ public:
     bool LoadTextureFromFile(std::string filePath) override;
     bool CreateTextureFBReady(int format, int w, int h) override;
 
+    void PrepareForRendering(VkCommandBuffer cmdBuff);
+    void PrepareForSampling(VkCommandBuffer cmdBuff);
+
     VkDescriptorImageInfo GetDescriptorInfo();
     VkImageView GetView();
 

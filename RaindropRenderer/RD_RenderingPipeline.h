@@ -7,6 +7,8 @@
 #include "RD_Texture.h"
 #include "RD_ShaderLoader.h"
 
+#include "RD_Camera.h"
+
 #include <memory>
 #include <vector>
 
@@ -33,8 +35,9 @@ private:
     std::shared_ptr<RD_API> m_api;
 
     std::shared_ptr<RD_RenderPass> m_rpass;
-
     std::shared_ptr<RD_Pipeline> m_plineGBuff;
+
+    std::unique_ptr<RD_Camera> m_cam;
 };
 
 

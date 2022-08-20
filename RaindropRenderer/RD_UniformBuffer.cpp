@@ -19,9 +19,11 @@ bool RD_UniformBuffer_Vk::BuildAndAllocateBuffer(size_t size) {
 }
 
 bool RD_UniformBuffer_Vk::FillBufferData(void *data) {
-    m_buffer->FillBufferData(data);
+    return m_buffer->FillBufferData(data);
+}
 
-    return true;
+bool RD_UniformBuffer_Vk::PartialFillBufferData(void *data, size_t size, size_t offset) {
+    return m_buffer->PartialFillBufferData(data, size, offset);
 }
 
 VkBuffer RD_UniformBuffer_Vk::GetBufferHandle() {

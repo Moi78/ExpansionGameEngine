@@ -19,6 +19,8 @@ RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, VkQueue gfxQue
     m_cmdBuffer = VK_NULL_HANDLE;
     m_layout = VK_NULL_HANDLE;
     m_pipeline = VK_NULL_HANDLE;
+
+    m_fence = VK_NULL_HANDLE;
 }
 
 RD_Pipeline_Vk::~RD_Pipeline_Vk() {
