@@ -19,19 +19,19 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline() {
     att.is_swapchain_attachment = false;
     att.sample_count = 1;
 
-    RD_Attachment att2{};
-    att2.format = IMGFORMAT_RGBA;
-    att2.do_clear = true;
-    att2.is_swapchain_attachment = false;
-    att2.sample_count = 1;
+    RD_Attachment depth{};
+    depth.format = IMGFORMAT_DEPTH;
+    depth.do_clear = true;
+    depth.is_swapchain_attachment = false;
+    depth.sample_count = 1;
 
-    m_rpass = m_api->CreateRenderPass({att, att2}, static_cast<float>(w), static_cast<float>(h));
+    m_rpass = m_api->CreateRenderPass({att, att, depth}, static_cast<float>(w), static_cast<float>(h));
     m_rpass->BuildRenderpass(m_api.get(), false);
 
     auto tex = m_rpass->GetAttachment(0);
     m_api->GetWindowingSystem()->SetPresentTexture(tex);
 
-    m_cam = std::make_unique<RD_Camera>(m_api, 60.0f, vec3(-1.0f, -0.5f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
+    m_cam = std::make_unique<RD_Camera>(m_api, 30.0f, vec3(-5.0f, -2.5f, 2.0f), vec3(0.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
 
     std::shared_ptr<RD_ShaderLoader> shader = m_api->CreateShader();
     shader->CompileShaderFromFile("shaders/bin/base.vspv", "shaders/bin/base.fspv");

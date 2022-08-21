@@ -39,6 +39,7 @@ private:
     std::shared_ptr<RD_RenderingPipeline> m_rpline;
 
     std::shared_ptr<RD_IndexedVertexBuffer> m_verticies;
+    std::shared_ptr<RD_IndexedVertexBuffer> m_verts2;
 
 	int m_width;
 	int m_height;

@@ -41,11 +41,21 @@ bool RaindropRenderer::InitRenderer() {
 
     m_verticies->FillBufferData(vData, indices);
 
+    m_verts2 = m_api->CreateIndexedVertexBuffer();
+
+    auto vData2 = MakeVertexData(
+            { vec3(-1.0, 1.0, 0.5), vec3(-1.0, -1.0, 0.5), vec3(1.0, 1.0, 0.5), vec3(1.0, -1.0, 0.5) },
+            { vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0) },
+            { vec2(0.0, 1.0), vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(1.0, 0.0)}
+    );
+
+    m_verts2->FillBufferData(vData2, indices);
+
 	return true;
 }
 
 void RaindropRenderer::RenderScene() {
-    std::vector<std::shared_ptr<RD_IndexedVertexBuffer>> vbuff = {m_verticies};
+    std::vector<std::shared_ptr<RD_IndexedVertexBuffer>> vbuff = {m_verts2, m_verticies};
     m_rpline->RenderScene(vbuff);
 
 	m_api->GetWindowingSystem()->Present();

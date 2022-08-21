@@ -28,6 +28,8 @@ public:
 
     virtual int GetAttachmentCount() = 0;
     virtual std::shared_ptr<RD_Texture> GetAttachment(int index) = 0;
+
+    virtual bool HasDepth() = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -61,6 +63,10 @@ public:
         return m_att_desc.size();
     }
 
+    bool HasDepth() override {
+        return m_hasDepth;
+    }
+
     std::shared_ptr<RD_Texture> GetAttachment(int index) override;
 
 private:
@@ -71,6 +77,7 @@ private:
 
     VkDevice m_dev;
     VkRenderPass m_renderPass;
+    bool m_hasDepth;
 
     std::vector<VkAttachmentDescription> m_att;
     std::vector<RD_Attachment> m_att_desc;

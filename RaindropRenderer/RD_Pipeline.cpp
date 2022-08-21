@@ -142,6 +142,10 @@ bool RD_Pipeline_Vk::BuildPipeline() {
         blendAtt.push_back(colorBlendState);
     }
 
+    if(m_rpass->HasDepth()) {
+        blendAtt.pop_back();
+    }
+
     VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
     colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     colorBlendInfo.logicOpEnable = VK_FALSE;
@@ -180,6 +184,14 @@ bool RD_Pipeline_Vk::BuildPipeline() {
         return false;
     }
 
+    VkPipelineDepthStencilStateCreateInfo depthInfo{};
+    depthInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthInfo.depthTestEnable = VK_TRUE;
+    depthInfo.depthWriteEnable = VK_TRUE;
+    depthInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthInfo.depthBoundsTestEnable = VK_FALSE;
+    depthInfo.stencilTestEnable = VK_FALSE;
+
     //PIPELINE CREATION
     VkGraphicsPipelineCreateInfo plineInfo{};
     plineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -190,7 +202,7 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     plineInfo.pViewportState = &vpStInfo;
     plineInfo.pRasterizationState = &rasterizerInfo;
     plineInfo.pMultisampleState = &ms;
-    plineInfo.pDepthStencilState = nullptr;
+    plineInfo.pDepthStencilState = &depthInfo;
     plineInfo.pColorBlendState = &colorBlendInfo;
     plineInfo.pDynamicState = nullptr;
     plineInfo.layout = m_layout;

@@ -72,10 +72,17 @@ bool RD_Texture_Vk::CreateTextureFBReady(int format, int w, int h) {
     }
 
     auto cmdBuffer = BeginOneTimeCommand(m_dev, m_cmdPool);
-    TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    bool hasDepth = fmt == VK_FORMAT_D32_SFLOAT;
+
+    if(fmt == VK_FORMAT_D32_SFLOAT) {
+        TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        m_isDepth = true;
+    } else {
+        TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    }
     EndOneTimeCommand(m_dev, m_cmdPool, cmdBuffer, m_gfxQueue);
 
-    if(!CreateImageView()) {
+    if(!CreateImageView(hasDepth)) {
         return false;
     }
 
@@ -87,11 +94,17 @@ bool RD_Texture_Vk::CreateTextureFBReady(int format, int w, int h) {
 }
 
 void RD_Texture_Vk::PrepareForRendering(VkCommandBuffer cmdBuff) {
-    TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    if(!m_isDepth) {
+        TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                              VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    }
 }
 
 void RD_Texture_Vk::PrepareForSampling(VkCommandBuffer cmdBuff) {
-    TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    if(!m_isDepth) {
+        TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                              VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    }
 }
 
 bool RD_Texture_Vk::CreateImage(VkFormat fmt, int w, int h, bool inFB) {
@@ -108,7 +121,11 @@ bool RD_Texture_Vk::CreateImage(VkFormat fmt, int w, int h, bool inFB) {
     cInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 
     if(inFB) {
-        cInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        if(fmt == VK_FORMAT_D32_SFLOAT) {
+            cInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        } else {
+            cInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        }
     }
 
     if(vkCreateImage(m_dev, &cInfo, nullptr, &m_imgHdl) != VK_SUCCESS) {
@@ -180,6 +197,14 @@ void RD_Texture_Vk::TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout
 
         srcFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
         dstFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    } else if((from == VK_IMAGE_LAYOUT_UNDEFINED) && (to == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)) {
+        memBarrier.srcAccessMask = 0;
+        memBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+        memBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+        srcFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        dstFlags = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+
     } else {
         std::cerr << "ERROR: Unsupported image transition." << std::endl;
         return;
@@ -217,7 +242,7 @@ void RD_Texture_Vk::CopyFromBuffer(VkCommandBuffer cmdBuff, std::unique_ptr<RD_B
     );
 }
 
-bool RD_Texture_Vk::CreateImageView() {
+bool RD_Texture_Vk::CreateImageView(bool depthAtt) {
     VkImageViewCreateInfo cInfo{};
     cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     cInfo.image = m_imgHdl;
@@ -228,6 +253,11 @@ bool RD_Texture_Vk::CreateImageView() {
     cInfo.subresourceRange.baseArrayLayer = 0;
     cInfo.subresourceRange.baseMipLevel = 0;
     cInfo.subresourceRange.levelCount = 1;
+
+    if(depthAtt) {
+        cInfo.format = VK_FORMAT_D32_SFLOAT;
+        cInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+    }
 
     if(vkCreateImageView(m_dev, &cInfo, nullptr, &m_imgView) != VK_SUCCESS) {
         std::cerr << "ERROR: Failed to create image view." << std::endl;

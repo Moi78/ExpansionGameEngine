@@ -9,6 +9,7 @@ RD_RenderPass_Vk::RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> atta
     m_h = height;
 
     m_fb = VK_NULL_HANDLE;
+    m_hasDepth = false;
 
     std::map<int, VkSampleCountFlagBits> map_sample {
         {1, VK_SAMPLE_COUNT_1_BIT},
@@ -31,7 +32,11 @@ RD_RenderPass_Vk::RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> atta
         desc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         desc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         desc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        desc.finalLayout = att.is_swapchain_attachment ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        if(desc.format == VK_FORMAT_D32_SFLOAT) {
+            desc.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        } else {
+            desc.finalLayout = att.is_swapchain_attachment ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        }
 
         m_att.push_back(desc);
     }
@@ -45,20 +50,31 @@ RD_RenderPass_Vk::~RD_RenderPass_Vk() {
 }
 
 bool RD_RenderPass_Vk::BuildRenderpass(RD_API* api, bool sc) {
-    std::vector<VkAttachmentReference> refs(m_att.size());
+    std::vector<VkAttachmentReference> refs;
+
+    VkAttachmentReference ref_depth{};
+    ref_depth.attachment = VK_ATTACHMENT_UNUSED;
 
     for(int i = 0; i < m_att.size(); i++) {
-        VkAttachmentReference attRef{};
-        attRef.attachment = i;
-        attRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        if(m_att[i].format != VK_FORMAT_D32_SFLOAT) {
+            VkAttachmentReference attRef{};
+            attRef.attachment = i;
+            attRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-        refs[i] = attRef;
+            refs.push_back(attRef);
+        } else {
+            ref_depth.attachment = i;
+            ref_depth.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+            m_hasDepth = true;
+        }
     }
 
     VkSubpassDescription subpass{};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.colorAttachmentCount = refs.size();
     subpass.pColorAttachments = refs.data();
+    subpass.pDepthStencilAttachment = &ref_depth;
 
     std::vector<VkSubpassDependency> deps;
 
@@ -72,7 +88,17 @@ bool RD_RenderPass_Vk::BuildRenderpass(RD_API* api, bool sc) {
         dep.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
         deps.emplace_back(dep);
-    } else {
+    } else if(m_hasDepth) {
+        VkSubpassDependency dep_{};
+        dep_.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dep_.dstSubpass = 0;
+        dep_.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        dep_.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        dep_.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dep_.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+        deps.emplace_back(dep_);
+    } {
         VkSubpassDependency dep_{};
         dep_.srcSubpass = VK_SUBPASS_EXTERNAL;
         dep_.dstSubpass = 0;
@@ -127,9 +153,14 @@ void RD_RenderPass_Vk::BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB) 
     rpassInfo.renderArea.extent = {(uint32_t)m_w, (uint32_t)m_h};
 
     constexpr VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+    constexpr VkClearValue clearDepth = {{{1.0f, 0.0f, 0.0f, 1.0f}}};
     std::vector<VkClearValue> clear;
     for(auto& a : m_att) {
-        clear.push_back(clearColor);
+        if(a.format == VK_FORMAT_D32_SFLOAT) {
+            clear.push_back(clearDepth);
+        } else {
+            clear.push_back(clearColor);
+        }
     }
 
     rpassInfo.clearValueCount = clear.size();
