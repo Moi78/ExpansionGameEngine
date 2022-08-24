@@ -24,7 +24,7 @@ public:
     virtual ~RD_RenderPass() {};
 
     virtual bool BuildRenderpass(RD_API* api, bool sc) = 0;
-    virtual void SetRenderpassSize(const int w, const int h) = 0;
+    virtual void SetRenderpassSize(RD_API* api, const int w, const int h) = 0;
 
     virtual int GetAttachmentCount() = 0;
     virtual std::shared_ptr<RD_Texture> GetAttachment(int index) = 0;
@@ -45,7 +45,7 @@ public:
     void EndRenderPass(VkCommandBuffer cmd);
 
     bool BuildRenderpass(RD_API* api, bool sc) override;
-    void SetRenderpassSize(const int w, const int h) override;
+    void SetRenderpassSize(RD_API* api, const int w, const int h) override;
 
     float GetWidth() {
         return m_w;

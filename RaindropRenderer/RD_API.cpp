@@ -389,8 +389,12 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
 	bool res_a = CreateSwapChain(m_dev, m_pdev, m_ind);
 	bool res_b = MakeFramebuffers(m_dev);
 
-    m_rpass->SetRenderpassSize(m_scExtent.width, m_scExtent.height);
+    m_rpass->SetRenderpassSize(nullptr, m_scExtent.width, m_scExtent.height);
     m_pline->RebuildPipeline();
+
+    if(m_extCallback.has_value()) {
+        m_extCallback->get()->Call();
+    }
 
 	return res_a && res_b;
 }
@@ -398,6 +402,10 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
 void RD_Windowing_GLFW::ResizeCBCK(GLFWwindow* win, int w, int h) {
 	auto app = reinterpret_cast<RD_Windowing_GLFW*>(glfwGetWindowUserPointer(win));
 	app->ResizeFrame(w, h);
+}
+
+void RD_Windowing_GLFW::SetExternalResizeCallback(std::shared_ptr<RD_Callback> cbck) {
+    m_extCallback = cbck;
 }
 
 bool RD_Windowing_GLFW::WasResized() {
@@ -441,6 +449,7 @@ void RD_Windowing_GLFW::BuildBlitPipeline() {
 }
 
 void RD_Windowing_GLFW::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
+    m_pline->PurgeTextures();
     m_pline->RegisterTexture(tex, 0);
     m_pline->RebuildPipeline();
 }

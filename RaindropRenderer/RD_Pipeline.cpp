@@ -466,6 +466,11 @@ void RD_Pipeline_Vk::RegisterTexture(std::shared_ptr<RD_Texture> &tex, uint32_t 
     m_bindings_tex.push_back(bindLayout);
 }
 
+void RD_Pipeline_Vk::PurgeTextures() {
+    m_texs.clear();
+    m_bindings_tex.clear();
+}
+
 bool RD_Pipeline_Vk::BuildSyncObjects() {
     assert(!m_extSignaling && "This instance uses external signaling. No need to build sync objects.");
 

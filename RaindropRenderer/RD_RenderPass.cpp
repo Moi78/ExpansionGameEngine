@@ -178,9 +178,20 @@ void RD_RenderPass_Vk::EndRenderPass(VkCommandBuffer cmd) {
     }
 }
 
-void RD_RenderPass_Vk::SetRenderpassSize(const int w, const int h) {
+void RD_RenderPass_Vk::SetRenderpassSize(RD_API* api, const int w, const int h) {
     m_w = w;
     m_h = h;
+
+    if(!m_imgs.empty()) {
+        for (auto &t: m_imgs) {
+            t.reset();
+        }
+        m_imgs.clear();
+
+        vkDestroyFramebuffer(m_dev, m_fb, nullptr);
+
+        MakeFramebuffer(api);
+    }
 }
 
 bool RD_RenderPass_Vk::MakeFramebuffer(RD_API* api) {

@@ -27,6 +27,7 @@ public:
 
     virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) = 0;
     virtual void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) = 0;
+    virtual void PurgeTextures() = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -56,6 +57,7 @@ public:
 
     void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) override;
     void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) override;
+    void PurgeTextures() override;
 
 private:
     bool AllocCMDBuffer();

@@ -10,7 +10,7 @@ RaindropRenderer::RaindropRenderer(std::shared_ptr<RD_API> api, std::shared_ptr<
 }
 
 RaindropRenderer::~RaindropRenderer() {
-
+    m_meshes.clear();
 }
 
 bool RaindropRenderer::InitRenderer() {
@@ -26,37 +26,20 @@ bool RaindropRenderer::InitRenderer() {
 
     m_rpline->InitRenderingPipeline();
 
-    m_verticies = m_api->CreateIndexedVertexBuffer();
+    m_resize_cbck = std::make_shared<RD_Callback>(CL_VDFUNCPTR(RaindropRenderer::Resize));
+    m_api->GetWindowingSystem()->SetExternalResizeCallback(m_resize_cbck);
 
-    auto vData = MakeVertexData(
-            { vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(1.0, 1.0, 0.0), vec3(1.0, -1.0, 0.0) },
-            { vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0) },
-            { vec2(0.0, 1.0), vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(1.0, 0.0)}
-    );
-
-    std::vector<uint32_t> indices = {
-            0, 1, 2,
-            1, 3, 2
-    };
-
-    m_verticies->FillBufferData(vData, indices);
-
-    m_verts2 = m_api->CreateIndexedVertexBuffer();
-
-    auto vData2 = MakeVertexData(
-            { vec3(-1.0, 1.0, 0.5), vec3(-1.0, -1.0, 0.5), vec3(1.0, 1.0, 0.5), vec3(1.0, -1.0, 0.5) },
-            { vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0) },
-            { vec2(0.0, 1.0), vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(1.0, 0.0)}
-    );
-
-    m_verts2->FillBufferData(vData2, indices);
+    m_mesh = std::make_shared<RD_Mesh>(m_api, vec3(), vec3(), vec3(2.0f, 2.0f, 2.0f));
+    m_mesh->LoadMesh("./mdl/monkey.msh");
+    RegisterMesh(m_mesh);
 
 	return true;
 }
 
 void RaindropRenderer::RenderScene() {
-    std::vector<std::shared_ptr<RD_IndexedVertexBuffer>> vbuff = {m_verts2, m_verticies};
-    m_rpline->RenderScene(vbuff);
+    m_mesh->Rotate(vec3(0.0f, 0.0f, 0.5f));
+
+    m_rpline->RenderScene(m_meshes);
 
 	m_api->GetWindowingSystem()->Present();
 }
@@ -72,4 +55,17 @@ bool RaindropRenderer::WantToClose() {
 		m_api->ProperQuit();
 		return true;
 	}
+}
+
+void RaindropRenderer::Resize() {
+    int w = m_api->GetWindowingSystem()->GetWidth();
+    int h = m_api->GetWindowingSystem()->GetHeight();
+
+    m_rpline->Resize(w, h);
+}
+
+void RaindropRenderer::RegisterMesh(std::shared_ptr<RD_Mesh> mesh) {
+    std::cout << "Registered new mesh" << std::endl;
+
+    m_meshes.push_back(mesh);
 }

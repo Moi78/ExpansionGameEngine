@@ -20,6 +20,7 @@
 #include "RD_Buffer.h"
 #include "RD_UniformBuffer.h"
 #include "RD_Texture.h"
+#include "RD_Callback.h"
 #include "vec.h"
 
 class RD_DLLAPI RD_Windowing {
@@ -31,6 +32,7 @@ public:
 	virtual bool WantToClose() = 0;
 
 	virtual bool ResizeFrame(const int w, const int h) = 0;
+    virtual void SetExternalResizeCallback(std::shared_ptr<RD_Callback> cbck) = 0;
 	virtual bool WasResized() = 0;
 
 	virtual int GetHeight() = 0;
@@ -106,6 +108,7 @@ public:
 	bool WantToClose() override;
 
 	bool ResizeFrame(const int w, const int h) override;
+    void SetExternalResizeCallback(std::shared_ptr<RD_Callback> cbck) override;
 	bool WasResized() override;
 
     void SetPresentTexture(std::shared_ptr<RD_Texture> tex) override;
@@ -174,6 +177,7 @@ private:
 	VkQueue m_presentQueue;
 
 	bool m_resizedFlag;
+    std::optional<std::shared_ptr<RD_Callback>> m_extCallback;
 };
 
 class RD_DLLAPI RD_API_Vk : public RD_API {

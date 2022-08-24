@@ -53,7 +53,7 @@ bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
     TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     EndOneTimeCommand(m_dev, m_cmdPool, cmdBuffer, m_gfxQueue);
 
-    if(!CreateImageView()) {
+    if(!CreateImageView(VK_FORMAT_R8G8B8A8_SRGB)) {
         return false;
     }
 
@@ -78,11 +78,11 @@ bool RD_Texture_Vk::CreateTextureFBReady(int format, int w, int h) {
         TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
         m_isDepth = true;
     } else {
-        TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+        TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
     EndOneTimeCommand(m_dev, m_cmdPool, cmdBuffer, m_gfxQueue);
 
-    if(!CreateImageView(hasDepth)) {
+    if(!CreateImageView(fmt, hasDepth)) {
         return false;
     }
 
@@ -205,6 +205,12 @@ void RD_Texture_Vk::TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout
         srcFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         dstFlags = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 
+    } else if((from == VK_IMAGE_LAYOUT_UNDEFINED) && (to == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)) {
+        memBarrier.srcAccessMask = 0;
+        memBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+        srcFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        dstFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
     } else {
         std::cerr << "ERROR: Unsupported image transition." << std::endl;
         return;
@@ -242,12 +248,12 @@ void RD_Texture_Vk::CopyFromBuffer(VkCommandBuffer cmdBuff, std::unique_ptr<RD_B
     );
 }
 
-bool RD_Texture_Vk::CreateImageView(bool depthAtt) {
+bool RD_Texture_Vk::CreateImageView(VkFormat fmt, bool depthAtt) {
     VkImageViewCreateInfo cInfo{};
     cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     cInfo.image = m_imgHdl;
     cInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    cInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+    cInfo.format = fmt;
     cInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     cInfo.subresourceRange.layerCount = 1;
     cInfo.subresourceRange.baseArrayLayer = 0;

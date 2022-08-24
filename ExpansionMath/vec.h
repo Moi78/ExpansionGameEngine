@@ -11,11 +11,11 @@ public:
     vec(std::initializer_list<float> elems) {
         assert(elems.size() == size_);
 
-        std::move(elems.begin(), elems.begin() + size_, m_vec.begin());
+        std::move(elems.begin(), elems.begin() + size_, &m_vec[0]);
     }
 
     float* GetData() {
-        return m_vec.data();
+        return &m_vec[0];
     }
 
     float GetLength() {
@@ -35,7 +35,7 @@ public:
     }
 
 protected:
-    std::array<float, size_> m_vec;
+    float m_vec[size_];
 };
 
 class vec4 : public vec<4> {
@@ -54,8 +54,17 @@ public:
 
     virtual vec4 operator-(const vec4& a) {
         vec4 v(0.0, 0.0, 0.0, 0.0);
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 4; i++) {
             v.GetData()[i] = m_vec[i] - a.m_vec[i];
+        }
+
+        return v;
+    }
+
+    virtual vec4 operator+(const vec4& a) {
+        vec4 v(0.0, 0.0, 0.0, 0.0);
+        for(int i = 0; i < 4; i++) {
+            v.GetData()[i] = m_vec[i] + a.m_vec[i];
         }
 
         return v;
@@ -82,6 +91,15 @@ public:
 
         return v;
     }
+
+    virtual vec3 operator+(const vec3& a) {
+        vec3 v(0.0, 0.0, 0.0);
+        for(int i = 0; i < 3; i++) {
+            v.GetData()[i] = m_vec[i] + a.m_vec[i];
+        }
+
+        return v;
+    }
 };
 
 class vec2 : public vec<2> {
@@ -96,8 +114,17 @@ public:
 
     virtual vec2 operator-(const vec2& a) {
         vec2 v(0.0, 0.0);
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
             v.GetData()[i] = m_vec[i] - a.m_vec[i];
+        }
+
+        return v;
+    }
+
+    virtual vec2 operator+(const vec2& a) {
+        vec2 v(0.0, 0.0);
+        for(int i = 0; i < 2; i++) {
+            v.GetData()[i] = m_vec[i] + a.m_vec[i];
         }
 
         return v;

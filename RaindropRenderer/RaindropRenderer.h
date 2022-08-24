@@ -16,6 +16,8 @@
 #include "RD_RenderPass.h"
 #include "RD_Pipeline.h"
 #include "RD_RenderingPipeline.h"
+#include "RD_Callback.h"
+#include "RD_Mesh.h"
 
 #include <memory>
 #include <vector>
@@ -33,16 +35,22 @@ public:
 	void RenderScene();
 
 	bool WantToClose();
+    void Resize();
+
+    void RegisterMesh(std::shared_ptr<RD_Mesh> mesh);
 
 private:
 	std::shared_ptr<RD_API> m_api;
     std::shared_ptr<RD_RenderingPipeline> m_rpline;
 
-    std::shared_ptr<RD_IndexedVertexBuffer> m_verticies;
-    std::shared_ptr<RD_IndexedVertexBuffer> m_verts2;
-
 	int m_width;
 	int m_height;
 	std::string m_wname;
+
+    std::shared_ptr<RD_Callback> m_resize_cbck;
+
+    std::vector<std::shared_ptr<RD_Mesh>> m_meshes;
+
+    std::shared_ptr<RD_Mesh> m_mesh;
 };
 

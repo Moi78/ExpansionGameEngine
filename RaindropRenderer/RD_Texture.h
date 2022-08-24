@@ -38,7 +38,7 @@ public:
 
 private:
     bool CreateImage(VkFormat fmt, int w, int h, bool inFB = false);
-    bool CreateImageView(bool depthAtt = false);
+    bool CreateImageView(VkFormat fmt, bool depthAtt = false);
     bool CreateImageSampler();
     void TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout from, VkImageLayout to);
     void CopyFromBuffer(VkCommandBuffer cmdBuff,std::unique_ptr<RD_Buffer_Vk>& buffer, uint32_t w, uint32_t h);
