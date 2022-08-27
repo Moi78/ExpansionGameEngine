@@ -8,9 +8,13 @@ RD_Texture_Vk::RD_Texture_Vk(VkDevice dev, VkPhysicalDevice pdev, VkQueue gfxQue
     m_pdev = pdev;
     m_gfxQueue = gfxQueue;
     m_cmdPool = cmdPool;
+
+    std::cout << "TEXTURE CREATED" << std::endl;
 }
 
 RD_Texture_Vk::~RD_Texture_Vk() {
+    std::cout << "TEXTURE DESTROYED" << std::endl;
+
     vkDestroySampler(m_dev, m_imgSampler, nullptr);
     vkDestroyImageView(m_dev, m_imgView, nullptr);
     vkDestroyImage(m_dev, m_imgHdl, nullptr);

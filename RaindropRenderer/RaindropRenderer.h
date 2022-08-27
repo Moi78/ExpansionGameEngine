@@ -38,6 +38,10 @@ public:
     void Resize();
 
     void RegisterMesh(std::shared_ptr<RD_Mesh> mesh);
+    void RegisterDirLight(std::shared_ptr<RD_DirLight> dlight);
+    void RegisterPointLight(std::shared_ptr<RD_PointLight> plight);
+
+    void UpdateLighting();
 
 private:
 	std::shared_ptr<RD_API> m_api;
@@ -50,7 +54,11 @@ private:
     std::shared_ptr<RD_Callback> m_resize_cbck;
 
     std::vector<std::shared_ptr<RD_Mesh>> m_meshes;
+    std::vector<std::shared_ptr<RD_DirLight>> m_dirLights;
+    std::vector<std::shared_ptr<RD_PointLight>> m_pointLights;
 
     std::shared_ptr<RD_Mesh> m_mesh;
+
+    std::shared_ptr<RD_Camera> m_viewCam;
 };
 

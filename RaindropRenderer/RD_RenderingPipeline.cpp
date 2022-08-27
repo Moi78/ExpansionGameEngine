@@ -57,10 +57,14 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline() {
     m_camModel = m_api->CreateUniformBuffer(0);
     m_camModel->BuildAndAllocateBuffer(16 * sizeof(float) * 3);
 
+    m_casterCount = m_api->CreateUniformBuffer(5);
+    m_casterCount->BuildAndAllocateBuffer(sizeof(RD_CasterCount));
+
     m_dlights = m_api->CreateUniformBuffer(3);
     m_dlights->BuildAndAllocateBuffer(10 * sizeof(GLSLDirLight));
 
-    m_cam = std::make_unique<RD_Camera>(m_api, 30.0f, vec3(-5.0f, -2.5f, 2.0f), vec3(0.0f, 0.0f, 0.0f), 0.1f, 1000.0f);
+    m_plights = m_api->CreateUniformBuffer(4);
+    m_plights->BuildAndAllocateBuffer(300 * sizeof(GLSLPointLight));
 
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
     base_shader->CompileShaderFromFile("shaders/bin/base.vspv", "shaders/bin/base.fspv");
@@ -83,24 +87,20 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline() {
     m_plineLight->RegisterTexture(pospass, 2);
 
     m_plineLight->RegisterUniformBuffer(m_dlights);
+    m_plineLight->RegisterUniformBuffer(m_plights);
+    m_plineLight->RegisterUniformBuffer(m_casterCount);
 
     m_plineLight->BuildPipeline();
-
-    RD_DirLight test = RD_DirLight(vec3(1.0f, 0.0f, 0.0f), 0.5f, vec3(1.0f, 0.5f, 1.0f));
-    test.PushToUniform(m_dlights, 0);
-
-    RD_DirLight test2 = RD_DirLight(vec3(-1.0f, 0.0f, -0.5f), 1.0f, vec3(0.5f, 1.0f, 0.5f));
-    test2.PushToUniform(m_dlights, 1);
 
     return true;
 }
 
-void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Mesh>>& sceneData) {
+void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Mesh>>& sceneData, std::shared_ptr<RD_Camera> cam) {
     if(sceneData.empty()) {
         return;
     }
 
-    m_cam->PushToUniform(m_camModel);
+    cam->PushToUniform(m_camModel);
     m_plineGBuff->Bind();
 
     for(auto& v : sceneData) {
@@ -117,7 +117,30 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Mesh>>
 
 void RD_RenderingPipeline_PBR::Resize(int w, int h) {
     m_rpassGBuff->SetRenderpassSize(m_api.get(), w, h);
-    m_api->GetWindowingSystem()->SetPresentTexture(m_rpassGBuff->GetAttachment(0));
+    m_rpassLight->SetRenderpassSize(m_api.get(), w, h);
+    m_api->GetWindowingSystem()->SetPresentTexture(m_rpassLight->GetAttachment(0));
 
     m_plineGBuff->RebuildPipeline();
+
+    auto colorpass = m_rpassGBuff->GetAttachment(0);
+    auto normpass = m_rpassGBuff->GetAttachment(1);
+    auto pospass = m_rpassGBuff->GetAttachment(2);
+
+    m_plineLight->PurgeTextures();
+    m_plineLight->RegisterTexture(colorpass, 0);
+    m_plineLight->RegisterTexture(normpass, 1);
+    m_plineLight->RegisterTexture(pospass, 2);
+    m_plineLight->RebuildPipeline();
+}
+
+void RD_RenderingPipeline_PBR::PushDirLight(std::shared_ptr<RD_DirLight> dlight, int index) {
+    dlight->PushToUniform(m_dlights, index);
+}
+
+void RD_RenderingPipeline_PBR::PushCasterCount(RD_CasterCount &ccount) {
+    m_casterCount->FillBufferData(&ccount);
+}
+
+void RD_RenderingPipeline_PBR::PushPointLight(std::shared_ptr<RD_PointLight> plight, int index) {
+    plight->PushToUniform(m_plights, index);
 }
