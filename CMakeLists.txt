@@ -5,10 +5,10 @@ add_compile_definitions(BUILD_VULKAN)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory("./ExpansionMath/")
-add_subdirectory("./BulldozerFileManager/")
-add_subdirectory("./RaindropRenderer/")
-add_subdirectory("./ExGame/")
+add_subdirectory("./src/ExpansionMath/")
+add_subdirectory("./src/BulldozerFileManager/")
+add_subdirectory("./src/RaindropRenderer/")
+add_subdirectory("./src/ExGame/")
 
 add_subdirectory("./tools/FBX2MSH/")
 
