@@ -9,12 +9,10 @@ RD_Texture_Vk::RD_Texture_Vk(VkDevice dev, VkPhysicalDevice pdev, VkQueue gfxQue
     m_gfxQueue = gfxQueue;
     m_cmdPool = cmdPool;
 
-    std::cout << "TEXTURE CREATED" << std::endl;
+    m_isDepth = false;
 }
 
 RD_Texture_Vk::~RD_Texture_Vk() {
-    std::cout << "TEXTURE DESTROYED" << std::endl;
-
     vkDestroySampler(m_dev, m_imgSampler, nullptr);
     vkDestroyImageView(m_dev, m_imgView, nullptr);
     vkDestroyImage(m_dev, m_imgHdl, nullptr);
@@ -80,6 +78,7 @@ bool RD_Texture_Vk::CreateTextureFBReady(int format, int w, int h) {
 
     if(fmt == VK_FORMAT_D32_SFLOAT) {
         TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         m_isDepth = true;
     } else {
         TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -101,12 +100,18 @@ void RD_Texture_Vk::PrepareForRendering(VkCommandBuffer cmdBuff) {
     if(!m_isDepth) {
         TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                               VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    } else {
+        TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                              VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     }
 }
 
 void RD_Texture_Vk::PrepareForSampling(VkCommandBuffer cmdBuff) {
     if(!m_isDepth) {
         TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                              VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    } else {
+        TransitionImageLayout(cmdBuff, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
                               VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
 }
@@ -163,7 +168,7 @@ void RD_Texture_Vk::TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout
     memBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
     memBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
     memBarrier.image = m_imgHdl;
-    memBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    memBarrier.subresourceRange.aspectMask = !m_isDepth ? VK_IMAGE_ASPECT_COLOR_BIT : VK_IMAGE_ASPECT_DEPTH_BIT;
     memBarrier.subresourceRange.layerCount = 1;
     memBarrier.subresourceRange.levelCount = 1;
     memBarrier.subresourceRange.baseArrayLayer = 0;
@@ -215,9 +220,23 @@ void RD_Texture_Vk::TransitionImageLayout(VkCommandBuffer cmdBuff, VkImageLayout
 
         srcFlags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         dstFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else if((from == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) && (to == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)) {
+        memBarrier.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        memBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        memBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+        srcFlags = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        dstFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else if((from == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) && (to == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)) {
+        memBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        memBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        memBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+        srcFlags = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+        dstFlags = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     } else {
-        std::cerr << "ERROR: Unsupported image transition." << std::endl;
-        return;
+            std::cerr << "ERROR: Unsupported image transition." << std::endl;
+            return;
     }
 
 
