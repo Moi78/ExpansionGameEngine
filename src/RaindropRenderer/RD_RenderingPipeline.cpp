@@ -67,10 +67,10 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline() {
     m_plights->BuildAndAllocateBuffer(300 * sizeof(GLSLPointLight));
 
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
-    base_shader->CompileShaderFromFile("shaders/bin/base.vspv", "shaders/bin/base.fspv");
+    base_shader->CompileShaderFromFile("../GameDir/shaders/bin/base.vspv", "../GameDir/shaders/bin/base.fspv");
 
     std::shared_ptr<RD_ShaderLoader> light_shader = m_api->CreateShader();
-    light_shader->CompileShaderFromFile("shaders/bin/sc_blit.vspv", "shaders/bin/lighting_pass.fspv");
+    light_shader->CompileShaderFromFile("../GameDir/shaders/bin/sc_blit.vspv", "../GameDir/shaders/bin/lighting_pass.fspv");
 
     m_plineGBuff = m_api->CreatePipeline(m_rpassGBuff, base_shader);
     m_plineGBuff->RegisterUniformBuffer(m_camModel);

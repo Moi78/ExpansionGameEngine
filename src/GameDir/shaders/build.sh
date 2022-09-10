@@ -1,11 +1,13 @@
 echo BUILDING SWAPCHAIN SHADERS
 
-glslc -c src/sc_blit.frag -o bin/sc_blit.fspv
-glslc -c src/sc_blit.vert -o bin/sc_blit.vspv
+PREFIX="src/GameDir/shaders"
+
+glslc -c $PREFIX/src/sc_blit.frag -o $PREFIX/bin/sc_blit.fspv
+glslc -c $PREFIX/src/sc_blit.vert -o $PREFIX/bin/sc_blit.vspv
 
 echo BUILDING PBR SHADERS
 
-glslc -c src/base.frag -o bin/base.fspv
-glslc -c src/base.vert -o bin/base.vspv
+glslc -c $PREFIX/src/base.frag -o $PREFIX/bin/base.fspv
+glslc -c $PREFIX/src/base.vert -o $PREFIX/bin/base.vspv
 
-glslc -c src/lighting_pass.frag -o bin/lighting_pass.fspv
+glslc -c $PREFIX/src/lighting_pass.frag -o $PREFIX/bin/lighting_pass.fspv

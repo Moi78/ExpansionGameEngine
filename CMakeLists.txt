@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory("./src/ExpansionMath/")
 add_subdirectory("./src/BulldozerFileManager/")
 add_subdirectory("./src/RaindropRenderer/")
+add_subdirectory("./src/ExpansionGameEngineCore/")
 add_subdirectory("./src/ExGame/")
 
 add_subdirectory("./tools/FBX2MSH/")

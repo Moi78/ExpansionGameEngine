@@ -417,7 +417,7 @@ bool RD_Windowing_GLFW::WasResized() {
 
 void RD_Windowing_GLFW::BuildBlitPipeline() {
     std::shared_ptr<RD_ShaderLoader> blitShader = m_api->CreateShader();
-    blitShader->CompileShaderFromFile("shaders/bin/sc_blit.vspv", "shaders/bin/sc_blit.fspv");
+    blitShader->CompileShaderFromFile("../GameDir/shaders/bin/sc_blit.vspv", "../GameDir/shaders/bin/sc_blit.fspv");
 
     RD_Attachment att{};
     att.do_clear = true;

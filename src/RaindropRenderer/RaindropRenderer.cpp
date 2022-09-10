@@ -32,7 +32,7 @@ bool RaindropRenderer::InitRenderer() {
     m_api->GetWindowingSystem()->SetExternalResizeCallback(m_resize_cbck);
 
     m_mesh = std::make_shared<RD_Mesh>(m_api, vec3(), vec3(), vec3(2.0f, 2.0f, 2.0f));
-    m_mesh->LoadMesh("./mdl/monkey.msh");
+    m_mesh->LoadMesh("../GameDir/mdl/monkey.msh");
     RegisterMesh(m_mesh);
 
     std::shared_ptr<RD_DirLight> test = std::make_shared<RD_DirLight>(vec3(0.0f, 0.0f, -1.0f), 1.0f, vec3(0.5f, 0.5f, 1.0f));
