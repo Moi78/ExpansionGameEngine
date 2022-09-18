@@ -6,3 +6,7 @@ add_library(ExpansionGameEngineCore SHARED
 target_link_libraries(ExpansionGameEngineCore RaindropRenderer)
 target_link_libraries(ExpansionGameEngineCore ExpansionMath)
 target_link_libraries(ExpansionGameEngineCore BulldozerFileManager)
+
+target_include_directories(ExpansionGameEngineCore PUBLIC ../RaindropRenderer)
+target_include_directories(ExpansionGameEngineCore PUBLIC ../ExpansionMath)
+target_include_directories(ExpansionGameEngineCore PUBLIC ../BulldozerFileManager)
