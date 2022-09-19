@@ -7,51 +7,35 @@ RaindropRenderer::RaindropRenderer(std::shared_ptr<RD_API> api, std::shared_ptr<
 	m_width = w;
 	m_height = h;
 	m_wname = wname;
-
-    m_viewCam = std::make_shared<RD_Camera>(m_api, 30.0f, vec3(-5.0f, -5.0f, 5.0f), vec3(), 0.1f, 1000.0f);
 }
 
 RaindropRenderer::~RaindropRenderer() {
     m_meshes.clear();
 }
 
-bool RaindropRenderer::InitRenderer() {
+bool RaindropRenderer::InitRenderer(std::string enginePath) {
+    m_enginePath = enginePath;
+
 	if (!m_api->InitAPI(m_wname, m_width, m_height)) {
 		return false;
 	}
 
-    m_api->GetWindowingSystem()->BuildBlitPipeline();
+    m_api->GetWindowingSystem()->BuildBlitPipeline(enginePath);
 
 	if(!m_api->MakeFramebuffers()) {
 		return false;
 	}
 
-    m_rpline->InitRenderingPipeline();
+    m_rpline->InitRenderingPipeline(enginePath);
 
     m_resize_cbck = std::make_shared<RD_Callback>(CL_VDFUNCPTR(RaindropRenderer::Resize));
     m_api->GetWindowingSystem()->SetExternalResizeCallback(m_resize_cbck);
-
-    m_mesh = std::make_shared<RD_Mesh>(m_api, vec3(), vec3(), vec3(2.0f, 2.0f, 2.0f));
-    m_mesh->LoadMesh("../GameDir/mdl/monkey.msh");
-    RegisterMesh(m_mesh);
-
-    std::shared_ptr<RD_DirLight> test = std::make_shared<RD_DirLight>(vec3(0.0f, 0.0f, -1.0f), 1.0f, vec3(0.5f, 0.5f, 1.0f));
-    RegisterDirLight(test);
-
-    std::shared_ptr<RD_DirLight> test2 = std::make_shared<RD_DirLight>(vec3(-1.0f, 0.0f, -0.3f), 1.0f, vec3(1.0f, 0.0f, 0.0f));
-    RegisterDirLight(test2);
-
-    std::shared_ptr<RD_PointLight> test3 = std::make_shared<RD_PointLight>(vec3(1.0f, 0.0f, 5.0f), 2.0f, vec3(0.0f, 1.0f, 0.0f), 10.0f);
-    RegisterPointLight(test3);
 
 	return true;
 }
 
 void RaindropRenderer::RenderScene() {
-    m_mesh->Rotate(vec3(0.0f, 0.0f, 0.5f));
-
     m_rpline->RenderScene(m_meshes, m_viewCam);
-
 	m_api->GetWindowingSystem()->Present();
 }
 

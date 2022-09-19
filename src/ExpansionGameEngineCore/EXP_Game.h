@@ -6,13 +6,21 @@
 
 #include <RaindropRenderer.h>
 
+#include "EXP_Conf.h"
+
 class EXP_Game {
 public:
-    EXP_Game(std::shared_ptr<RaindropRenderer> rndr);
+    EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo);
     ~EXP_Game();
 
-private:
+    //Engine control
+    bool InitEngine();
+    void RunGame();
 
+private:
+    std::shared_ptr<RaindropRenderer> m_rndr;
+
+    EXP_GameInfo m_gameinfo;
 };
 
 

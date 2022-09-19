@@ -8,7 +8,7 @@ RD_RenderingPipeline_PBR::~RD_RenderingPipeline_PBR() {
 
 }
 
-bool RD_RenderingPipeline_PBR::InitRenderingPipeline() {
+bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     int w, h;
     w = m_api->GetWindowingSystem()->GetWidth();
     h = m_api->GetWindowingSystem()->GetHeight();
@@ -67,10 +67,10 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline() {
     m_plights->BuildAndAllocateBuffer(300 * sizeof(GLSLPointLight));
 
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
-    base_shader->CompileShaderFromFile("../GameDir/shaders/bin/base.vspv", "../GameDir/shaders/bin/base.fspv");
+    base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
 
     std::shared_ptr<RD_ShaderLoader> light_shader = m_api->CreateShader();
-    light_shader->CompileShaderFromFile("../GameDir/shaders/bin/sc_blit.vspv", "../GameDir/shaders/bin/lighting_pass.fspv");
+    light_shader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/lighting_pass.fspv");
 
     m_plineGBuff = m_api->CreatePipeline(m_rpassGBuff, base_shader);
     m_plineGBuff->RegisterUniformBuffer(m_camModel);
@@ -143,4 +143,8 @@ void RD_RenderingPipeline_PBR::PushCasterCount(RD_CasterCount &ccount) {
 
 void RD_RenderingPipeline_PBR::PushPointLight(std::shared_ptr<RD_PointLight> plight, int index) {
     plight->PushToUniform(m_plights, index);
+}
+
+std::shared_ptr<RD_RenderPass> RD_RenderingPipeline_PBR::GetBaseRenderpass() {
+    return m_rpassGBuff;
 }

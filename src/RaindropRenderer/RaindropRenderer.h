@@ -29,7 +29,7 @@ public:
 	RaindropRenderer(std::shared_ptr<RD_API> api, std::shared_ptr<RD_RenderingPipeline> rpline, const int width, const int height, std::string wname);
 	~RaindropRenderer();
 
-	bool InitRenderer();
+	bool InitRenderer(std::string enginePath);
 
 	void UpdateWindow();
 	void RenderScene();
@@ -50,6 +50,7 @@ private:
 	int m_width;
 	int m_height;
 	std::string m_wname;
+    std::string m_enginePath;
 
     std::shared_ptr<RD_Callback> m_resize_cbck;
 

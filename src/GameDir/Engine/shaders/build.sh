@@ -1,6 +1,6 @@
 echo BUILDING SWAPCHAIN SHADERS
 
-PREFIX="src/GameDir/shaders"
+PREFIX="src/GameDir/Engine/shaders"
 
 glslc -c $PREFIX/src/sc_blit.frag -o $PREFIX/bin/sc_blit.fspv
 glslc -c $PREFIX/src/sc_blit.vert -o $PREFIX/bin/sc_blit.vspv

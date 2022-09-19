@@ -4,26 +4,35 @@
 #include <RaindropRenderer.h>
 #include <RD_API.h>
 
+#include <EXP_Game.h>
+#include <EXP_Conf.h>
+
 //Enabling Nvidia Optimus
 extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
 
 int main(int argc, char* argv[]) {
 	std::cout << "EXPANSION GAME ENGINE REWRITE" << std::endl;
 
+    EXP_GameInfo gameinfo{};
+    gameinfo.GameLib = "";
+    gameinfo.RootEngineContentDir = "./GameDir/Engine/";
+    gameinfo.RootGameContentDir = "./GameDir/Content/";
+    gameinfo.WindowHeight = 1270;
+    gameinfo.WindowWidth = 720;
+
 	std::shared_ptr<RD_API> api = std::make_shared<RD_API_Vk>();
     std::shared_ptr<RD_RenderingPipeline> rpline = std::make_shared<RD_RenderingPipeline_PBR>(api);
 
-	std::unique_ptr<RaindropRenderer> rndr = std::make_unique<RaindropRenderer>(std::shared_ptr<RD_API>(api), std::shared_ptr<RD_RenderingPipeline>(rpline), 1270, 720, "ExGame");
+	std::shared_ptr<RaindropRenderer> rndr = std::make_shared<RaindropRenderer>(std::shared_ptr<RD_API>(api), std::shared_ptr<RD_RenderingPipeline>(rpline), 1270, 720, "ExGame");
 
-	if(!rndr->InitRenderer()) {
-		std::cerr << "Failed to init renderer." << std::endl;
-		exit(-1);
-	}
+    std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>(rndr, gameinfo);
 
-	while (!rndr->WantToClose()) {
-		rndr->UpdateWindow();
-		rndr->RenderScene();
-	}
+    if(!game->InitEngine()) {
+        std::cerr << "ERROR: Failed to init engine. :(" << std::endl;
+        return -1;
+    }
+
+    game->RunGame();
 
 	return 0;
 }

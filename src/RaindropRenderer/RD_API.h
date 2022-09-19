@@ -39,7 +39,7 @@ public:
 	virtual int GetWidth() = 0;
 
 	virtual void Present() = 0;
-    virtual void BuildBlitPipeline() = 0;
+    virtual void BuildBlitPipeline(std::string enginePath) = 0;
 
     virtual void SetPresentTexture(std::shared_ptr<RD_Texture> tex) = 0;
 
@@ -126,7 +126,7 @@ public:
 	int GetWidth() override;
 
 	void Present() override;
-    void BuildBlitPipeline() override;
+    void BuildBlitPipeline(std::string enginePath) override;
 
 	void PollEvents() override;
 

@@ -27,7 +27,7 @@ public:
     RD_RenderingPipeline() {};
     virtual ~RD_RenderingPipeline() {};
 
-    virtual bool InitRenderingPipeline() = 0;
+    virtual bool InitRenderingPipeline(std::string enginePath) = 0;
     virtual void Resize(int w, int h) = 0;
 
     virtual void RenderScene(std::vector<std::shared_ptr<RD_Mesh>>& sceneData, std::shared_ptr<RD_Camera> cam) = 0;
@@ -35,6 +35,8 @@ public:
     virtual void PushDirLight(std::shared_ptr<RD_DirLight> dlight, int index) = 0;
     virtual void PushPointLight(std::shared_ptr<RD_PointLight> plight, int index) = 0;
     virtual void PushCasterCount(RD_CasterCount& ccount) = 0;
+
+    virtual std::shared_ptr<RD_RenderPass> GetBaseRenderpass() = 0;
 };
 
 class RD_RenderingPipeline_PBR : public RD_RenderingPipeline {
@@ -42,7 +44,7 @@ public:
     RD_RenderingPipeline_PBR(std::shared_ptr<RD_API>& api);
     ~RD_RenderingPipeline_PBR() override;
 
-    bool InitRenderingPipeline() override;
+    bool InitRenderingPipeline(std::string enginePath) override;
     void Resize(int w, int h) override;
 
     void RenderScene(std::vector<std::shared_ptr<RD_Mesh>>& sceneData, std::shared_ptr<RD_Camera> cam) override;
@@ -50,6 +52,8 @@ public:
     void PushDirLight(std::shared_ptr<RD_DirLight> dlight, int index) override;
     void PushPointLight(std::shared_ptr<RD_PointLight> plight, int index) override;
     void PushCasterCount(RD_CasterCount& ccount) override;
+
+    std::shared_ptr<RD_RenderPass> GetBaseRenderpass() override;
 
 private:
     std::shared_ptr<RD_API> m_api;
