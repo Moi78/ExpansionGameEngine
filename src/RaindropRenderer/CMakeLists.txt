@@ -13,7 +13,7 @@ add_library(RaindropRenderer SHARED
     RD_RenderPass.cpp
     RD_Pipeline.h
     RD_Pipeline.cpp
-    RD_VertexBuffer.cpp RD_VertexBuffer.h RD_Buffer.h RD_Buffer.cpp RD_UniformBuffer.cpp RD_UniformBuffer.h RD_Texture.cpp RD_Texture.h RD_RenderingPipeline.cpp RD_RenderingPipeline.h RD_ImageFormat.h RD_ImageFormat.cpp RD_Camera.cpp RD_Camera.h RD_Callback.h RD_Mesh.cpp RD_Mesh.h RD_DirLight.cpp RD_DirLight.h RD_Quad.cpp RD_Quad.h RD_PointLight.cpp RD_PointLight.h)
+    RD_VertexBuffer.cpp RD_VertexBuffer.h RD_Buffer.h RD_Buffer.cpp RD_UniformBuffer.cpp RD_UniformBuffer.h RD_Texture.cpp RD_Texture.h RD_RenderingPipeline.cpp RD_RenderingPipeline.h RD_ImageFormat.h RD_ImageFormat.cpp RD_Camera.cpp RD_Camera.h RD_Callback.h RD_Mesh.cpp RD_Mesh.h RD_DirLight.cpp RD_DirLight.h RD_Quad.cpp RD_Quad.h RD_PointLight.cpp RD_PointLight.h RD_Material.cpp RD_Material.h)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(glfw3 3.3 REQUIRED FATAL_ERROR)

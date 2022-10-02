@@ -41,7 +41,16 @@ public:
     void RegisterDirLight(std::shared_ptr<RD_DirLight> dlight);
     void RegisterPointLight(std::shared_ptr<RD_PointLight> plight);
 
+    void SetCurrentCamera(std::shared_ptr<RD_Camera>& cam);
+
+    void RegisterMaterial(std::shared_ptr<RD_Material> mat);
+
     void UpdateLighting();
+
+    std::string GetEnginePath();
+    std::shared_ptr<RD_API> GetAPI();
+
+    std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_ShaderLoader>& shader);
 
 private:
 	std::shared_ptr<RD_API> m_api;
@@ -55,10 +64,10 @@ private:
     std::shared_ptr<RD_Callback> m_resize_cbck;
 
     std::vector<std::shared_ptr<RD_Mesh>> m_meshes;
+    std::vector<std::shared_ptr<RD_Material>> m_materials;
+
     std::vector<std::shared_ptr<RD_DirLight>> m_dirLights;
     std::vector<std::shared_ptr<RD_PointLight>> m_pointLights;
-
-    std::shared_ptr<RD_Mesh> m_mesh;
 
     std::shared_ptr<RD_Camera> m_viewCam;
 };

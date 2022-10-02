@@ -7,6 +7,8 @@ RaindropRenderer::RaindropRenderer(std::shared_ptr<RD_API> api, std::shared_ptr<
 	m_width = w;
 	m_height = h;
 	m_wname = wname;
+
+    m_viewCam = std::make_shared<RD_Camera>(m_api, 0.0f, vec3(), vec3(), 0.0f, 0.0f);
 }
 
 RaindropRenderer::~RaindropRenderer() {
@@ -35,7 +37,7 @@ bool RaindropRenderer::InitRenderer(std::string enginePath) {
 }
 
 void RaindropRenderer::RenderScene() {
-    m_rpline->RenderScene(m_meshes, m_viewCam);
+    m_rpline->RenderScene(m_materials, m_viewCam);
 	m_api->GetWindowingSystem()->Present();
 }
 
@@ -99,4 +101,27 @@ void RaindropRenderer::RegisterPointLight(std::shared_ptr<RD_PointLight> plight)
 
     m_pointLights.push_back(plight);
     UpdateLighting();
+}
+
+std::string RaindropRenderer::GetEnginePath() {
+    return m_enginePath;
+}
+
+void RaindropRenderer::RegisterMaterial(std::shared_ptr <RD_Material> mat) {
+    m_materials.push_back(mat);
+}
+
+std::shared_ptr<RD_API> RaindropRenderer::GetAPI() {
+    return m_api;
+}
+
+std::shared_ptr<RD_Pipeline> RaindropRenderer::CreatePipeline(std::shared_ptr<RD_ShaderLoader> &shader) {
+    auto pline = m_api->CreatePipeline(m_rpline->GetBaseRenderpass(), shader);
+    m_rpline->SetupPipeline(pline);
+
+    return pline;
+}
+
+void RaindropRenderer::SetCurrentCamera(std::shared_ptr <RD_Camera> &cam) {
+    m_viewCam = cam;
 }

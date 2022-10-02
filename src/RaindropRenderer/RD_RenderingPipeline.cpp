@@ -95,20 +95,16 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     return true;
 }
 
-void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Mesh>>& sceneData, std::shared_ptr<RD_Camera> cam) {
+void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Material>>& sceneData, std::shared_ptr<RD_Camera> cam) {
     if(sceneData.empty()) {
         return;
     }
 
     cam->PushToUniform(m_camModel);
-    m_plineGBuff->Bind();
 
-    for(auto& v : sceneData) {
-        m_camModel->PartialFillBufferData(v->GetTransform().GetPTR(), 16 * sizeof(float), 2 * 16 * sizeof(float));
-        m_plineGBuff->DrawIndexedVertexBuffer(v->GetVertexBuffer());
+    for(auto& m : sceneData) {
+        m->RenderMeshes(m_camModel);
     }
-
-    m_plineGBuff->Unbind();
 
     m_plineLight->Bind();
     m_plineLight->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer());
@@ -147,4 +143,9 @@ void RD_RenderingPipeline_PBR::PushPointLight(std::shared_ptr<RD_PointLight> pli
 
 std::shared_ptr<RD_RenderPass> RD_RenderingPipeline_PBR::GetBaseRenderpass() {
     return m_rpassGBuff;
+}
+
+void RD_RenderingPipeline_PBR::SetupPipeline(std::shared_ptr<RD_Pipeline> pline) {
+    pline->RegisterUniformBuffer(m_camModel);
+    pline->BuildPipeline();
 }
