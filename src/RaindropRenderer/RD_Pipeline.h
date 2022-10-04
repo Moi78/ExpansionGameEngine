@@ -6,28 +6,33 @@
 #include "RD_VertexBuffer.h"
 #include "RD_UniformBuffer.h"
 #include "RD_Texture.h"
+#include "RD_RenderSynchronizer.h"
 
 #include <iostream>
 #include <memory>
 #include <array>
+#include <optional>
 
 class RD_Pipeline {
 public:
     RD_Pipeline() {};
     virtual ~RD_Pipeline() {};
 
-    virtual void Bind() = 0;
-    virtual void Unbind() = 0;
+    virtual void Bind(std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
+    virtual void Unbind(std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
 
     virtual void RebuildPipeline() = 0;
     virtual bool BuildPipeline() = 0;
 
     virtual void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) = 0;
-    virtual void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) = 0;
+    virtual void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
 
     virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) = 0;
     virtual void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) = 0;
     virtual void PurgeTextures() = 0;
+
+    virtual void SetModelMode(bool mode) = 0;
+    virtual void PushConstant(void* data, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -40,8 +45,8 @@ public:
     ~RD_Pipeline_Vk() override;
     void CleanUp();
 
-    void Bind() override;
-    void Unbind() override;
+    void Bind(std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
+    void Unbind(std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
     void BindSC(VkFramebuffer fb);
     void UnbindSC();
@@ -53,11 +58,14 @@ public:
     void RebuildPipeline() override;
 
     void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) override;
-    void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) override;
+    void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
     void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) override;
     void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) override;
     void PurgeTextures() override;
+
+    void SetModelMode(bool mode) override;
+    void PushConstant(void* data, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
 private:
     bool AllocCMDBuffer();
@@ -88,6 +96,8 @@ private:
     VkPipeline m_pipeline;
 
     VkCommandBuffer m_cmdBuffer;
+
+    bool m_isModelMode;
 };
 
 #endif //BUILD_VULKAN

@@ -21,6 +21,7 @@
 #include "RD_UniformBuffer.h"
 #include "RD_Texture.h"
 #include "RD_Callback.h"
+#include "RD_RenderSynchronizer.h"
 #include "vec.h"
 
 class RD_DLLAPI RD_Windowing {
@@ -64,6 +65,7 @@ public:
     virtual std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() = 0;
     virtual std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) = 0;
     virtual std::shared_ptr<RD_Texture> CreateTexture() = 0;
+    virtual std::shared_ptr<RD_RenderSynchronizer> CreateRenderSynchronizer() = 0;
 
 	virtual std::shared_ptr<RD_Windowing> GetWindowingSystem() = 0;
 };
@@ -197,6 +199,7 @@ public:
     std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() override;
     std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) override;
     std::shared_ptr<RD_Texture> CreateTexture() override;
+    std::shared_ptr<RD_RenderSynchronizer> CreateRenderSynchronizer() override;
 
 	std::shared_ptr<RD_Windowing> GetWindowingSystem() override;
 private:

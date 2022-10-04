@@ -3,6 +3,7 @@
 
 #include "RD_Texture.h"
 #include "RD_ImageFormat.h"
+#include "RD_RenderSynchronizer.h"
 
 #include <iostream>
 #include <vector>
@@ -26,6 +27,9 @@ public:
     virtual bool BuildRenderpass(RD_API* api, bool sc) = 0;
     virtual void SetRenderpassSize(RD_API* api, const int w, const int h) = 0;
 
+    virtual void BeginRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
+    virtual void EndRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
+
     virtual int GetAttachmentCount() = 0;
     virtual std::shared_ptr<RD_Texture> GetAttachment(int index) = 0;
 
@@ -42,7 +46,10 @@ public:
     ~RD_RenderPass_Vk() override;
 
     void BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB = VK_NULL_HANDLE);
+    void BeginRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) override;
+
     void EndRenderPass(VkCommandBuffer cmd);
+    void EndRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) override;
 
     bool BuildRenderpass(RD_API* api, bool sc) override;
     void SetRenderpassSize(RD_API* api, const int w, const int h) override;

@@ -334,7 +334,7 @@ void RD_Windowing_GLFW::Present() {
 	std::shared_ptr<RD_Pipeline_Vk> plineVK = std::reinterpret_pointer_cast<RD_Pipeline_Vk>(m_pline);
 	plineVK->BindSC(m_scFbs[m_imgIdx]);
 
-    plineVK->DrawIndexedVertexBuffer(m_verticies);
+    plineVK->DrawIndexedVertexBuffer(m_verticies, {});
 
 	plineVK->UnbindSC();
 	vkResetFences(m_dev, 1, &m_inFLight_f);
@@ -806,6 +806,10 @@ std::shared_ptr<RD_UniformBuffer> RD_API_Vk::CreateUniformBuffer(uint32_t bindin
 
 std::shared_ptr<RD_Texture> RD_API_Vk::CreateTexture() {
     return std::make_shared<RD_Texture_Vk>(m_ldev, m_dev, m_gfx_queue, m_pool);
+}
+
+std::shared_ptr<RD_RenderSynchronizer> RD_API_Vk::CreateRenderSynchronizer() {
+    return std::make_shared<RD_RenderSynchronizer_Vk>(m_ldev, m_pool, m_gfx_queue);
 }
 
 //-----------------------------------

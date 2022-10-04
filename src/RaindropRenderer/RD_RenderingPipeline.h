@@ -8,6 +8,7 @@
 #include "RD_ShaderLoader.h"
 #include "RD_UniformBuffer.h"
 #include "RD_Quad.h"
+#include "RD_RenderSynchronizer.h"
 
 #include "RD_Mesh.h"
 #include "RD_Camera.h"
@@ -69,10 +70,13 @@ private:
     std::shared_ptr<RD_Pipeline> m_plineLight;
 
     std::shared_ptr<RD_UniformBuffer> m_camModel;
+    std::shared_ptr<RD_UniformBuffer> m_models;
 
     std::shared_ptr<RD_UniformBuffer> m_dlights;
     std::shared_ptr<RD_UniformBuffer> m_plights;
     std::shared_ptr<RD_UniformBuffer> m_casterCount;
+
+    std::shared_ptr<RD_RenderSynchronizer_Vk> m_sync;
 };
 
 

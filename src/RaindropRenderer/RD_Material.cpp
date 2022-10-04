@@ -16,13 +16,14 @@ void RD_Material::PurgeMeshes() {
     m_meshes.clear();
 }
 
-void RD_Material::RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel) {
-    m_pline->Bind();
+void RD_Material::RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::shared_ptr<RD_RenderSynchronizer> sync) {
+    m_pline->Bind(sync);
 
     for(auto& m : m_meshes) {
-        camModel->PartialFillBufferData(m->GetTransform().GetPTR(), 16 * sizeof(float), 2 * 16 * sizeof(float));
-        m_pline->DrawIndexedVertexBuffer(m->GetVertexBuffer());
+        //camModel->PartialFillBufferData(m->GetTransform().GetPTR(), 16 * sizeof(float), 2 * 16 * sizeof(float));
+        m_pline->PushConstant(m->GetTransform().GetPTR(), sync);
+        m_pline->DrawIndexedVertexBuffer(m->GetVertexBuffer(), sync);
     }
 
-    m_pline->Unbind();
+    m_pline->Unbind(sync);
 }

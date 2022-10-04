@@ -14,6 +14,7 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     h = m_api->GetWindowingSystem()->GetHeight();
 
     m_renderSurface = std::make_shared<RD_Quad>(m_api);
+    m_sync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(m_api->CreateRenderSynchronizer());
 
     //FRAMEBUFFER
     RD_Attachment color{};
@@ -56,6 +57,9 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     //UNIFORMS
     m_camModel = m_api->CreateUniformBuffer(0);
     m_camModel->BuildAndAllocateBuffer(16 * sizeof(float) * 3);
+
+    m_models = m_api->CreateUniformBuffer(1);
+    m_models->BuildAndAllocateBuffer(16 * sizeof(float) * 256);
 
     m_casterCount = m_api->CreateUniformBuffer(5);
     m_casterCount->BuildAndAllocateBuffer(sizeof(RD_CasterCount));
@@ -102,13 +106,19 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Materi
 
     cam->PushToUniform(m_camModel);
 
+    m_sync->Start();
+    m_rpassGBuff->BeginRenderpass(m_sync);
+
     for(auto& m : sceneData) {
-        m->RenderMeshes(m_camModel);
+        m->RenderMeshes(m_camModel, m_sync);
     }
 
-    m_plineLight->Bind();
-    m_plineLight->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer());
-    m_plineLight->Unbind();
+    m_rpassGBuff->EndRenderpass(m_sync);
+    m_sync->Stop();
+
+    m_plineLight->Bind({});
+    m_plineLight->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), {});
+    m_plineLight->Unbind({});
 }
 
 void RD_RenderingPipeline_PBR::Resize(int w, int h) {

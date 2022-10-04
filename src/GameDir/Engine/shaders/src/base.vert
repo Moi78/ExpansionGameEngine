@@ -13,13 +13,17 @@ layout (binding = 0) uniform TRANFORMS {
     mat4 model;
 };
 
+layout (push_constant) uniform MODELS {
+    mat4 model_;
+};
+
 void main() {
-    vec3 fragPos = (vec4(aPos, 1.0) * model).xyz;
+    vec3 fragPos = (vec4(aPos, 1.0) * model_).xyz;
     gl_Position = vec4(fragPos, 1.0) * view * proj;
 
     UVcoords = aUV;
 
-    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    mat3 normalMatrix = transpose(inverse(mat3(model_)));
     norm = aNorm * normalMatrix;
 
     FragPos = fragPos;

@@ -117,6 +117,8 @@ std::shared_ptr<RD_API> RaindropRenderer::GetAPI() {
 
 std::shared_ptr<RD_Pipeline> RaindropRenderer::CreatePipeline(std::shared_ptr<RD_ShaderLoader> &shader) {
     auto pline = m_api->CreatePipeline(m_rpline->GetBaseRenderpass(), shader);
+    pline->SetModelMode(true);
+
     m_rpline->SetupPipeline(pline);
 
     return pline;

@@ -8,6 +8,7 @@ RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, VkQueue gfxQue
     m_gfxQueue = gfxQueue;
 
     m_extSignaling = extSignaling;
+    m_isModelMode = false;
 
     m_rpass = std::reinterpret_pointer_cast<RD_RenderPass_Vk>(rpass);
     m_shader = std::reinterpret_pointer_cast<RD_ShaderLoader_Vk>(shader);
@@ -155,6 +156,16 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     //PIPELINE LAYOUT
     VkPipelineLayoutCreateInfo plineLayoutInfo{};
     plineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+
+    if(m_isModelMode) {
+        VkPushConstantRange push_constant{};
+        push_constant.size = 16 * sizeof(float);
+        push_constant.offset = 0;
+        push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+        plineLayoutInfo.pPushConstantRanges = &push_constant;
+        plineLayoutInfo.pushConstantRangeCount = 1;
+    }
 
     //UNIFORM BUFFERS // TEXTURE BUFFERS (If any)
     if((!m_uBuffs.empty()) || (!m_texs.empty())) {
@@ -331,18 +342,25 @@ bool RD_Pipeline_Vk::AllocCMDBuffer() {
     return true;
 }
 
-void RD_Pipeline_Vk::Bind() {
+void RD_Pipeline_Vk::Bind(std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
     VkCommandBufferBeginInfo bInfo{};
     bInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-    vkResetCommandBuffer(m_cmdBuffer, 0);
+    VkCommandBuffer cmdBuff = m_cmdBuffer;
 
-    vkBeginCommandBuffer(m_cmdBuffer, &bInfo);
-    m_rpass->BeginRenderPass(m_cmdBuffer);
-    vkCmdBindPipeline(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+    if(!sync.has_value()) {
+        vkResetCommandBuffer(cmdBuff, 0);
+        vkBeginCommandBuffer(cmdBuff, &bInfo);
+        m_rpass->BeginRenderPass(cmdBuff);
+    } else {
+        auto syncVK = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync.value());
+        cmdBuff = syncVK->GetCommandBuffer();
+    }
+
+    vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 
     if(m_descSet != VK_NULL_HANDLE) {
-        vkCmdBindDescriptorSets(m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, 1, &m_descSet, 0, nullptr);
+        vkCmdBindDescriptorSets(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, 0, 1, &m_descSet, 0, nullptr);
     }
 }
 
@@ -361,11 +379,13 @@ void RD_Pipeline_Vk::BindSC(VkFramebuffer fb) {
     }
 }
 
-void RD_Pipeline_Vk::Unbind() {
-    m_rpass->EndRenderPass(m_cmdBuffer);
-    vkEndCommandBuffer(m_cmdBuffer);
+void RD_Pipeline_Vk::Unbind(std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
+    if(!sync.has_value()) {
+        m_rpass->EndRenderPass(m_cmdBuffer);
+        vkEndCommandBuffer(m_cmdBuffer);
 
-    SubmitCMDSync();
+        SubmitCMDSync();
+    }
 }
 
 void RD_Pipeline_Vk::UnbindSC() {
@@ -429,12 +449,18 @@ void RD_Pipeline_Vk::DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) {
     );
 }
 
-void RD_Pipeline_Vk::DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff) {
+void RD_Pipeline_Vk::DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
     const std::shared_ptr<RD_IndexedVertexBuffer_Vk> vib = std::reinterpret_pointer_cast<RD_IndexedVertexBuffer_Vk>(vibuff);
 
-    vib->BindBuffer(m_cmdBuffer);
+    VkCommandBuffer cmdBuff = m_cmdBuffer;
+    if(sync.has_value()) {
+        const std::shared_ptr<RD_RenderSynchronizer_Vk> vsync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync.value());
+        cmdBuff = vsync->GetCommandBuffer();
+    }
+
+    vib->BindBuffer(cmdBuff);
     vkCmdDrawIndexed(
-        m_cmdBuffer,
+        cmdBuff,
         vib->GetNumberOfIndices(),
         1, 0, 0, 0
     );
@@ -487,6 +513,20 @@ bool RD_Pipeline_Vk::BuildSyncObjects() {
     }
 
     return true;
+}
+
+void RD_Pipeline_Vk::SetModelMode(bool mode) {
+    m_isModelMode = mode;
+}
+
+void RD_Pipeline_Vk::PushConstant(void *data, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
+    VkCommandBuffer cmdBuff = m_cmdBuffer;
+    if(sync.has_value()) {
+        const std::shared_ptr<RD_RenderSynchronizer_Vk> vsync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync.value());
+        cmdBuff = vsync->GetCommandBuffer();
+    }
+
+    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, 16 * sizeof(float), data);
 }
 
 #endif //BUILD_VULKAN

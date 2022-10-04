@@ -227,4 +227,50 @@ std::shared_ptr<RD_Texture> RD_RenderPass_Vk::GetAttachment(int index) {
     return m_imgs[index];
 }
 
+void RD_RenderPass_Vk::BeginRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) {
+    auto syncVK = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync);
+
+    VkCommandBuffer cmd = syncVK->GetCommandBuffer();
+
+    for(auto& img : m_imgs) {
+        auto imgVK = std::reinterpret_pointer_cast<RD_Texture_Vk>(img);
+        imgVK->PrepareForRendering(cmd);
+    }
+
+    VkRenderPassBeginInfo rpassInfo{};
+    rpassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    rpassInfo.renderPass = m_renderPass;
+    rpassInfo.framebuffer = m_fb;
+    rpassInfo.renderArea.offset = {0, 0};
+    rpassInfo.renderArea.extent = {(uint32_t)m_w, (uint32_t)m_h};
+
+    constexpr VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+    constexpr VkClearValue clearDepth = {{{1.0f, 0.0f, 0.0f, 1.0f}}};
+    std::vector<VkClearValue> clear;
+    for(auto& a : m_att) {
+        if(a.format == VK_FORMAT_D32_SFLOAT) {
+            clear.push_back(clearDepth);
+        } else {
+            clear.push_back(clearColor);
+        }
+    }
+
+    rpassInfo.clearValueCount = clear.size();
+    rpassInfo.pClearValues = clear.data();
+
+    vkCmdBeginRenderPass(cmd, &rpassInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void RD_RenderPass_Vk::EndRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) {
+    auto syncVK = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync);
+    VkCommandBuffer cmd = syncVK->GetCommandBuffer();
+
+    vkCmdEndRenderPass(cmd);
+
+    for(auto& img : m_imgs) {
+        auto imgVK = std::reinterpret_pointer_cast<RD_Texture_Vk>(img);
+        imgVK->PrepareForSampling(cmd);
+    }
+}
+
 #endif //BUILD_VULKAN

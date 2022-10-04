@@ -7,6 +7,7 @@
 #include "RD_Mesh.h"
 #include "RD_Pipeline.h"
 #include "RD_UniformBuffer.h"
+#include "RD_RenderSynchronizer.h"
 
 class RD_Material {
 public:
@@ -16,7 +17,7 @@ public:
     void RegisterMesh(std::shared_ptr<RD_Mesh> mesh);
     void PurgeMeshes();
 
-    void RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel);
+    void RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::shared_ptr<RD_RenderSynchronizer> sync);
 
 private:
     std::vector<std::shared_ptr<RD_Mesh>> m_meshes;
