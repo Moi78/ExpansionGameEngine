@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "EXPANSION GAME ENGINE REWRITE" << std::endl;
 
     EXP_GameInfo gameinfo{};
-    gameinfo.GameLib = "";
+    gameinfo.GameLib = "libGame.so";
     gameinfo.RootEngineContentDir = "./GameDir/Engine/";
     gameinfo.RootGameContentDir = "./GameDir/Content/";
     gameinfo.WindowHeight = 1270;

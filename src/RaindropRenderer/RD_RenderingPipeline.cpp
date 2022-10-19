@@ -76,10 +76,6 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     std::shared_ptr<RD_ShaderLoader> light_shader = m_api->CreateShader();
     light_shader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/lighting_pass.fspv");
 
-    m_plineGBuff = m_api->CreatePipeline(m_rpassGBuff, base_shader);
-    m_plineGBuff->RegisterUniformBuffer(m_camModel);
-    m_plineGBuff->BuildPipeline();
-
     m_plineLight = m_api->CreatePipeline(m_rpassLight, light_shader);
 
     auto colorpass = m_rpassGBuff->GetAttachment(0);
@@ -126,7 +122,9 @@ void RD_RenderingPipeline_PBR::Resize(int w, int h) {
     m_rpassLight->SetRenderpassSize(m_api.get(), w, h);
     m_api->GetWindowingSystem()->SetPresentTexture(m_rpassLight->GetAttachment(0));
 
-    m_plineGBuff->RebuildPipeline();
+    for(auto& p : m_pline_refs) {
+        p->RebuildPipeline();
+    }
 
     auto colorpass = m_rpassGBuff->GetAttachment(0);
     auto normpass = m_rpassGBuff->GetAttachment(1);
@@ -158,4 +156,6 @@ std::shared_ptr<RD_RenderPass> RD_RenderingPipeline_PBR::GetBaseRenderpass() {
 void RD_RenderingPipeline_PBR::SetupPipeline(std::shared_ptr<RD_Pipeline> pline) {
     pline->RegisterUniformBuffer(m_camModel);
     pline->BuildPipeline();
+
+    m_pline_refs.push_back(pline);
 }

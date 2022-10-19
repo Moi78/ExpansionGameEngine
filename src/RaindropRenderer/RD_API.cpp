@@ -32,6 +32,8 @@ void vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerE
 RD_Windowing_GLFW::RD_Windowing_GLFW(RD_API* api) {
     m_api = api;
     m_resizedFlag = false;
+
+    m_initialized = false;
 }
 
 RD_Windowing_GLFW::~RD_Windowing_GLFW() {
@@ -88,6 +90,7 @@ bool RD_Windowing_GLFW::OpenWindow(std::string name, const int w, const int h) {
 		return false;
 	}
 
+    m_initialized = true;
 	return true;
 }
 
@@ -261,11 +264,19 @@ bool RD_Windowing_GLFW::CreateImageViews(VkDevice dev) {
 
 
 int RD_Windowing_GLFW::GetHeight() {
+    if(!m_initialized) {
+        return 0;
+    }
+
 	glfwGetFramebufferSize(m_win, NULL, &m_h);
 	return m_h;
 }
 
 int RD_Windowing_GLFW::GetWidth() {
+    if(!m_initialized) {
+        return 0;
+    }
+
 	glfwGetFramebufferSize(m_win, &m_w, nullptr);
 	return m_w;
 }

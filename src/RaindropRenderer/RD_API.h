@@ -148,6 +148,8 @@ private:
 	GLFWwindow* m_win;
     RD_API* m_api;
 
+    bool m_initialized;
+
 	VkSurfaceKHR m_surface;
 	VkSwapchainKHR m_swapChain;
 

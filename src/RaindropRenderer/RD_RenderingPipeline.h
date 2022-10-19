@@ -64,7 +64,6 @@ private:
     std::shared_ptr<RD_Quad> m_renderSurface;
 
     std::shared_ptr<RD_RenderPass> m_rpassGBuff;
-    std::shared_ptr<RD_Pipeline> m_plineGBuff;
 
     std::shared_ptr<RD_RenderPass> m_rpassLight;
     std::shared_ptr<RD_Pipeline> m_plineLight;
@@ -77,6 +76,8 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_casterCount;
 
     std::shared_ptr<RD_RenderSynchronizer_Vk> m_sync;
+
+    std::vector<std::shared_ptr<RD_Pipeline>> m_pline_refs;
 };
 
 

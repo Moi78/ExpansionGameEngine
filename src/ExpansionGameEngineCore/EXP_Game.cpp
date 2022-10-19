@@ -1,8 +1,11 @@
 #include "EXP_Game.h"
+#include "EXP_HotLoad.h"
 
 EXP_Game::EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo) {
     m_rndr = rndr;
     m_gameinfo = std::move(gameinfo);
+
+    m_hotloader = std::make_unique<EXP_HotLoad>();
 }
 
 EXP_Game::~EXP_Game() {
@@ -13,6 +16,8 @@ bool EXP_Game::InitEngine() {
     if(!m_rndr->InitRenderer(m_gameinfo.RootEngineContentDir)) {
         return false;
     }
+
+
 
     std::shared_ptr<RD_ShaderLoader> shader = m_rndr->GetAPI()->CreateShader();
     shader->CompileShaderFromFile(m_gameinfo.RootEngineContentDir + "/shaders/bin/base.vspv", m_gameinfo.RootEngineContentDir + "/shaders/bin/base.fspv");
@@ -44,7 +49,7 @@ bool EXP_Game::InitEngine() {
     std::shared_ptr<RD_PointLight> plight = std::make_shared<RD_PointLight>(vec3(0.0f, -2.0f, -1.5f), 1.0f, vec3(0.0f, 1.0f, 0.5f), 10.0f);
     m_rndr->RegisterPointLight(plight);
 
-    std::shared_ptr<RD_Camera> cam = std::make_shared<RD_Camera>(m_rndr->GetAPI(), 30.0f, vec3(-2.0f, -2.0f, 1.0f), vec3(), 0.1f, 100.0f);
+    std::shared_ptr<RD_Camera> cam = std::make_shared<RD_Camera>(m_rndr->GetAPI(), 120.0f, vec3(-2.0f, -2.0f, 1.0f), vec3(), 0.1f, 100.0f);
     m_rndr->SetCurrentCamera(cam);
 
     return true;

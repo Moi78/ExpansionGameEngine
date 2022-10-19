@@ -59,6 +59,7 @@ void RaindropRenderer::Resize() {
     int h = m_api->GetWindowingSystem()->GetHeight();
 
     m_rpline->Resize(w, h);
+    m_viewCam->UpdateProj();
 }
 
 void RaindropRenderer::RegisterMesh(std::shared_ptr<RD_Mesh> mesh) {

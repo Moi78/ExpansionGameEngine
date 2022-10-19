@@ -62,111 +62,66 @@ public:
 	}
 
 	vec4 operator*(vec4 a) {
-		if constexpr(std::is_same_v<T, float>) {
-			Float4 vec(a.GetX(), a.GetY(), a.GetZ(), a.GetW());
+        Float4 vec(a.GetX(), a.GetY(), a.GetZ(), a.GetW());
 
-			T XYZW[4];
-			for (int i = 0; i < 16; i += 4) {
-				Float4 mat_row(m_mat[i] , m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
-				Float4 vec_new = mat_row * vec;
+        T XYZW[4];
+        for (int i = 0; i < 16; i += 4) {
+            Float4 mat_row(m_mat[i] , m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
+			Float4 vec_new = mat_row * vec;
 
-				XYZW[i / 4] = vec_new.Get(0) + vec_new.Get(1) + vec_new.Get(2) + vec_new.Get(3);
-			}
+			XYZW[i / 4] = vec_new.Get(0) + vec_new.Get(1) + vec_new.Get(2) + vec_new.Get(3);
+        }
 
-			return vec4(XYZW[0], XYZW[1], XYZW[2], XYZW[3]);
-		}
-		else {
-			T XYZW[4];
-			for (int i = 0; i < 16; i += 4) {
-				XYZW[i / 4] = a.GetX() * m_mat[i] + a.GetY() * m_mat[i + 1] + a.GetZ() * m_mat[i + 2] + a.GetW() * m_mat[i + 3];
-			}
-
-			return vec4(XYZW[0], XYZW[1], XYZW[2], XYZW[3]);
-		}
+        return vec4(XYZW[0], XYZW[1], XYZW[2], XYZW[3]);
 	}
 
 	mat4<T> operator*(float a) {
 		T nMat[16];
 		memset(nMat, 0, 16 * sizeof(T));
 
-		if constexpr (std::is_same_v<T, float>) {
-			Float4 scalar;
-			scalar.LoadConstant(a);
-			for (int i = 0; i < 16; i += 4) {
-				Float4 m(m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
-				Float4 mmultiplied = m * scalar;
+        Float4 scalar;
+        scalar.LoadConstant(a);
+        for (int i = 0; i < 16; i += 4) {
+            Float4 m(m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
+            Float4 mmultiplied = m * scalar;
 
-				memcpy(&nMat[i], mmultiplied.GetPointer(), 4 * sizeof(float));
-			}
-		}
-		else {
-			for (int i = 0; i < 16; i++) {
-				nMat[i] = m_mat[i] * a;
-			}
-		}
+            memcpy(&nMat[i], mmultiplied.GetPointer(), 4 * sizeof(float));
+        }
 
 		return mat4<T>(nMat);
 	}
 
 	mat4<T> operator*(mat4<T> const& a) {
-		if constexpr (std::is_same_v<T, float>) {
-			//SIMD Impl.
+        //SIMD Impl.
 
-			//Allocating matrix in XMM registers
-			std::vector<Float4> mat_1_rows;
-			for (int i = 0; i < 16; i += 4) {
-				mat_1_rows.push_back(Float4(m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]));
-			}
-
-			//Declaring result mat
-			T nMat[16];
-
-			for (int i = 0; i < 4; i++) {
-				for (int c = 0; c < 4; c++) {
-					//Getting column of the second matrix
-					Float4 col(a.m_mat[c], a.m_mat[c + 4], a.m_mat[c + 8], a.m_mat[c + 12]);
-
-					//Multiplying & storing results
-					Float4 result = mat_1_rows[i] * col;
-
-					//Sum up everything
-					T comp = 0;
-					for (int s = 0; s < 4; s++) {
-						comp += result.Get(s);
-					}
-
-					nMat[4 * i + c] = comp;
-				}
-			}
-
-			return mat4<T>(nMat);
+        //Allocating matrix in XMM registers
+        std::vector<Float4> mat_1_rows;
+		for (int i = 0; i < 16; i += 4) {
+			mat_1_rows.push_back(Float4(m_mat[i], m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]));
 		}
-		else {
-			//Non-SIMD impl.
 
-			T nMat[16];
-			for (int i = 0; i < 4; i++) {
-				for (int c = 0; c < 4; c++) {
-					T col[4] = { a.m_mat[c], a.m_mat[c + 4], a.m_mat[c + 8], a.m_mat[c + 12] };
+		//Declaring result mat
+		T nMat[16];
 
-					//Multiply all
-					T results[4];
-					for (int m = 0; m < 4; m++) {
-						results[m] = col[m] * m_mat[4 * i + c];
-					}
+		for (int i = 0; i < 4; i++) {
+			for (int c = 0; c < 4; c++) {
+				//Getting column of the second matrix
+				Float4 col(a.m_mat[c], a.m_mat[c + 4], a.m_mat[c + 8], a.m_mat[c + 12]);
 
-					//Sum up everything
-					T comp = 0;
-					for (int s = 0; s < 4; s++) {
-						comp += results[s];
-					}
+				//Multiplying & storing results
+				Float4 result = mat_1_rows[i] * col;
 
-					nMat[4 * i + c] = comp;
+				//Sum up everything
+				T comp = 0;
+				for (int s = 0; s < 4; s++) {
+					comp += result.Get(s);
 				}
-			}
 
-			return mat4<T>(nMat);
+				nMat[4 * i + c] = comp;
+			}
 		}
+
+		return mat4<T>(nMat);
 	}
 
 	T* GetPTR() {

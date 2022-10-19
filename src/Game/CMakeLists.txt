@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.22)
 
-project(ExGame)
-
-add_executable(ExGame main.cpp)
+add_library(Game SHARED GameLevel.cpp GameLevel.h)
 
 target_include_directories(ExGame PUBLIC "../RaindropRenderer/")
 target_include_directories(ExGame PUBLIC "../ExpansionGameEngineCore/")
-target_include_directories(ExGame PUBLIC "../ExpansionMath/")
 
 target_link_libraries(ExGame RaindropRenderer)
 target_link_libraries(ExGame ExpansionGameEngineCore)
-target_link_libraries(ExGame ExpansionMath)
 
-install(TARGETS ExGame RUNTIME DESTINATION bin)
+add_custom_command(TARGET Game POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Game> ${PROJECT_SOURCE_DIR}/src/GameDir/)

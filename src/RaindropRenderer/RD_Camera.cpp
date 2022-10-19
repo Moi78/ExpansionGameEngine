@@ -23,7 +23,11 @@ void RD_Camera::UpdateCamera() {
 }
 
 void RD_Camera::UpdateProj() {
-    m_proj = ProjPersp(m_FOV, 1280.0f / 720.0f, m_near, m_far);
+    auto window = m_api->GetWindowingSystem();
+    const float w = (float)window->GetWidth();
+    const float h = (float)window->GetHeight();
+
+    m_proj = ProjPersp(DEG_TO_RAD(-m_FOV), (w / h), m_near, m_far);
 }
 
 void RD_Camera::UpdateView() {

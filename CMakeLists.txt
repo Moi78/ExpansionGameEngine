@@ -10,6 +10,7 @@ add_subdirectory("./src/BulldozerFileManager/")
 add_subdirectory("./src/RaindropRenderer/")
 add_subdirectory("./src/ExpansionGameEngineCore/")
 add_subdirectory("./src/ExGame/")
+add_subdirectory("./src/Game/")
 
 add_subdirectory("./tools/FBX2MSH/")
 
