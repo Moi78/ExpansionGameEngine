@@ -10,6 +10,8 @@ struct EXP_GameInfo {
     std::string GameLib;
     std::string RootGameContentDir;
     std::string RootEngineContentDir;
+
+    std::string StartLevel;
 };
 
 #endif //EXPGE_EXP_CONF_H

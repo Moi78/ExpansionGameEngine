@@ -10,6 +10,8 @@
 
 //Forward decl.
 class EXP_HotLoad;
+class EXP_MapLoader;
+class EXP_Level;
 
 class EXP_Game {
 public:
@@ -20,9 +22,15 @@ public:
     bool InitEngine();
     void RunGame();
 
+    void LoadLevel(std::string levelPath);
+
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;
-    std::unique_ptr<EXP_HotLoad> m_hotloader;
+
+    std::shared_ptr<EXP_HotLoad> m_hotloader;
+    std::unique_ptr<EXP_MapLoader> m_maploader;
+
+    std::shared_ptr<EXP_Level> m_currentLevel;
 
     EXP_GameInfo m_gameinfo;
 };

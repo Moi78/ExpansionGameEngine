@@ -1,0 +1,10 @@
+{
+  "levelObjectName":"GameLevel",
+  "nodes": [
+    {
+      "type": "mesh",
+      "mesh": "/mdl/monkey.msh",
+      "material": "/mat/material_test.exmtl"
+    }
+  ]
+}

@@ -13,6 +13,8 @@
 #include "EXP_Game.h"
 #include "EXP_MapLoader.h"
 
+#include <memory>
+
 #ifdef _WIN32
 
 #ifdef EXPANSIONGAMEENGINE_EXPORTS
@@ -56,10 +58,8 @@ private:
 
 #else
 
-#define EXPGE_LEVEL_HEADER(obj) extern "C" obj* obj##Handler (EXP_Game*, EXP_MapLoader*);\
-								extern "C" void obj##Remover (obj*)
-#define EXPGE_LEVEL_CODE(obj) obj* obj##Handler(EXP_Game* game, EXP_MapLoader* lvl) { return new obj(game, lvl); }\
-							  void obj##Remover(obj* objCode) { delete objCode; }
+#define EXPGE_LEVEL_HEADER(obj) extern "C" std::shared_ptr<obj> obj##Handler (EXP_Game*);
+#define EXPGE_LEVEL_CODE(obj) std::shared_ptr<obj> obj##Handler(EXP_Game* game) { return std::make_shared<obj>(game); }
 
 #include <iostream>
 #include <string>

@@ -14,11 +14,12 @@ int main(int argc, char* argv[]) {
 	std::cout << "EXPANSION GAME ENGINE REWRITE" << std::endl;
 
     EXP_GameInfo gameinfo{};
-    gameinfo.GameLib = "libGame.so";
-    gameinfo.RootEngineContentDir = "./GameDir/Engine/";
-    gameinfo.RootGameContentDir = "./GameDir/Content/";
+    gameinfo.GameLib = "./libGame.so";
+    gameinfo.RootEngineContentDir = "./Engine/";
+    gameinfo.RootGameContentDir = "./Content/";
     gameinfo.WindowHeight = 1270;
     gameinfo.WindowWidth = 720;
+    gameinfo.StartLevel = "/levels/level1.json";
 
 	std::shared_ptr<RD_API> api = std::make_shared<RD_API_Vk>();
     std::shared_ptr<RD_RenderingPipeline> rpline = std::make_shared<RD_RenderingPipeline_PBR>(api);
