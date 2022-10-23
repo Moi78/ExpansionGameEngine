@@ -22,6 +22,8 @@ public:
     void Update();
 
     mat4f GetTransform();
+    void SetTransform(mat4f& transform);
+
     std::shared_ptr<RD_IndexedVertexBuffer> GetVertexBuffer();
 
     void Rotate(vec3 rotation);

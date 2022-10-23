@@ -18,11 +18,16 @@ public:
     EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo);
     ~EXP_Game();
 
+    std::string GetGameContentPath();
+    std::string GetEngineContentPath();
+
     //Engine control
     bool InitEngine();
     void RunGame();
-
     void LoadLevel(std::string levelPath);
+
+    //Engine Sub-Systems
+    std::shared_ptr<RaindropRenderer> GetRenderer();
 
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;

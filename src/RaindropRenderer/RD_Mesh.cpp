@@ -47,6 +47,10 @@ mat4f RD_Mesh::GetTransform() {
     return m_transf;
 }
 
+void RD_Mesh::SetTransform(mat4f &transform) {
+    m_transf = transform;
+}
+
 std::shared_ptr<RD_IndexedVertexBuffer> RD_Mesh::GetVertexBuffer() {
     return m_vbuff;
 }

@@ -18,7 +18,7 @@ public:
 
     virtual ~EXP_Component() {};
 
-    void SetParentMatrix(mat4f& matrix);
+    virtual void SetParentMatrix(mat4f& matrix);
 
     vec3 GetComponentPos();
     vec3 GetComponentRot();

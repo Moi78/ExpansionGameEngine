@@ -6,6 +6,12 @@
 #include <EXP_MapLoader.h>
 #include <EXP_Level.h>
 
+#include <EXP_Material.h>
+#include <EXP_StaticMeshActor.h>
+
+#include <RD_Camera.h>
+#include <RD_DirLight.h>
+
 class GameLevel : public EXP_Level {
 public:
     GameLevel(EXP_Game* game);

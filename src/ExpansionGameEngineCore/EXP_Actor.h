@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <vector>
+#include <chrono>
+#include <cstddef>
 
 #include <vec.h>
 #include <mat4.h>
@@ -11,19 +13,15 @@
 
 class EXP_Actor {
 public:
-    EXP_Actor(vec3 pos, vec3 rot, vec3 scale) {
-        m_pos = pos;
-        m_rot = rot;
-        m_scale = scale;
-
-        UpdateTransform();
-    }
+    EXP_Actor(vec3 pos, vec3 rot, vec3 scale);
 
     virtual ~EXP_Actor() {}
 
     vec3 GetActorPos();
     vec3 GetActorRot();
     vec3 GetActorScale();
+
+    uint64_t GetActorUID();
 
     void SetActorPos(vec3 npos);
     void SetActorRot(vec3 nrot);
@@ -37,11 +35,13 @@ public:
     virtual void OnTick() = 0;
 
     void LinkComponent(std::shared_ptr<EXP_Component> comp);
-private:
+protected:
     vec3 m_pos, m_rot, m_scale;
     mat4f m_transform;
 
     std::vector<std::shared_ptr<EXP_Component>> m_comps;
+
+    uint64_t m_uid;
 };
 
 

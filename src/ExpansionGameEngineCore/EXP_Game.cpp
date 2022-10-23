@@ -39,5 +39,16 @@ void EXP_Game::RunGame() {
 
 void EXP_Game::LoadLevel(std::string levelPath) {
     m_currentLevel = m_maploader->LoadLevel(levelPath);
-    m_currentLevel->Test();
+}
+
+std::shared_ptr<RaindropRenderer> EXP_Game::GetRenderer() {
+    return m_rndr;
+}
+
+std::string EXP_Game::GetGameContentPath() {
+    return m_gameinfo.RootGameContentDir;
+}
+
+std::string EXP_Game::GetEngineContentPath() {
+    return m_gameinfo.RootEngineContentDir;
 }

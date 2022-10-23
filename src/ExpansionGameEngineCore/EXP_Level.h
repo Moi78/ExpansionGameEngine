@@ -4,11 +4,18 @@
 #include <memory>
 
 #include "EXP_Game.h"
+#include "EXP_Actor.h"
 
 class EXP_Level {
 public:
     EXP_Level(EXP_Game* game);
-    ~EXP_Level();
+    virtual ~EXP_Level();
+
+    void RegisterActor(std::shared_ptr<EXP_Actor> actor);
+    void UnregisterActor(uint64_t actor_uid);
+
+private:
+    std::vector<std::shared_ptr<EXP_Actor>> m_actors;
 };
 
 

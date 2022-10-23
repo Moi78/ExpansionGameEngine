@@ -1,5 +1,17 @@
 #include "EXP_Actor.h"
 
+EXP_Actor::EXP_Actor(vec3 pos, vec3 rot, vec3 scale) {
+    m_pos = pos;
+    m_rot = rot;
+    m_scale = scale;
+
+    UpdateTransform();
+
+    using namespace std::chrono;
+    m_uid = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count();
+    std::cout << "Created actor (UID : " << (long long) m_uid << ")" << std::endl;
+}
+
 vec3 EXP_Actor::GetActorPos() {
     return m_pos;
 }
@@ -48,4 +60,8 @@ void EXP_Actor::UpdateActor() {
     for(auto& c : m_comps) {
         c->SetParentMatrix(m_transform);
     }
+}
+
+uint64_t EXP_Actor::GetActorUID() {
+    return m_uid;
 }
