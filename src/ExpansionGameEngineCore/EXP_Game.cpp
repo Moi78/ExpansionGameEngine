@@ -34,6 +34,8 @@ void EXP_Game::RunGame() {
     while(!m_rndr->WantToClose()) {
         m_rndr->UpdateWindow();
         m_rndr->RenderScene();
+
+        m_currentLevel->TickActors();
     }
 }
 

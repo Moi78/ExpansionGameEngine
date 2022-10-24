@@ -15,3 +15,9 @@ void EXP_Level::RegisterActor(std::shared_ptr<EXP_Actor> actor) {
 void EXP_Level::UnregisterActor(uint64_t actor_uid) {
     return;
 }
+
+void EXP_Level::TickActors() {
+    for(auto& a : m_actors) {
+        a->OnTick();
+    }
+}

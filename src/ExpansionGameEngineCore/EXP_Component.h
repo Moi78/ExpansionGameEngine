@@ -31,7 +31,7 @@ public:
     mat4f GetComponentTransform();
     void UpdateTransform();
 
-private:
+protected:
     vec3 m_pos, m_rot, m_scale;
 
     mat4f m_transform;

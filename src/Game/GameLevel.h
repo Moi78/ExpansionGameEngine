@@ -12,10 +12,15 @@
 #include <RD_Camera.h>
 #include <RD_DirLight.h>
 
+#include "TestActor.h"
+
 class GameLevel : public EXP_Level {
 public:
     GameLevel(EXP_Game* game);
     ~GameLevel();
+
+private:
+    std::shared_ptr<TestActor> m_tactor;
 };
 
 EXPGE_LEVEL_HEADER(GameLevel);

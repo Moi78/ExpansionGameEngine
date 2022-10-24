@@ -38,39 +38,6 @@ protected:
     float m_vec[size_];
 };
 
-class vec4 : public vec<4> {
-public:
-    vec4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : vec({x, y, z, w}) {}
-
-    float GetX() { return m_vec[0]; }
-    float GetY() { return m_vec[1]; }
-    float GetZ() { return m_vec[2]; }
-    float GetW() { return m_vec[3]; }
-
-    void SetX(float nx) { m_vec[0] = nx; }
-    void SetY(float ny) { m_vec[1] = ny; }
-    void SetZ(float nz) { m_vec[2] = nz; }
-    void SetW(float nw) { m_vec[3] = nw; }
-
-    virtual vec4 operator-(const vec4& a) {
-        vec4 v(0.0, 0.0, 0.0, 0.0);
-        for(int i = 0; i < 4; i++) {
-            v.GetData()[i] = m_vec[i] - a.m_vec[i];
-        }
-
-        return v;
-    }
-
-    virtual vec4 operator+(const vec4& a) {
-        vec4 v(0.0, 0.0, 0.0, 0.0);
-        for(int i = 0; i < 4; i++) {
-            v.GetData()[i] = m_vec[i] + a.m_vec[i];
-        }
-
-        return v;
-    }
-};
-
 class vec3 : public vec<3> {
 public:
     vec3(float x = 0.0f, float y = 0.0f, float z = 0.0f) : vec({x, y, z}) {}
@@ -82,6 +49,19 @@ public:
     void SetX(float nx) { m_vec[0] = nx; }
     void SetY(float ny) { m_vec[1] = ny; }
     void SetZ(float nz) { m_vec[2] = nz; }
+
+    void SetAll(float x, float y, float z) {
+        m_vec[0] = x;
+        m_vec[1] = y;
+        m_vec[2] = z;
+    }
+
+    vec3 NormalizedVector() {
+        vec3 copy(m_vec[0], m_vec[1], m_vec[2]);
+        copy.NormalizeVector();
+
+        return copy;
+    }
 
     virtual vec3 operator-(const vec3& a) {
         vec3 v(0.0, 0.0, 0.0);
@@ -112,6 +92,18 @@ public:
     void SetX(float nx) { m_vec[0] = nx; }
     void SetY(float ny) { m_vec[1] = ny; }
 
+    void SetAll(float x, float y) {
+        m_vec[0] = x;
+        m_vec[1] = y;
+    }
+
+    vec2 NormalizedVector() {
+        vec2 copy(m_vec[0], m_vec[1]);
+        copy.NormalizeVector();
+
+        return copy;
+    }
+
     virtual vec2 operator-(const vec2& a) {
         vec2 v(0.0, 0.0);
         for(int i = 0; i < 2; i++) {
@@ -128,6 +120,58 @@ public:
         }
 
         return v;
+    }
+};
+
+class vec4 : public vec<4> {
+public:
+    vec4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : vec({x, y, z, w}) {}
+    vec4(vec3 xyz, float w) : vec({xyz.GetX(), xyz.GetY(), xyz.GetZ(), w}) {}
+
+    float GetX() { return m_vec[0]; }
+    float GetY() { return m_vec[1]; }
+    float GetZ() { return m_vec[2]; }
+    float GetW() { return m_vec[3]; }
+
+    void SetX(float nx) { m_vec[0] = nx; }
+    void SetY(float ny) { m_vec[1] = ny; }
+    void SetZ(float nz) { m_vec[2] = nz; }
+    void SetW(float nw) { m_vec[3] = nw; }
+
+    void SetAll(float x, float y, float z, float w) {
+        m_vec[0] = x;
+        m_vec[1] = y;
+        m_vec[2] = z;
+        m_vec[3] = w;
+    }
+
+    vec4 NormalizedVector() {
+        vec4 copy(m_vec[0], m_vec[1], m_vec[2], m_vec[3]);
+        copy.NormalizeVector();
+
+        return copy;
+    }
+
+    virtual vec4 operator-(const vec4& a) {
+        vec4 v(0.0, 0.0, 0.0, 0.0);
+        for(int i = 0; i < 4; i++) {
+            v.GetData()[i] = m_vec[i] - a.m_vec[i];
+        }
+
+        return v;
+    }
+
+    virtual vec4 operator+(const vec4& a) {
+        vec4 v(0.0, 0.0, 0.0, 0.0);
+        for(int i = 0; i < 4; i++) {
+            v.GetData()[i] = m_vec[i] + a.m_vec[i];
+        }
+
+        return v;
+    }
+
+    vec3 ToVec3() {
+        return vec3(m_vec[0], m_vec[1], m_vec[2]);
     }
 };
 

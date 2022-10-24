@@ -3,6 +3,7 @@
 
 #include "mat4.h"
 #include "vec.h"
+#include "quat.h"
 
 #include "RD_Pipeline.h"
 #include "RD_UniformBuffer.h"
@@ -15,17 +16,25 @@ public:
 
     void PushToUniform(const std::shared_ptr<RD_UniformBuffer>& buff);
 
+    void SetPos(vec3 npos);
+    void SetOffsetPos(vec3 noffpos);
+    void SetTarget(vec3 ntarget);
+    void SetUp(vec3 nup);
+
+    vec3 GetForwardVector();
+
     void UpdateCamera();
     void UpdateView();
     void UpdateProj();
-private:
+
+protected:
     std::shared_ptr<RD_API> m_api;
 
     mat4f m_proj;
     mat4f m_view;
 
-    vec3 m_pos;
-    vec3 m_target;
+    vec3 m_pos, m_offset_pos;
+    vec3 m_target, m_up;
     float m_FOV, m_near, m_far;
 };
 

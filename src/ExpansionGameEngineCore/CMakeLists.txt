@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 add_library(ExpansionGameEngineCore SHARED
-        EXP_Game.cpp EXP_Game.h EXP_Conf.h EXP_HotLoad.cpp EXP_HotLoad.h EXP_MapLoader.cpp EXP_MapLoader.h EXP_Level.cpp EXP_Level.h EXP_Actor.cpp EXP_Actor.h EXP_Component.cpp EXP_Component.h EXP_Material.cpp EXP_Material.h EXP_StaticMesh.cpp EXP_StaticMesh.h EXP_StaticMeshActor.cpp EXP_StaticMeshActor.h)
+        EXP_Game.cpp EXP_Game.h EXP_Conf.h EXP_HotLoad.cpp EXP_HotLoad.h EXP_MapLoader.cpp EXP_MapLoader.h EXP_Level.cpp EXP_Level.h EXP_Actor.cpp EXP_Actor.h EXP_Component.cpp EXP_Component.h EXP_Material.cpp EXP_Material.h EXP_StaticMesh.cpp EXP_StaticMesh.h EXP_StaticMeshActor.cpp EXP_StaticMeshActor.h EXP_Camera.cpp EXP_Camera.h)
 
 target_link_libraries(ExpansionGameEngineCore RaindropRenderer)
 target_link_libraries(ExpansionGameEngineCore ExpansionMath)

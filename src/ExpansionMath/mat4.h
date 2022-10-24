@@ -51,6 +51,10 @@ public:
 		return m_mat[4 * row + column];
 	}
 
+    vec3 GetTranslation() {
+        return vec3(m_mat[3], m_mat[7], m_mat[11]);
+    }
+
 	void DBG_print_matrix() {
 		for (int x = 0; x < 4; x++) {
 			for (int y = 0; y < 4; y++) {

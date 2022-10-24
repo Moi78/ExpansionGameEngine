@@ -14,6 +14,8 @@ public:
     void RegisterActor(std::shared_ptr<EXP_Actor> actor);
     void UnregisterActor(uint64_t actor_uid);
 
+    void TickActors();
+
 private:
     std::vector<std::shared_ptr<EXP_Actor>> m_actors;
 };
