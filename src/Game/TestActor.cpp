@@ -5,7 +5,9 @@ TestActor::TestActor(EXP_Game* game) : EXP_Actor(vec3(-2.0f, -2.0f, 0.0f), vec3(
     LinkComponent(m_cam);
 
     auto gamecam = std::reinterpret_pointer_cast<RD_Camera>(m_cam);
-    game->GetRenderer()->SetCurrentCamera(gamecam);
+    game->GetRenderer()->SetCurrentCamera(m_cam);
+
+    m_cpt = 0.0f;
 }
 
 TestActor::~TestActor() {
@@ -17,5 +19,8 @@ void TestActor::OnStart() {
 }
 
 void TestActor::OnTick() {
+    m_cam->AddRoll(sin(m_cpt));
     m_cam->AddYaw(1.0f);
+
+    m_cpt += 0.1f;
 }

@@ -34,7 +34,7 @@ void RD_Camera::UpdateProj() {
 }
 
 void RD_Camera::UpdateView() {
-    m_view = LookAt(m_pos + m_offset_pos, m_target, m_up);
+    m_view = LookAt(m_pos + m_offset_pos, m_target + m_pos + m_offset_pos, m_up);
 }
 
 void RD_Camera::PushToUniform(const std::shared_ptr<RD_UniformBuffer>& buff) {

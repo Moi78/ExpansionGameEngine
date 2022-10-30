@@ -125,6 +125,6 @@ std::shared_ptr<RD_Pipeline> RaindropRenderer::CreatePipeline(std::shared_ptr<RD
     return pline;
 }
 
-void RaindropRenderer::SetCurrentCamera(std::shared_ptr <RD_Camera> &cam) {
+void RaindropRenderer::SetCurrentCamera(std::shared_ptr<RD_Camera> cam) {
     m_viewCam = cam;
 }

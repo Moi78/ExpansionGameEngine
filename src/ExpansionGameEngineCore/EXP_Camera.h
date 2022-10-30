@@ -11,7 +11,7 @@
 #include <mat4.h>
 #include <vec.h>
 
-class EXP_Camera : public EXP_Component, public RD_Camera {
+class EXP_Camera : public RD_Camera, public EXP_Component {
 public:
     EXP_Camera(EXP_Game* game, vec3 pos, vec3 ypr, float FOV, float near, float far);
     ~EXP_Camera() {};

@@ -17,6 +17,8 @@ public:
 
 private:
     std::shared_ptr<EXP_Camera> m_cam;
+
+    float m_cpt;
 };
 
 

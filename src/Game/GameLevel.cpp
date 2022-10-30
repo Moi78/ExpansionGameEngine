@@ -11,6 +11,9 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     auto mesh = std::make_shared<EXP_StaticMeshActor>(game, "/mdl/monkey.msh", mat, vec3(), vec3(0.0f, 10.0f, -45.0f), vec3(1.0f, 1.0f, 1.0f));
     RegisterActor(mesh);
 
+    auto mesh2 = std::make_shared<EXP_StaticMeshActor>(game, "/mdl/monkey.msh", mat, vec3(-4.0f, -2.0f), vec3(0.0f, 10.0f, 90.0f), vec3(1.0f, 1.0f, 1.0f));
+    RegisterActor(mesh2);
+
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
 

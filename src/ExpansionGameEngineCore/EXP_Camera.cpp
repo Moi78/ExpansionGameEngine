@@ -16,7 +16,7 @@ void EXP_Camera::ComputeYPR() {
 
     m_target.SetAll(
             cos(yaw) * cos(pitch),
-            sin(yaw) * sin(pitch),
+            sin(yaw) * cos(pitch),
             sin(pitch)
     );
     UpdateView();

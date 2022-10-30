@@ -41,7 +41,7 @@ public:
     void RegisterDirLight(std::shared_ptr<RD_DirLight> dlight);
     void RegisterPointLight(std::shared_ptr<RD_PointLight> plight);
 
-    void SetCurrentCamera(std::shared_ptr<RD_Camera>& cam);
+    void SetCurrentCamera(std::shared_ptr<RD_Camera> cam);
 
     void RegisterMaterial(std::shared_ptr<RD_Material> mat);
 
