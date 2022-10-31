@@ -28,7 +28,7 @@ public:
     virtual void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
 
     virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) = 0;
-    virtual void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) = 0;
+    virtual void RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) = 0;
     virtual void PurgeTextures() = 0;
 
     virtual void SetModelMode(bool mode) = 0;
@@ -61,7 +61,7 @@ public:
     void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
     void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) override;
-    void RegisterTexture(std::shared_ptr<RD_Texture>& tex, uint32_t binding) override;
+    void RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) override;
     void PurgeTextures() override;
 
     void SetModelMode(bool mode) override;

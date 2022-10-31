@@ -15,6 +15,7 @@ public:
     virtual ~RD_Camera();
 
     void PushToUniform(const std::shared_ptr<RD_UniformBuffer>& buff);
+    void PushCamDataToUniform(const std::shared_ptr<RD_UniformBuffer>& buff);
 
     void SetPos(vec3 npos);
     void SetOffsetPos(vec3 noffpos);

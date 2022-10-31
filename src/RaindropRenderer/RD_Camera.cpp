@@ -65,3 +65,9 @@ void RD_Camera::SetUp(vec3 nup) {
 vec3 RD_Camera::GetForwardVector() {
     return m_target.NormalizedVector();
 }
+
+void RD_Camera::PushCamDataToUniform(const std::shared_ptr<RD_UniformBuffer> &buff) {
+    vec3 effPos = m_pos + m_offset_pos;
+    buff->PartialFillBufferData(effPos.GetData(), sizeof(float) * 4, 0);
+    buff->PartialFillBufferData(m_target.GetData(), sizeof(float) * 4, 4 * sizeof(float));
+}

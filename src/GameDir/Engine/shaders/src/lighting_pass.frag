@@ -3,9 +3,12 @@ layout (location = 0) out vec4 oColor;
 
 layout (location = 0) in vec2 UVcoords;
 
-layout (binding = 0) uniform sampler2D Color;
-layout (binding = 1) uniform sampler2D Norm;
-layout (binding = 2) uniform sampler2D FragPos;
+layout (binding = 10) uniform sampler2D Color;
+layout (binding = 11) uniform sampler2D Norm;
+layout (binding = 12) uniform sampler2D FragPos;
+
+layout (binding = 13) uniform sampler2D MetRoughAO;
+layout (binding = 14) uniform sampler2D SheenProp;
 
 struct DirLight {
     vec3 dir;
@@ -19,6 +22,8 @@ struct PointLight {
     vec3 color;
     float radius;
 };
+
+#define PI 3.1415926538
 
 #define MAX_DIR_LIGHTS 10
 layout (binding = 3) uniform DIR_LIGHTS {
@@ -35,18 +40,83 @@ layout (binding = 5) uniform CASTER_COUNT {
     int nPLights;
 };
 
+layout (binding = 6) uniform CAMERA_INFO {
+    vec4 camPos;
+    vec4 camDir;
+};
+
+// MET ROUGH AO
+float roughness = texture(MetRoughAO, UVcoords).y;
+float metallic = texture(MetRoughAO, UVcoords).x;
+float ao = texture(MetRoughAO, UVcoords).z;
+
+// SHEEN
+float sheen = texture(SheenProp, UVcoords).x;
+float sheenTint = texture(SheenProp, UVcoords).y;
+
 vec3 n = normalize(texture(Norm, UVcoords).xyz);
-vec3 c = texture(Color, UVcoords).xyz;
 vec3 fragPos = texture(FragPos, UVcoords).xyz;
+vec3 v = camPos.xyz - fragPos;
+
+vec3 c = texture(Color, UVcoords).xyz;
+
+float GGXDistrib(vec3 halfway, float alpha) {
+    float a2 = alpha*alpha;
+    float nDh2 = pow(max(dot(n, halfway), 0.0), 2.0);
+
+    return (a2) / (PI * pow(nDh2*(a2 - 1.0) + 1.0, 2.0));
+}
+
+float ShadowFac(float NdotV, float k) {
+    float denom = NdotV * (1.0 - k) + k;
+
+    return NdotV / denom;
+}
+
+vec3 Fresnel(vec3 h, vec3 F0) {
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - dot(h, v), 0.0, 1.0), 5.0);
+}
+
+vec3 Sheen(vec3 h, vec3 F0) {
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - dot(h, n), 0.0, 1.0), 5.0);
+}
+
+vec3 ComputeDirLight(vec3 l, vec3 lightColor, float brightness) {
+    vec3 diffuse = vec3(0.0, 0.0, 0.0);
+    vec3 h = normalize(l + v);
+
+    vec3 radiance = lightColor * brightness;
+
+    float spec = GGXDistrib(h, roughness);
+
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, c, metallic);
+
+    vec3 fresnel = Fresnel(h, F0);
+
+    float r_trans = (roughness + roughness) / 8.0;
+    float geom = ShadowFac(max(dot(n, v), 0.0), r_trans) * ShadowFac(max(dot(n, l), 0.0), r_trans);
+
+    vec3 num = spec * geom * fresnel;
+    float denom = 4.0 * max(dot(n, v), 0.0) * max(dot(n, l), 0.0) + 0.0001;
+
+    vec3 specular = num / denom;
+
+    vec3 kS = fresnel;
+
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
+
+    float NdL = max(dot(n, l), 0.0);
+
+    vec3 Lo = (kD * c / PI + specular) * radiance * NdL;
+    return Lo;
+}
 
 void main() {
     vec3 light = vec3(0.0, 0.0, 0.0);
     for(int i = 0; i < nDLights; i++) {
-        vec3 normDir = normalize(-dlights[i].dir);
-
-        float lightness = max(dot(n, normDir), 0.0);
-
-        light += lightness * c * dlights[i].color.rgb * dlights[i].brightness;
+        light += ComputeDirLight(normalize(vec3(-dlights[i].dir)), dlights[i].color.rgb, dlights[i].brightness);
     }
 
     for(int i = 0; i < nPLights; i++) {
@@ -61,7 +131,9 @@ void main() {
         }
     }
 
-    light += 0.1 * c;
+    light += 0.03 * c * ao;
+    light += mix(vec3(1.0), c, sheenTint) * sheen * clamp(Sheen(normalize(-camDir.xyz + v).xyz, vec3(0)), 0.0, 1.0);
 
-    oColor = vec4(light, 1.0);
+    light = light / (light + vec3(1.0));
+    oColor = vec4(pow(light, vec3(1.0 / 2.2)), 1.0);
 }

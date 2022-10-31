@@ -479,7 +479,7 @@ void RD_Pipeline_Vk::RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& bu
     m_bindings.push_back(bindLayout);
 }
 
-void RD_Pipeline_Vk::RegisterTexture(std::shared_ptr<RD_Texture> &tex, uint32_t binding) {
+void RD_Pipeline_Vk::RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) {
     m_texs.push_back(tex);
 
     VkDescriptorSetLayoutBinding bindLayout{};

@@ -74,6 +74,7 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_dlights;
     std::shared_ptr<RD_UniformBuffer> m_plights;
     std::shared_ptr<RD_UniformBuffer> m_casterCount;
+    std::shared_ptr<RD_UniformBuffer> m_camData;
 
     std::shared_ptr<RD_RenderSynchronizer_Vk> m_sync;
 

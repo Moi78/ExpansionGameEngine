@@ -41,11 +41,13 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
      *  - Color
      *  - Normal
      *  - Frag Position
+     *  - MetRoughAO
+     *  - Sheen
      *  - Depth
      *
      */
 
-    m_rpassGBuff = m_api->CreateRenderPass({color, colorf, colorf, depth}, static_cast<float>(w), static_cast<float>(h));
+    m_rpassGBuff = m_api->CreateRenderPass({color, colorf, colorf, colorf, colorf, depth}, static_cast<float>(w), static_cast<float>(h));
     m_rpassGBuff->BuildRenderpass(m_api.get(), false);
 
     m_rpassLight = m_api->CreateRenderPass({color}, static_cast<float>(w), static_cast<float>(h));
@@ -70,6 +72,9 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plights = m_api->CreateUniformBuffer(4);
     m_plights->BuildAndAllocateBuffer(300 * sizeof(GLSLPointLight));
 
+    m_camData = m_api->CreateUniformBuffer(6);
+    m_camData->BuildAndAllocateBuffer(8 * sizeof(float));
+
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
     base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
 
@@ -78,17 +83,14 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
 
     m_plineLight = m_api->CreatePipeline(m_rpassLight, light_shader);
 
-    auto colorpass = m_rpassGBuff->GetAttachment(0);
-    auto normpass = m_rpassGBuff->GetAttachment(1);
-    auto pospass = m_rpassGBuff->GetAttachment(2);
-
-    m_plineLight->RegisterTexture(colorpass, 0);
-    m_plineLight->RegisterTexture(normpass, 1);
-    m_plineLight->RegisterTexture(pospass, 2);
+    for(int i = 0; i < 5; i++) {
+        m_plineLight->RegisterTexture(m_rpassGBuff->GetAttachment(i), i + 10);
+    }
 
     m_plineLight->RegisterUniformBuffer(m_dlights);
     m_plineLight->RegisterUniformBuffer(m_plights);
     m_plineLight->RegisterUniformBuffer(m_casterCount);
+    m_plineLight->RegisterUniformBuffer(m_camData);
 
     m_plineLight->BuildPipeline();
 
@@ -101,6 +103,7 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Materi
     }
 
     cam->PushToUniform(m_camModel);
+    cam->PushCamDataToUniform(m_camData);
 
     m_sync->Start();
     m_rpassGBuff->BeginRenderpass(m_sync);
@@ -126,14 +129,10 @@ void RD_RenderingPipeline_PBR::Resize(int w, int h) {
         p->RebuildPipeline();
     }
 
-    auto colorpass = m_rpassGBuff->GetAttachment(0);
-    auto normpass = m_rpassGBuff->GetAttachment(1);
-    auto pospass = m_rpassGBuff->GetAttachment(2);
-
     m_plineLight->PurgeTextures();
-    m_plineLight->RegisterTexture(colorpass, 0);
-    m_plineLight->RegisterTexture(normpass, 1);
-    m_plineLight->RegisterTexture(pospass, 2);
+    for(int i = 0; i < 5; i++) {
+        m_plineLight->RegisterTexture(m_rpassGBuff->GetAttachment(i), i + 10);
+    }
     m_plineLight->RebuildPipeline();
 }
 
