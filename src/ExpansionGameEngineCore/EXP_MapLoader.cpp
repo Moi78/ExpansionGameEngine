@@ -38,5 +38,48 @@ std::shared_ptr<EXP_Level> EXP_MapLoader::LoadLevel(std::string levelPath) {
         return voidLevel;
     }
 
-    return hdl(m_game);
+    auto lvl = hdl(m_game);
+
+    Json::Value nodes = root["nodes"];
+    for(auto& n : nodes) {
+        if(n["type"].asString() == "mesh") {
+            lvl->RegisterActor(CreateMesh(n));
+        } else if(n["type"].asString() == "dirlight") {
+            lvl->RegisterActor(CreateDirLight(n));
+        } else if(n["type"].asString() == "pointlight") {
+            lvl->RegisterActor(CreatePointLight(n));
+        }
+    }
+
+    return lvl;
+}
+
+std::shared_ptr<EXP_StaticMeshActor> EXP_MapLoader::CreateMesh(Json::Value node) {
+    vec3 pos = vec3(node["pos"][0].asFloat(), node["pos"][1].asFloat(), node["pos"][2].asFloat());
+    vec3 rot = vec3(node["rot"][0].asFloat(), node["rot"][1].asFloat(), node["rot"][2].asFloat());
+    vec3 scale = vec3(node["scale"][0].asFloat(), node["scale"][1].asFloat(), node["scale"][2].asFloat());
+
+    std::shared_ptr<EXP_StaticMeshActor> smesh = std::make_shared<EXP_StaticMeshActor>(
+            m_game, node["mesh"].asString(), m_game->QueryMaterial(node["material"].asString()), pos, rot, scale
+    );
+
+    return smesh;
+}
+
+std::shared_ptr<EXP_DirLightActor> EXP_MapLoader::CreateDirLight(Json::Value node) {
+    vec3 color = vec3(node["color"][0].asFloat(), node["color"][1].asFloat(), node["color"][2].asFloat());
+    vec3 dir = vec3(node["dir"][0].asFloat(), node["dir"][1].asFloat(), node["dir"][2].asFloat());
+    float brightness = node["brightness"].asFloat();
+
+    return std::make_shared<EXP_DirLightActor>(m_game, dir, color, brightness);
+}
+
+std::shared_ptr<EXP_PointLightActor> EXP_MapLoader::CreatePointLight(Json::Value node) {
+    vec3 pos = vec3(node["pos"][0].asFloat(), node["pos"][1].asFloat(), node["pos"][2].asFloat());
+    vec3 color = vec3(node["color"][0].asFloat(), node["color"][1].asFloat(), node["color"][2].asFloat());
+
+    float brightness = node["brightness"].asFloat();
+    float radius = node["radius"].asFloat();
+
+    return std::make_shared<EXP_PointLightActor>(m_game, pos, color, brightness, radius);
 }

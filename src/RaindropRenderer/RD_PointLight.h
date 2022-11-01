@@ -13,7 +13,7 @@ public:
 
     void PushToUniform(std::shared_ptr<RD_UniformBuffer> buff, int index);
 
-private:
+protected:
     vec3 m_pos;
     float m_brightness;
     float m_radius;

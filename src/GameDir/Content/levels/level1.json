@@ -4,7 +4,36 @@
     {
       "type": "mesh",
       "mesh": "/mdl/monkey.msh",
-      "material": "/mat/material_test.exmtl"
+      "material": "/mat/mat_test.json",
+      "pos": [0.0, 0.0, 0.0],
+      "rot": [0.0, 10.0, -45.0],
+      "scale": [1.0, 1.0, 1.0]
+    },
+
+    {
+      "type": "mesh",
+      "mesh": "/mdl/monkey.msh",
+      "material": "/mat/mat_test.json",
+      "pos": [-4.0, -2.0, 0.0],
+      "rot": [0.0, 10.0, 90.0],
+      "scale": [1.0, 1.0, 1.0]
+    },
+
+    {
+      "type": "dirlight",
+
+      "color": [1.0, 1.0, 0.0],
+      "dir": [1, 1, -1],
+      "brightness": 1.0
+    },
+
+    {
+      "type": "pointlight",
+
+      "pos": [-2.0, -2.0, 0.0],
+      "color": [0.0, 0.8, 1.0],
+      "brightness": 10.0,
+      "radius": 50.0
     }
   ]
 }

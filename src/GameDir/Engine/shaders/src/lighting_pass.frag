@@ -81,11 +81,20 @@ vec3 Sheen(vec3 h, vec3 F0) {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - dot(h, n), 0.0, 1.0), 5.0);
 }
 
-vec3 ComputeDirLight(vec3 l, vec3 lightColor, float brightness) {
+vec3 ComputeRadianceDir(vec3 color, float brightness) {
+    return color * brightness;
+}
+
+vec3 ComputeRadiancePoint(vec3 pos, vec3 color, float brightness) {
+    float distance = length(pos - fragPos);
+    float att = 1.0 / (distance * distance);
+
+    return color * att * brightness;
+}
+
+vec3 ComputeLight(vec3 l, vec3 radiance) {
     vec3 diffuse = vec3(0.0, 0.0, 0.0);
     vec3 h = normalize(l + v);
-
-    vec3 radiance = lightColor * brightness;
 
     float spec = GGXDistrib(h, roughness);
 
@@ -116,18 +125,17 @@ vec3 ComputeDirLight(vec3 l, vec3 lightColor, float brightness) {
 void main() {
     vec3 light = vec3(0.0, 0.0, 0.0);
     for(int i = 0; i < nDLights; i++) {
-        light += ComputeDirLight(normalize(vec3(-dlights[i].dir)), dlights[i].color.rgb, dlights[i].brightness);
+        vec3 radiance = ComputeRadianceDir(dlights[i].color.rgb, dlights[i].brightness);
+        light += ComputeLight(normalize(vec3(-dlights[i].dir)), radiance);
     }
 
     for(int i = 0; i < nPLights; i++) {
         float dist = distance(plights[i].pos, fragPos);
         if(dist <= plights[i].radius) {
-            vec3 lightDir = plights[i].pos - fragPos;
+            vec3 dir = normalize(plights[i].pos - fragPos);
 
-            float lightness = max(dot(n, lightDir), 0.0);
-            float attenuation = 1.0 / (dist * dist);
-
-            light += lightness * c * plights[i].color.rgb * plights[i].brightness * attenuation;
+            vec3 radiance = ComputeRadiancePoint(plights[i].pos, plights[i].color, plights[i].brightness);
+            light += ComputeLight(dir, radiance);
         }
     }
 

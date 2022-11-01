@@ -49,6 +49,8 @@ void EXP_Actor::UpdateTransform() {
     m_transform = TranslateMatrix(m_transform, m_pos);
     m_transform = ScaleMatrix(m_transform, m_scale);
     m_transform = RotateMatrix(m_transform, m_rot);
+
+    UpdateActor();
 }
 
 void EXP_Actor::LinkComponent(std::shared_ptr<EXP_Component> comp) {

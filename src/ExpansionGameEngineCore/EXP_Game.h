@@ -7,11 +7,13 @@
 #include <RaindropRenderer.h>
 
 #include "EXP_Conf.h"
+#include "EXP_GenericRessourceManager.h"
 
 //Forward decl.
 class EXP_HotLoad;
 class EXP_MapLoader;
 class EXP_Level;
+class EXP_Material;
 
 class EXP_Game {
 public:
@@ -28,6 +30,7 @@ public:
 
     //Engine Sub-Systems
     std::shared_ptr<RaindropRenderer> GetRenderer();
+    std::shared_ptr<EXP_Material> QueryMaterial(std::string matPath);
 
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;
@@ -38,6 +41,7 @@ private:
     std::shared_ptr<EXP_Level> m_currentLevel;
 
     EXP_GameInfo m_gameinfo;
+    EXP_GenericRessourceManager<std::shared_ptr<EXP_Material>> m_materials;
 };
 
 

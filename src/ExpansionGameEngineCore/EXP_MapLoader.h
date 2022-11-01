@@ -7,6 +7,9 @@
 
 #include "EXP_HotLoad.h"
 #include "EXP_Level.h"
+#include "EXP_StaticMeshActor.h"
+#include "EXP_DirLightActor.h"
+#include "EXP_PointLightActor.h"
 
 #include <json/json.h>
 
@@ -16,6 +19,10 @@ public:
     ~EXP_MapLoader();
 
     std::shared_ptr<EXP_Level> LoadLevel(std::string levelPath);
+
+    std::shared_ptr<EXP_StaticMeshActor> CreateMesh(Json::Value node);
+    std::shared_ptr<EXP_DirLightActor> CreateDirLight(Json::Value node);
+    std::shared_ptr<EXP_PointLightActor> CreatePointLight(Json::Value node);
 
 private:
     EXP_Game* m_game;
