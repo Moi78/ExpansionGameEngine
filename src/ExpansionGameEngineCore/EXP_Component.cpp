@@ -38,9 +38,14 @@ mat4f EXP_Component::GetComponentTransform() {
 void EXP_Component::UpdateTransform() {
     m_transform = mat4f(1.0f);
 
-    m_transform = TranslateMatrix(m_transform, m_pos);
-    m_transform = ScaleMatrix(m_transform, m_scale);
-    m_transform = RotateMatrix(m_transform, m_rot);
+    mat4f trans = mat4f(1.0f);
+    mat4f scale = mat4f(1.0f);
+    mat4f rot = mat4f(1.0f);
 
+    trans = TranslateMatrix(trans, m_pos);
+    scale = ScaleMatrix(scale, m_scale);
+    rot = RotateMatrix(rot, m_rot);
+
+    m_transform = trans * rot * scale;
     m_transform = m_ptrans * m_transform;
 }

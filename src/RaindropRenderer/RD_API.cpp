@@ -465,6 +465,36 @@ void RD_Windowing_GLFW::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
     m_pline->RebuildPipeline();
 }
 
+float RD_Windowing_GLFW::GetCursorPositionX() {
+    double x = 0.0f;
+    glfwGetCursorPos(m_win, &x, nullptr);
+
+    return (float)x;
+}
+
+float RD_Windowing_GLFW::GetCursorPositionY() {
+    double y = 0.0f;
+    glfwGetCursorPos(m_win, nullptr, &y);
+
+    return (float)y;
+}
+
+void RD_Windowing_GLFW::SetCursorVisibility(bool visibility) {
+    glfwSetInputMode(m_win, GLFW_CURSOR, visibility ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+}
+
+void RD_Windowing_GLFW::SetCursorPosition(double x, double y) {
+    glfwSetCursorPos(m_win, x, y);
+}
+
+bool RD_Windowing_GLFW::GetKeyPress(int key) {
+    return glfwGetKey(m_win, key) == GLFW_PRESS;
+}
+
+bool RD_Windowing_GLFW::GetMouseButtonPress(int mbutton) {
+    return glfwGetMouseButton(m_win, mbutton) == GLFW_PRESS;
+}
+
 // ------------------------------------------------------------------------------------
 
 RD_API_Vk::RD_API_Vk() {

@@ -4,8 +4,9 @@
 #include <EXP_Game.h>
 #include <EXP_Actor.h>
 #include <EXP_Camera.h>
-
-#include <RD_Camera.h>
+#include <EXP_KeyboardCallback.h>
+#include <EXP_PointLight.h>
+#include <EXP_StaticMesh.h>
 
 class TestActor : public EXP_Actor {
 public:
@@ -15,10 +16,15 @@ public:
     void OnStart() override;
     void OnTick() override;
 
-private:
-    std::shared_ptr<EXP_Camera> m_cam;
+    void Forward();
 
-    float m_cpt;
+private:
+    std::shared_ptr<EXP_InputHandler> m_inhdl;
+
+    std::shared_ptr<EXP_Camera> m_cam;
+    std::shared_ptr<EXP_PointLight> m_plight;
+
+    std::shared_ptr<EXP_KeyboardCallback> m_forward;
 };
 
 

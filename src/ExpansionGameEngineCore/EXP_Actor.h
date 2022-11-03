@@ -27,6 +27,9 @@ public:
     void SetActorRot(vec3 nrot);
     void SetActorScale(vec3 nscale);
 
+    void TranslateActor(vec3 trans);
+    void RotateActor(vec3 rotation);
+
     mat4f GetActorTransform();
     void UpdateTransform();
     void UpdateActor();

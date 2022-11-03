@@ -1,6 +1,8 @@
 #ifndef EXPGE_EXP_POINTLIGHT_H
 #define EXPGE_EXP_POINTLIGHT_H
 
+#include <memory>
+
 #include <vec.h>
 #include <mat4.h>
 

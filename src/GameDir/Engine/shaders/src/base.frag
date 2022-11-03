@@ -15,5 +15,5 @@ void main() {
     oPos = vec4(FragPos, 1.0);
 
     oMetRoughAO = vec4(0.5, 0.2, 0.0, 0.0);
-    oSheen = vec4(1.0, 0.0, 0.0, 0.0);
+    oSheen = vec4(0.1, 0.0, 0.0, 0.0);
 }

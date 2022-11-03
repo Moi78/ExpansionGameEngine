@@ -28,6 +28,9 @@ bool EXP_Game::InitEngine() {
         return false;
     }
 
+    // Init Input Handler jut before it is used by actors
+    m_inhdl = std::make_shared<EXP_InputHandler>(m_rndr->GetAPI()->GetWindowingSystem());
+
     LoadLevel(m_gameinfo.RootGameContentDir + m_gameinfo.StartLevel);
 
     return true;
@@ -35,9 +38,12 @@ bool EXP_Game::InitEngine() {
 
 void EXP_Game::RunGame() {
     while(!m_rndr->WantToClose()) {
+        m_inhdl->ResetCursor();
+
         m_rndr->UpdateWindow();
         m_rndr->RenderScene();
 
+        m_inhdl->UpdateAll();
         m_currentLevel->TickActors();
     }
 }
@@ -71,4 +77,8 @@ std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath) {
     m_materials.AddRessource(material, matPath);
 
     return material;
+}
+
+std::shared_ptr<EXP_InputHandler> EXP_Game::GetInputHandler() {
+    return m_inhdl;
 }

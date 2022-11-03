@@ -80,6 +80,21 @@ public:
 
         return v;
     }
+
+    virtual vec3 operator*(const float& a) {
+        vec3 v(0.0, 0.0, 0.0);
+        for(int i = 0; i < 3; i++) {
+            v.GetData()[i] = m_vec[i] * a;
+        }
+
+        return v;
+    }
+
+    virtual void operator*=(const float& a) {
+        for(auto& c : m_vec) {
+            c *= a;
+        }
+    }
 };
 
 class vec2 : public vec<2> {
@@ -120,6 +135,21 @@ public:
         }
 
         return v;
+    }
+
+    virtual vec2 operator*(const float& a) {
+        vec2 v(0.0, 0.0);
+        for(int i = 0; i < 2; i++) {
+            v.GetData()[i] = m_vec[i] * a;
+        }
+
+        return v;
+    }
+
+    virtual void operator*=(const float& a) {
+        for(auto& c : m_vec) {
+            c *= a;
+        }
     }
 };
 
@@ -168,6 +198,21 @@ public:
         }
 
         return v;
+    }
+
+    virtual vec4 operator*(const float& a) {
+        vec4 v(0.0, 0.0, 0.0, 0.0);
+        for(int i = 0; i < 4; i++) {
+            v.GetData()[i] = m_vec[i] * a;
+        }
+
+        return v;
+    }
+
+    virtual void operator*=(const float& a) {
+        for(auto& c : m_vec) {
+            c *= a;
+        }
     }
 
     vec3 ToVec3() {

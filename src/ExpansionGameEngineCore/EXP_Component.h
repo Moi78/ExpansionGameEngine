@@ -14,6 +14,7 @@ public:
         m_scale = scale;
 
         m_ptrans = mat4f(1.0f);
+        UpdateTransform();
     };
 
     virtual ~EXP_Component() {};

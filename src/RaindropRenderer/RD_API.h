@@ -45,6 +45,15 @@ public:
     virtual void SetPresentTexture(std::shared_ptr<RD_Texture> tex) = 0;
 
 	virtual void PollEvents() = 0;
+
+    virtual bool GetKeyPress(int key) = 0;
+    virtual bool GetMouseButtonPress(int mbutton) = 0;
+
+    virtual float GetCursorPositionX() = 0;
+    virtual float GetCursorPositionY() = 0;
+    virtual void SetCursorPosition(double x, double y) = 0;
+
+    virtual void SetCursorVisibility(bool visibility) = 0;
 };
 
 class RD_DLLAPI RD_API
@@ -131,6 +140,15 @@ public:
     void BuildBlitPipeline(std::string enginePath) override;
 
 	void PollEvents() override;
+
+    void SetCursorVisibility(bool visibility) override;
+
+    float GetCursorPositionX() override;
+    float GetCursorPositionY() override;
+    void SetCursorPosition(double x, double y) override;
+
+    bool GetKeyPress(int key) override;
+    bool GetMouseButtonPress(int mbutton) override;
 
 	int GetExtensionsCount();
 	const char** GetExtensionsNames();

@@ -8,6 +8,7 @@
 
 #include "EXP_Conf.h"
 #include "EXP_GenericRessourceManager.h"
+#include "EXP_InputHandler.h"
 
 //Forward decl.
 class EXP_HotLoad;
@@ -30,6 +31,8 @@ public:
 
     //Engine Sub-Systems
     std::shared_ptr<RaindropRenderer> GetRenderer();
+    std::shared_ptr<EXP_InputHandler> GetInputHandler();
+
     std::shared_ptr<EXP_Material> QueryMaterial(std::string matPath);
 
 private:
@@ -37,6 +40,7 @@ private:
 
     std::shared_ptr<EXP_HotLoad> m_hotloader;
     std::unique_ptr<EXP_MapLoader> m_maploader;
+    std::shared_ptr<EXP_InputHandler> m_inhdl;
 
     std::shared_ptr<EXP_Level> m_currentLevel;
 
