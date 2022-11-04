@@ -52,17 +52,17 @@ void BD_Reader::ReadMSHFile(std::string file) {
 	}
 
 	//Reading indices
-	bFile.read(reinterpret_cast<char*>(&iSize), sizeof(int)); //Same pattern
+	bFile.read(reinterpret_cast<char*>(&iSize), sizeof(uint32_t)); //Same pattern
 
 	int itemp = 0;
 
 	for (int i = 0; i < iSize; i++) {
-		bFile.read(reinterpret_cast<char*>(&itemp), sizeof(int));
+		bFile.read(reinterpret_cast<char*>(&itemp), sizeof(uint32_t));
 		mIndices.push_back(itemp);
 	}
 
 	//Reading normals
-	bFile.read(reinterpret_cast<char*>(&nSize), sizeof(int)); //Same pattern
+	bFile.read(reinterpret_cast<char*>(&nSize), sizeof(uint32_t)); //Same pattern
 
 	temp = vec3(0.0f, 0.0f, 0.0f);
 
@@ -72,7 +72,7 @@ void BD_Reader::ReadMSHFile(std::string file) {
 	}
 
 	//Reading UV
-	bFile.read(reinterpret_cast<char*>(&uvSize), sizeof(int)); //Same pattern
+	bFile.read(reinterpret_cast<char*>(&uvSize), sizeof(uint32_t)); //Same pattern
 
 	for (int i = 0; i < uvSize; i++) {
 		bFile.read(reinterpret_cast<char*>(&tempUV), sizeof(vec2));

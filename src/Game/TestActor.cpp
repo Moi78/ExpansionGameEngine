@@ -11,9 +11,6 @@ TestActor::TestActor(EXP_Game* game) : EXP_Actor(vec3(-2.0f, -2.0f, 0.0f), vec3(
     LinkComponent(m_plight);
     game->GetRenderer()->RegisterPointLight(m_plight);
 
-    auto msh = std::make_shared<EXP_StaticMesh>(game, "/mdl/monkey.msh", game->QueryMaterial("/mat/mat_test.json"), vec3(2.0f, 0.0f, 0.0f), vec3(), vec3(0.5f, 0.5f, 0.5f));
-    LinkComponent(msh);
-
     m_forward = std::make_shared<EXP_KeyboardCallback>('Z', CL_VDFUNCPTR(TestActor::Forward));
     m_inhdl->RegisterKeyboardCallback(m_forward);
 }

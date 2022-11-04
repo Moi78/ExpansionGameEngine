@@ -3,29 +3,11 @@
   "nodes": [
     {
       "type": "mesh",
-      "mesh": "/mdl/monkey.msh",
-      "material": "/mat/mat_test.json",
-      "pos": [0.0, 0.0, 0.0],
-      "rot": [0.0, 10.0, -45.0],
-      "scale": [1.0, 1.0, 1.0]
-    },
-
-    {
-      "type": "mesh",
       "mesh": "/mdl/plane.msh",
       "material": "/mat/mat_test.json",
-      "pos": [0.0, 0.0, -3.0],
+      "pos": [0.0, 0.0, -2.0],
       "rot": [0.0, 0.0, 0.0],
-      "scale": [10.0, 10.0, 10.0]
-    },
-
-    {
-      "type": "mesh",
-      "mesh": "/mdl/monkey.msh",
-      "material": "/mat/mat_test.json",
-      "pos": [-4.0, -2.0, 1.0],
-      "rot": [0.0, 10.0, 90.0],
-      "scale": [1.5, 1.5, 1.5]
+      "scale": [1.0, 1.0, 1.0]
     },
 
     {

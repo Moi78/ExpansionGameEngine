@@ -46,6 +46,9 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
     uint32_t nbrUVcoord = m_uv_coord.size();
     uint32_t nbrVertStrength = m_vertex_weight.size();
 
+    std::cout << "BD Verticies " << (long long)nbrVertices << std::endl;
+    std::cout << "BD Indicies " << (long long)nbrIndice << std::endl;
+
 	//Vertices
 	bFile.write(reinterpret_cast<const char*>(&nbrVertices), sizeof(uint32_t));
 
@@ -54,28 +57,28 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 	}
 
 	//Indices
-	bFile.write(reinterpret_cast<const char*>(&nbrIndice), sizeof(int));
+	bFile.write(reinterpret_cast<const char*>(&nbrIndice), sizeof(uint32_t));
 
 	for (int i = 0; i < nbrIndice; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_indices[i]), sizeof(int));
 	}
 
 	//Normals
-	bFile.write(reinterpret_cast<const char*>(&nbrNormal), sizeof(int));
+	bFile.write(reinterpret_cast<const char*>(&nbrNormal), sizeof(uint32_t));
 
 	for (int i = 0; i < nbrNormal; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_normals[i]), sizeof(vec3));
 	}
 
 	//UV Coords
-	bFile.write(reinterpret_cast<const char*>(&nbrUVcoord), sizeof(int));
+	bFile.write(reinterpret_cast<const char*>(&nbrUVcoord), sizeof(uint32_t));
 
 	for (int i = 0; i < nbrUVcoord; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_uv_coord[i]), sizeof(vec2));
 	}
 
 	//Vertex Strength
-	bFile.write(reinterpret_cast<const char*>(&nbrVertStrength), sizeof(int));
+	bFile.write(reinterpret_cast<const char*>(&nbrVertStrength), sizeof(uint32_t));
 
 	for (int i = 0; i < nbrVertStrength; i++) {
 		bFile.write(reinterpret_cast<const char*>(&m_vertex_weight[i]), sizeof(vec4));

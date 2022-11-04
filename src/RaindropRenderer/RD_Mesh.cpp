@@ -27,6 +27,9 @@ void RD_Mesh::LoadMesh(const std::string& filepath) {
         pos.push_back(r.GetVertexByIndex(i));
         norm.push_back(r.GetNormalByIndex(i));
         uv.push_back(r.GetUVcoordByIndex(i));
+    }
+
+    for(int i = 0; i < r.GetIndicesCount(); i++) {
         indicies.push_back(r.GetIndiceByIndex(i));
     }
 

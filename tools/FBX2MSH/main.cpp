@@ -27,9 +27,15 @@ int main(int argc, char* argv[]) {
 
     Assimp::Importer importer;
 
+    std::cout << "Opening " << filePath << std::endl;
     const aiScene* scene = importer.ReadFile(filePath.c_str(),
                                        aiProcess_Triangulate |
                                        aiProcess_GenUVCoords);
+
+    if(!scene) {
+        std::cerr << "ERROR: Failed to import " << filePath << std::endl;
+        return -4;
+    }
 
     if(!scene->HasMeshes()) {
         std::cerr << "ERROR: There is no mesh in the provided file." << std::endl;
@@ -66,6 +72,7 @@ int main(int argc, char* argv[]) {
                 w.AppendIndices(currentMesh->mFaces[ind].mIndices[idx]);
             }
         }
+        std::cout << currentMesh->mNumFaces << " faces" << std::endl;
 
         std::string suffix;
         if(scene->mNumMeshes > 1) {
