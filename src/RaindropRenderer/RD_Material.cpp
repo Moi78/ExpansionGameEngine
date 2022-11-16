@@ -27,3 +27,10 @@ void RD_Material::RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::
 
     m_pline->Unbind(sync);
 }
+
+void RD_Material::RenderMeshesExtPline(std::shared_ptr<RD_Pipeline> pline, std::shared_ptr<RD_RenderSynchronizer> sync) {
+    for(auto& m : m_meshes) {
+        pline->PushConstant(m->GetTransform().GetPTR(), sync);
+        pline->DrawIndexedVertexBuffer(m->GetVertexBuffer(), sync);
+    }
+}

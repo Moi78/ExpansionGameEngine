@@ -3,9 +3,9 @@
   "nodes": [
     {
       "type": "mesh",
-      "mesh": "/mdl/plane.msh",
+      "mesh": "/mdl/suzanne.msh",
       "material": "/mat/mat_test.json",
-      "pos": [0.0, 0.0, -2.0],
+      "pos": [0.0, 0.0, 0.0],
       "rot": [0.0, 0.0, 0.0],
       "scale": [1.0, 1.0, 1.0]
     },
@@ -13,8 +13,8 @@
     {
       "type": "dirlight",
 
-      "color": [1.0, 1.0, 0.0],
-      "dir": [1, 1, -1],
+      "color": [1.0, 1.0, 1.0],
+      "dir": [2.0, 1.0, -1],
       "brightness": 1.0
     }
   ]

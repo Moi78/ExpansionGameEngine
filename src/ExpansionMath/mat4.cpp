@@ -42,10 +42,10 @@ mat4<float> LookAt(vec3 pos, vec3 target, vec3 up) {
 
 mat4<float> ProjOrtho(float right, float left, float top, float bottom, float nearv, float farv) {
     float mat[16] = {
-            2 / (right - left), 0, 0, -((right + left) / (right - left)),
-            0, 2 / (top - bottom), 0, -((top + bottom) / (top - bottom)),
-            0, 0, -2 / (farv - nearv), -((farv + nearv) / (farv - nearv)),
-            0, 0, 0, 1
+            2.0f / (right - left), 0, 0, -((right + left) / (right - left)),
+            0, 2.0f / (bottom - top), 0, -((top + bottom) / (bottom - top)),
+            0, 0, 1.0f / (nearv - farv), (nearv) / (nearv - farv),
+            0, 0, 0, 1.0f
     };
 
     return mat4<float>(mat);

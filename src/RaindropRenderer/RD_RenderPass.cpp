@@ -11,7 +11,7 @@ RD_RenderPass_Vk::RD_RenderPass_Vk(VkDevice dev, std::vector<RD_Attachment> atta
     m_fb = VK_NULL_HANDLE;
     m_hasDepth = false;
 
-    std::map<int, VkSampleCountFlagBits> map_sample {
+    std::unordered_map<int, VkSampleCountFlagBits> map_sample {
         {1, VK_SAMPLE_COUNT_1_BIT},
         {2, VK_SAMPLE_COUNT_2_BIT},
         {4, VK_SAMPLE_COUNT_4_BIT},
@@ -144,7 +144,7 @@ void RD_RenderPass_Vk::BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB) 
     rpassInfo.renderPass = m_renderPass;
 
     if(scFB != VK_NULL_HANDLE) {
-        rpassInfo.framebuffer = scFB; // TO COMPLETE
+        rpassInfo.framebuffer = scFB;
     } else {
         rpassInfo.framebuffer = m_fb;
     }
@@ -271,6 +271,24 @@ void RD_RenderPass_Vk::EndRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync
         auto imgVK = std::reinterpret_pointer_cast<RD_Texture_Vk>(img);
         imgVK->PrepareForSampling(cmd);
     }
+}
+
+void RD_RenderPass_Vk::BeginRenderpassExt(std::shared_ptr<RD_RenderSynchronizer> sync,
+                                          std::shared_ptr<RD_OrphanFramebuffer> fb) {
+    auto syncVK = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync);
+    auto fbVK = std::reinterpret_pointer_cast<RD_OrphanFramebuffer_Vk>(fb);
+
+    fbVK->PrepareForRendering(syncVK->GetCommandBuffer());
+    BeginRenderPass(syncVK->GetCommandBuffer(), fbVK->GetFramebufferHandle());
+}
+
+void RD_RenderPass_Vk::EndRenderpassEXT(std::shared_ptr<RD_RenderSynchronizer> sync,
+                                        std::shared_ptr<RD_OrphanFramebuffer> fb) {
+    auto syncVK = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync);
+    auto fbVK = std::reinterpret_pointer_cast<RD_OrphanFramebuffer_Vk>(fb);
+
+    EndRenderPass(syncVK->GetCommandBuffer());
+    fbVK->PrepareForSampling(syncVK->GetCommandBuffer());
 }
 
 #endif //BUILD_VULKAN

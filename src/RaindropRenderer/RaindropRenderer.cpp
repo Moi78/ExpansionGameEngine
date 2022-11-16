@@ -38,6 +38,8 @@ bool RaindropRenderer::InitRenderer(std::string enginePath) {
 
 void RaindropRenderer::RenderScene() {
     m_rpline->RenderScene(m_materials, m_viewCam);
+    m_rpline->RenderShadows(m_materials, m_dirLights);
+
 	m_api->GetWindowingSystem()->Present();
 }
 
@@ -77,11 +79,17 @@ void RaindropRenderer::RegisterDirLight(std::shared_ptr<RD_DirLight> dlight) {
 
 void RaindropRenderer::UpdateLighting() {
     int i = 0;
+    int shadowCasterCount = 0;
     for(auto& dl : m_dirLights) {
         m_rpline->PushDirLight(dl, i);
 
+        if(dl->IsShadowCaster()) {
+            shadowCasterCount++;
+        }
+
         i++;
     }
+    m_rpline->SetNumberOfShadowFB(shadowCasterCount);
 
     i = 0;
     for(auto& pl : m_pointLights) {

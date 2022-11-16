@@ -853,6 +853,14 @@ std::shared_ptr<RD_RenderSynchronizer> RD_API_Vk::CreateRenderSynchronizer() {
     return std::make_shared<RD_RenderSynchronizer_Vk>(m_ldev, m_pool, m_gfx_queue);
 }
 
+std::shared_ptr<RD_OrphanFramebuffer> RD_API_Vk::CreateOrphanFramebuffer(
+        std::shared_ptr<RD_RenderPass> rpass,
+        std::vector<RD_Attachment> attachments,
+        float w, float h
+) {
+    return std::make_shared<RD_OrphanFramebuffer_Vk>(m_ldev, rpass, attachments, w, h);
+}
+
 //-----------------------------------
 
 bool CheckDeviceExtensionSupport(VkPhysicalDevice dev) {

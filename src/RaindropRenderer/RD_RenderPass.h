@@ -7,9 +7,10 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 class RD_API;
+class RD_OrphanFramebuffer;
 
 struct RD_Attachment {
     int format;
@@ -28,7 +29,9 @@ public:
     virtual void SetRenderpassSize(RD_API* api, const int w, const int h) = 0;
 
     virtual void BeginRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
+    virtual void BeginRenderpassExt(std::shared_ptr<RD_RenderSynchronizer> sync, std::shared_ptr<RD_OrphanFramebuffer> fb) = 0;
     virtual void EndRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
+    virtual void EndRenderpassEXT(std::shared_ptr<RD_RenderSynchronizer> sync, std::shared_ptr<RD_OrphanFramebuffer> fb) = 0;
 
     virtual int GetAttachmentCount() = 0;
     virtual std::shared_ptr<RD_Texture> GetAttachment(int index) = 0;
@@ -47,9 +50,11 @@ public:
 
     void BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB = VK_NULL_HANDLE);
     void BeginRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) override;
+    void BeginRenderpassExt(std::shared_ptr<RD_RenderSynchronizer> sync, std::shared_ptr<RD_OrphanFramebuffer> fb) override;
 
     void EndRenderPass(VkCommandBuffer cmd);
     void EndRenderpass(std::shared_ptr<RD_RenderSynchronizer> sync) override;
+    void EndRenderpassEXT(std::shared_ptr<RD_RenderSynchronizer> sync, std::shared_ptr<RD_OrphanFramebuffer> fb) override;
 
     bool BuildRenderpass(RD_API* api, bool sc) override;
     void SetRenderpassSize(RD_API* api, const int w, const int h) override;

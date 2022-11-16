@@ -11,7 +11,7 @@
 #include "EXP_DirLightActor.h"
 #include "EXP_PointLightActor.h"
 
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 
 class EXP_MapLoader {
 public:

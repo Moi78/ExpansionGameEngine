@@ -53,6 +53,9 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_rpassLight = m_api->CreateRenderPass({color}, static_cast<float>(w), static_cast<float>(h));
     m_rpassLight->BuildRenderpass(m_api.get(), false);
 
+    m_rpassShadowDepth = m_api->CreateRenderPass({depth}, SHADOW_RES, SHADOW_RES);
+    m_rpassShadowDepth->BuildRenderpass(m_api.get(), true);
+
     auto tex = m_rpassLight->GetAttachment(0);
     m_api->GetWindowingSystem()->SetPresentTexture(tex);
 
@@ -75,11 +78,22 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_camData = m_api->CreateUniformBuffer(6);
     m_camData->BuildAndAllocateBuffer(8 * sizeof(float));
 
+    m_lightMat = m_api->CreateUniformBuffer(0);
+    m_lightMat->BuildAndAllocateBuffer(16 * 2 * sizeof(float));
+
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
     base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
 
     std::shared_ptr<RD_ShaderLoader> light_shader = m_api->CreateShader();
     light_shader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/lighting_pass.fspv");
+
+    std::shared_ptr<RD_ShaderLoader> shadowDepth_shader = m_api->CreateShader();
+    shadowDepth_shader->CompileShaderFromFile(enginePath + "/shaders/bin/shadow_depth.vspv", enginePath + "/shaders/bin/shadow_depth.fspv");
+
+    m_plineShadowDepth = m_api->CreatePipeline(m_rpassShadowDepth, shadowDepth_shader);
+    m_plineShadowDepth->SetModelMode(true);
+    m_plineShadowDepth->RegisterUniformBuffer(m_lightMat);
+    m_plineShadowDepth->BuildPipeline();
 
     m_plineLight = m_api->CreatePipeline(m_rpassLight, light_shader);
 
@@ -157,4 +171,50 @@ void RD_RenderingPipeline_PBR::SetupPipeline(std::shared_ptr<RD_Pipeline> pline)
     pline->BuildPipeline();
 
     m_pline_refs.push_back(pline);
+}
+
+void RD_RenderingPipeline_PBR::RenderShadows(
+        std::vector<std::shared_ptr<RD_Material>>& sceneData,
+        std::vector<std::shared_ptr<RD_DirLight>>& lightData
+) {
+    for(int i = 0; i < lightData.size(); i++) {
+        m_lightMat->PartialFillBufferData(lightData[i]->GetMatProj().GetPTR(), 16 * sizeof(float), 0);
+        m_lightMat->PartialFillBufferData(lightData[i]->GetMatView().GetPTR(), 16 * sizeof(float), 16 * sizeof(float));
+
+        m_sync->Start();
+        m_rpassShadowDepth->BeginRenderpassExt(m_sync, m_depthFBs[i]);
+        m_plineShadowDepth->Bind(m_sync);
+
+        for (auto &sd: sceneData) {
+            sd->RenderMeshesExtPline(m_plineShadowDepth, m_sync);
+        }
+
+        m_plineShadowDepth->Unbind(m_sync);
+        m_rpassShadowDepth->EndRenderpassEXT(m_sync, m_depthFBs[i]);
+        m_sync->Stop();
+    }
+}
+
+void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
+    RD_Attachment depth{};
+    depth.format = IMGFORMAT_DEPTH;
+    depth.do_clear = true;
+    depth.is_swapchain_attachment = false;
+    depth.sample_count = 1;
+
+    if(nbr < m_depthFBs.size()) {
+        //Removing FBs in excess
+
+        m_depthFBs.erase(m_depthFBs.begin() + nbr, m_depthFBs.end());
+    } else if(nbr > m_depthFBs.size()) {
+        // Creating missing FBs
+        int missingFBNbrs = nbr - m_depthFBs.size();
+
+        for(int i = 0; i < missingFBNbrs; i++) {
+            std::shared_ptr<RD_OrphanFramebuffer> fb = m_api->CreateOrphanFramebuffer(m_rpassShadowDepth, {depth}, SHADOW_RES, SHADOW_RES);
+            fb->BuildFramebuffer(m_api.get());
+
+            m_depthFBs.push_back(fb);
+        }
+    }
 }

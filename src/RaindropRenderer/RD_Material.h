@@ -18,6 +18,7 @@ public:
     void PurgeMeshes();
 
     void RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::shared_ptr<RD_RenderSynchronizer> sync);
+    void RenderMeshesExtPline(std::shared_ptr<RD_Pipeline> pline, std::shared_ptr<RD_RenderSynchronizer> sync);
 
 private:
     std::vector<std::shared_ptr<RD_Mesh>> m_meshes;
