@@ -324,6 +324,26 @@ bool RD_Pipeline_Vk::CreateDescriptorSet() {
         vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
     }
 
+    for(int i = 0; i < m_bindings_tex_array.size(); i++) {
+        std::vector<VkDescriptorImageInfo> infos;
+        for(auto& t : m_texs_array[i]) {
+            auto vkTex = std::reinterpret_pointer_cast<RD_Texture_Vk>(t);
+            infos.push_back(vkTex->GetDescriptorInfo());
+        }
+
+        VkWriteDescriptorSet descW;
+        descW.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descW.dstSet = m_descSet;
+        descW.dstBinding = m_bindings_tex_array[i].binding;
+        descW.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descW.descriptorCount = infos.size();
+        descW.pBufferInfo = nullptr;
+        descW.pImageInfo = infos.data();
+        descW.pTexelBufferView = nullptr;
+
+        vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
+    }
+
     return true;
 }
 
@@ -490,6 +510,19 @@ void RD_Pipeline_Vk::RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t b
     bindLayout.pImmutableSamplers = nullptr;
 
     m_bindings_tex.push_back(bindLayout);
+}
+
+void RD_Pipeline_Vk::RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) {
+    m_texs_array.push_back(texs);
+
+    VkDescriptorSetLayoutBinding bindLayout{};
+    bindLayout.binding = binding;
+    bindLayout.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    bindLayout.descriptorCount = 1;
+    bindLayout.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    bindLayout.pImmutableSamplers = nullptr;
+
+    m_bindings_tex_array.push_back(bindLayout);
 }
 
 void RD_Pipeline_Vk::PurgeTextures() {

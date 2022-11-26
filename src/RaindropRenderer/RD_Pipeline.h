@@ -29,6 +29,7 @@ public:
 
     virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) = 0;
     virtual void RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) = 0;
+    virtual void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
     virtual void PurgeTextures() = 0;
 
     virtual void SetModelMode(bool mode) = 0;
@@ -62,6 +63,7 @@ public:
 
     void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) override;
     void RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) override;
+    void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
     void PurgeTextures() override;
 
     void SetModelMode(bool mode) override;
@@ -88,6 +90,10 @@ private:
 
     std::vector<VkDescriptorSetLayoutBinding> m_bindings;
     std::vector<VkDescriptorSetLayoutBinding> m_bindings_tex;
+
+    std::vector<VkDescriptorSetLayoutBinding> m_bindings_tex_array;
+    std::vector<std::vector<std::shared_ptr<RD_Texture>>> m_texs_array;
+
     VkDescriptorSet m_descSet;
     VkDescriptorSetLayout m_descLayout;
     VkDescriptorPool m_descPool;
