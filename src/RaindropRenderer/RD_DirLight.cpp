@@ -55,3 +55,7 @@ mat4f RD_DirLight::GetMatProj() {
 mat4f RD_DirLight::GetMatView() {
     return m_lightView;
 }
+
+mat4f RD_DirLight::GetTransMat() {
+    return m_lightProj * m_lightView;
+}

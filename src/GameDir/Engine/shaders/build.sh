@@ -17,4 +17,4 @@ glslc -c $PREFIX/src/lighting_pass.frag -o $PREFIX/bin/lighting_pass.fspv
 glslc -c $PREFIX/src/shadow_depth.frag -o $PREFIX/bin/shadow_depth.fspv
 glslc -c $PREFIX/src/shadow_depth.vert -o $PREFIX/bin/shadow_depth.vspv
 
-glslc -c $PREFIX/src/shadow_calc.frag -o $PREFIX/bin/shadow_cal.fspv
+glslc -c $PREFIX/src/shadow_calc.frag -o $PREFIX/bin/shadow_calc.fspv

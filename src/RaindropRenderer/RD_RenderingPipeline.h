@@ -69,6 +69,8 @@ public:
     void SetNumberOfShadowFB(int nbr) override;
 
 private:
+    void UpdateShadowTexArray();
+
     std::shared_ptr<RD_API> m_api;
     std::shared_ptr<RD_Quad> m_renderSurface;
 
@@ -79,6 +81,9 @@ private:
 
     std::shared_ptr<RD_RenderPass> m_rpassShadowDepth;
     std::shared_ptr<RD_Pipeline> m_plineShadowDepth;
+
+    std::shared_ptr<RD_RenderPass> m_rpassShadowCalc;
+    std::shared_ptr<RD_Pipeline> m_plineShadowCalc;
 
     std::vector<std::shared_ptr<RD_OrphanFramebuffer>> m_depthFBs;
 
@@ -91,6 +96,7 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_plights;
     std::shared_ptr<RD_UniformBuffer> m_casterCount;
     std::shared_ptr<RD_UniformBuffer> m_camData;
+    std::shared_ptr<RD_UniformBuffer> m_indexuBuffer;
 
     std::shared_ptr<RD_RenderSynchronizer_Vk> m_sync;
 

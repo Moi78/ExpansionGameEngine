@@ -21,7 +21,7 @@ void RD_Material::RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::
 
     for(auto& m : m_meshes) {
         //camModel->PartialFillBufferData(m->GetTransform().GetPTR(), 16 * sizeof(float), 2 * 16 * sizeof(float));
-        m_pline->PushConstant(m->GetTransform().GetPTR(), sync);
+        m_pline->PushConstant(m->GetTransform().GetPTR(), 16 * sizeof(float), sync);
         m_pline->DrawIndexedVertexBuffer(m->GetVertexBuffer(), sync);
     }
 
@@ -30,7 +30,7 @@ void RD_Material::RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::
 
 void RD_Material::RenderMeshesExtPline(std::shared_ptr<RD_Pipeline> pline, std::shared_ptr<RD_RenderSynchronizer> sync) {
     for(auto& m : m_meshes) {
-        pline->PushConstant(m->GetTransform().GetPTR(), sync);
+        pline->PushConstant(m->GetTransform().GetPTR(), 16 * sizeof(float), sync);
         pline->DrawIndexedVertexBuffer(m->GetVertexBuffer(), sync);
     }
 }

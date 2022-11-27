@@ -1,6 +1,10 @@
 #ifndef EXPGE_RD_ORPHANFRAMEBUFFER_H
 #define EXPGE_RD_ORPHANFRAMEBUFFER_H
 
+#include <memory>
+
+#include "RD_Texture.h"
+
 class RD_API;
 
 class RD_OrphanFramebuffer {
@@ -9,6 +13,8 @@ public:
     ~RD_OrphanFramebuffer() {};
 
     virtual bool BuildFramebuffer(RD_API* api) = 0;
+
+    virtual std::shared_ptr<RD_Texture> GetAttachment(int idx) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -28,6 +34,8 @@ public:
 
     void PrepareForSampling(VkCommandBuffer cmd);
     void PrepareForRendering(VkCommandBuffer cmd);
+
+    std::shared_ptr<RD_Texture> GetAttachment(int idx) override;
 private:
     VkDevice m_dev;
     std::shared_ptr<RD_RenderPass> m_rpass;

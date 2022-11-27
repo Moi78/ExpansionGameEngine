@@ -17,6 +17,7 @@ public:
     void ComputeMatrix();
     mat4f GetMatProj();
     mat4f GetMatView();
+    mat4f GetTransMat();
 
     void PushToUniform(std::shared_ptr<RD_UniformBuffer> buff, int idx);
 

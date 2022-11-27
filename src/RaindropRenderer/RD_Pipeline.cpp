@@ -172,6 +172,7 @@ bool RD_Pipeline_Vk::BuildPipeline() {
         std::vector<VkDescriptorSetLayoutBinding> bindings;
         bindings.insert(bindings.begin(), m_bindings.begin(), m_bindings.end());
         bindings.insert(bindings.end(), m_bindings_tex.begin(), m_bindings_tex.end());
+        bindings.insert(bindings.end(), m_bindings_tex_array.begin(), m_bindings_tex_array.end());
 
         VkDescriptorSetLayoutCreateInfo bindingLayoutInfo{};
         bindingLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -250,7 +251,7 @@ bool RD_Pipeline_Vk::CreateDescriptorPool() {
 
     VkDescriptorPoolSize poolSize_tex{};
     poolSize_tex.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSize_tex.descriptorCount = m_bindings_tex.size();
+    poolSize_tex.descriptorCount = m_bindings_tex.size() + m_bindings_tex_array.size();
 
     if(poolSize_tex.descriptorCount > 0) {
         psize.push_back(poolSize_tex);
@@ -260,7 +261,7 @@ bool RD_Pipeline_Vk::CreateDescriptorPool() {
     cInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     cInfo.poolSizeCount = psize.size();
     cInfo.pPoolSizes = psize.data();
-    cInfo.maxSets = m_bindings.size() + m_bindings_tex.size();
+    cInfo.maxSets = m_bindings.size() + m_bindings_tex.size() + m_bindings_tex_array.size();
 
     if(vkCreateDescriptorPool(m_dev, &cInfo, nullptr, &m_descPool) != VK_SUCCESS) {
         std::cerr << "ERROR: Failed to create descriptor pool." << std::endl;
@@ -331,17 +332,19 @@ bool RD_Pipeline_Vk::CreateDescriptorSet() {
             infos.push_back(vkTex->GetDescriptorInfo());
         }
 
-        VkWriteDescriptorSet descW;
-        descW.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descW.dstSet = m_descSet;
-        descW.dstBinding = m_bindings_tex_array[i].binding;
-        descW.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        descW.descriptorCount = infos.size();
-        descW.pBufferInfo = nullptr;
-        descW.pImageInfo = infos.data();
-        descW.pTexelBufferView = nullptr;
+        if(infos.size() > 0) {
+            VkWriteDescriptorSet descW{};
+            descW.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descW.dstSet = m_descSet;
+            descW.dstBinding = m_bindings_tex_array[i].binding;
+            descW.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descW.descriptorCount = infos.size();
+            descW.pBufferInfo = nullptr;
+            descW.pImageInfo = infos.data();
+            descW.pTexelBufferView = nullptr;
 
-        vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
+            vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
+        }
     }
 
     return true;
@@ -518,7 +521,7 @@ void RD_Pipeline_Vk::RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture
     VkDescriptorSetLayoutBinding bindLayout{};
     bindLayout.binding = binding;
     bindLayout.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    bindLayout.descriptorCount = 1;
+    bindLayout.descriptorCount = texs.size();
     bindLayout.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     bindLayout.pImmutableSamplers = nullptr;
 
@@ -528,6 +531,19 @@ void RD_Pipeline_Vk::RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture
 void RD_Pipeline_Vk::PurgeTextures() {
     m_texs.clear();
     m_bindings_tex.clear();
+
+    m_texs_array.clear();
+    m_bindings_tex_array.clear();
+}
+
+void RD_Pipeline_Vk::SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) {
+    for(int i = 0; i < m_bindings_tex_array.size(); i++) {
+        if(m_bindings_tex_array[i].binding == binding) {
+            m_texs_array[i] = texs;
+            m_bindings_tex_array[i].descriptorCount = texs.size();
+            break;
+        }
+    }
 }
 
 bool RD_Pipeline_Vk::BuildSyncObjects() {
@@ -552,14 +568,25 @@ void RD_Pipeline_Vk::SetModelMode(bool mode) {
     m_isModelMode = mode;
 }
 
-void RD_Pipeline_Vk::PushConstant(void *data, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
+void RD_Pipeline_Vk::PushConstant(void *data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
     VkCommandBuffer cmdBuff = m_cmdBuffer;
     if(sync.has_value()) {
         const std::shared_ptr<RD_RenderSynchronizer_Vk> vsync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync.value());
         cmdBuff = vsync->GetCommandBuffer();
     }
 
-    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, 16 * sizeof(float), data);
+    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, size, data);
+}
+
+void RD_Pipeline_Vk::PartialPushConstant(void *data, size_t size, size_t offset,
+                                         std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
+    VkCommandBuffer cmdBuff = m_cmdBuffer;
+    if(sync.has_value()) {
+        const std::shared_ptr<RD_RenderSynchronizer_Vk> vsync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(sync.value());
+        cmdBuff = vsync->GetCommandBuffer();
+    }
+
+    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT, offset, size, data);
 }
 
 #endif //BUILD_VULKAN

@@ -32,8 +32,11 @@ public:
     virtual void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
     virtual void PurgeTextures() = 0;
 
+    virtual void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
+
     virtual void SetModelMode(bool mode) = 0;
-    virtual void PushConstant(void* data, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
+    virtual void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
+    virtual void PartialPushConstant(void* data, size_t size, size_t offest, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -66,8 +69,11 @@ public:
     void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
     void PurgeTextures() override;
 
+    void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
+
     void SetModelMode(bool mode) override;
-    void PushConstant(void* data, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
+    void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
+    void PartialPushConstant(void* data, size_t size, size_t offset, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
 private:
     bool AllocCMDBuffer();

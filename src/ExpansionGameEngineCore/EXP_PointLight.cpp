@@ -11,5 +11,5 @@ void EXP_PointLight::SetParentMatrix(mat4f &matrix) {
     vec4 rpos = matrix * pos;
 
     RD_PointLight::m_pos = rpos.ToVec3();
-    m_game->GetRenderer()->UpdateLighting();
+    m_game->GetRenderer()->UpdateLighting(true, false);
 }

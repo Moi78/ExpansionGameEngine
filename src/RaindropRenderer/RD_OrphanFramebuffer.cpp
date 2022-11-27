@@ -89,4 +89,10 @@ void RD_OrphanFramebuffer_Vk::PrepareForRendering(VkCommandBuffer cmd) {
     }
 }
 
+std::shared_ptr<RD_Texture> RD_OrphanFramebuffer_Vk::GetAttachment(int idx) {
+    assert(idx < m_imgs.size() && idx >= 0);
+
+    return m_imgs[idx];
+}
+
 #endif //BUILD_VULKAN

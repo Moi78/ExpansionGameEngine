@@ -56,6 +56,9 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_rpassShadowDepth = m_api->CreateRenderPass({depth}, SHADOW_RES, SHADOW_RES);
     m_rpassShadowDepth->BuildRenderpass(m_api.get(), true);
 
+    m_rpassShadowCalc = m_api->CreateRenderPass({colorf}, static_cast<float>(w), static_cast<float>(h));
+    m_rpassShadowCalc->BuildRenderpass(m_api.get(), false);
+
     auto tex = m_rpassLight->GetAttachment(0);
     m_api->GetWindowingSystem()->SetPresentTexture(tex);
 
@@ -79,7 +82,10 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_camData->BuildAndAllocateBuffer(8 * sizeof(float));
 
     m_lightMat = m_api->CreateUniformBuffer(0);
-    m_lightMat->BuildAndAllocateBuffer(16 * 2 * sizeof(float));
+    m_lightMat->BuildAndAllocateBuffer(16 * 10 * sizeof(float));
+
+    m_indexuBuffer = m_api->CreateUniformBuffer(2);
+    m_indexuBuffer->BuildAndAllocateBuffer(sizeof(uint32_t));
 
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
     base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
@@ -90,10 +96,25 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     std::shared_ptr<RD_ShaderLoader> shadowDepth_shader = m_api->CreateShader();
     shadowDepth_shader->CompileShaderFromFile(enginePath + "/shaders/bin/shadow_depth.vspv", enginePath + "/shaders/bin/shadow_depth.fspv");
 
+    std::shared_ptr<RD_ShaderLoader> shadowCalc_shader = m_api->CreateShader();
+    shadowCalc_shader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/shadow_calc.fspv");
+
     m_plineShadowDepth = m_api->CreatePipeline(m_rpassShadowDepth, shadowDepth_shader);
     m_plineShadowDepth->SetModelMode(true);
     m_plineShadowDepth->RegisterUniformBuffer(m_lightMat);
+    m_plineShadowDepth->RegisterUniformBuffer(m_indexuBuffer);
     m_plineShadowDepth->BuildPipeline();
+
+    m_plineShadowCalc = m_api->CreatePipeline(m_rpassShadowCalc, shadowCalc_shader);
+    m_plineShadowCalc->RegisterUniformBuffer(m_lightMat);
+
+    std::vector<std::shared_ptr<RD_Texture>> tArray = {};
+    for(auto& s : m_depthFBs) {
+        tArray.push_back(s->GetAttachment(0));
+    }
+
+    m_plineShadowCalc->RegisterTextureArray(tArray, 1);
+    m_plineShadowCalc->BuildPipeline();
 
     m_plineLight = m_api->CreatePipeline(m_rpassLight, light_shader);
 
@@ -177,9 +198,13 @@ void RD_RenderingPipeline_PBR::RenderShadows(
         std::vector<std::shared_ptr<RD_Material>>& sceneData,
         std::vector<std::shared_ptr<RD_DirLight>>& lightData
 ) {
-    for(int i = 0; i < lightData.size(); i++) {
-        m_lightMat->PartialFillBufferData(lightData[i]->GetMatProj().GetPTR(), 16 * sizeof(float), 0);
-        m_lightMat->PartialFillBufferData(lightData[i]->GetMatView().GetPTR(), 16 * sizeof(float), 16 * sizeof(float));
+    for(uint32_t i = 0; i < lightData.size(); i++) {
+        if(!lightData[i]->IsShadowCaster()) {
+            continue;
+        }
+
+        m_lightMat->PartialFillBufferData(lightData[i]->GetTransMat().GetPTR(), 16 * sizeof(float), 4 * sizeof(float) + i * 16 * sizeof(float));
+        m_indexuBuffer->FillBufferData(&i);
 
         m_sync->Start();
         m_rpassShadowDepth->BeginRenderpassExt(m_sync, m_depthFBs[i]);
@@ -193,6 +218,16 @@ void RD_RenderingPipeline_PBR::RenderShadows(
         m_rpassShadowDepth->EndRenderpassEXT(m_sync, m_depthFBs[i]);
         m_sync->Stop();
     }
+
+    m_sync->Start();
+    m_rpassShadowCalc->BeginRenderpass(m_sync);
+    m_plineShadowCalc->Bind(m_sync);
+
+    m_plineShadowCalc->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
+
+    m_plineShadowCalc->Unbind(m_sync);
+    m_rpassShadowCalc->EndRenderpass(m_sync);
+    m_sync->Stop();
 }
 
 void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
@@ -217,4 +252,16 @@ void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
             m_depthFBs.push_back(fb);
         }
     }
+
+    UpdateShadowTexArray();
+}
+
+void RD_RenderingPipeline_PBR::UpdateShadowTexArray() {
+    std::vector<std::shared_ptr<RD_Texture>> tArray;
+    for(auto& s : m_depthFBs) {
+        tArray.push_back(s->GetAttachment(0));
+    }
+
+    m_plineShadowCalc->SetTextureArray(tArray, 1);
+    m_plineShadowCalc->RebuildPipeline();
 }

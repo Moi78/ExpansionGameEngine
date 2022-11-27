@@ -74,28 +74,33 @@ void RaindropRenderer::RegisterDirLight(std::shared_ptr<RD_DirLight> dlight) {
     std::cout << "Registered new dir light" << std::endl;
 
     m_dirLights.push_back(dlight);
-    UpdateLighting();
+    UpdateLighting(false, true);
 }
 
-void RaindropRenderer::UpdateLighting() {
+void RaindropRenderer::UpdateLighting(bool pLighting, bool dLighting) {
     int i = 0;
     int shadowCasterCount = 0;
-    for(auto& dl : m_dirLights) {
-        m_rpline->PushDirLight(dl, i);
 
-        if(dl->IsShadowCaster()) {
-            shadowCasterCount++;
+    if(dLighting) {
+        for (auto &dl: m_dirLights) {
+            m_rpline->PushDirLight(dl, i);
+
+            if (dl->IsShadowCaster()) {
+                shadowCasterCount++;
+            }
+
+            i++;
         }
-
-        i++;
+        m_rpline->SetNumberOfShadowFB(shadowCasterCount);
     }
-    m_rpline->SetNumberOfShadowFB(shadowCasterCount);
 
-    i = 0;
-    for(auto& pl : m_pointLights) {
-        m_rpline->PushPointLight(pl, i);
+    if(pLighting) {
+        i = 0;
+        for (auto &pl: m_pointLights) {
+            m_rpline->PushPointLight(pl, i);
 
-        i++;
+            i++;
+        }
     }
 
     RD_CasterCount ccount{};
@@ -109,7 +114,7 @@ void RaindropRenderer::RegisterPointLight(std::shared_ptr<RD_PointLight> plight)
     std::cout << "Registered new point light" << std::endl;
 
     m_pointLights.push_back(plight);
-    UpdateLighting();
+    UpdateLighting(true, false);
 }
 
 std::string RaindropRenderer::GetEnginePath() {

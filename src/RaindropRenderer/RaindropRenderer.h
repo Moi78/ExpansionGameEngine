@@ -45,7 +45,7 @@ public:
 
     void RegisterMaterial(std::shared_ptr<RD_Material> mat);
 
-    void UpdateLighting();
+    void UpdateLighting(bool pLighting = true, bool dLighting = true);
 
     std::string GetEnginePath();
     std::shared_ptr<RD_API> GetAPI();
