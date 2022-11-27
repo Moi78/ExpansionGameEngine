@@ -198,13 +198,14 @@ void RD_RenderingPipeline_PBR::RenderShadows(
         std::vector<std::shared_ptr<RD_Material>>& sceneData,
         std::vector<std::shared_ptr<RD_DirLight>>& lightData
 ) {
+    int scaster_idx = 0;
     for(uint32_t i = 0; i < lightData.size(); i++) {
         if(!lightData[i]->IsShadowCaster()) {
             continue;
         }
 
-        m_lightMat->PartialFillBufferData(lightData[i]->GetTransMat().GetPTR(), 16 * sizeof(float), 4 * sizeof(float) + i * 16 * sizeof(float));
-        m_indexuBuffer->FillBufferData(&i);
+        m_indexuBuffer->FillBufferData(&scaster_idx);
+        scaster_idx++;
 
         m_sync->Start();
         m_rpassShadowDepth->BeginRenderpassExt(m_sync, m_depthFBs[i]);
@@ -264,4 +265,8 @@ void RD_RenderingPipeline_PBR::UpdateShadowTexArray() {
 
     m_plineShadowCalc->SetTextureArray(tArray, 1);
     m_plineShadowCalc->RebuildPipeline();
+}
+
+void RD_RenderingPipeline_PBR::PushLightMat(mat4f mat, int idx) {
+    m_lightMat->PartialFillBufferData(mat.GetPTR(), 16 * sizeof(float), idx * 16 * sizeof(float));
 }

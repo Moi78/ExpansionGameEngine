@@ -86,6 +86,7 @@ void RaindropRenderer::UpdateLighting(bool pLighting, bool dLighting) {
             m_rpline->PushDirLight(dl, i);
 
             if (dl->IsShadowCaster()) {
+                m_rpline->PushLightMat(dl->GetTransMat(), shadowCasterCount);
                 shadowCasterCount++;
             }
 

@@ -46,6 +46,7 @@ public:
     virtual void SetupPipeline(std::shared_ptr<RD_Pipeline> pline) = 0;
 
     virtual void SetNumberOfShadowFB(int nbr) = 0;
+    virtual void PushLightMat(mat4f mat, int idx) = 0;
 };
 
 class RD_RenderingPipeline_PBR : public RD_RenderingPipeline {
@@ -67,6 +68,7 @@ public:
     void SetupPipeline(std::shared_ptr<RD_Pipeline> pline) override;
 
     void SetNumberOfShadowFB(int nbr) override;
+    void PushLightMat(mat4f mat, int idx) override;
 
 private:
     void UpdateShadowTexArray();
