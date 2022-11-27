@@ -38,12 +38,12 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     /*
      *
      * FRAMEBUFFER COMPOSITION :
-     *  - Color
-     *  - Normal
-     *  - Frag Position
-     *  - MetRoughAO
-     *  - Sheen
-     *  - Depth
+     *  - Color (0)
+     *  - Normal (1)
+     *  - Frag Position (2)
+     *  - MetRoughAO (3)
+     *  - Sheen (4)
+     *  - Depth (5)
      *
      */
 
@@ -103,10 +103,12 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineShadowDepth->SetModelMode(true);
     m_plineShadowDepth->RegisterUniformBuffer(m_lightMat);
     m_plineShadowDepth->RegisterUniformBuffer(m_indexuBuffer);
+    m_plineShadowDepth->SetCullMode(RD_CullMode::CM_NONE);
     m_plineShadowDepth->BuildPipeline();
 
     m_plineShadowCalc = m_api->CreatePipeline(m_rpassShadowCalc, shadowCalc_shader);
     m_plineShadowCalc->RegisterUniformBuffer(m_lightMat);
+    m_plineShadowCalc->RegisterUniformBuffer(m_indexuBuffer);
 
     std::vector<std::shared_ptr<RD_Texture>> tArray = {};
     for(auto& s : m_depthFBs) {
@@ -114,6 +116,7 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     }
 
     m_plineShadowCalc->RegisterTextureArray(tArray, 1);
+    m_plineShadowCalc->RegisterTexture(m_rpassGBuff->GetAttachment(2), 3);
     m_plineShadowCalc->BuildPipeline();
 
     m_plineLight = m_api->CreatePipeline(m_rpassLight, light_shader);
@@ -122,6 +125,7 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
         m_plineLight->RegisterTexture(m_rpassGBuff->GetAttachment(i), i + 10);
     }
 
+    m_plineLight->RegisterTexture(m_rpassShadowCalc->GetAttachment(0), 20);
     m_plineLight->RegisterUniformBuffer(m_dlights);
     m_plineLight->RegisterUniformBuffer(m_plights);
     m_plineLight->RegisterUniformBuffer(m_casterCount);
@@ -148,11 +152,19 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Materi
     }
 
     m_rpassGBuff->EndRenderpass(m_sync);
-    m_sync->Stop();
 
-    m_plineLight->Bind({});
-    m_plineLight->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), {});
-    m_plineLight->Unbind({});
+    m_rpassLight->BeginRenderpass(m_sync);
+    m_plineLight->Bind(m_sync);
+    m_plineLight->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
+    m_plineLight->Unbind(m_sync);
+    m_rpassLight->EndRenderpass(m_sync);
+
+    m_rpassShadowCalc->BeginRenderpass(m_sync);
+    m_plineShadowCalc->Bind(m_sync);
+    m_plineShadowCalc->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
+    m_plineShadowCalc->Unbind(m_sync);
+    m_rpassShadowCalc->EndRenderpass(m_sync);
+    m_sync->Stop();
 }
 
 void RD_RenderingPipeline_PBR::Resize(int w, int h) {
@@ -219,16 +231,6 @@ void RD_RenderingPipeline_PBR::RenderShadows(
         m_rpassShadowDepth->EndRenderpassEXT(m_sync, m_depthFBs[i]);
         m_sync->Stop();
     }
-
-    m_sync->Start();
-    m_rpassShadowCalc->BeginRenderpass(m_sync);
-    m_plineShadowCalc->Bind(m_sync);
-
-    m_plineShadowCalc->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
-
-    m_plineShadowCalc->Unbind(m_sync);
-    m_rpassShadowCalc->EndRenderpass(m_sync);
-    m_sync->Stop();
 }
 
 void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {

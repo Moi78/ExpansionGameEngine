@@ -10,6 +10,8 @@ layout (binding = 12) uniform sampler2D FragPos;
 layout (binding = 13) uniform sampler2D MetRoughAO;
 layout (binding = 14) uniform sampler2D SheenProp;
 
+layout (binding = 20) uniform sampler2D Shadows;
+
 struct DirLight {
     vec3 dir;
     float brightness;
@@ -143,5 +145,5 @@ void main() {
     light += mix(vec3(1.0), c, sheenTint) * sheen * clamp(Sheen(normalize(-camDir.xyz + v).xyz, vec3(0)), 0.0, 1.0);
 
     light = light / (light + vec3(1.0));
-    oColor = vec4(pow(light, vec3(1.0 / 2.2)), 1.0);
+    oColor = vec4(pow(light, vec3(1.0 / 2.2)), 1.0) * (1.0 - texture(Shadows, UVcoords));
 }

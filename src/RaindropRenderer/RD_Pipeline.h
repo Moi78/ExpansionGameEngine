@@ -13,6 +13,11 @@
 #include <array>
 #include <optional>
 
+enum class RD_CullMode {
+    CM_BACK = 0,
+    CM_NONE = 1
+};
+
 class RD_Pipeline {
 public:
     RD_Pipeline() {};
@@ -31,6 +36,8 @@ public:
     virtual void RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) = 0;
     virtual void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
     virtual void PurgeTextures() = 0;
+
+    virtual void SetCullMode(RD_CullMode cm) = 0;
 
     virtual void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
 
@@ -69,6 +76,8 @@ public:
     void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
     void PurgeTextures() override;
 
+    void SetCullMode(RD_CullMode cm) override;
+
     void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
 
     void SetModelMode(bool mode) override;
@@ -106,6 +115,8 @@ private:
 
     VkPipelineLayout m_layout;
     VkPipeline m_pipeline;
+
+    VkCullModeFlags m_cullMode;
 
     VkCommandBuffer m_cmdBuffer;
 

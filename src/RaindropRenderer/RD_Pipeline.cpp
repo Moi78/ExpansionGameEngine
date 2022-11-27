@@ -22,6 +22,8 @@ RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, VkQueue gfxQue
     m_pipeline = VK_NULL_HANDLE;
 
     m_fence = VK_NULL_HANDLE;
+
+    m_cullMode = VK_CULL_MODE_BACK_BIT;
 }
 
 RD_Pipeline_Vk::~RD_Pipeline_Vk() {
@@ -115,7 +117,7 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     rasterizerInfo.rasterizerDiscardEnable = VK_FALSE;
     rasterizerInfo.polygonMode = VK_POLYGON_MODE_FILL;
     rasterizerInfo.lineWidth = 1.0f;
-    rasterizerInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+    rasterizerInfo.cullMode = m_cullMode;
     rasterizerInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
     rasterizerInfo.depthBiasEnable = VK_FALSE;
     rasterizerInfo.depthBiasConstantFactor = 0.0f;
@@ -587,6 +589,14 @@ void RD_Pipeline_Vk::PartialPushConstant(void *data, size_t size, size_t offset,
     }
 
     vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT, offset, size, data);
+}
+
+void RD_Pipeline_Vk::SetCullMode(RD_CullMode cm) {
+    if(cm == RD_CullMode::CM_BACK) {
+        m_cullMode = VK_CULL_MODE_BACK_BIT;
+    } else if(cm == RD_CullMode::CM_NONE) {
+        m_cullMode = VK_CULL_MODE_NONE;
+    }
 }
 
 #endif //BUILD_VULKAN
