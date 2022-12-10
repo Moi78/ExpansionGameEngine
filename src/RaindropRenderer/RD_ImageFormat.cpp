@@ -28,7 +28,7 @@ VkFormat GetVKFormat(int format) {
     return map_formats[format];
 }
 
-size_t GetVKFormatSize(int format) {
+size_t GetFormatSize(int format) {
     std::unordered_map<int, size_t> map_sizes {
             {IMGFORMAT_R, sizeof(uint8_t)},
             {IMGFORMAT_RG, 2 * sizeof(uint8_t)},
@@ -50,6 +50,8 @@ size_t GetVKFormatSize(int format) {
             {IMGFORMAT_BGRA, 4 * sizeof(uint8_t)},
             {IMGFORMAT_BGR, 3 * sizeof(uint8_t)}
     };
+
+    return map_sizes[format];
 }
 
 #endif //BUILD_VULKAN

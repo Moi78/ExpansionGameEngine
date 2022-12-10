@@ -66,24 +66,37 @@ bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
     return true;
 }
 
-bool RD_Texture_Vk::CreateTextureFromData(int format, int w, int h, std::vector<char> data) {
+bool RD_Texture_Vk::CreateTextureFromData(int format, int w, int h, void* data) {
     VkFormat fmt = GetVKFormat(format);
+    size_t fmt_size = GetFormatSize(format);
 
     if(!CreateImage(fmt, w, h, false)) {
         return false;
     }
 
-    size_t buffSize = w * h * 4;
+    size_t buffSize = w * h * fmt_size;
+
     std::unique_ptr<RD_Buffer_Vk> stagingBuff = std::make_unique<RD_Buffer_Vk>(m_dev, m_pdev, m_gfxQueue, m_cmdPool);
 
     stagingBuff->BuildAndAllocateBuffer(
             buffSize, RD_BufferUsage::BUFF_TRANSFER_SRC,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
     );
-    stagingBuff->FillBufferData(data.data());
+    stagingBuff->FillBufferData(data);
 
     auto cmdBuffer = BeginOneTimeCommand(m_dev, m_cmdPool);
+    TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    CopyFromBuffer(cmdBuffer, stagingBuff, w, h);
+    TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    EndOneTimeCommand(m_dev, m_cmdPool, cmdBuffer, m_gfxQueue);
 
+    if(!CreateImageView(fmt)) {
+        return false;
+    }
+
+    if(!CreateImageSampler()) {
+        return false;
+    }
 
     return true;
 }

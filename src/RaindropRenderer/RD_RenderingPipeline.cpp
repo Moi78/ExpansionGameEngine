@@ -274,6 +274,8 @@ void RD_RenderingPipeline_PBR::FillNoiseValues() {
     m_noiseValues = m_api->CreateUniformBuffer(8);
     m_noiseValues->BuildAndAllocateBuffer(16 * 4 * sizeof(float));
 
+    m_noise_texture = m_api->CreateTexture();
+
     std::array<float, 16 * 4> noise_data;
 
     std::default_random_engine rengine;
@@ -282,6 +284,8 @@ void RD_RenderingPipeline_PBR::FillNoiseValues() {
     for(auto& n : noise_data) {
         n = distrib(rengine);
     }
+
+    m_noise_texture->CreateTextureFromData(IMGFORMAT_RGBA32F, 4, 4, noise_data.data());
 
     m_noiseValues->FillBufferData(noise_data.data());
 }

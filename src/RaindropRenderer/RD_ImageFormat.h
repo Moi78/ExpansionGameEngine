@@ -27,6 +27,7 @@
 #include <unordered_map>
 
 VkFormat GetVKFormat(int format);
+size_t GetFormatSize(int format);
 
 #endif //BUILD_VULKAN
 
