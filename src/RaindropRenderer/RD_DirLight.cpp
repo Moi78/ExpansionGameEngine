@@ -28,6 +28,8 @@ void RD_DirLight::PushToUniform(std::shared_ptr<RD_UniformBuffer> buff, int idx)
     dlight.dir[1] = m_dir.GetY();
     dlight.dir[2] = m_dir.GetZ();
 
+    dlight.isShadowCaster = m_shadowCaster;
+
     buff->PartialFillBufferData(&dlight, sizeof(GLSLDirLight), idx * sizeof(GLSLDirLight));
 }
 
@@ -44,7 +46,7 @@ void RD_DirLight::ComputeMatrix() {
         return;
     }
 
-    m_lightProj = ProjOrtho(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 30.0f);
+    m_lightProj = ProjOrtho(-5.0f, 5.0f, -5.0f, 5.0f, -10.0f, 30.0f);
     m_lightView = LookAt((m_dir * -1.0f) + vec3(0.0f, 0.0f, 2.0f), vec3(0.0f, 0.0f, 2.0f), vec3(0.0f, 0.0f, 1.0f));
 }
 

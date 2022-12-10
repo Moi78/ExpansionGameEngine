@@ -16,10 +16,15 @@
 #define IMGFORMAT_BGRA 10
 #define IMGFORMAT_BGR 11
 
+#define IMGFORMAT_R32F 12
+#define IMGFORMAT_RG32F 13
+#define IMGFORMAT_RGB32F 14
+#define IMGFORMAT_RGBA32F 15
+
 #ifdef BUILD_VULKAN
 
 #include <vulkan/vulkan.hpp>
-#include <map>
+#include <unordered_map>
 
 VkFormat GetVKFormat(int format);
 

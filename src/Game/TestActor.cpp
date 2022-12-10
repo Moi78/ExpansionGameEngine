@@ -7,7 +7,7 @@ TestActor::TestActor(EXP_Game* game) : EXP_Actor(vec3(-2.0f, -2.0f, 0.0f), vec3(
     LinkComponent(m_cam);
     game->GetRenderer()->SetCurrentCamera(m_cam);
 
-    m_plight = std::make_shared<EXP_PointLight>(game, vec3(2.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f), 5.0f, 10.0f);
+    m_plight = std::make_shared<EXP_PointLight>(game, vec3(2.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f), 5.0f, 0.0f);
     LinkComponent(m_plight);
     game->GetRenderer()->RegisterPointLight(m_plight);
 

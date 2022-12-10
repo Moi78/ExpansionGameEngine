@@ -56,9 +56,6 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_rpassShadowDepth = m_api->CreateRenderPass({depth}, SHADOW_RES, SHADOW_RES);
     m_rpassShadowDepth->BuildRenderpass(m_api.get(), true);
 
-    m_rpassShadowCalc = m_api->CreateRenderPass({colorf}, static_cast<float>(w), static_cast<float>(h));
-    m_rpassShadowCalc->BuildRenderpass(m_api.get(), false);
-
     auto tex = m_rpassLight->GetAttachment(0);
     m_api->GetWindowingSystem()->SetPresentTexture(tex);
 
@@ -81,11 +78,13 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_camData = m_api->CreateUniformBuffer(6);
     m_camData->BuildAndAllocateBuffer(8 * sizeof(float));
 
-    m_lightMat = m_api->CreateUniformBuffer(0);
+    m_lightMat = m_api->CreateUniformBuffer(7);
     m_lightMat->BuildAndAllocateBuffer(16 * 10 * sizeof(float));
 
     m_indexuBuffer = m_api->CreateUniformBuffer(2);
     m_indexuBuffer->BuildAndAllocateBuffer(sizeof(uint32_t));
+
+    FillNoiseValues();
 
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
     base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
@@ -106,30 +105,25 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineShadowDepth->SetCullMode(RD_CullMode::CM_NONE);
     m_plineShadowDepth->BuildPipeline();
 
-    m_plineShadowCalc = m_api->CreatePipeline(m_rpassShadowCalc, shadowCalc_shader);
-    m_plineShadowCalc->RegisterUniformBuffer(m_lightMat);
-    m_plineShadowCalc->RegisterUniformBuffer(m_indexuBuffer);
+    m_plineLight = m_api->CreatePipeline(m_rpassLight, light_shader);
 
     std::vector<std::shared_ptr<RD_Texture>> tArray = {};
     for(auto& s : m_depthFBs) {
         tArray.push_back(s->GetAttachment(0));
     }
 
-    m_plineShadowCalc->RegisterTextureArray(tArray, 1);
-    m_plineShadowCalc->RegisterTexture(m_rpassGBuff->GetAttachment(2), 3);
-    m_plineShadowCalc->BuildPipeline();
-
-    m_plineLight = m_api->CreatePipeline(m_rpassLight, light_shader);
+    m_plineLight->RegisterTextureArray(tArray, 20);
+    m_plineLight->RegisterUniformBuffer(m_lightMat);
 
     for(int i = 0; i < 5; i++) {
         m_plineLight->RegisterTexture(m_rpassGBuff->GetAttachment(i), i + 10);
     }
 
-    m_plineLight->RegisterTexture(m_rpassShadowCalc->GetAttachment(0), 20);
     m_plineLight->RegisterUniformBuffer(m_dlights);
     m_plineLight->RegisterUniformBuffer(m_plights);
     m_plineLight->RegisterUniformBuffer(m_casterCount);
     m_plineLight->RegisterUniformBuffer(m_camData);
+    m_plineLight->RegisterUniformBuffer(m_noiseValues);
 
     m_plineLight->BuildPipeline();
 
@@ -159,11 +153,6 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Materi
     m_plineLight->Unbind(m_sync);
     m_rpassLight->EndRenderpass(m_sync);
 
-    m_rpassShadowCalc->BeginRenderpass(m_sync);
-    m_plineShadowCalc->Bind(m_sync);
-    m_plineShadowCalc->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
-    m_plineShadowCalc->Unbind(m_sync);
-    m_rpassShadowCalc->EndRenderpass(m_sync);
     m_sync->Stop();
 }
 
@@ -180,6 +169,14 @@ void RD_RenderingPipeline_PBR::Resize(int w, int h) {
     for(int i = 0; i < 5; i++) {
         m_plineLight->RegisterTexture(m_rpassGBuff->GetAttachment(i), i + 10);
     }
+
+    std::vector<std::shared_ptr<RD_Texture>> tArray = {};
+    for(auto& s : m_depthFBs) {
+        tArray.push_back(s->GetAttachment(0));
+    }
+
+    m_plineLight->RegisterTextureArray(tArray, 20);
+
     m_plineLight->RebuildPipeline();
 }
 
@@ -265,10 +262,26 @@ void RD_RenderingPipeline_PBR::UpdateShadowTexArray() {
         tArray.push_back(s->GetAttachment(0));
     }
 
-    m_plineShadowCalc->SetTextureArray(tArray, 1);
-    m_plineShadowCalc->RebuildPipeline();
+    m_plineLight->SetTextureArray(tArray, 20);
+    m_plineLight->RebuildPipeline();
 }
 
 void RD_RenderingPipeline_PBR::PushLightMat(mat4f mat, int idx) {
     m_lightMat->PartialFillBufferData(mat.GetPTR(), 16 * sizeof(float), idx * 16 * sizeof(float));
+}
+
+void RD_RenderingPipeline_PBR::FillNoiseValues() {
+    m_noiseValues = m_api->CreateUniformBuffer(8);
+    m_noiseValues->BuildAndAllocateBuffer(16 * 4 * sizeof(float));
+
+    std::array<float, 16 * 4> noise_data;
+
+    std::default_random_engine rengine;
+    std::uniform_real_distribution<float> distrib(-2.0f, 2.0f);
+
+    for(auto& n : noise_data) {
+        n = distrib(rengine);
+    }
+
+    m_noiseValues->FillBufferData(noise_data.data());
 }

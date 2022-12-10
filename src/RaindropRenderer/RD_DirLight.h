@@ -34,7 +34,8 @@ private:
 struct GLSLDirLight {
     float dir[3];
     float brightness;
-    float color[4];
+    float color[3];
+    bool isShadowCaster;
 };
 
 #endif //EXPGE_RD_DIRLIGHT_H

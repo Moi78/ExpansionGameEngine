@@ -16,6 +16,7 @@ public:
 
     virtual bool LoadTextureFromFile(std::string filePath) = 0;
     virtual bool CreateTextureFBReady(int format, int w, int h) = 0;
+    virtual bool CreateTextureFromData(int format, int w, int h, std::vector<char> data) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -29,6 +30,7 @@ public:
 
     bool LoadTextureFromFile(std::string filePath) override;
     bool CreateTextureFBReady(int format, int w, int h) override;
+    bool CreateTextureFromData(int format, int w, int h, std::vector<char> data) override;
 
     void PrepareForRendering(VkCommandBuffer cmdBuff);
     void PrepareForSampling(VkCommandBuffer cmdBuff);

@@ -66,6 +66,28 @@ bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
     return true;
 }
 
+bool RD_Texture_Vk::CreateTextureFromData(int format, int w, int h, std::vector<char> data) {
+    VkFormat fmt = GetVKFormat(format);
+
+    if(!CreateImage(fmt, w, h, false)) {
+        return false;
+    }
+
+    size_t buffSize = w * h * 4;
+    std::unique_ptr<RD_Buffer_Vk> stagingBuff = std::make_unique<RD_Buffer_Vk>(m_dev, m_pdev, m_gfxQueue, m_cmdPool);
+
+    stagingBuff->BuildAndAllocateBuffer(
+            buffSize, RD_BufferUsage::BUFF_TRANSFER_SRC,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+    );
+    stagingBuff->FillBufferData(data.data());
+
+    auto cmdBuffer = BeginOneTimeCommand(m_dev, m_cmdPool);
+
+
+    return true;
+}
+
 bool RD_Texture_Vk::CreateTextureFBReady(int format, int w, int h) {
     VkFormat fmt = GetVKFormat(format);
 

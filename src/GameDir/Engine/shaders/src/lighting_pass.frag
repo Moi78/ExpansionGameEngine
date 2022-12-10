@@ -10,12 +10,13 @@ layout (binding = 12) uniform sampler2D FragPos;
 layout (binding = 13) uniform sampler2D MetRoughAO;
 layout (binding = 14) uniform sampler2D SheenProp;
 
-layout (binding = 20) uniform sampler2D Shadows;
+layout (binding = 20) uniform sampler2D dDepth[10];
 
 struct DirLight {
     vec3 dir;
     float brightness;
-    vec4 color;
+    vec3 color;
+    bool isShadowCaster;
 };
 
 struct PointLight {
@@ -47,6 +48,14 @@ layout (binding = 6) uniform CAMERA_INFO {
     vec4 camDir;
 };
 
+layout (binding = 7) uniform LIGHT_MAT {
+    mat4 lmats[10];
+};
+
+layout (binding = 8) uniform NOISE {
+    vec2 noise[16];
+};
+
 // MET ROUGH AO
 float roughness = texture(MetRoughAO, UVcoords).y;
 float metallic = texture(MetRoughAO, UVcoords).x;
@@ -61,6 +70,35 @@ vec3 fragPos = texture(FragPos, UVcoords).xyz;
 vec3 v = camPos.xyz - fragPos;
 
 vec3 c = texture(Color, UVcoords).xyz;
+
+float CalcShadow(int idx, vec3 fPos) {
+    vec4 fPos_lightSpace = vec4(fPos, 1.0) * lmats[idx];
+    vec3 projCoord = fPos_lightSpace.xyz / fPos_lightSpace.w;
+
+    projCoord = projCoord * 0.5 + 0.5;
+
+    vec2 texelSize = 1.0 / textureSize(dDepth[idx], 0);
+    float currentDepth = projCoord.z;
+    float bias = 0.0025;
+
+    float center = texture(dDepth[idx], projCoord.xy).r;
+    center = center * 0.5 + 0.5;
+
+    const float filterSize = 1.0;
+    float shadow = 0.0;
+    for(float x = -filterSize; x <= filterSize; x++) {
+        for(float y = -filterSize; y <= filterSize; y++) {
+            float depthVal = texture(dDepth[idx], projCoord.xy + (noise[int(x) * 3 + int(y)] * texelSize)).r;
+            depthVal = depthVal * 0.5 + 0.5;
+
+            if(depthVal > currentDepth - bias) {
+                shadow += 1.0;
+            }
+        }
+    }
+    shadow /= 9.0;
+    return shadow;
+}
 
 float GGXDistrib(vec3 halfway, float alpha) {
     float a2 = alpha*alpha;
@@ -126,9 +164,17 @@ vec3 ComputeLight(vec3 l, vec3 radiance) {
 
 void main() {
     vec3 light = vec3(0.0, 0.0, 0.0);
+
+    int sCasterCount = 0;
     for(int i = 0; i < nDLights; i++) {
         vec3 radiance = ComputeRadianceDir(dlights[i].color.rgb, dlights[i].brightness);
-        light += ComputeLight(normalize(vec3(-dlights[i].dir)), radiance);
+
+        if(dlights[i].isShadowCaster) {
+            float factor = CalcShadow(sCasterCount, fragPos);
+            light += ComputeLight(normalize(vec3(-dlights[i].dir)), radiance) * factor;
+
+            sCasterCount++;
+        }
     }
 
     for(int i = 0; i < nPLights; i++) {
@@ -145,5 +191,5 @@ void main() {
     light += mix(vec3(1.0), c, sheenTint) * sheen * clamp(Sheen(normalize(-camDir.xyz + v).xyz, vec3(0)), 0.0, 1.0);
 
     light = light / (light + vec3(1.0));
-    oColor = vec4(pow(light, vec3(1.0 / 2.2)), 1.0) * (1.0 - texture(Shadows, UVcoords));
+    oColor = vec4(pow(light, vec3(1.0 / 2.2)), 1.0);
 }
