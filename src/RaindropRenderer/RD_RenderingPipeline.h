@@ -98,7 +98,6 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_casterCount;
     std::shared_ptr<RD_UniformBuffer> m_camData;
     std::shared_ptr<RD_UniformBuffer> m_indexuBuffer;
-    std::shared_ptr<RD_UniformBuffer> m_noiseValues;
 
     std::shared_ptr<RD_Texture> m_noise_texture;
 

@@ -76,7 +76,10 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plights->BuildAndAllocateBuffer(300 * sizeof(GLSLPointLight));
 
     m_camData = m_api->CreateUniformBuffer(6);
-    m_camData->BuildAndAllocateBuffer(8 * sizeof(float));
+    m_camData->BuildAndAllocateBuffer(10 * sizeof(float));
+
+    vec2 scrSize = vec2(m_api->GetWindowingSystem()->GetWidth(), m_api->GetWindowingSystem()->GetHeight());
+    m_camData->PartialFillBufferData(scrSize.GetData(), 2 * sizeof(float), 4 * 2 * sizeof(float));
 
     m_lightMat = m_api->CreateUniformBuffer(7);
     m_lightMat->BuildAndAllocateBuffer(16 * 10 * sizeof(float));
@@ -123,7 +126,8 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineLight->RegisterUniformBuffer(m_plights);
     m_plineLight->RegisterUniformBuffer(m_casterCount);
     m_plineLight->RegisterUniformBuffer(m_camData);
-    m_plineLight->RegisterUniformBuffer(m_noiseValues);
+
+    m_plineLight->RegisterTexture(m_noise_texture, 15);
 
     m_plineLight->BuildPipeline();
 
@@ -178,6 +182,9 @@ void RD_RenderingPipeline_PBR::Resize(int w, int h) {
     m_plineLight->RegisterTextureArray(tArray, 20);
 
     m_plineLight->RebuildPipeline();
+
+    vec2 scrSize = vec2(w, h);
+    m_camData->PartialFillBufferData(scrSize.GetData(), 2 * sizeof(float), 4 * 2 * sizeof(float));
 }
 
 void RD_RenderingPipeline_PBR::PushDirLight(std::shared_ptr<RD_DirLight> dlight, int index) {
@@ -271,21 +278,17 @@ void RD_RenderingPipeline_PBR::PushLightMat(mat4f mat, int idx) {
 }
 
 void RD_RenderingPipeline_PBR::FillNoiseValues() {
-    m_noiseValues = m_api->CreateUniformBuffer(8);
-    m_noiseValues->BuildAndAllocateBuffer(16 * 4 * sizeof(float));
-
     m_noise_texture = m_api->CreateTexture();
+    constexpr int tex_size = 100;
 
-    std::array<float, 16 * 4> noise_data;
+    std::array<float, tex_size * tex_size * 2> noise_data;
 
     std::default_random_engine rengine;
-    std::uniform_real_distribution<float> distrib(-2.0f, 2.0f);
+    std::uniform_real_distribution<float> distrib(-0.5f, 0.5f);
 
     for(auto& n : noise_data) {
         n = distrib(rengine);
     }
 
-    m_noise_texture->CreateTextureFromData(IMGFORMAT_RGBA32F, 4, 4, noise_data.data());
-
-    m_noiseValues->FillBufferData(noise_data.data());
+    m_noise_texture->CreateTextureFromData(IMGFORMAT_RG32F, tex_size, tex_size, noise_data.data());
 }

@@ -10,6 +10,8 @@ layout (binding = 12) uniform sampler2D FragPos;
 layout (binding = 13) uniform sampler2D MetRoughAO;
 layout (binding = 14) uniform sampler2D SheenProp;
 
+layout (binding = 15) uniform sampler2D noise;
+
 layout (binding = 20) uniform sampler2D dDepth[10];
 
 struct DirLight {
@@ -46,14 +48,12 @@ layout (binding = 5) uniform CASTER_COUNT {
 layout (binding = 6) uniform CAMERA_INFO {
     vec4 camPos;
     vec4 camDir;
+
+    vec2 screenSize;
 };
 
 layout (binding = 7) uniform LIGHT_MAT {
     mat4 lmats[10];
-};
-
-layout (binding = 8) uniform NOISE {
-    vec2 noise[16];
 };
 
 // MET ROUGH AO
@@ -71,6 +71,13 @@ vec3 v = camPos.xyz - fragPos;
 
 vec3 c = texture(Color, UVcoords).xyz;
 
+vec2 ChangeUVRes(vec2 newRes) {
+    vec2 abscoord = screenSize * UVcoords;
+    vec2 n_uvcoords = abscoord / newRes;
+
+    return n_uvcoords;
+}
+
 float CalcShadow(int idx, vec3 fPos) {
     vec4 fPos_lightSpace = vec4(fPos, 1.0) * lmats[idx];
     vec3 projCoord = fPos_lightSpace.xyz / fPos_lightSpace.w;
@@ -84,19 +91,24 @@ float CalcShadow(int idx, vec3 fPos) {
     float center = texture(dDepth[idx], projCoord.xy).r;
     center = center * 0.5 + 0.5;
 
-    const float filterSize = 1.0;
+    const float filterSize = 1.5;
     float shadow = 0.0;
+    float filter_resol = distance(-filterSize, filterSize);
+
     for(float x = -filterSize; x <= filterSize; x++) {
         for(float y = -filterSize; y <= filterSize; y++) {
-            float depthVal = texture(dDepth[idx], projCoord.xy + (noise[int(x) * 3 + int(y)] * texelSize)).r;
+            vec2 uv = ChangeUVRes(textureSize(noise, 0));
+            vec2 noise_ = texture(noise, uv).rg;
+
+            float depthVal = texture(dDepth[idx], projCoord.xy + ((noise_ + vec2(x, y)) * texelSize)).r;
             depthVal = depthVal * 0.5 + 0.5;
 
             if(depthVal > currentDepth - bias) {
-                shadow += 1.0;
+                shadow += (1.0 / (filter_resol * filter_resol));
             }
         }
     }
-    shadow /= 9.0;
+    shadow /= filter_resol;
     return shadow;
 }
 
