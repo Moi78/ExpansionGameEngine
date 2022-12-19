@@ -9,6 +9,10 @@ echo BUILDING PBR SHADERS
 
 glslc -c $PREFIX/src/base.frag -o $PREFIX/bin/base.fspv
 glslc -c $PREFIX/src/base.vert -o $PREFIX/bin/base.vspv
+cp $PREFIX/bin/base.fspv "src/GameDir/Content/mat/base.fspv"
+
+glslc -c $PREFIX/src/yellow.frag -o $PREFIX/bin/yellow.fspv
+cp $PREFIX/bin/yellow.fspv "src/GameDir/Content/mat/yellow.fspv"
 
 glslc -c $PREFIX/src/base_two.frag -o $PREFIX/bin/base_two.fspv
 

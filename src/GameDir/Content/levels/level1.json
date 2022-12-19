@@ -4,9 +4,9 @@
     {
       "type": "mesh",
       "mesh": "/mdl/suzanne.msh",
-      "material": "/mat/mat_test.json",
-      "pos": [-2.0, 0.0, 0.0],
-      "rot": [0.0, 0.0, 0.0],
+      "material": "/mat/mat_yellow.json",
+      "pos": [-2.0, 0.0, 1.0],
+      "rot": [25.0, -45.0, 45.0],
       "scale": [1.0, 1.0, 1.0]
     },
 
@@ -14,7 +14,7 @@
       "type": "mesh",
       "mesh": "/mdl/plane.msh",
       "material": "/mat/mat_test.json",
-      "pos": [0.0, 0.0, 0.0],
+      "pos": [0.0, 0.0, -1.0],
       "rot": [0.0, 0.0, 0.0],
       "scale": [15.0, 15.0, 15.0]
     },
@@ -22,24 +22,24 @@
     {
       "type": "dirlight",
 
-      "color": [1.0, 0.0, 1.0],
+      "color": [1.0, 1.0, 1.0],
       "dir": [2.0, 1.0, -1],
-      "brightness": 0.0
-    },
-
-    {
-      "type": "dirlight",
-
-      "color": [1.0, 1.0, 0.0],
-      "dir": [-2.0, -1.0, -1],
-      "brightness": 0.0
+      "brightness": 1.0
     },
 
     {
       "type": "dirlight",
 
       "color": [1.0, 1.0, 1.0],
-      "dir": [0.0, -5.0, -0.5],
+      "dir": [-2.0, -1.0, -1],
+      "brightness": 1.0
+    },
+
+    {
+      "type": "dirlight",
+
+      "color": [1.0, 1.0, 1.0],
+      "dir": [0.0, -2.0, -0.5],
       "brightness": 1.0
     }
   ]

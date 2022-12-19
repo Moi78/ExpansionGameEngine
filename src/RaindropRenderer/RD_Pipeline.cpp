@@ -8,7 +8,7 @@ RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, VkQueue gfxQue
     m_gfxQueue = gfxQueue;
 
     m_extSignaling = extSignaling;
-    m_isModelMode = false;
+    m_push_ctant_size = 0;
 
     m_rpass = std::reinterpret_pointer_cast<RD_RenderPass_Vk>(rpass);
     m_shader = std::reinterpret_pointer_cast<RD_ShaderLoader_Vk>(shader);
@@ -159,11 +159,11 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     VkPipelineLayoutCreateInfo plineLayoutInfo{};
     plineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
-    if(m_isModelMode) {
+    if(m_push_ctant_size > 0) {
         VkPushConstantRange push_constant{};
-        push_constant.size = 16 * sizeof(float);
+        push_constant.size = m_push_ctant_size;
         push_constant.offset = 0;
-        push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+        push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 
         plineLayoutInfo.pPushConstantRanges = &push_constant;
         plineLayoutInfo.pushConstantRangeCount = 1;
@@ -566,8 +566,8 @@ bool RD_Pipeline_Vk::BuildSyncObjects() {
     return true;
 }
 
-void RD_Pipeline_Vk::SetModelMode(bool mode) {
-    m_isModelMode = mode;
+void RD_Pipeline_Vk::ConfigurePushConstant(size_t size) {
+    m_push_ctant_size = size;
 }
 
 void RD_Pipeline_Vk::PushConstant(void *data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) {
@@ -577,7 +577,7 @@ void RD_Pipeline_Vk::PushConstant(void *data, size_t size, std::optional<std::sh
         cmdBuff = vsync->GetCommandBuffer();
     }
 
-    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, size, data);
+    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, size, data);
 }
 
 void RD_Pipeline_Vk::PartialPushConstant(void *data, size_t size, size_t offset,
@@ -588,7 +588,7 @@ void RD_Pipeline_Vk::PartialPushConstant(void *data, size_t size, size_t offset,
         cmdBuff = vsync->GetCommandBuffer();
     }
 
-    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT, offset, size, data);
+    vkCmdPushConstants(cmdBuff, m_layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, offset, size, data);
 }
 
 void RD_Pipeline_Vk::SetCullMode(RD_CullMode cm) {

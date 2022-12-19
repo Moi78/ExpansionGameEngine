@@ -98,11 +98,8 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     std::shared_ptr<RD_ShaderLoader> shadowDepth_shader = m_api->CreateShader();
     shadowDepth_shader->CompileShaderFromFile(enginePath + "/shaders/bin/shadow_depth.vspv", enginePath + "/shaders/bin/shadow_depth.fspv");
 
-    std::shared_ptr<RD_ShaderLoader> shadowCalc_shader = m_api->CreateShader();
-    shadowCalc_shader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/shadow_calc.fspv");
-
     m_plineShadowDepth = m_api->CreatePipeline(m_rpassShadowDepth, shadowDepth_shader);
-    m_plineShadowDepth->SetModelMode(true);
+    m_plineShadowDepth->ConfigurePushConstant(16 * sizeof(float) + sizeof(uint32_t));
     m_plineShadowDepth->RegisterUniformBuffer(m_lightMat);
     m_plineShadowDepth->RegisterUniformBuffer(m_indexuBuffer);
     m_plineShadowDepth->SetCullMode(RD_CullMode::CM_NONE);

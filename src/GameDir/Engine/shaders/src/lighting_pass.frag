@@ -78,15 +78,23 @@ vec2 ChangeUVRes(vec2 newRes) {
     return n_uvcoords;
 }
 
+bool isBetween(float x, float a, float b) {
+    return ((x > a) && (x < b));
+}
+
 float CalcShadow(int idx, vec3 fPos) {
     vec4 fPos_lightSpace = vec4(fPos, 1.0) * lmats[idx];
     vec3 projCoord = fPos_lightSpace.xyz / fPos_lightSpace.w;
 
     projCoord = projCoord * 0.5 + 0.5;
 
+    if((!isBetween(projCoord.x, 0.0, 1.0)) || (!isBetween(projCoord.y, 0.0, 1.0))) {
+        return 1.0;
+    }
+
     vec2 texelSize = 1.0 / textureSize(dDepth[idx], 0);
     float currentDepth = projCoord.z;
-    float bias = 0.0025;
+    float bias = 0.00125;
 
     float center = texture(dDepth[idx], projCoord.xy).r;
     center = center * 0.5 + 0.5;
@@ -103,13 +111,16 @@ float CalcShadow(int idx, vec3 fPos) {
             float depthVal = texture(dDepth[idx], projCoord.xy + ((noise_ + vec2(x, y)) * texelSize)).r;
             depthVal = depthVal * 0.5 + 0.5;
 
-            if(depthVal > currentDepth - bias) {
+            if(depthVal < currentDepth - bias) {
                 shadow += (1.0 / (filter_resol * filter_resol));
             }
         }
     }
-    shadow /= filter_resol;
-    return shadow;
+
+    if(shadow > 0.98) {
+        shadow = 1.0;
+    }
+    return 1 - (shadow);
 }
 
 float GGXDistrib(vec3 halfway, float alpha) {

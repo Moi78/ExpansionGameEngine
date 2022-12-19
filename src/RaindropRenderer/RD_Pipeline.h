@@ -41,7 +41,7 @@ public:
 
     virtual void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
 
-    virtual void SetModelMode(bool mode) = 0;
+    virtual void ConfigurePushConstant(size_t size) = 0;
     virtual void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
     virtual void PartialPushConstant(void* data, size_t size, size_t offest, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
 };
@@ -80,7 +80,7 @@ public:
 
     void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
 
-    void SetModelMode(bool mode) override;
+    void ConfigurePushConstant(size_t size) override;
     void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
     void PartialPushConstant(void* data, size_t size, size_t offset, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
@@ -120,7 +120,7 @@ private:
 
     VkCommandBuffer m_cmdBuffer;
 
-    bool m_isModelMode;
+    size_t m_push_ctant_size;
 };
 
 #endif //BUILD_VULKAN
