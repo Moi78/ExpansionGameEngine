@@ -3,7 +3,7 @@
 TestActor::TestActor(EXP_Game* game) : EXP_Actor(vec3(-2.0f, -2.0f, 0.0f), vec3(), vec3(1.0f, 1.0f, 1.0f)) {
     m_inhdl = game->GetInputHandler();
 
-    m_cam = std::make_shared<EXP_Camera>(game, vec3(), vec3(), 60.0f, 0.001f, 1000.0f);
+    m_cam = std::make_shared<EXP_Camera>(game, vec3(), vec3(), 60.0f, 0.1f, 100.0f);
     LinkComponent(m_cam);
     game->GetRenderer()->SetCurrentCamera(m_cam);
 

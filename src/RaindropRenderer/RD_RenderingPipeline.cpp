@@ -35,6 +35,12 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     depth.is_swapchain_attachment = false;
     depth.sample_count = 1;
 
+    RD_Attachment bicolorf{};
+    bicolorf.format = IMGFORMAT_RG16F;
+    bicolorf.do_clear = true;
+    bicolorf.is_swapchain_attachment = false;
+    bicolorf.sample_count = 1;
+
     /*
      *
      * FRAMEBUFFER COMPOSITION :
@@ -50,10 +56,10 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_rpassGBuff = m_api->CreateRenderPass({color, colorf, colorf, colorf, colorf, depth}, static_cast<float>(w), static_cast<float>(h));
     m_rpassGBuff->BuildRenderpass(m_api.get(), false);
 
-    m_rpassLight = m_api->CreateRenderPass({color}, static_cast<float>(w), static_cast<float>(h));
+    m_rpassLight = m_api->CreateRenderPass({colorf}, static_cast<float>(w), static_cast<float>(h));
     m_rpassLight->BuildRenderpass(m_api.get(), false);
 
-    m_rpassShadowDepth = m_api->CreateRenderPass({depth}, SHADOW_RES, SHADOW_RES);
+    m_rpassShadowDepth = m_api->CreateRenderPass({depth, bicolorf}, SHADOW_RES, SHADOW_RES);
     m_rpassShadowDepth->BuildRenderpass(m_api.get(), true);
 
     auto tex = m_rpassLight->GetAttachment(0);
@@ -109,10 +115,11 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
 
     std::vector<std::shared_ptr<RD_Texture>> tArray = {};
     for(auto& s : m_depthFBs) {
-        tArray.push_back(s->GetAttachment(0));
+        tArray.push_back(s->GetAttachment(1));
     }
 
     m_plineLight->RegisterTextureArray(tArray, 20);
+
     m_plineLight->RegisterUniformBuffer(m_lightMat);
 
     for(int i = 0; i < 5; i++) {
@@ -235,6 +242,12 @@ void RD_RenderingPipeline_PBR::RenderShadows(
 }
 
 void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
+    RD_Attachment bicolorf{};
+    bicolorf.format = IMGFORMAT_RG16F;
+    bicolorf.do_clear = true;
+    bicolorf.is_swapchain_attachment = false;
+    bicolorf.sample_count = 1;
+
     RD_Attachment depth{};
     depth.format = IMGFORMAT_DEPTH;
     depth.do_clear = true;
@@ -250,7 +263,7 @@ void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
         int missingFBNbrs = nbr - m_depthFBs.size();
 
         for(int i = 0; i < missingFBNbrs; i++) {
-            std::shared_ptr<RD_OrphanFramebuffer> fb = m_api->CreateOrphanFramebuffer(m_rpassShadowDepth, {depth}, SHADOW_RES, SHADOW_RES);
+            std::shared_ptr<RD_OrphanFramebuffer> fb = m_api->CreateOrphanFramebuffer(m_rpassShadowDepth, {depth, bicolorf}, SHADOW_RES, SHADOW_RES);
             fb->BuildFramebuffer(m_api.get());
 
             m_depthFBs.push_back(fb);
@@ -263,7 +276,7 @@ void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
 void RD_RenderingPipeline_PBR::UpdateShadowTexArray() {
     std::vector<std::shared_ptr<RD_Texture>> tArray;
     for(auto& s : m_depthFBs) {
-        tArray.push_back(s->GetAttachment(0));
+        tArray.push_back(s->GetAttachment(1));
     }
 
     m_plineLight->SetTextureArray(tArray, 20);

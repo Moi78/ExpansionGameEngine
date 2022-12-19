@@ -335,7 +335,7 @@ bool RD_Texture_Vk::CreateImageSampler() {
     VkSamplerCreateInfo cInfo{};
     cInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     cInfo.magFilter = VK_FILTER_LINEAR;
-    cInfo.minFilter = VK_FILTER_LINEAR;
+    cInfo.minFilter = VK_FILTER_NEAREST;
     cInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     cInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     cInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;

@@ -83,44 +83,27 @@ bool isBetween(float x, float a, float b) {
 }
 
 float CalcShadow(int idx, vec3 fPos) {
-    vec4 fPos_lightSpace = vec4(fPos, 1.0) * lmats[idx];
-    vec3 projCoord = fPos_lightSpace.xyz / fPos_lightSpace.w;
+    vec4 fPos_lightSpace = vec4(fragPos, 1.0) * lmats[idx]; // lmats == matrices view de lights
 
+    vec3 projCoord = fPos_lightSpace.xyz / fPos_lightSpace.w;
     projCoord = projCoord * 0.5 + 0.5;
 
-    if((!isBetween(projCoord.x, 0.0, 1.0)) || (!isBetween(projCoord.y, 0.0, 1.0))) {
+    if(!isBetween(projCoord.x, 0, 1) || !isBetween(projCoord.y, 0, 1)) {
         return 1.0;
     }
 
-    vec2 texelSize = 1.0 / textureSize(dDepth[idx], 0);
-    float currentDepth = projCoord.z;
-    float bias = 0.00125;
+    vec2 moments = texture(dDepth[idx], projCoord.xy).rg;
 
-    float center = texture(dDepth[idx], projCoord.xy).r;
-    center = center * 0.5 + 0.5;
-
-    const float filterSize = 1.5;
-    float shadow = 0.0;
-    float filter_resol = distance(-filterSize, filterSize);
-
-    for(float x = -filterSize; x <= filterSize; x++) {
-        for(float y = -filterSize; y <= filterSize; y++) {
-            vec2 uv = ChangeUVRes(textureSize(noise, 0));
-            vec2 noise_ = texture(noise, uv).rg;
-
-            float depthVal = texture(dDepth[idx], projCoord.xy + ((noise_ + vec2(x, y)) * texelSize)).r;
-            depthVal = depthVal * 0.5 + 0.5;
-
-            if(depthVal < currentDepth - bias) {
-                shadow += (1.0 / (filter_resol * filter_resol));
-            }
-        }
+    if(projCoord.z - 0.0025 < moments.x) {
+        return 1.0;
     }
 
-    if(shadow > 0.98) {
-        shadow = 1.0;
-    }
-    return 1 - (shadow);
+    float variance = moments.y - (moments.x * moments.x);
+    variance = max(variance, 0.0005);
+
+    float d = moments.x - projCoord.z;
+    float p_max = variance / (variance + d * d);
+    return p_max;
 }
 
 float GGXDistrib(vec3 halfway, float alpha) {

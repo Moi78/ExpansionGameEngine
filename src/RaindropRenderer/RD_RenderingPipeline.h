@@ -21,7 +21,7 @@
 #include <vector>
 #include <random>
 
-constexpr float SHADOW_RES = 1024;
+constexpr float SHADOW_RES = 128;
 
 struct RD_CasterCount {
     int nDLights;
