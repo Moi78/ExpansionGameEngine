@@ -46,7 +46,7 @@ void RD_DirLight::ComputeMatrix() {
         return;
     }
 
-    m_lightProj = ProjOrtho(-5.0f, 5.0f, -5.0f, 5.0f, -10.0f, 30.0f);
+    m_lightProj = ProjOrtho(-15.0f, 15.0f, -15.0f, 15.0f, -10.0f, 30.0f);
     m_lightView = LookAt((m_dir * -1.0f) + vec3(0.0f, 0.0f, 2.0f), vec3(0.0f, 0.0f, 2.0f), vec3(0.0f, 0.0f, 1.0f));
 }
 

@@ -228,7 +228,7 @@ std::shared_ptr<RD_RenderPass> RD_RenderingPipeline_PBR::GetBaseRenderpass() {
 
 void RD_RenderingPipeline_PBR::SetupPipeline(std::shared_ptr<RD_Pipeline> pline) {
     pline->RegisterUniformBuffer(m_camModel);
-    pline->BuildPipeline();
+    //pline->BuildPipeline();
 
     m_pline_refs.push_back(pline);
 }

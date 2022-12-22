@@ -37,8 +37,17 @@ bool EXP_Material::LoadMaterial(std::string material_file) {
     }
 
     auto pline = m_game->GetRenderer()->CreatePipeline(shaderLoader);
-    m_mat = std::make_shared<RD_Material>(pline);
+    for(auto& t : root["texs"]) {
+        std::shared_ptr<RD_Texture> tex = m_game->GetRenderer()->GetAPI()->CreateTexture();
+        if(!tex->LoadTextureFromFile(m_game->GetGameContentPath() + t["path"].asString())) {
+            continue;
+        }
 
+        pline->RegisterTexture(tex, t["binding"].asInt());
+    }
+    pline->BuildPipeline();
+
+    m_mat = std::make_shared<RD_Material>(pline);
     m_game->GetRenderer()->RegisterMaterial(m_mat);
 
     return true;
