@@ -21,7 +21,7 @@
 #include <vector>
 #include <random>
 
-constexpr float SHADOW_RES = 128;
+constexpr float SHADOW_RES = 512;
 
 struct RD_CasterCount {
     int nDLights;
@@ -85,6 +85,12 @@ private:
 
     std::shared_ptr<RD_RenderPass> m_rpassShadowDepth;
     std::shared_ptr<RD_Pipeline> m_plineShadowDepth;
+
+    std::shared_ptr<RD_OrphanFramebuffer> m_sblur;
+
+    std::shared_ptr<RD_RenderPass> m_rpassSblur;
+    std::shared_ptr<RD_Pipeline> m_plineSblur;
+    std::shared_ptr<RD_Pipeline> m_plineSblur_b;
 
     std::vector<std::shared_ptr<RD_OrphanFramebuffer>> m_depthFBs;
 

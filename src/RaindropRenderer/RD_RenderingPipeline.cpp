@@ -35,11 +35,11 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     depth.is_swapchain_attachment = false;
     depth.sample_count = 1;
 
-    RD_Attachment bicolorf{};
-    bicolorf.format = IMGFORMAT_RG16F;
-    bicolorf.do_clear = true;
-    bicolorf.is_swapchain_attachment = false;
-    bicolorf.sample_count = 1;
+    RD_Attachment monocolorf{};
+    monocolorf.format = IMGFORMAT_R32F;
+    monocolorf.do_clear = true;
+    monocolorf.is_swapchain_attachment = false;
+    monocolorf.sample_count = 1;
 
     /*
      *
@@ -59,11 +59,17 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_rpassLight = m_api->CreateRenderPass({colorf}, static_cast<float>(w), static_cast<float>(h));
     m_rpassLight->BuildRenderpass(m_api.get(), false);
 
-    m_rpassShadowDepth = m_api->CreateRenderPass({depth, bicolorf}, SHADOW_RES, SHADOW_RES);
-    m_rpassShadowDepth->BuildRenderpass(m_api.get(), true);
+    m_rpassShadowDepth = m_api->CreateRenderPass({depth, monocolorf}, SHADOW_RES, SHADOW_RES);
+    m_rpassShadowDepth->BuildRenderpass(m_api.get(), false);
 
     auto tex = m_rpassLight->GetAttachment(0);
     m_api->GetWindowingSystem()->SetPresentTexture(tex);
+
+    m_rpassSblur = m_api->CreateRenderPass({depth, monocolorf}, SHADOW_RES, SHADOW_RES);
+    m_rpassSblur->BuildRenderpass(m_api.get(), false);
+
+    m_sblur = m_api->CreateOrphanFramebuffer(m_rpassSblur, {depth, monocolorf}, SHADOW_RES, SHADOW_RES);
+    m_sblur->BuildFramebuffer(m_api.get());
 
     //UNIFORMS
     m_camModel = m_api->CreateUniformBuffer(0);
@@ -103,6 +109,19 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
 
     std::shared_ptr<RD_ShaderLoader> shadowDepth_shader = m_api->CreateShader();
     shadowDepth_shader->CompileShaderFromFile(enginePath + "/shaders/bin/shadow_depth.vspv", enginePath + "/shaders/bin/shadow_depth.fspv");
+
+    std::shared_ptr<RD_ShaderLoader> monoblur_shader = m_api->CreateShader();
+    monoblur_shader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/mono_blur.fspv");
+
+    m_plineSblur = m_api->CreatePipeline(m_rpassSblur, monoblur_shader);
+    m_plineSblur->RegisterTexture(m_rpassShadowDepth->GetAttachment(1), 0);
+    m_plineSblur->ConfigurePushConstant(2 * sizeof(float));
+    m_plineSblur->BuildPipeline();
+
+    m_plineSblur_b = m_api->CreatePipeline(m_rpassSblur, monoblur_shader);
+    m_plineSblur_b->RegisterTexture(m_sblur->GetAttachment(1), 0);
+    m_plineSblur_b->ConfigurePushConstant(2 * sizeof(float));
+    m_plineSblur_b->BuildPipeline();
 
     m_plineShadowDepth = m_api->CreatePipeline(m_rpassShadowDepth, shadowDepth_shader);
     m_plineShadowDepth->ConfigurePushConstant(16 * sizeof(float) + sizeof(uint32_t));
@@ -224,29 +243,52 @@ void RD_RenderingPipeline_PBR::RenderShadows(
             continue;
         }
 
-        m_indexuBuffer->FillBufferData(&scaster_idx);
-        scaster_idx++;
-
         m_sync->Start();
-        m_rpassShadowDepth->BeginRenderpassExt(m_sync, m_depthFBs[i]);
+        m_rpassShadowDepth->BeginRenderpass(m_sync);
         m_plineShadowDepth->Bind(m_sync);
+
+        m_plineShadowDepth->PartialPushConstant(&scaster_idx, sizeof(uint32_t), 16 * sizeof(float), m_sync);
+        scaster_idx++;
 
         for (auto &sd: sceneData) {
             sd->RenderMeshesExtPline(m_plineShadowDepth, m_sync);
         }
 
         m_plineShadowDepth->Unbind(m_sync);
-        m_rpassShadowDepth->EndRenderpassEXT(m_sync, m_depthFBs[i]);
+        m_rpassShadowDepth->EndRenderpass(m_sync);
+
+        //BLUR SHADOWS
+        vec2 horiz = vec2(1, 0);
+        vec2 vert = vec2(0, 1);
+
+        m_rpassSblur->BeginRenderpassExt(m_sync, m_sblur);
+        m_plineSblur->Bind(m_sync);
+
+        m_plineSblur->PushConstant(horiz.GetData(), 2 * sizeof(float), m_sync);
+        m_plineSblur->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
+
+        m_plineSblur->Unbind(m_sync);
+        m_rpassSblur->EndRenderpassEXT(m_sync, m_sblur);
+
+        m_rpassSblur->BeginRenderpassExt(m_sync, m_depthFBs[i]);
+        m_plineSblur_b->Bind(m_sync);
+
+        m_plineSblur_b->PushConstant(vert.GetData(), 2 * sizeof(float), m_sync);
+        m_plineSblur_b->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
+
+        m_plineSblur_b->Unbind(m_sync);
+        m_rpassSblur->EndRenderpassEXT(m_sync, m_depthFBs[i]);
+
         m_sync->Stop();
     }
 }
 
 void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
-    RD_Attachment bicolorf{};
-    bicolorf.format = IMGFORMAT_RG16F;
-    bicolorf.do_clear = true;
-    bicolorf.is_swapchain_attachment = false;
-    bicolorf.sample_count = 1;
+    RD_Attachment monocolorf{};
+    monocolorf.format = IMGFORMAT_R32F;
+    monocolorf.do_clear = true;
+    monocolorf.is_swapchain_attachment = false;
+    monocolorf.sample_count = 1;
 
     RD_Attachment depth{};
     depth.format = IMGFORMAT_DEPTH;
@@ -263,7 +305,7 @@ void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
         int missingFBNbrs = nbr - m_depthFBs.size();
 
         for(int i = 0; i < missingFBNbrs; i++) {
-            std::shared_ptr<RD_OrphanFramebuffer> fb = m_api->CreateOrphanFramebuffer(m_rpassShadowDepth, {depth, bicolorf}, SHADOW_RES, SHADOW_RES);
+            std::shared_ptr<RD_OrphanFramebuffer> fb = m_api->CreateOrphanFramebuffer(m_rpassShadowDepth, {depth, monocolorf}, SHADOW_RES, SHADOW_RES);
             fb->BuildFramebuffer(m_api.get());
 
             m_depthFBs.push_back(fb);

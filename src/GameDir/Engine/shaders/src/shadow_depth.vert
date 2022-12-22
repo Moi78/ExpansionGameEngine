@@ -13,8 +13,9 @@ layout (binding = 2) uniform INDEX {
 
 layout (push_constant) uniform MODEL {
     mat4 model;
+    int idx_;
 };
 
 void main() {
-    gl_Position = (vec4(aPos, 1.0) * model) * lmats[idx];
+    gl_Position = (vec4(aPos, 1.0) * model) * lmats[idx_];
 }

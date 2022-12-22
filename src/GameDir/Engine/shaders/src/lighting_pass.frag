@@ -92,18 +92,16 @@ float CalcShadow(int idx, vec3 fPos) {
         return 1.0;
     }
 
-    vec2 moments = texture(dDepth[idx], projCoord.xy).rg;
+    const float c = 80;
+    float e_dx = exp(projCoord.z * c);
+    float e_zx = texture(dDepth[idx], projCoord.xy).r;
 
-    if(projCoord.z - 0.0025 < moments.x) {
-        return 1.0;
-    }
+    float dx = projCoord.z;
+    float zx = log(e_zx) / -c;
 
-    float variance = moments.y - (moments.x * moments.x);
-    variance = max(variance, 0.0005);
+    float shadow = 1 - (e_zx * e_dx - 1);
 
-    float d = moments.x - projCoord.z;
-    float p_max = variance / (variance + d * d);
-    return p_max;
+    return clamp(shadow, 0, 1);
 }
 
 float GGXDistrib(vec3 halfway, float alpha) {

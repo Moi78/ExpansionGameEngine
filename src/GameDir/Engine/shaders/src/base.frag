@@ -14,6 +14,6 @@ void main() {
     oNorm = vec4(norm, 1.0);
     oPos = vec4(FragPos, 1.0);
 
-    oMetRoughAO = vec4(0.0, 0.8, 0.1, 0.0);
+    oMetRoughAO = vec4(0.0, 0.8, 0.3, 0.0);
     oSheen = vec4(0.0, 0.0, 0.0, 0.0);
 }
