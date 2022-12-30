@@ -95,6 +95,10 @@ public:
             c *= a;
         }
     }
+
+    float operator[](const int idx) {
+        return m_vec[idx];
+    }
 };
 
 class vec2 : public vec<2> {
@@ -151,12 +155,17 @@ public:
             c *= a;
         }
     }
+
+    float operator[](const int idx) {
+        return m_vec[idx];
+    }
 };
 
 class vec4 : public vec<4> {
 public:
     vec4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : vec({x, y, z, w}) {}
     vec4(vec3 xyz, float w) : vec({xyz.GetX(), xyz.GetY(), xyz.GetZ(), w}) {}
+    vec4(std::array<float, 4> xyzw) : vec({xyzw[0], xyzw[1], xyzw[2], xyzw[3]}) {}
 
     float GetX() { return m_vec[0]; }
     float GetY() { return m_vec[1]; }
@@ -213,6 +222,10 @@ public:
         for(auto& c : m_vec) {
             c *= a;
         }
+    }
+
+    float& operator[](const int idx) {
+        return m_vec[idx];
     }
 
     vec3 ToVec3() {

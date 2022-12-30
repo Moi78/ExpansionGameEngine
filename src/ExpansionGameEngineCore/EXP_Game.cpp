@@ -13,6 +13,8 @@ EXP_Game::EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo
     m_maploader = std::make_unique<EXP_MapLoader>(this, m_hotloader);
 
     m_materials = EXP_GenericRessourceManager<std::shared_ptr<EXP_Material>>();
+
+    m_last_skel_offset = 0;
 }
 
 EXP_Game::~EXP_Game() {
@@ -81,4 +83,14 @@ std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath) {
 
 std::shared_ptr<EXP_InputHandler> EXP_Game::GetInputHandler() {
     return m_inhdl;
+}
+
+int EXP_Game::GetSkeletonOffset() {
+    return m_last_skel_offset;
+}
+
+void EXP_Game::SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) {
+    m_rndr->SetupSkeleton(skel);
+
+    m_last_skel_offset += skel->GetBoneCount() * 16 * sizeof(float);
 }

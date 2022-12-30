@@ -21,8 +21,9 @@ public:
 	void AppendIndices(int indice);
 	void AppendUVcoord(vec2 uv);
 	void AppendVertexWeight(vec4 weight);
+    void AppendBoneID(vec4 ids);
 
-	void ToBinary(std::string filepath, std::string filename);
+	void ToBinary(std::string filepath);
 
 	void ClearWriter();
 
@@ -32,6 +33,7 @@ private:
 	std::vector<vec3> m_normals;
 	std::vector<vec2> m_uv_coord;
 	std::vector<vec4> m_vertex_weight;
+    std::vector<vec4> m_boneID;
 };
 
 #endif

@@ -96,10 +96,8 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_lightMat = m_api->CreateUniformBuffer(7);
     m_lightMat->BuildAndAllocateBuffer(16 * 10 * sizeof(float));
 
-    m_indexuBuffer = m_api->CreateUniformBuffer(2);
-    m_indexuBuffer->BuildAndAllocateBuffer(sizeof(uint32_t));
-
-    FillNoiseValues();
+    m_bonesBuffer = m_api->CreateUniformBuffer(1);
+    m_bonesBuffer->BuildAndAllocateBuffer(1024 * 16 * sizeof(float));
 
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
     base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
@@ -126,7 +124,6 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineShadowDepth = m_api->CreatePipeline(m_rpassShadowDepth, shadowDepth_shader);
     m_plineShadowDepth->ConfigurePushConstant(16 * sizeof(float) + sizeof(uint32_t));
     m_plineShadowDepth->RegisterUniformBuffer(m_lightMat);
-    m_plineShadowDepth->RegisterUniformBuffer(m_indexuBuffer);
     m_plineShadowDepth->SetCullMode(RD_CullMode::CM_NONE);
     m_plineShadowDepth->BuildPipeline();
 
@@ -149,8 +146,6 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineLight->RegisterUniformBuffer(m_plights);
     m_plineLight->RegisterUniformBuffer(m_casterCount);
     m_plineLight->RegisterUniformBuffer(m_camData);
-
-    m_plineLight->RegisterTexture(m_noise_texture, 15);
 
     m_plineLight->BuildPipeline();
 
@@ -228,7 +223,7 @@ std::shared_ptr<RD_RenderPass> RD_RenderingPipeline_PBR::GetBaseRenderpass() {
 
 void RD_RenderingPipeline_PBR::SetupPipeline(std::shared_ptr<RD_Pipeline> pline) {
     pline->RegisterUniformBuffer(m_camModel);
-    //pline->BuildPipeline();
+    pline->RegisterUniformBuffer(m_bonesBuffer);
 
     m_pline_refs.push_back(pline);
 }
@@ -329,18 +324,6 @@ void RD_RenderingPipeline_PBR::PushLightMat(mat4f mat, int idx) {
     m_lightMat->PartialFillBufferData(mat.GetPTR(), 16 * sizeof(float), idx * 16 * sizeof(float));
 }
 
-void RD_RenderingPipeline_PBR::FillNoiseValues() {
-    m_noise_texture = m_api->CreateTexture();
-    constexpr int tex_size = 100;
-
-    std::array<float, tex_size * tex_size * 2> noise_data;
-
-    std::default_random_engine rengine;
-    std::uniform_real_distribution<float> distrib(-0.5f, 0.5f);
-
-    for(auto& n : noise_data) {
-        n = distrib(rengine);
-    }
-
-    m_noise_texture->CreateTextureFromData(IMGFORMAT_RG32F, tex_size, tex_size, noise_data.data());
+void RD_RenderingPipeline_PBR::SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) {
+    skel->UploadSkeleton(m_bonesBuffer);
 }

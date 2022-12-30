@@ -1,7 +1,12 @@
 #include "RD_VertexBuffer.h"
 
-std::vector<float> MakeVertexData(std::vector<vec3> pos, std::vector<vec3> norm, std::vector<vec2> uv) {
+std::vector<float> MakeVertexData(std::vector<vec3> pos, std::vector<vec3> norm, std::vector<vec2> uv, std::vector<vec4> weights, std::vector<vec4> bonesID) {
     assert((pos.size() == norm.size()) && (norm.size() == uv.size()) && "Every vector must have the same size");
+
+    bool doWeighting = false;
+    if(weights.size() > 0 && bonesID.size() > 0) {
+        doWeighting = true;
+    }
 
     std::vector<float> res;
     for(int i = 0; i < pos.size(); i++) {
@@ -15,6 +20,28 @@ std::vector<float> MakeVertexData(std::vector<vec3> pos, std::vector<vec3> norm,
 
         res.push_back(uv[i].GetX());
         res.push_back(uv[i].GetY());
+
+        if(!doWeighting) {
+            res.push_back(0);
+            res.push_back(0);
+            res.push_back(0);
+            res.push_back(0);
+
+            res.push_back(-1);
+            res.push_back(-1);
+            res.push_back(-1);
+            res.push_back(-1);
+        } else {
+            res.push_back(weights[i].GetX());
+            res.push_back(weights[i].GetY());
+            res.push_back(weights[i].GetZ());
+            res.push_back(weights[i].GetW());
+
+            res.push_back(bonesID[i].GetX());
+            res.push_back(bonesID[i].GetY());
+            res.push_back(bonesID[i].GetZ());
+            res.push_back(bonesID[i].GetW());
+        }
     }
 
     return res;

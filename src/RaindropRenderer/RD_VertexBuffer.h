@@ -27,7 +27,7 @@ public:
     virtual uint32_t GetNumberOfIndices() = 0;
 };
 
-std::vector<float> MakeVertexData(std::vector<vec3> pos, std::vector<vec3> norm, std::vector<vec2> uv);
+std::vector<float> MakeVertexData(std::vector<vec3> pos, std::vector<vec3> norm, std::vector<vec2> uv, std::vector<vec4> weights = {}, std::vector<vec4> bonesID = {});
 
 #ifdef BUILD_VULKAN
 

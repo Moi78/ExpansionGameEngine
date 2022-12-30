@@ -7,6 +7,7 @@
 
 #include "RD_API.h"
 #include "RD_VertexBuffer.h"
+#include "RD_Skeleton.h"
 
 #include <BD_Reader.h>
 
@@ -28,9 +29,17 @@ public:
 
     void Rotate(vec3 rotation);
 
+    bool HasSkeleton();
+
+    void SetSkeleton(std::shared_ptr<RD_Skeleton> skel);
+    std::shared_ptr<RD_Skeleton> GetSkeleton();
+
 private:
     std::shared_ptr<RD_API> m_api;
     std::shared_ptr<RD_IndexedVertexBuffer> m_vbuff;
+
+    std::shared_ptr<RD_Skeleton> m_skel;
+    bool m_hasSkel;
 
     mat4f m_transf;
     vec3 m_pos;

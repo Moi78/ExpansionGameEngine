@@ -55,7 +55,7 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     const std::array<VkPipelineShaderStageCreateInfo, 2> stages = {vcInfo, fcInfo};
 
     // FIXED FUNCTIONS
-    std::array<VkVertexInputAttributeDescription, 3> attrs = {};
+    std::array<VkVertexInputAttributeDescription, 5> attrs = {};
 
     //POSITION
     attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -75,9 +75,21 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     attrs[2].location = 2;
     attrs[2].offset = sizeof(float) * 6;
 
+    //WEIGHTS
+    attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+    attrs[3].binding = 0;
+    attrs[3].location = 3;
+    attrs[3].offset = sizeof(float) * 8;
+
+    //BONE IDs
+    attrs[4].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+    attrs[4].binding = 0;
+    attrs[4].location = 4;
+    attrs[4].offset = sizeof(float) * 12;
+
     VkVertexInputBindingDescription bindDesc{};
     bindDesc.binding = 0;
-    bindDesc.stride = sizeof(float) * 8;
+    bindDesc.stride = sizeof(float) * 16;
     bindDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
     VkPipelineVertexInputStateCreateInfo vinInfo{};

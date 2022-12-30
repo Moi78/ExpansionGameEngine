@@ -1,10 +1,11 @@
 #ifndef EXPGE_EXP_GAME_H
 #define EXPGE_EXP_GAME_H
 
-#include<memory>
+#include <memory>
 #include <string>
 
 #include <RaindropRenderer.h>
+#include <RD_Skeleton.h>
 
 #include "EXP_Conf.h"
 #include "EXP_GenericRessourceManager.h"
@@ -35,6 +36,9 @@ public:
 
     std::shared_ptr<EXP_Material> QueryMaterial(std::string matPath);
 
+    int GetSkeletonOffset();
+    void SetupSkeleton(std::shared_ptr<RD_Skeleton> skel);
+
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;
 
@@ -46,6 +50,8 @@ private:
 
     EXP_GameInfo m_gameinfo;
     EXP_GenericRessourceManager<std::shared_ptr<EXP_Material>> m_materials;
+
+    int m_last_skel_offset;
 };
 
 

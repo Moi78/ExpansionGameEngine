@@ -22,12 +22,14 @@ public:
 	vec3 GetNormalByIndex(int);
 	vec2 GetUVcoordByIndex(int);
 	vec4 GetVertexWeightByIndex(int);
+    vec4 GetBoneIDByIndex(int);
 
 	int GetIndicesCount();
 	int GetVerticesCount();
 	int GetNormalCount();
 	int GetUVcoordCount();
 	int GetVertexWeightCount();
+    int GetBoneIDCount();
 
 	void ClearAll();
 
@@ -37,12 +39,14 @@ private:
 	std::vector<vec3> mNormal;
 	std::vector<vec2> mUVcoord;
 	std::vector<vec4> mVertWeight;
+    std::vector<vec4> mBoneId;
 
 	int icount;
 	int vcount;
 	int ncount;
 	int uvcount;
 	int vwcount;
+    int bidcount;
 };
 
 #endif // _BD_READER_H__

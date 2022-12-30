@@ -10,6 +10,7 @@
 #include "EXP_StaticMeshActor.h"
 #include "EXP_DirLightActor.h"
 #include "EXP_PointLightActor.h"
+#include "EXP_SkeletalMeshActor.h"
 
 #include <jsoncpp/json/json.h>
 
@@ -23,6 +24,7 @@ public:
     std::shared_ptr<EXP_StaticMeshActor> CreateMesh(Json::Value node);
     std::shared_ptr<EXP_DirLightActor> CreateDirLight(Json::Value node);
     std::shared_ptr<EXP_PointLightActor> CreatePointLight(Json::Value node);
+    std::shared_ptr<EXP_SkeletalMeshActor> CreateSKMesh(Json::Value node);
 
 private:
     EXP_Game* m_game;

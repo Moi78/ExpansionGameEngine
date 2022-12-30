@@ -9,6 +9,9 @@
 #include <EXP_Material.h>
 #include <EXP_StaticMeshActor.h>
 
+#include <RD_Mesh.h>
+#include <RD_Skeleton.h>
+
 #include <RD_Camera.h>
 #include <RD_DirLight.h>
 

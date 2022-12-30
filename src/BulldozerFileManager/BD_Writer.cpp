@@ -28,8 +28,12 @@ void BD_Writer::AppendVertexWeight(vec4 weight) {
 	m_vertex_weight.push_back(weight);
 }
 
-void BD_Writer::ToBinary(std::string filepath, std::string filename) {
-	std::string ddir = filepath + filename + ".msh";
+void BD_Writer::AppendBoneID(vec4 ids) {
+    m_boneID.push_back(ids);
+}
+
+void BD_Writer::ToBinary(std::string filepath) {
+	std::string ddir = filepath;
 
 	std::ofstream bFile;
 	bFile.open(ddir.c_str(), std::ios::binary);
@@ -45,6 +49,7 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
     uint32_t nbrNormal = m_normals.size();
     uint32_t nbrUVcoord = m_uv_coord.size();
     uint32_t nbrVertStrength = m_vertex_weight.size();
+    uint32_t nbrBoneId = m_boneID.size();
 
     std::cout << "BD Verticies " << (long long)nbrVertices << std::endl;
     std::cout << "BD Indicies " << (long long)nbrIndice << std::endl;
@@ -84,6 +89,13 @@ void BD_Writer::ToBinary(std::string filepath, std::string filename) {
 		bFile.write(reinterpret_cast<const char*>(&m_vertex_weight[i]), sizeof(vec4));
 	}
 
+    //Bones ID
+    bFile.write(reinterpret_cast<const char*>(&nbrBoneId), sizeof(uint32_t));
+
+    for(int i = 0; i < nbrBoneId; i++) {
+        bFile.write(reinterpret_cast<const char*>(&m_boneID[i]), sizeof(vec4));
+    }
+
 	bFile.close();
 }
 
@@ -92,4 +104,6 @@ void BD_Writer::ClearWriter() {
 	m_vertices.clear();
 	m_normals.clear();
 	m_uv_coord.clear();
+    m_vertex_weight.clear();
+    m_boneID.clear();
 }

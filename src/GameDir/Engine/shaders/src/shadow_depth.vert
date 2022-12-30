@@ -2,13 +2,11 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNorm;
 layout (location = 2) in vec2 aUV;
+layout (location = 3) in vec4 aBWeights;
+layout (location = 4) in vec4 aBonesID;
 
 layout (binding = 7) uniform LIGHT_MAT {
     mat4 lmats[10];
-};
-
-layout (binding = 2) uniform INDEX {
-    int idx;
 };
 
 layout (push_constant) uniform MODEL {

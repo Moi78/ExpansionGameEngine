@@ -12,10 +12,21 @@ layout (location = 3) in vec4 weight;
 layout (location = 4) in vec4 boneID;
 
 void main() {
-    oColor = vec4(1.0, 1.0, 1.0, 1.0);
+    float red = weight.x;
+    if(boneID.x == 2) {
+        red = weight.x;
+    } else if(boneID.y == 2) {
+        red = weight.y;
+    } else if(boneID.z == 2) {
+        red = weight.z;
+    } else if(boneID.w == 2) {
+        red = weight.w;
+    }
+
+    oColor = vec4(red, 0.0, 0.0, 1.0);
     oNorm = vec4(norm, 1.0);
     oPos = vec4(FragPos, 1.0);
 
-    oMetRoughAO = vec4(0.0, 0.8, 0.3, 0.0);
-    oSheen = vec4(0.0, 0.0, 0.0, 0.0);
+    oMetRoughAO = vec4(0.9, 0.2, 0.3, 0.0);
+    oSheen = vec4(0.1, 0.1, 0.1, 0.0);
 }

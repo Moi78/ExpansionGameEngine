@@ -10,8 +10,6 @@ layout (binding = 12) uniform sampler2D FragPos;
 layout (binding = 13) uniform sampler2D MetRoughAO;
 layout (binding = 14) uniform sampler2D SheenProp;
 
-layout (binding = 15) uniform sampler2D noise;
-
 layout (binding = 20) uniform sampler2D dDepth[10];
 
 struct DirLight {

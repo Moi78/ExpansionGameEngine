@@ -44,10 +44,15 @@ std::shared_ptr<EXP_Level> EXP_MapLoader::LoadLevel(std::string levelPath) {
     for(auto& n : nodes) {
         if(n["type"].asString() == "mesh") {
             lvl->RegisterActor(CreateMesh(n));
+
         } else if(n["type"].asString() == "dirlight") {
             lvl->RegisterActor(CreateDirLight(n));
+
         } else if(n["type"].asString() == "pointlight") {
             lvl->RegisterActor(CreatePointLight(n));
+
+        } else if(n["type"].asString() == "skelmesh") {
+            lvl->RegisterActor(CreateSKMesh(n));
         }
     }
 
@@ -82,4 +87,16 @@ std::shared_ptr<EXP_PointLightActor> EXP_MapLoader::CreatePointLight(Json::Value
     float radius = node["radius"].asFloat();
 
     return std::make_shared<EXP_PointLightActor>(m_game, pos, color, brightness, radius);
+}
+
+std::shared_ptr<EXP_SkeletalMeshActor> EXP_MapLoader::CreateSKMesh(Json::Value node) {
+    vec3 pos = vec3(node["pos"][0].asFloat(), node["pos"][1].asFloat(), node["pos"][2].asFloat());
+    vec3 rot = vec3(node["rot"][0].asFloat(), node["rot"][1].asFloat(), node["rot"][2].asFloat());
+    vec3 scale = vec3(node["scale"][0].asFloat(), node["scale"][1].asFloat(), node["scale"][2].asFloat());
+
+    std::shared_ptr<EXP_SkeletalMeshActor> skmesh = std::make_shared<EXP_SkeletalMeshActor>(
+            m_game, node["mesh"].asString(), node["skeleton"].asString(), m_game->QueryMaterial(node["material"].asString()), pos, rot, scale
+    );
+
+    return skmesh;
 }

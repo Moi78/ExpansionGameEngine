@@ -14,6 +14,9 @@ cp $PREFIX/bin/base.fspv "src/GameDir/Content/mat/base.fspv"
 glslc -c $PREFIX/src/yellow.frag -o $PREFIX/bin/yellow.fspv
 cp $PREFIX/bin/yellow.fspv "src/GameDir/Content/mat/yellow.fspv"
 
+glslc -c $PREFIX/src/visu_weight.frag -o $PREFIX/bin/visu_weight.fspv
+cp $PREFIX/bin/visu_weight.fspv "src/GameDir/Content/mat/visu_weight.fspv"
+
 glslc -c $PREFIX/src/base_two.frag -o $PREFIX/bin/base_two.fspv
 
 glslc -c $PREFIX/src/lighting_pass.frag -o $PREFIX/bin/lighting_pass.fspv

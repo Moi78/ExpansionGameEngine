@@ -7,6 +7,8 @@
 #include <EXP_Game.h>
 #include <EXP_Conf.h>
 
+#include <BD_SkelReader.h>
+
 //Enabling Nvidia Optimus
 extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
 

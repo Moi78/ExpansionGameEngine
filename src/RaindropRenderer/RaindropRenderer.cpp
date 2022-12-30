@@ -132,7 +132,7 @@ std::shared_ptr<RD_API> RaindropRenderer::GetAPI() {
 
 std::shared_ptr<RD_Pipeline> RaindropRenderer::CreatePipeline(std::shared_ptr<RD_ShaderLoader> &shader) {
     auto pline = m_api->CreatePipeline(m_rpline->GetBaseRenderpass(), shader);
-    pline->ConfigurePushConstant(16 * sizeof(float));
+    pline->ConfigurePushConstant(16 * sizeof(float) + sizeof(int32_t));
 
     m_rpline->SetupPipeline(pline);
 
@@ -141,4 +141,8 @@ std::shared_ptr<RD_Pipeline> RaindropRenderer::CreatePipeline(std::shared_ptr<RD
 
 void RaindropRenderer::SetCurrentCamera(std::shared_ptr<RD_Camera> cam) {
     m_viewCam = cam;
+}
+
+void RaindropRenderer::SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) {
+    m_rpline->SetupSkeleton(skel);
 }

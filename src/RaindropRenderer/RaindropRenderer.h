@@ -10,7 +10,6 @@
 #define RD_DLLAPI
 #endif // _WIN32
 
-
 #include "RD_API.h"
 #include "RD_ShaderLoader.h"
 #include "RD_RenderPass.h"
@@ -18,6 +17,7 @@
 #include "RD_RenderingPipeline.h"
 #include "RD_Callback.h"
 #include "RD_Mesh.h"
+#include "RD_Skeleton.h"
 
 #include <memory>
 #include <vector>
@@ -51,6 +51,8 @@ public:
     std::shared_ptr<RD_API> GetAPI();
 
     std::shared_ptr<RD_Pipeline> CreatePipeline(std::shared_ptr<RD_ShaderLoader>& shader);
+
+    void SetupSkeleton(std::shared_ptr<RD_Skeleton> skel);
 
 private:
 	std::shared_ptr<RD_API> m_api;

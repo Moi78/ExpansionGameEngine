@@ -16,6 +16,7 @@
 #include "RD_DirLight.h"
 #include "RD_PointLight.h"
 #include "RD_Material.h"
+#include "RD_Skeleton.h"
 
 #include <memory>
 #include <vector>
@@ -45,6 +46,7 @@ public:
 
     virtual std::shared_ptr<RD_RenderPass> GetBaseRenderpass() = 0;
     virtual void SetupPipeline(std::shared_ptr<RD_Pipeline> pline) = 0;
+    virtual void SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) = 0;
 
     virtual void SetNumberOfShadowFB(int nbr) = 0;
     virtual void PushLightMat(mat4f mat, int idx) = 0;
@@ -67,13 +69,13 @@ public:
 
     std::shared_ptr<RD_RenderPass> GetBaseRenderpass() override;
     void SetupPipeline(std::shared_ptr<RD_Pipeline> pline) override;
+    void SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) override;
 
     void SetNumberOfShadowFB(int nbr) override;
     void PushLightMat(mat4f mat, int idx) override;
 
 private:
     void UpdateShadowTexArray();
-    void FillNoiseValues();
 
     std::shared_ptr<RD_API> m_api;
     std::shared_ptr<RD_Quad> m_renderSurface;
@@ -103,9 +105,7 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_plights;
     std::shared_ptr<RD_UniformBuffer> m_casterCount;
     std::shared_ptr<RD_UniformBuffer> m_camData;
-    std::shared_ptr<RD_UniformBuffer> m_indexuBuffer;
-
-    std::shared_ptr<RD_Texture> m_noise_texture;
+    std::shared_ptr<RD_UniformBuffer> m_bonesBuffer;
 
     std::shared_ptr<RD_RenderSynchronizer_Vk> m_sync;
 
