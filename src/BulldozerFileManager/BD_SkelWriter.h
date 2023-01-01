@@ -13,6 +13,8 @@ struct Bone {
     std::string name;
     mat4f pos;
     int idx;
+
+    int parent_id;
 };
 
 class BD_SkelWriter {

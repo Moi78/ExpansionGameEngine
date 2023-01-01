@@ -8,8 +8,7 @@ layout (location = 4) in vec4 aBonesID;
 layout (location = 0) out vec2 UVcoords;
 layout (location = 1) out vec3 norm;
 layout (location = 2) out vec3 FragPos;
-layout (location = 3) out vec4 weight;
-layout (location = 4) out vec4 boneID;
+layout (location = 3) out vec3 color;
 
 layout (binding = 0) uniform TRANFORMS {
     mat4 proj;
@@ -30,6 +29,7 @@ void main() {
     vec4 totalPos;
     vec3 fragPos;
     if(bone_offset != -1) {
+        /*
         for (int i = 0; i < 4; i++) {
             if(aBonesID[i] == -1) {
                 continue;
@@ -45,10 +45,12 @@ void main() {
         }
 
         fragPos = (vec4(totalPos.xyz, 1.0) * model_).xyz;
+        */
     } else {
         fragPos = (vec4(aPos, 1.0) * model_).xyz;
     }
 
+    fragPos = (vec4(aPos, 1.0) * model_).xyz;
     gl_Position = vec4(fragPos, 1.0) * view * proj;
 
     UVcoords = aUV;
@@ -57,7 +59,4 @@ void main() {
     norm = aNorm * normalMatrix;
 
     FragPos = fragPos;
-
-    weight = aBWeights;
-    boneID = aBonesID;
 }

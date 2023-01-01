@@ -29,6 +29,8 @@ bool BD_SkelReader::ReadFile(std::string file) {
         bFile.read(reinterpret_cast<char*>(&b.idx), sizeof(int));
         bFile.read(reinterpret_cast<char*>(&b.pos), sizeof(mat4f));
 
+        bFile.read(reinterpret_cast<char*>(&b.parent_id), sizeof(int));
+
         size_t ssize = 0;
         bFile.read(reinterpret_cast<char*>(&ssize), sizeof(size_t));
 

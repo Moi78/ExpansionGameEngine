@@ -9,6 +9,48 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <unordered_map>
+
+int GetBoneIdxByName(std::vector<Bone>& bones, std::string name) {
+    for(int i = 0; i < bones.size(); i++) {
+        if(bones[i].name == name) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+std::string FindParentName(std::string selfName, aiNode* rootNode) {
+    if(rootNode == nullptr) {
+        return "";
+    }
+
+    for(int i = 0; i < rootNode->mNumChildren; i++) {
+        if(rootNode->mChildren[i]->mName.C_Str() == selfName) {
+            return rootNode->mChildren[i]->mName.C_Str();
+        }
+
+        FindParentName(selfName, rootNode->mChildren[i]);
+    }
+
+    return "";
+}
+
+void ResolveBonesHierarchy(std::vector<Bone>& bones, aiNode* rootNode) {
+    for(auto& b : bones) {
+        std::string pName = FindParentName(b.name, rootNode);
+        std::cout << pName << std::endl;
+
+        int idx = -1;
+        if(pName != "") {
+            idx = GetBoneIdxByName(bones, pName);
+        }
+
+        b.parent_id = idx;
+    }
+}
+
 
 int main(int argc, char* argv[]) {
     std::cout << "|----------------------------------------|" << std::endl;
@@ -111,6 +153,8 @@ int main(int argc, char* argv[]) {
                 b = vec4(-1, -1, -1, -1);
             }
 
+            std::vector<Bone> bones;
+
             if(currentMesh->HasBones()) {
                 BD_SkelWriter sk_w;
 
@@ -137,8 +181,10 @@ int main(int argc, char* argv[]) {
                     aiMatrix4x4t mat = currentMesh->mBones[b]->mOffsetMatrix;
                     bn.pos = mat4f(mat[0]);
 
-                    sk_w.AppendBone(bn);
+                    bones.push_back(bn);
                 }
+
+                ResolveBonesHierarchy(bones, currentMesh->mBones[0]->mNode);
 
                 for(auto& wgt : weights) {
                     w.AppendVertexWeight(wgt);
@@ -146,6 +192,10 @@ int main(int argc, char* argv[]) {
 
                 for(auto& b : bonesID) {
                     w.AppendBoneID(b);
+                }
+
+                for(auto& b : bones) {
+                    sk_w.AppendBone(b);
                 }
 
                 std::filesystem::path outp_skel(outpDir.parent_path());
