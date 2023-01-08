@@ -24,6 +24,7 @@ void BD_SkelWriter::WriteBinary(std::string outpath) {
     for(auto& b : m_bones) {
         file.write(reinterpret_cast<const char*>(&b.idx), sizeof(int));
         file.write(reinterpret_cast<const char*>(&b.pos), sizeof(mat4f));
+        file.write(reinterpret_cast<const char*>(&b.offset), sizeof(mat4f));
 
         file.write(reinterpret_cast<const char*>(&b.parent_id), sizeof(int));
 

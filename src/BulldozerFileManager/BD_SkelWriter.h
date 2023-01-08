@@ -11,9 +11,11 @@
 
 struct Bone {
     std::string name;
+    mat4f offset;
     mat4f pos;
     int idx;
 
+    std::string parent_name;
     int parent_id;
 };
 

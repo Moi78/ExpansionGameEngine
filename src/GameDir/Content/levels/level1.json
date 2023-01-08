@@ -16,6 +16,17 @@
       "skeleton": "/mdl/test_riggin.skl",
       "material": "/mat/mat_weight.json",
 
+      "pos": [-4, -4, 0],
+      "rot": [0, 0, 0],
+      "scale": [1, 1, 1]
+    },
+
+    {
+      "type": "skelmesh",
+      "mesh": "/mdl/complex_rig_test.msh",
+      "skeleton": "/mdl/complex_rig_test.skl",
+      "material": "/mat/mat_yellow.json",
+
       "pos": [4, 4, 0],
       "rot": [0, 0, 0],
       "scale": [1, 1, 1]

@@ -122,8 +122,9 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineSblur_b->BuildPipeline();
 
     m_plineShadowDepth = m_api->CreatePipeline(m_rpassShadowDepth, shadowDepth_shader);
-    m_plineShadowDepth->ConfigurePushConstant(16 * sizeof(float) + sizeof(uint32_t));
+    m_plineShadowDepth->ConfigurePushConstant(16 * sizeof(float) + 2 * sizeof(uint32_t));
     m_plineShadowDepth->RegisterUniformBuffer(m_lightMat);
+    m_plineShadowDepth->RegisterUniformBuffer(m_bonesBuffer);
     m_plineShadowDepth->SetCullMode(RD_CullMode::CM_NONE);
     m_plineShadowDepth->BuildPipeline();
 

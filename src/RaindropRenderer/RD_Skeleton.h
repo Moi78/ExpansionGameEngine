@@ -18,6 +18,10 @@ public:
     size_t GetBoneCount();
 
 private:
+    void ComputeFinalMatrices();
+    mat4f ResolveMatrix(Bone b);
+
+    std::vector<mat4f> m_final_matrices;
     std::vector<Bone> m_skeleton;
     size_t m_skel_offset;
 };

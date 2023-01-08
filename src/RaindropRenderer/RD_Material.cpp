@@ -37,6 +37,14 @@ void RD_Material::RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::
 
 void RD_Material::RenderMeshesExtPline(std::shared_ptr<RD_Pipeline> pline, std::shared_ptr<RD_RenderSynchronizer> sync) {
     for(auto& m : m_meshes) {
+        if(m->HasSkeleton()) {
+            int32_t offset = m->GetSkeleton()->GetOffset() / (16 * sizeof(float));
+            m_pline->PartialPushConstant(&offset, sizeof(int32_t), 16 * sizeof(float), sync);
+        } else {
+            int32_t offset = -1;
+            m_pline->PartialPushConstant(&offset, sizeof(int32_t), 16 * sizeof(float), sync);
+        }
+
         pline->PushConstant(m->GetTransform().GetPTR(), 16 * sizeof(float), sync);
         pline->DrawIndexedVertexBuffer(m->GetVertexBuffer(), sync);
     }

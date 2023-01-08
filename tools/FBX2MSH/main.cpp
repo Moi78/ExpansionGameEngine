@@ -11,43 +11,22 @@
 #include <assimp/postprocess.h>
 #include <unordered_map>
 
-int GetBoneIdxByName(std::vector<Bone>& bones, std::string name) {
-    for(int i = 0; i < bones.size(); i++) {
-        if(bones[i].name == name) {
+int FindBoneIdx(std::string name, std::vector<Bone>& bones) {
+    int i = 0;
+    for(auto& b : bones) {
+        if(name == b.name) {
             return i;
         }
+
+        i++;
     }
 
     return -1;
 }
 
-std::string FindParentName(std::string selfName, aiNode* rootNode) {
-    if(rootNode == nullptr) {
-        return "";
-    }
-
-    for(int i = 0; i < rootNode->mNumChildren; i++) {
-        if(rootNode->mChildren[i]->mName.C_Str() == selfName) {
-            return rootNode->mChildren[i]->mName.C_Str();
-        }
-
-        FindParentName(selfName, rootNode->mChildren[i]);
-    }
-
-    return "";
-}
-
-void ResolveBonesHierarchy(std::vector<Bone>& bones, aiNode* rootNode) {
+void ResolveBonesHierarchy(std::vector<Bone>& bones) {
     for(auto& b : bones) {
-        std::string pName = FindParentName(b.name, rootNode);
-        std::cout << pName << std::endl;
-
-        int idx = -1;
-        if(pName != "") {
-            idx = GetBoneIdxByName(bones, pName);
-        }
-
-        b.parent_id = idx;
+        b.parent_id = FindBoneIdx(b.parent_name, bones);
     }
 }
 
@@ -179,12 +158,18 @@ int main(int argc, char* argv[]) {
                     bn.idx = b;
 
                     aiMatrix4x4t mat = currentMesh->mBones[b]->mOffsetMatrix;
-                    bn.pos = mat4f(mat[0]);
+                    bn.offset = mat4f(mat[0]);
+
+                    aiNode* root = scene->mRootNode;
+                    aiNode* currentBone = root->FindNode(bn.name.c_str());
+
+                    bn.parent_name = currentBone->mParent->mName.C_Str();
+                    bn.pos = mat4f(currentBone->mTransformation[0]);
 
                     bones.push_back(bn);
                 }
 
-                ResolveBonesHierarchy(bones, currentMesh->mBones[0]->mNode);
+                ResolveBonesHierarchy(bones);
 
                 for(auto& wgt : weights) {
                     w.AppendVertexWeight(wgt);
