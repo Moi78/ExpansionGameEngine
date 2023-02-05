@@ -2,6 +2,9 @@
 
 Expansion Game Engine is a 3D game engine under development.
 
+/!\\ THIS PROJECT IS BEEING REWRITTEN FOR VULKAN /!\\ \
+/!\\ SEE vulkan-rewrite BRANCH /!\\
+
 ## Target List
  - [ ] Multi-API rendering (OpenGL, Vulkan, and DirectX11/12 if I want to export to XBox)
    - [x] OpenGL 3/4
