@@ -11,14 +11,14 @@
     },
 
     {
-      "type": "mesh",
-      "mesh": "/mdl/complex_rig_test.msh",
-      "skeleton": "/mdl/complex_rig_test.skl",
+      "type": "skelmesh",
+      "mesh": "/mdl/robot.msh",
+      "skeleton": "/mdl/robot.skl",
       "material": "/mat/mat_yellow.json",
 
       "pos": [4, 4, 0],
       "rot": [0, 0, 0],
-      "scale": [1, 1, 1]
+      "scale": [0.8, 0.8, 0.8]
     },
 
     {

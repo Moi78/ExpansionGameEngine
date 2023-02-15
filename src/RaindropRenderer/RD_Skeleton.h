@@ -2,6 +2,7 @@
 #define EXPGE_RD_SKELETON_H
 
 #include <BD_SkelReader.h>
+#include <glob.h>
 
 #include "RD_UniformBuffer.h"
 
