@@ -7,7 +7,7 @@
 #include <EXP_Game.h>
 #include <EXP_Conf.h>
 
-#include <BD_SkelReader.h>
+#include <BD_AnimReader.h>
 
 //Enabling Nvidia Optimus
 extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
@@ -29,6 +29,9 @@ int main(int argc, char* argv[]) {
 	std::shared_ptr<RaindropRenderer> rndr = std::make_shared<RaindropRenderer>(std::shared_ptr<RD_API>(api), std::shared_ptr<RD_RenderingPipeline>(rpline), 1270, 720, "ExGame");
 
     std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>(rndr, gameinfo);
+
+    BD_AnimReader ar;
+    ar.ReadFile(gameinfo.RootGameContentDir + "/mdl/robot_anim.anim");
 
     if(!game->InitEngine()) {
         std::cerr << "ERROR: Failed to init engine. :(" << std::endl;

@@ -5,6 +5,7 @@
 #include <vec.h>
 #include <BD_Writer.h>
 #include <BD_SkelWriter.h>
+#include <BD_AnimWriter.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -30,6 +31,62 @@ void ResolveBonesHierarchy(std::vector<Bone>& bones) {
     }
 }
 
+std::vector<BD_Frame> ExtractChannelFrames(aiNodeAnim* anim, std::vector<Bone>& bones) {
+    std::string nodeName = anim->mNodeName.C_Str();
+    int nodeIdx = FindBoneIdx(nodeName, bones);
+    if(nodeIdx == -1) {
+        std::cerr << "ERROR: Bad node id." << std::endl;
+        return {};
+    }
+
+    std::vector<BD_Frame> frames;
+    for(int i = 0; i < anim->mNumPositionKeys; i++) {
+        BD_Frame f;
+        f.boneID = nodeIdx;
+        f.chanType = BD_CHAN_POS;
+
+        f.time = anim->mPositionKeys[i].mTime;
+
+        for(int c = 0; c < 3; c++) {
+            f.vecData[c] = anim->mPositionKeys[i].mValue[c];
+        }
+        f.vecData[3] = 0;
+
+        frames.push_back(f);
+    }
+
+    for(int i = 0; i < anim->mNumRotationKeys; i++) {
+        BD_Frame f;
+        f.boneID = nodeIdx;
+        f.chanType = BD_CHAN_ROT;
+
+        f.time = anim->mRotationKeys[i].mTime;
+
+        f.vecData[0] = anim->mRotationKeys[i].mValue.x;
+        f.vecData[1] = anim->mRotationKeys[i].mValue.y;
+        f.vecData[2] = anim->mRotationKeys[i].mValue.z;
+        f.vecData[3] = anim->mRotationKeys[i].mValue.w;
+
+        frames.push_back(f);
+    }
+
+    for(int i = 0; i < anim->mNumScalingKeys; i++) {
+        BD_Frame f;
+        f.boneID = nodeIdx;
+        f.chanType = BD_CHAN_SCALE;
+
+        f.time = anim->mPositionKeys[i].mTime;
+
+        for(int c = 0; c < 3; c++) {
+            f.vecData[c] = anim->mScalingKeys[i].mValue[c];
+        }
+        f.vecData[3] = 0;
+
+        frames.push_back(f);
+    }
+
+    return frames;
+}
 
 int main(int argc, char* argv[]) {
     std::cout << "|----------------------------------------|" << std::endl;
@@ -39,6 +96,7 @@ int main(int argc, char* argv[]) {
     std::string filePath;
     std::string outpFilePath;
     bool doExtractSkeleton = false;
+    bool doExtractAnims = false;
 
     for(int i = 0; i < argc; i++) {
         if(std::string(argv[i]) == "-f") {
@@ -63,6 +121,8 @@ int main(int argc, char* argv[]) {
             }
 
             outpFilePath = std::string(argv[i + 1]);
+        } else if(std::string(argv[i]) == "-extract-anims") {
+            doExtractAnims = true;
         }
     }
 
@@ -121,6 +181,7 @@ int main(int argc, char* argv[]) {
         }
         std::cout << currentMesh->mNumFaces << " faces" << std::endl;
 
+        std::vector<Bone> bones;
         if(doExtractSkeleton) {
             std::vector<vec4> weights(currentMesh->mNumVertices);
             for(auto& wgt : weights) {
@@ -131,8 +192,6 @@ int main(int argc, char* argv[]) {
             for(auto& b : bonesID) {
                 b = vec4(-1, -1, -1, -1);
             }
-
-            std::vector<Bone> bones;
 
             if(currentMesh->HasBones()) {
                 BD_SkelWriter sk_w;
@@ -189,6 +248,37 @@ int main(int argc, char* argv[]) {
                 std::cout << currentMesh->mNumBones << " bones" << std::endl;
             } else {
                 std::cerr << "ERROR: No bones detected." << std::endl;
+            }
+        }
+
+        if(doExtractAnims) {
+            if(!scene->HasAnimations()) {
+                std::cerr << "ERROR: No animations detected." << std::endl;
+            } else {
+                for(int a = 0; a < scene->mNumAnimations; a++) {
+                    aiAnimation* anim = scene->mAnimations[a];
+                    std::cout << "Anim " << a << " duration : " << anim->mDuration / anim->mTicksPerSecond << " sec" << std::endl;
+                    std::cout << "Framerate : " << anim->mTicksPerSecond << " FPS" << std::endl;
+
+                    BD_AnimMeta meta{};
+                    meta.framerate = anim->mTicksPerSecond;
+                    meta.duration = anim->mDuration;
+
+                    std::filesystem::path outp_anim(outpDir.parent_path());
+                    BD_AnimWriter aw;
+                    for(int chan = 0; chan < anim->mNumChannels; chan++) {
+                        assert(bones.size() > 0);
+                        auto animData = ExtractChannelFrames(anim->mChannels[chan], bones);
+
+                        std::cout << "Channel " << chan << " frame count : " << animData.size() << std::endl;
+                        for(auto f : animData) {
+                            aw.AddFrame(f);
+                        }
+                    }
+
+                    aw.SetAnimMeta(meta);
+                    aw.WriteAnimation(outp_anim.string() + "/" + outpDir.stem().string() + ".anim");
+                }
             }
         }
 
