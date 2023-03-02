@@ -9,8 +9,8 @@ EXP_SkeletalMesh::EXP_SkeletalMesh(EXP_Game *game, std::string mesh_file, std::s
 
     std::shared_ptr<RD_Skeleton> skel = std::make_shared<RD_Skeleton>(0);
     skel->ReadSkeleton(game->GetGameContentPath() + skel_file);
-    game->SetupSkeleton(skel);
 
+    game->SetupSkeleton(skel);
     m_mesh->SetSkeleton(skel);
 
     mat->RegisterMesh(m_mesh);
@@ -25,4 +25,8 @@ void EXP_SkeletalMesh::SetParentMatrix(mat4f &pmat) {
     mat4f realTransf = pmat * compTransf;
 
     m_mesh->SetTransform(realTransf);
+}
+
+std::shared_ptr<RD_Skeleton> EXP_SkeletalMesh::GetSkeleton() {
+    return m_mesh->GetSkeleton();
 }

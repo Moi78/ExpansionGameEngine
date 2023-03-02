@@ -38,6 +38,7 @@ public:
 
     int GetSkeletonOffset();
     void SetupSkeleton(std::shared_ptr<RD_Skeleton> skel);
+    void UpdateSkeleton(std::shared_ptr<RD_Skeleton> skel);
 
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;

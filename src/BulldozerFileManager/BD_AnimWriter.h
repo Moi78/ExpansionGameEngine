@@ -10,7 +10,8 @@
 enum BD_ChannelType {
     BD_CHAN_ROT = 0x00,
     BD_CHAN_POS = 0x01,
-    BD_CHAN_SCALE = 0x02
+    BD_CHAN_SCALE = 0x02,
+    BD_CHAN_EMPTY = 0x03
 };
 
 struct BD_Frame {

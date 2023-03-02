@@ -14,6 +14,8 @@ public:
     BD_Frame GetFrameByIndex(int idx);
     int GetFrameCount();
 
+    BD_AnimMeta GetMeta();
+
 private:
     std::vector<BD_Frame> m_frames;
     BD_AnimMeta m_meta;

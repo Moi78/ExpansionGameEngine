@@ -16,7 +16,7 @@
       "skeleton": "/mdl/robot_anim.skl",
       "material": "/mat/mat_yellow.json",
 
-      "pos": [4, 4, 2],
+      "pos": [4, 4, 4],
       "rot": [0, 0, 0],
       "scale": [0.5, 0.5, 0.5]
     },

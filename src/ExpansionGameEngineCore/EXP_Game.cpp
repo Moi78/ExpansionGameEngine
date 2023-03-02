@@ -94,3 +94,7 @@ void EXP_Game::SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) {
 
     m_last_skel_offset += skel->GetBoneCount() * 16 * sizeof(float);
 }
+
+void EXP_Game::UpdateSkeleton(std::shared_ptr<RD_Skeleton> skel) {
+    m_rndr->SetupSkeleton(skel);
+}

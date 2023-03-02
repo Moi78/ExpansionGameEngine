@@ -36,23 +36,23 @@ public:
 
 	mat4f ToMat4() {
 		float a[16] = {
-			m_quat[0], m_quat[3], - m_quat[2], m_quat[1],
-			- m_quat[3], m_quat[0], m_quat[1], m_quat[2],
-			m_quat[2], - m_quat[1], m_quat[0], m_quat[3],
-			- m_quat[1], - m_quat[2], - m_quat[3], m_quat[0],
+			 m_quat[0],  m_quat[3], -m_quat[2], m_quat[1],
+			-m_quat[3],  m_quat[0],  m_quat[1], m_quat[2],
+			 m_quat[2], -m_quat[1],  m_quat[0], m_quat[3],
+			-m_quat[1], -m_quat[2], -m_quat[3], m_quat[0],
 		};
 
 		float b[16] = {
-			m_quat[0], m_quat[3], -m_quat[2], m_quat[1],
-			- m_quat[3], m_quat[0], m_quat[1], - m_quat[2],
-			m_quat[2], - m_quat[1], m_quat[0], - m_quat[3],
-			m_quat[1], m_quat[2], m_quat[3], m_quat[0],
+			 m_quat[0],  m_quat[3], -m_quat[2], -m_quat[1],
+			-m_quat[3],  m_quat[0],  m_quat[1], -m_quat[2],
+			 m_quat[2], -m_quat[1],  m_quat[0], -m_quat[3],
+			 m_quat[1],  m_quat[2],  m_quat[3],  m_quat[0],
 		};
 		
 		mat4f mat_a(a);
-		const mat4f mat_b(b);
+		mat4f mat_b(b);
 
-		return mat_a * mat_b;
+		return mat_b * mat_a;
 	}
 	
 	Quat operator*(const Quat& q) {

@@ -47,9 +47,9 @@ std::vector<BD_Frame> ExtractChannelFrames(aiNodeAnim* anim, std::vector<Bone>& 
 
         f.time = anim->mPositionKeys[i].mTime;
 
-        for(int c = 0; c < 3; c++) {
-            f.vecData[c] = anim->mPositionKeys[i].mValue[c];
-        }
+        f.vecData[0] = anim->mPositionKeys[i].mValue.x;
+        f.vecData[1] = anim->mPositionKeys[i].mValue.y;
+        f.vecData[2] = anim->mPositionKeys[i].mValue.z;
         f.vecData[3] = 0;
 
         frames.push_back(f);
@@ -75,11 +75,11 @@ std::vector<BD_Frame> ExtractChannelFrames(aiNodeAnim* anim, std::vector<Bone>& 
         f.boneID = nodeIdx;
         f.chanType = BD_CHAN_SCALE;
 
-        f.time = anim->mPositionKeys[i].mTime;
+        f.time = anim->mScalingKeys[i].mTime;
 
-        for(int c = 0; c < 3; c++) {
-            f.vecData[c] = anim->mScalingKeys[i].mValue[c];
-        }
+        f.vecData[0] = anim->mScalingKeys[i].mValue.x;
+        f.vecData[1] = anim->mScalingKeys[i].mValue.y;
+        f.vecData[2] = anim->mScalingKeys[i].mValue.z;
         f.vecData[3] = 0;
 
         frames.push_back(f);

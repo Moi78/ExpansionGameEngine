@@ -55,3 +55,9 @@ mat4f RD_Skeleton::ResolveMatrix(Bone b) {
 
     return globalTransf;
 }
+
+void RD_Skeleton::TransformBone(mat4f transform, int idx) {
+    //m_skeleton[idx].pos = m_skeleton[idx].pos * transform;
+    m_skeleton[idx].pos = transform;
+    ComputeFinalMatrices();
+}

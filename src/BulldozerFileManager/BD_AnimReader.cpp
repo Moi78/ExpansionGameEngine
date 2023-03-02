@@ -44,3 +44,7 @@ BD_Frame BD_AnimReader::GetFrameByIndex(int idx) {
     assert(idx < m_frames.size());
     return m_frames[idx];
 }
+
+BD_AnimMeta BD_AnimReader::GetMeta() {
+    return m_meta;
+}

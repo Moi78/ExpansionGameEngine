@@ -6,6 +6,7 @@
 #include "EXP_Game.h"
 #include "EXP_Actor.h"
 #include "EXP_SkeletalMesh.h"
+#include "EXP_SkelAnim.h"
 
 class EXP_SkeletalMeshActor : public EXP_Actor {
 public:
@@ -13,10 +14,13 @@ public:
     ~EXP_SkeletalMeshActor() {};
 
     void OnStart() override {}
-    void OnTick() override {}
+    void OnTick() override;
 
 private:
     std::shared_ptr<EXP_SkeletalMesh> m_skel_mesh;
+
+    std::shared_ptr<EXP_SkelAnim> anim;
+    int fcount;
 };
 
 

@@ -15,6 +15,8 @@ public:
 
     virtual void SetParentMatrix(mat4f& pmat) override;
 
+    std::shared_ptr<RD_Skeleton> GetSkeleton();
+
 private:
     std::shared_ptr<RD_Mesh> m_mesh;
 };

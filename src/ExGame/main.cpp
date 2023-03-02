@@ -30,9 +30,6 @@ int main(int argc, char* argv[]) {
 
     std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>(rndr, gameinfo);
 
-    BD_AnimReader ar;
-    ar.ReadFile(gameinfo.RootGameContentDir + "/mdl/robot_anim.anim");
-
     if(!game->InitEngine()) {
         std::cerr << "ERROR: Failed to init engine. :(" << std::endl;
         return -1;
