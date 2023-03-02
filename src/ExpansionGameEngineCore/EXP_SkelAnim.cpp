@@ -34,21 +34,21 @@ void EXP_SkelAnim::TransfSkelAtTime(std::shared_ptr<EXP_SkeletalMesh> skelmesh, 
     std::shared_ptr<RD_Skeleton> skel = skelmesh->GetSkeleton();
 
     for(int b = 0; b < skel->GetBoneCount(); b++) {
-        mat4f transf = mat4f(1.0f);
-
+        mat4f transM = mat4f(1.0f);
         BD_Frame closest_pos = GetClosestFrame(m_pos, time, b);
         vec3 pos = vec3(closest_pos.vecData[0], closest_pos.vecData[1], closest_pos.vecData[2]);
-        transf = TranslateMatrix(transf, pos);
+        transM = TranslateMatrix(transM, pos);
 
         BD_Frame closest_rot = GetClosestFrame(m_rot, time, b);
         Quat rot = Quat(closest_rot.vecData[3], closest_rot.vecData[0], closest_rot.vecData[1], closest_rot.vecData[2]);
-        transf = transf * rot.ToMat4();
-        rot.ToMat4().DBG_print_matrix();
+        mat4f rotM = rot.ToMat4();
 
+        mat4f scaleM = mat4f(1.0f);
         BD_Frame closest_scale = GetClosestFrame(m_scale, time, b);
         vec3 scale = vec3(closest_scale.vecData[0], closest_scale.vecData[1], closest_scale.vecData[2]);
-        transf = ScaleMatrix(transf, vec3(1.0f, 1.0f, 1.0f));
+        scaleM = ScaleMatrix(scaleM, vec3(1.0f, 1.0f, 1.0f));
 
+        mat4f transf = transM * rotM * scaleM;
         skel->TransformBone(transf, b);
     }
 
