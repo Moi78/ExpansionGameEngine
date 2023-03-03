@@ -9,3 +9,11 @@ vec3 Cross(vec3 a, vec3 b) {
 
     return res;
 }
+
+vec3 Lerp(vec3& a, vec3& b, float t) {
+    float x = a.GetX() * (1 - t) + b.GetX() * t;
+    float y = a.GetY() * (1 - t) + b.GetY() * t;
+    float z = a.GetZ() * (1 - t) + b.GetZ() * t;
+
+    return vec3(x, y, z);
+}

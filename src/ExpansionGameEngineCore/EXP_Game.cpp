@@ -4,6 +4,7 @@
 #include "EXP_MapLoader.h"
 #include "EXP_Level.h"
 #include "EXP_Material.h"
+#include "EXP_Animator.h"
 
 EXP_Game::EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo) {
     m_rndr = rndr;
@@ -32,6 +33,7 @@ bool EXP_Game::InitEngine() {
 
     // Init Input Handler jut before it is used by actors
     m_inhdl = std::make_shared<EXP_InputHandler>(m_rndr->GetAPI()->GetWindowingSystem());
+    m_animator = std::make_shared<EXP_Animator>();
 
     LoadLevel(m_gameinfo.RootGameContentDir + m_gameinfo.StartLevel);
 
@@ -47,6 +49,8 @@ void EXP_Game::RunGame() {
 
         m_inhdl->UpdateAll();
         m_currentLevel->TickActors();
+
+        m_animator->UpdateAnimations();
     }
 }
 
@@ -83,6 +87,10 @@ std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath) {
 
 std::shared_ptr<EXP_InputHandler> EXP_Game::GetInputHandler() {
     return m_inhdl;
+}
+
+std::shared_ptr<EXP_Animator> EXP_Game::GetAnimator() {
+    return m_animator;
 }
 
 int EXP_Game::GetSkeletonOffset() {

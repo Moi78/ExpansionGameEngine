@@ -15,7 +15,7 @@ public:
     size_t GetOffset();
 
     void ReadSkeleton(std::string fpath);
-    void TransformBone(mat4f transform, int idx);
+    void SetBoneTransform(mat4f transform, int idx);
 
     size_t GetBoneCount();
 

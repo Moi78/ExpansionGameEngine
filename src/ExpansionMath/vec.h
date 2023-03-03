@@ -234,5 +234,6 @@ public:
 };
 
 vec3 Cross(vec3 a, vec3 b);
+vec3 Lerp(vec3& a, vec3& b, float t);
 
 #endif //EXPGE_VEC_H

@@ -2,6 +2,7 @@
 #define EXPGE_EXP_SKELETALMESHACTOR_H
 
 #include <memory>
+#include <chrono>
 
 #include "EXP_Game.h"
 #include "EXP_Actor.h"
@@ -14,13 +15,10 @@ public:
     ~EXP_SkeletalMeshActor() {};
 
     void OnStart() override {}
-    void OnTick() override;
+    void OnTick() override {};
 
 private:
     std::shared_ptr<EXP_SkeletalMesh> m_skel_mesh;
-
-    std::shared_ptr<EXP_SkelAnim> anim;
-    int fcount;
 };
 
 

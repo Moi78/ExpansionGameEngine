@@ -29,7 +29,7 @@ public:
         return m_ressources.find(id) != m_ressources.end();
     }
 
-private:
+protected:
     std::unordered_map<std::string, T> m_ressources;
 };
 
