@@ -41,7 +41,7 @@ void EXP_SkelAnim::TransfSkelAtTime(std::shared_ptr<EXP_SkeletalMesh> skelmesh, 
 
         BD_Frame closest_rot = GetClosestFrame(m_rot, time, b);
         Quat rot = Quat(closest_rot.vecData[3], closest_rot.vecData[0], closest_rot.vecData[1], closest_rot.vecData[2]);
-        mat4f rotM = rot.ToMat4();
+        mat4f rotM = rot.GetConjugate().ToMat4();
 
         mat4f scaleM = mat4f(1.0f);
         BD_Frame closest_scale = GetClosestFrame(m_scale, time, b);
