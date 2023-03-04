@@ -5,6 +5,8 @@
       "type": "mesh",
       "mesh": "/mdl/suzanne.msh",
       "material": "/mat/mat_yellow.json",
+      "tag": "suzanne",
+
       "pos": [-2.0, 0.0, 0.0],
       "rot": [25.0, -45.0, 45.0],
       "scale": [2.0, 2.0, 2.0]
@@ -15,8 +17,21 @@
       "mesh": "/mdl/robot_anim.msh",
       "skeleton": "/mdl/robot_anim.skl",
       "material": "/mat/mat_yellow.json",
+      "tag": "skel",
 
       "pos": [4, 4, 2.5],
+      "rot": [0, 0, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+
+    {
+      "type": "skelmesh",
+      "mesh": "/mdl/robot_anim.msh",
+      "skeleton": "/mdl/robot_anim.skl",
+      "material": "/mat/mat_yellow.json",
+      "tag": "skel2",
+
+      "pos": [4, 7, 2.5],
       "rot": [0, 0, 0],
       "scale": [0.5, 0.5, 0.5]
     },
@@ -25,6 +40,8 @@
       "type": "mesh",
       "mesh": "/mdl/plane.msh",
       "material": "/mat/mat_test.json",
+      "tag": "ground",
+
       "pos": [0.0, 0.0, -1.0],
       "rot": [0.0, 0.0, 0.0],
       "scale": [15.0, 15.0, 15.0]
@@ -32,6 +49,7 @@
 
     {
       "type": "dirlight",
+      "tag": "sun",
 
       "color": [1.0, 1.0, 1.0],
       "dir": [2.0, 1.0, -1],

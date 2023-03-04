@@ -49,6 +49,7 @@ void EXP_Game::RunGame() {
 
         m_inhdl->UpdateAll();
         m_currentLevel->TickActors();
+        m_currentLevel->OnTick();
 
         m_animator->UpdateAnimations();
     }
@@ -56,6 +57,7 @@ void EXP_Game::RunGame() {
 
 void EXP_Game::LoadLevel(std::string levelPath) {
     m_currentLevel = m_maploader->LoadLevel(levelPath);
+    m_currentLevel->OnStart();
 }
 
 std::shared_ptr<RaindropRenderer> EXP_Game::GetRenderer() {

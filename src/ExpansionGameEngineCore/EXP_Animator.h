@@ -11,6 +11,8 @@ using namespace std::chrono;
 using namespace std::chrono_literals;
 
 struct EXP_AnimTracker {
+    EXP_AnimTracker(std::shared_ptr<EXP_SkelAnim> canim, std::shared_ptr<EXP_SkeletalMesh> cmesh, float time_scale, bool b);
+
     std::shared_ptr<EXP_SkelAnim> anim;
     std::shared_ptr<EXP_SkeletalMesh> mesh;
 
@@ -19,7 +21,7 @@ struct EXP_AnimTracker {
     bool isLooping;
 };
 
-class EXP_Animator : private EXP_GenericRessourceManager<EXP_AnimTracker> {
+class EXP_Animator : private EXP_GenericRessourceManager<std::shared_ptr<EXP_AnimTracker>> {
 public:
     EXP_Animator();
     ~EXP_Animator();

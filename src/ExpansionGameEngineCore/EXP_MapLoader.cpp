@@ -42,17 +42,22 @@ std::shared_ptr<EXP_Level> EXP_MapLoader::LoadLevel(std::string levelPath) {
 
     Json::Value nodes = root["nodes"];
     for(auto& n : nodes) {
+        std::optional<std::string> opt_tag;
+        if(n.isMember("tag")) {
+            opt_tag = n["tag"].asString();
+        }
+
         if(n["type"].asString() == "mesh") {
-            lvl->RegisterActor(CreateMesh(n));
+            lvl->RegisterActor(CreateMesh(n), opt_tag);
 
         } else if(n["type"].asString() == "dirlight") {
-            lvl->RegisterActor(CreateDirLight(n));
+            lvl->RegisterActor(CreateDirLight(n), opt_tag);
 
         } else if(n["type"].asString() == "pointlight") {
-            lvl->RegisterActor(CreatePointLight(n));
+            lvl->RegisterActor(CreatePointLight(n), opt_tag);
 
         } else if(n["type"].asString() == "skelmesh") {
-            lvl->RegisterActor(CreateSKMesh(n));
+            lvl->RegisterActor(CreateSKMesh(n), opt_tag);
         }
     }
 

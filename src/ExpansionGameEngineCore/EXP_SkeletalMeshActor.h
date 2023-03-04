@@ -14,6 +14,8 @@ public:
     EXP_SkeletalMeshActor(EXP_Game* game, std::string mesh_file, std::string skel_file, std::shared_ptr<EXP_Material> mat, vec3 pos, vec3 rot, vec3 scale);
     ~EXP_SkeletalMeshActor() {};
 
+    std::shared_ptr<EXP_SkeletalMesh> GetMeshComponent();
+
     void OnStart() override {}
     void OnTick() override {};
 

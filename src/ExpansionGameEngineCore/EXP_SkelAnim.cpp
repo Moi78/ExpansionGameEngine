@@ -15,6 +15,8 @@ bool EXP_SkelAnim::LoadAnimation(std::string path) {
         return false;
     }
 
+    std::cout << "Loading animation " << path << std::endl;
+
     for(int i = 0; i < ar.GetFrameCount(); i++) {
         BD_Frame f = ar.GetFrameByIndex(i);
         if(f.chanType == BD_CHAN_POS) {
