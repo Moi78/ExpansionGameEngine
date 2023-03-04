@@ -7,7 +7,7 @@ EXP_SkeletalMesh::EXP_SkeletalMesh(EXP_Game *game, std::string mesh_file, std::s
     m_mesh = std::make_shared<RD_Mesh>(game->GetRenderer()->GetAPI(), pos, rot, scale);
     m_mesh->LoadMesh(game->GetGameContentPath() + mesh_file);
 
-    std::shared_ptr<RD_Skeleton> skel = std::make_shared<RD_Skeleton>(0);
+    std::shared_ptr<RD_Skeleton> skel = std::make_shared<RD_Skeleton>(game->GetSkeletonOffset());
     skel->ReadSkeleton(game->GetGameContentPath() + skel_file);
 
     game->SetupSkeleton(skel);

@@ -18,17 +18,12 @@ public:
 
     void TransfSkelAtTime(std::shared_ptr<EXP_SkeletalMesh> skelmesh, double time);
 
-    void PauseAnim(bool pauseState);
-    bool IsPaused();
-
     BD_AnimMeta GetMeta();
 private:
     BD_Frame GetClosestFrame(std::vector<BD_Frame>& frames, double time, int id, bool next = false);
 
     EXP_Game* m_game;
     BD_AnimMeta m_meta;
-
-    bool m_isPaused;
 
     std::vector<BD_Frame> m_pos;
     std::vector<BD_Frame> m_rot;

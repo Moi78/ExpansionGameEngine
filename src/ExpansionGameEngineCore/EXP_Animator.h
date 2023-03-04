@@ -19,6 +19,8 @@ struct EXP_AnimTracker {
     float currentFrame;
     float timeScale;
     bool isLooping;
+
+    bool isPaused;
 };
 
 class EXP_Animator : private EXP_GenericRessourceManager<std::shared_ptr<EXP_AnimTracker>> {

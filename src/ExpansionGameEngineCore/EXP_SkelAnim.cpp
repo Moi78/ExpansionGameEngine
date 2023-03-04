@@ -2,7 +2,6 @@
 
 EXP_SkelAnim::EXP_SkelAnim(EXP_Game* game) {
     m_game = game;
-    m_isPaused = false;
 }
 
 EXP_SkelAnim::~EXP_SkelAnim() {
@@ -133,14 +132,6 @@ BD_Frame EXP_SkelAnim::GetClosestFrame(std::vector<BD_Frame> &frames, double tim
     }
 
     return closest;
-}
-
-void EXP_SkelAnim::PauseAnim(bool pauseState) {
-    m_isPaused = pauseState;
-}
-
-bool EXP_SkelAnim::IsPaused() {
-    return m_isPaused;
 }
 
 BD_AnimMeta EXP_SkelAnim::GetMeta() {

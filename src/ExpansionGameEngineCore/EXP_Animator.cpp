@@ -26,7 +26,7 @@ void EXP_Animator::PauseAnimation(std::string animName) {
         return;
     }
 
-    GetRessource(animName)->anim->PauseAnim(true);
+    GetRessource(animName)->isPaused = true;
 }
 
 void EXP_Animator::ResumeAnimation(std::string animName) {
@@ -35,7 +35,7 @@ void EXP_Animator::ResumeAnimation(std::string animName) {
         return;
     }
 
-    GetRessource(animName)->anim->PauseAnim(false);
+    GetRessource(animName)->isPaused = false;
 }
 
 void EXP_Animator::StopAnimation(std::string animName) {
@@ -50,10 +50,11 @@ void EXP_Animator::StopAnimation(std::string animName) {
 void EXP_Animator::UpdateAnimations() {
     float now = NowMs();
 
+    std::vector<std::string> toYeet;
     for(auto& anims : m_ressources) {
         auto tracker = anims.second;
 
-        if(!tracker->anim->IsPaused()) {
+        if(!tracker->isPaused) {
             tracker->anim->TransfSkelAtTime(tracker->mesh, tracker->currentFrame);
 
             float fps = tracker->anim->GetMeta().framerate;
@@ -63,10 +64,15 @@ void EXP_Animator::UpdateAnimations() {
                 if (tracker->isLooping) {
                     tracker->currentFrame = 1;
                 } else {
-                    RemoveRessource(anims.first);
+                    toYeet.push_back(anims.first);
                 }
             }
         }
+    }
+
+    for(auto& y : toYeet) {
+        std::cout << "YEET" << std::endl;
+        RemoveRessource(y);
     }
 
     m_last_updt_stamp = now;
@@ -80,4 +86,6 @@ EXP_AnimTracker::EXP_AnimTracker(std::shared_ptr<EXP_SkelAnim> canim, std::share
     currentFrame = 1;
     timeScale = time_scale;
     isLooping = b;
+
+    isPaused = false;
 }

@@ -32,7 +32,7 @@ void GameLevel::OnStart() {
     m_anim = std::make_shared<EXP_SkelAnim>(m_game);
     if(m_anim->LoadAnimation("/mdl/robot_anim.anim")) {
         m_game->GetAnimator()->PlayAnimation(m_anim, skelMesh, "skelAnim1", true);
-        m_game->GetAnimator()->PlayAnimation(m_anim, skelMesh2, "skelAnim2", false);
+        m_game->GetAnimator()->PlayAnimation(m_anim, skelMesh2, "skelAnim2", true);
     }
 }
 
@@ -40,8 +40,10 @@ void GameLevel::PlayPause() {
     std::cout << "One time press" << std::endl;
     if(m_pause_state) {
         m_game->GetAnimator()->ResumeAnimation("skelAnim1");
+        m_game->GetAnimator()->PauseAnimation("skelAnim2");
     } else {
        m_game->GetAnimator()->PauseAnimation("skelAnim1");
+       m_game->GetAnimator()->ResumeAnimation("skelAnim2");
     }
 
     m_pause_state = !m_pause_state;
