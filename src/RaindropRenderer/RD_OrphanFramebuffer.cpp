@@ -43,6 +43,7 @@ RD_OrphanFramebuffer_Vk::RD_OrphanFramebuffer_Vk(VkDevice dev, std::shared_ptr<R
 }
 
 RD_OrphanFramebuffer_Vk::~RD_OrphanFramebuffer_Vk() {
+    std::cout << "Destroyed orphan framebuffer" << std::endl;
     vkDestroyFramebuffer(m_dev, m_fb, nullptr);
 }
 

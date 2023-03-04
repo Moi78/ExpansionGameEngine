@@ -195,7 +195,7 @@ void RD_RenderingPipeline_PBR::Resize(int w, int h) {
 
     std::vector<std::shared_ptr<RD_Texture>> tArray = {};
     for(auto& s : m_depthFBs) {
-        tArray.push_back(s->GetAttachment(0));
+        tArray.push_back(s->GetAttachment(1));
     }
 
     m_plineLight->RegisterTextureArray(tArray, 20);
