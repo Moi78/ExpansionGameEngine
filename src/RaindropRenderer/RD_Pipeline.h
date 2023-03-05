@@ -32,7 +32,7 @@ public:
     virtual void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) = 0;
     virtual void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
 
-    virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) = 0;
+    virtual void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer> buff) = 0;
     virtual void RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) = 0;
     virtual void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
     virtual void PurgeTextures() = 0;
@@ -71,7 +71,7 @@ public:
     void DrawVertexBuffer(std::shared_ptr<RD_VertexBuffer> vbuff) override;
     void DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuffer> vibuff, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
-    void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) override;
+    void RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer> buff) override;
     void RegisterTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) override;
     void RegisterTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
     void PurgeTextures() override;

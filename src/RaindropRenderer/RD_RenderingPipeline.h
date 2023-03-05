@@ -106,6 +106,7 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_casterCount;
     std::shared_ptr<RD_UniformBuffer> m_camData;
     std::shared_ptr<RD_UniformBuffer> m_bonesBuffer;
+    std::shared_ptr<RD_UniformBuffer> m_viewport_buffer;
 
     std::shared_ptr<RD_RenderSynchronizer_Vk> m_sync;
 

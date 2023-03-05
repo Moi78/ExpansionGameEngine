@@ -23,6 +23,9 @@ GameLevel::~GameLevel() {
 void GameLevel::OnStart() {
     m_game->GetInputHandler()->RegisterKeyboardCallback(m_playpause);
 
+    //m_game->GetRenderer()->GetAPI()->GetWindowingSystem()->SetViewport({0, 0, 3840 / 10, 2160 / 10});
+    //m_game->GetRenderer()->GetAPI()->GetWindowingSystem()->SetViewportMode(RD_ViewportMode::FLOATING);
+
     auto skelMeshActor = GetCastedActorByName<EXP_SkeletalMeshActor>("skel");
     auto skelMesh = skelMeshActor->GetMeshComponent();
 

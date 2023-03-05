@@ -32,6 +32,9 @@ void vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerE
 RD_Windowing_GLFW::RD_Windowing_GLFW(RD_API* api) {
     m_api = api;
     m_resizedFlag = false;
+    m_vpm = RD_ViewportMode::FULL_WINDOW;
+    m_vp = {0, 0, 1, 1};
+    m_vp_real = {0, 0, 1, 1};
 
     m_initialized = false;
 }
@@ -91,6 +94,10 @@ bool RD_Windowing_GLFW::OpenWindow(std::string name, const int w, const int h) {
 	}
 
     m_initialized = true;
+
+    m_vp_u = m_api->CreateUniformBuffer(80);
+    m_vp_u->BuildAndAllocateBuffer(sizeof(RD_Rect));
+
 	return true;
 }
 
@@ -268,8 +275,12 @@ int RD_Windowing_GLFW::GetHeight() {
         return 0;
     }
 
-	glfwGetFramebufferSize(m_win, NULL, &m_h);
-	return m_h;
+    if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
+        glfwGetFramebufferSize(m_win, NULL, &m_h);
+        return m_h;
+    } else {
+        return m_vp.h;
+    }
 }
 
 int RD_Windowing_GLFW::GetWidth() {
@@ -277,8 +288,12 @@ int RD_Windowing_GLFW::GetWidth() {
         return 0;
     }
 
-	glfwGetFramebufferSize(m_win, &m_w, nullptr);
-	return m_w;
+    if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
+        glfwGetFramebufferSize(m_win, &m_w, nullptr);
+        return m_w;
+    } else {
+        return m_vp.w;
+    }
 }
 
 void RD_Windowing_GLFW::PollEvents() {
@@ -441,6 +456,9 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
 
     m_pline = m_api->CreatePipeline(m_rpass, blitShader, true);
 
+    m_vp_u->FillBufferData(&m_vp);
+
+    m_pline->RegisterUniformBuffer(m_vp_u);
     m_pline->BuildPipeline();
 
     m_verticies = m_api->CreateIndexedVertexBuffer();
@@ -493,6 +511,31 @@ bool RD_Windowing_GLFW::GetKeyPress(int key) {
 
 bool RD_Windowing_GLFW::GetMouseButtonPress(int mbutton) {
     return glfwGetMouseButton(m_win, mbutton) == GLFW_PRESS;
+}
+
+void RD_Windowing_GLFW::SetViewportMode(RD_ViewportMode vpm) {
+    m_vpm = vpm;
+
+    if(m_vpm == RD_ViewportMode::FLOATING) {
+        ResizeFrame(m_vp.w, m_vp.h);
+        m_vp_u->FillBufferData(&m_vp);
+    } else if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
+        RD_Rect defRect = {0, 0, 1, 1};
+        m_vp_u->FillBufferData(&defRect);
+    }
+}
+
+void RD_Windowing_GLFW::SetViewport(RD_Rect vp) {
+    m_vp = vp;
+
+    if(m_vpm == RD_ViewportMode::FLOATING) {
+        ResizeFrame(vp.w, vp.h);
+        m_vp_u->FillBufferData(&m_vp);
+    }
+}
+
+RD_Rect RD_Windowing_GLFW::GetViewportRect() {
+    return m_vp_real;
 }
 
 // ------------------------------------------------------------------------------------

@@ -503,7 +503,7 @@ void RD_Pipeline_Vk::DrawIndexedVertexBuffer(std::shared_ptr<RD_IndexedVertexBuf
     );
 }
 
-void RD_Pipeline_Vk::RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer>& buff) {
+void RD_Pipeline_Vk::RegisterUniformBuffer(std::shared_ptr<RD_UniformBuffer> buff) {
     m_uBuffs.push_back(buff);
 
     VkDescriptorSetLayoutBinding bindLayout{};

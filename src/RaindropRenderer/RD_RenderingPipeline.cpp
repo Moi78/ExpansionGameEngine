@@ -99,6 +99,12 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_bonesBuffer = m_api->CreateUniformBuffer(1);
     m_bonesBuffer->BuildAndAllocateBuffer(1024 * 16 * sizeof(float));
 
+    m_viewport_buffer = m_api->CreateUniformBuffer(80);
+    m_viewport_buffer->BuildAndAllocateBuffer(sizeof(RD_Rect));
+
+    RD_Rect vp = m_api->GetWindowingSystem()->GetViewportRect();
+    m_viewport_buffer->FillBufferData(&vp);
+
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
     base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
 
@@ -114,11 +120,13 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineSblur = m_api->CreatePipeline(m_rpassSblur, monoblur_shader);
     m_plineSblur->RegisterTexture(m_rpassShadowDepth->GetAttachment(1), 0);
     m_plineSblur->ConfigurePushConstant(2 * sizeof(float));
+    m_plineSblur->RegisterUniformBuffer(m_viewport_buffer);
     m_plineSblur->BuildPipeline();
 
     m_plineSblur_b = m_api->CreatePipeline(m_rpassSblur, monoblur_shader);
     m_plineSblur_b->RegisterTexture(m_sblur->GetAttachment(1), 0);
     m_plineSblur_b->ConfigurePushConstant(2 * sizeof(float));
+    m_plineSblur_b->RegisterUniformBuffer(m_viewport_buffer);
     m_plineSblur_b->BuildPipeline();
 
     m_plineShadowDepth = m_api->CreatePipeline(m_rpassShadowDepth, shadowDepth_shader);
@@ -147,6 +155,7 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineLight->RegisterUniformBuffer(m_plights);
     m_plineLight->RegisterUniformBuffer(m_casterCount);
     m_plineLight->RegisterUniformBuffer(m_camData);
+    m_plineLight->RegisterUniformBuffer(m_viewport_buffer);
 
     m_plineLight->BuildPipeline();
 

@@ -7,8 +7,18 @@ layout (location = 4) in vec4 aBonesID;
 
 layout (location = 0) out vec2 UVcoords;
 
+layout(binding = 80) uniform VIEWPORT {
+    float x;
+    float y;
+    float w;
+    float h;
+};
+
 void main() {
-    gl_Position = vec4(aPos, 1.0);
+    vec2 pos = aPos.xy * vec2(w, h);
+    pos += vec2(x, y);
+
+    gl_Position = vec4(pos, 0.0, 1.0);
 
     UVcoords = aUV;
 }

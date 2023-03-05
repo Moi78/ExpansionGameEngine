@@ -25,6 +25,18 @@
 #include "RD_OrphanFramebuffer.h"
 #include "vec.h"
 
+enum class RD_ViewportMode {
+    FLOATING,
+    FULL_WINDOW
+};
+
+struct RD_Rect {
+    float x;
+    float y;
+    float w;
+    float h;
+};
+
 class RD_DLLAPI RD_Windowing {
 public:
 	RD_Windowing() {};
@@ -55,6 +67,10 @@ public:
     virtual void SetCursorPosition(double x, double y) = 0;
 
     virtual void SetCursorVisibility(bool visibility) = 0;
+
+    virtual void SetViewportMode(RD_ViewportMode vpm) = 0;
+    virtual void SetViewport(RD_Rect vp) = 0;
+    virtual RD_Rect GetViewportRect() = 0;
 };
 
 class RD_DLLAPI RD_API
@@ -166,6 +182,10 @@ public:
 
 	void SendGraphicsQueue(VkQueue queue);
 	void SendPresentQueue(VkQueue queue);
+
+    void SetViewportMode(RD_ViewportMode vpm) override;
+    void SetViewport(RD_Rect vp) override;
+    RD_Rect GetViewportRect() override;
 private:
 	static void ResizeCBCK(GLFWwindow* win, int w, int h);
 
@@ -205,7 +225,13 @@ private:
 	VkQueue m_presentQueue;
 
 	bool m_resizedFlag;
+    RD_ViewportMode m_vpm;
+
+    RD_Rect m_vp;
+    RD_Rect m_vp_real;
+
     std::optional<std::shared_ptr<RD_Callback>> m_extCallback;
+    std::shared_ptr<RD_UniformBuffer> m_vp_u;
 };
 
 class RD_DLLAPI RD_API_Vk : public RD_API {
