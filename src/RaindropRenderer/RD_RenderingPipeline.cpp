@@ -102,7 +102,7 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_viewport_buffer = m_api->CreateUniformBuffer(80);
     m_viewport_buffer->BuildAndAllocateBuffer(sizeof(RD_Rect));
 
-    RD_Rect vp = m_api->GetWindowingSystem()->GetViewportRect();
+    RD_Rect vp = {0, 0, 1, 1};
     m_viewport_buffer->FillBufferData(&vp);
 
     std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();

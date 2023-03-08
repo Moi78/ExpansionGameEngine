@@ -52,6 +52,9 @@ public:
 	virtual int GetHeight() = 0;
 	virtual int GetWidth() = 0;
 
+    virtual int GetScreenWidth() = 0;
+    virtual int GetScreenHeight() = 0;
+
 	virtual void Present() = 0;
     virtual void BuildBlitPipeline(std::string enginePath) = 0;
 
@@ -157,6 +160,9 @@ public:
 
 	int GetHeight() override;
 	int GetWidth() override;
+
+    int GetScreenWidth() override;
+    int GetScreenHeight() override;
 
 	void Present() override;
     void BuildBlitPipeline(std::string enginePath) override;

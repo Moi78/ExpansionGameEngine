@@ -274,8 +274,8 @@ int RD_Windowing_GLFW::GetHeight() {
         return 0;
     }
 
+    glfwGetFramebufferSize(m_win, NULL, &m_h);
     if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
-        glfwGetFramebufferSize(m_win, NULL, &m_h);
         return m_h;
     } else {
         return m_vp.h;
@@ -287,12 +287,22 @@ int RD_Windowing_GLFW::GetWidth() {
         return 0;
     }
 
+    glfwGetFramebufferSize(m_win, &m_w, nullptr);
     if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
-        glfwGetFramebufferSize(m_win, &m_w, nullptr);
         return m_w;
     } else {
         return m_vp.w;
     }
+}
+
+int RD_Windowing_GLFW::GetScreenHeight() {
+    glfwGetFramebufferSize(m_win, NULL, &m_h);
+    return m_h;
+}
+
+int RD_Windowing_GLFW::GetScreenWidth() {
+    glfwGetFramebufferSize(m_win, &m_w, nullptr);
+    return m_w;
 }
 
 void RD_Windowing_GLFW::PollEvents() {
@@ -417,6 +427,17 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
     m_rpass->SetRenderpassSize(nullptr, m_scExtent.width, m_scExtent.height);
     m_pline->RebuildPipeline();
 
+    if(m_vpm == RD_ViewportMode::FLOATING) {
+        float offset_x = (m_vp.w / (float)GetScreenWidth()) - 1;
+        float offset_y = (m_vp.h / (float)GetScreenHeight()) - 1;
+        m_vp_real = {
+                offset_x, offset_y,
+                m_vp.w / (float)GetScreenWidth(),
+                m_vp.h / (float)GetScreenHeight()
+        };
+        m_vp_u->FillBufferData(&m_vp_real);
+    }
+
     if(m_extCallback.has_value()) {
         m_extCallback->get()->Call();
     }
@@ -519,7 +540,6 @@ void RD_Windowing_GLFW::SetViewportMode(RD_ViewportMode vpm) {
 
     if(m_vpm == RD_ViewportMode::FLOATING) {
         ResizeFrame(m_vp.w, m_vp.h);
-        m_vp_u->FillBufferData(&m_vp);
     } else if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
         RD_Rect defRect = {0, 0, 1, 1};
         m_vp_u->FillBufferData(&defRect);
@@ -531,7 +551,6 @@ void RD_Windowing_GLFW::SetViewport(RD_Rect vp) {
 
     if(m_vpm == RD_ViewportMode::FLOATING) {
         ResizeFrame(vp.w, vp.h);
-        m_vp_u->FillBufferData(&m_vp);
     }
 }
 
