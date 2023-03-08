@@ -46,6 +46,8 @@ RD_Windowing_GLFW::~RD_Windowing_GLFW() {
 
 void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoDelete) {
     if(!surfaceNoDelete) {
+        m_vp_u.reset();
+
         m_rpass.reset();
         m_pline.reset();
         m_verticies.reset();
@@ -94,9 +96,6 @@ bool RD_Windowing_GLFW::OpenWindow(std::string name, const int w, const int h) {
 	}
 
     m_initialized = true;
-
-    m_vp_u = m_api->CreateUniformBuffer(80);
-    m_vp_u->BuildAndAllocateBuffer(sizeof(RD_Rect));
 
 	return true;
 }
@@ -456,6 +455,8 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
 
     m_pline = m_api->CreatePipeline(m_rpass, blitShader, true);
 
+    m_vp_u = m_api->CreateUniformBuffer(80);
+    m_vp_u->BuildAndAllocateBuffer(sizeof(RD_Rect));
     m_vp_u->FillBufferData(&m_vp);
 
     m_pline->RegisterUniformBuffer(m_vp_u);
