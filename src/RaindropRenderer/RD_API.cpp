@@ -500,6 +500,8 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
 }
 
 void RD_Windowing_GLFW::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
+    m_presentTex = tex;
+
     m_pline->PurgeTextures();
     m_pline->RegisterTexture(tex, 0);
     m_pline->RebuildPipeline();
@@ -556,6 +558,14 @@ void RD_Windowing_GLFW::SetViewport(RD_Rect vp) {
 
 RD_Rect RD_Windowing_GLFW::GetViewportRect() {
     return m_vp_real;
+}
+
+bool RD_Windowing_GLFW::HasPresentTexture() {
+    return m_presentTex.get() != nullptr;
+}
+
+std::shared_ptr<RD_Texture> RD_Windowing_GLFW::GetPresentTexture() {
+    return m_presentTex;
 }
 
 // ------------------------------------------------------------------------------------

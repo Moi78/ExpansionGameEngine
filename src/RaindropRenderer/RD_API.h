@@ -74,6 +74,9 @@ public:
     virtual void SetViewportMode(RD_ViewportMode vpm) = 0;
     virtual void SetViewport(RD_Rect vp) = 0;
     virtual RD_Rect GetViewportRect() = 0;
+
+    virtual bool HasPresentTexture() = 0;
+    virtual std::shared_ptr<RD_Texture> GetPresentTexture() = 0;
 };
 
 class RD_DLLAPI RD_API
@@ -192,6 +195,9 @@ public:
     void SetViewportMode(RD_ViewportMode vpm) override;
     void SetViewport(RD_Rect vp) override;
     RD_Rect GetViewportRect() override;
+
+    bool HasPresentTexture() override;
+    std::shared_ptr<RD_Texture> GetPresentTexture() override;
 private:
 	static void ResizeCBCK(GLFWwindow* win, int w, int h);
 
@@ -225,6 +231,7 @@ private:
 
     std::shared_ptr<RD_RenderPass> m_rpass;
     std::shared_ptr<RD_Pipeline> m_pline;
+    std::shared_ptr<RD_Texture> m_presentTex;
     std::shared_ptr<RD_IndexedVertexBuffer> m_verticies;
 
 	VkQueue m_gfxQueue;

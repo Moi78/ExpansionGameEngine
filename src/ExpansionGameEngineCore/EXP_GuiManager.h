@@ -18,10 +18,10 @@ public:
     const RD_Rect& GetRect();
 
 protected:
-    void SetChild(EXP_GuiWidget* child);
+    void AddChild(EXP_GuiWidget* child);
 
     EXP_GuiWidget* m_parent;
-    EXP_GuiWidget* m_child;
+    std::vector<EXP_GuiWidget*> m_child;
 
     RD_Rect m_rect;
 };
@@ -29,7 +29,7 @@ protected:
 class EXP_GuiManager {
 public:
     EXP_GuiManager(std::shared_ptr<RD_API> api);
-    ~EXP_GuiManager();
+    ~EXP_GuiManager() = default;
 
     void AddWidget(std::shared_ptr<EXP_GuiWidget> widget);
 
