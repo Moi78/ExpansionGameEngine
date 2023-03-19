@@ -561,11 +561,11 @@ RD_Rect RD_Windowing_GLFW::GetViewportRect() {
 }
 
 bool RD_Windowing_GLFW::HasPresentTexture() {
-    return m_presentTex.get() != nullptr;
+    return !m_presentTex.expired();
 }
 
 std::shared_ptr<RD_Texture> RD_Windowing_GLFW::GetPresentTexture() {
-    return m_presentTex;
+    return m_presentTex.lock();
 }
 
 // ------------------------------------------------------------------------------------

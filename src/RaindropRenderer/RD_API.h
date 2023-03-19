@@ -231,7 +231,7 @@ private:
 
     std::shared_ptr<RD_RenderPass> m_rpass;
     std::shared_ptr<RD_Pipeline> m_pline;
-    std::shared_ptr<RD_Texture> m_presentTex;
+    std::weak_ptr<RD_Texture> m_presentTex;
     std::shared_ptr<RD_IndexedVertexBuffer> m_verticies;
 
 	VkQueue m_gfxQueue;
