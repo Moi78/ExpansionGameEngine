@@ -366,8 +366,11 @@ void RD_Windowing_GLFW::Present() {
 		return;
 	}
 
+    bool isFS = 0;
+
 	std::shared_ptr<RD_Pipeline_Vk> plineVK = std::reinterpret_pointer_cast<RD_Pipeline_Vk>(m_pline);
 	plineVK->BindSC(m_scFbs[m_imgIdx]);
+    plineVK->PushConstant(&isFS, sizeof(uint32_t), {});
 
     plineVK->DrawIndexedVertexBuffer(m_verticies, {});
 
@@ -481,6 +484,7 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
     m_vp_u->FillBufferData(&m_vp);
 
     m_pline->RegisterUniformBuffer(m_vp_u);
+    m_pline->ConfigurePushConstant(sizeof(uint32_t));
     m_pline->BuildPipeline();
 
     m_verticies = m_api->CreateIndexedVertexBuffer();

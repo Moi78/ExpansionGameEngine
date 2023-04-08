@@ -10,6 +10,7 @@
 #include "EXP_Conf.h"
 #include "EXP_GenericRessourceManager.h"
 #include "EXP_InputHandler.h"
+#include "EXP_GuiManager.h"
 
 //Forward decl.
 class EXP_HotLoad;
@@ -49,6 +50,8 @@ private:
     std::unique_ptr<EXP_MapLoader> m_maploader;
     std::shared_ptr<EXP_InputHandler> m_inhdl;
     std::shared_ptr<EXP_Animator> m_animator;
+
+    std::unique_ptr<EXP_GuiManager> m_guiLayer;
 
     std::shared_ptr<EXP_Level> m_currentLevel;
 

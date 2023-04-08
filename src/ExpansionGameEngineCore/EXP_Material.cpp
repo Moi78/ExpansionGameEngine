@@ -8,8 +8,9 @@ EXP_Material::~EXP_Material() {
 
 }
 
-bool EXP_Material::LoadMaterial(std::string material_file) {
-    std::ifstream file(m_game->GetGameContentPath() + material_file);
+bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath) {
+    std::string rootPath = enginePath ? m_game->GetEngineContentPath() : m_game->GetGameContentPath();
+    std::ifstream file(rootPath + material_file);
     if(!file.is_open()) {
         return false;
     }
@@ -28,7 +29,7 @@ bool EXP_Material::LoadMaterial(std::string material_file) {
     auto shaderLoader = m_game->GetRenderer()->GetAPI()->CreateShader();
     bool result = shaderLoader->CompileShaderFromFile(
             m_game->GetEngineContentPath() + "/shaders/bin/base.vspv",
-            m_game->GetGameContentPath() + root["spirv_file"].asString()
+            rootPath + root["spirv_file"].asString()
     );
 
     if(!result) {
@@ -39,7 +40,7 @@ bool EXP_Material::LoadMaterial(std::string material_file) {
     auto pline = m_game->GetRenderer()->CreatePipeline(shaderLoader);
     for(auto& t : root["texs"]) {
         std::shared_ptr<RD_Texture> tex = m_game->GetRenderer()->GetAPI()->CreateTexture();
-        if(!tex->LoadTextureFromFile(m_game->GetGameContentPath() + t["path"].asString())) {
+        if(!tex->LoadTextureFromFile(rootPath + t["path"].asString())) {
             continue;
         }
 

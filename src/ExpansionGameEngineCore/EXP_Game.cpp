@@ -13,6 +13,8 @@ EXP_Game::EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo
     m_hotloader = std::make_shared<EXP_HotLoad>();
     m_maploader = std::make_unique<EXP_MapLoader>(this, m_hotloader);
 
+    m_guiLayer = std::make_unique<EXP_GuiManager>(rndr->GetAPI());
+
     m_materials = EXP_GenericRessourceManager<std::shared_ptr<EXP_Material>>();
 
     m_last_skel_offset = 0;
@@ -45,6 +47,7 @@ void EXP_Game::RunGame() {
         m_inhdl->ResetCursor();
 
         m_rndr->UpdateWindow();
+        m_guiLayer->RenderGui();
         m_rndr->RenderScene();
 
         m_inhdl->UpdateAll();

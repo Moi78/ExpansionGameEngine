@@ -14,11 +14,19 @@ layout(binding = 80) uniform VIEWPORT {
     float h;
 };
 
-void main() {
-    vec2 pos = aPos.xy * vec2(w, h);
-    pos += vec2(x, y);
+layout(push_constant) uniform FULLSCREEN_OVR {
+    bool fullscreenOverride;
+};
 
-    gl_Position = vec4(pos, 0.0, 1.0);
+void main() {
+    if(!fullscreenOverride) {
+        vec2 pos = aPos.xy * vec2(w, h);
+        pos += vec2(x, y);
+
+        gl_Position = vec4(pos, 0.0, 1.0);
+    } else {
+        gl_Position = vec4(aPos.xy, 0.0, 1.0);
+    }
 
     UVcoords = aUV;
 }

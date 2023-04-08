@@ -156,6 +156,7 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     m_plineLight->RegisterUniformBuffer(m_casterCount);
     m_plineLight->RegisterUniformBuffer(m_camData);
     m_plineLight->RegisterUniformBuffer(m_viewport_buffer);
+    m_plineLight->ConfigurePushConstant(sizeof(uint32_t));
 
     m_plineLight->BuildPipeline();
 
@@ -166,6 +167,8 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Materi
     if(sceneData.empty()) {
         return;
     }
+
+    uint32_t notFS = 0;
 
     cam->PushToUniform(m_camModel);
     cam->PushCamDataToUniform(m_camData);
@@ -181,6 +184,7 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Materi
 
     m_rpassLight->BeginRenderpass(m_sync);
     m_plineLight->Bind(m_sync);
+    m_plineLight->PushConstant(&notFS, sizeof(uint32_t), m_sync);
     m_plineLight->DrawIndexedVertexBuffer(m_renderSurface->GetVertexBuffer(), m_sync);
     m_plineLight->Unbind(m_sync);
     m_rpassLight->EndRenderpass(m_sync);

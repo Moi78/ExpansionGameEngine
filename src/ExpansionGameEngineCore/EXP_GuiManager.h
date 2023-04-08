@@ -13,7 +13,7 @@ public:
     ~EXP_GuiWidget() = default;
 
     virtual void RenderWidget() = 0;
-    void Paint();
+    virtual void Paint();
 
     const RD_Rect& GetRect();
 
@@ -37,6 +37,8 @@ public:
 
 private:
     std::shared_ptr<RD_API> m_api;
+
+    std::shared_ptr<RD_RenderPass> m_rpass;
 
     std::vector<std::shared_ptr<EXP_GuiWidget>> m_widgets;
 };

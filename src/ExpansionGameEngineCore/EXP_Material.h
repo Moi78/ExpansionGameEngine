@@ -18,7 +18,7 @@ public:
     EXP_Material(EXP_Game* game);
     ~EXP_Material();
 
-    bool LoadMaterial(std::string material_file);
+    bool LoadMaterial(std::string material_file, bool enginePath = false);
     void RegisterMesh(std::shared_ptr<RD_Mesh> smesh);
 
 private:
