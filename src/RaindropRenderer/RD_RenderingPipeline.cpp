@@ -20,24 +20,28 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     RD_Attachment color{};
     color.format = IMGFORMAT_RGBA;
     color.do_clear = true;
+    color.clearColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     color.is_swapchain_attachment = false;
     color.sample_count = 1;
 
     RD_Attachment colorf{};
     colorf.format = IMGFORMAT_RGBA16F;
     colorf.do_clear = true;
+    colorf.clearColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     colorf.is_swapchain_attachment = false;
     colorf.sample_count = 1;
 
     RD_Attachment depth{};
     depth.format = IMGFORMAT_DEPTH;
     depth.do_clear = true;
+    depth.clearColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     depth.is_swapchain_attachment = false;
     depth.sample_count = 1;
 
     RD_Attachment monocolorf{};
     monocolorf.format = IMGFORMAT_R32F;
     monocolorf.do_clear = true;
+    monocolorf.clearColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     monocolorf.is_swapchain_attachment = false;
     monocolorf.sample_count = 1;
 
@@ -197,10 +201,6 @@ void RD_RenderingPipeline_PBR::Resize(int w, int h) {
     m_rpassLight->SetRenderpassSize(m_api.get(), w, h);
     m_api->GetWindowingSystem()->SetPresentTexture(m_rpassLight->GetAttachment(0));
 
-    for(auto& p : m_pline_refs) {
-        p->RebuildPipeline();
-    }
-
     m_plineLight->PurgeTextures();
     for(int i = 0; i < 5; i++) {
         m_plineLight->RegisterTexture(m_rpassGBuff->GetAttachment(i), i + 10);
@@ -238,8 +238,6 @@ std::shared_ptr<RD_RenderPass> RD_RenderingPipeline_PBR::GetBaseRenderpass() {
 void RD_RenderingPipeline_PBR::SetupPipeline(std::shared_ptr<RD_Pipeline> pline) {
     pline->RegisterUniformBuffer(m_camModel);
     pline->RegisterUniformBuffer(m_bonesBuffer);
-
-    m_pline_refs.push_back(pline);
 }
 
 void RD_RenderingPipeline_PBR::RenderShadows(
@@ -296,12 +294,14 @@ void RD_RenderingPipeline_PBR::SetNumberOfShadowFB(int nbr) {
     RD_Attachment monocolorf{};
     monocolorf.format = IMGFORMAT_R32F;
     monocolorf.do_clear = true;
+    monocolorf.clearColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     monocolorf.is_swapchain_attachment = false;
     monocolorf.sample_count = 1;
 
     RD_Attachment depth{};
     depth.format = IMGFORMAT_DEPTH;
     depth.do_clear = true;
+    depth.clearColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     depth.is_swapchain_attachment = false;
     depth.sample_count = 1;
 

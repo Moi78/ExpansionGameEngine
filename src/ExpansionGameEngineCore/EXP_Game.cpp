@@ -13,8 +13,6 @@ EXP_Game::EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo
     m_hotloader = std::make_shared<EXP_HotLoad>();
     m_maploader = std::make_unique<EXP_MapLoader>(this, m_hotloader);
 
-    m_guiLayer = std::make_unique<EXP_GuiManager>(rndr->GetAPI());
-
     m_materials = EXP_GenericRessourceManager<std::shared_ptr<EXP_Material>>();
 
     m_last_skel_offset = 0;
@@ -28,6 +26,11 @@ bool EXP_Game::InitEngine() {
     if(!m_rndr->InitRenderer(m_gameinfo.RootEngineContentDir)) {
         return false;
     }
+
+    m_guiLayer = std::make_shared<EXP_GuiManager>(m_rndr->GetAPI());
+
+    RD_Callback resize_cbck{CL_VDFUNCPTR(EXP_Game::Resize)};
+    m_rndr->SetExtResizeCallback(resize_cbck);
 
     if(!m_hotloader->LoadLib(m_gameinfo.GameLib.c_str())) {
         return false;
@@ -75,13 +78,13 @@ std::string EXP_Game::GetEngineContentPath() {
     return m_gameinfo.RootEngineContentDir;
 }
 
-std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath) {
+std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath, bool fromEngine) {
     if(m_materials.DoIDExists(matPath)) {
         return m_materials.GetRessource(matPath);
     }
 
     auto material = std::make_shared<EXP_Material>(this);
-    if(!material->LoadMaterial(matPath)) {
+    if(!material->LoadMaterial(matPath, fromEngine)) {
         std::cout << "ERROR: Failed to load material" << std::endl;
         return nullptr; // TODO: Create a default material to be returned
     }
@@ -98,6 +101,10 @@ std::shared_ptr<EXP_Animator> EXP_Game::GetAnimator() {
     return m_animator;
 }
 
+std::shared_ptr<EXP_GuiManager> EXP_Game::GetGuiManager() {
+    return m_guiLayer;
+}
+
 int EXP_Game::GetSkeletonOffset() {
     return m_last_skel_offset;
 }
@@ -110,4 +117,14 @@ void EXP_Game::SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) {
 
 void EXP_Game::UpdateSkeleton(std::shared_ptr<RD_Skeleton> skel) {
     m_rndr->SetupSkeleton(skel);
+}
+
+void EXP_Game::Resize() {
+    auto win = m_rndr->GetAPI()->GetWindowingSystem();
+
+    m_guiLayer->Resize(win->GetScreenWidth(), win->GetScreenHeight());
+
+    for(auto& m : m_materials) {
+        m.second->GetPipeline()->RebuildPipeline();
+    }
 }

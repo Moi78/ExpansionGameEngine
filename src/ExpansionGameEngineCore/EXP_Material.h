@@ -21,6 +21,8 @@ public:
     bool LoadMaterial(std::string material_file, bool enginePath = false);
     void RegisterMesh(std::shared_ptr<RD_Mesh> smesh);
 
+    std::shared_ptr<RD_Pipeline> GetPipeline();
+
 private:
     EXP_Game* m_game;
     std::shared_ptr<RD_Material> m_mat;

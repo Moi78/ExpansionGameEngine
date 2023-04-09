@@ -36,6 +36,7 @@ public:
 
 	bool WantToClose();
     void Resize();
+    void SetExtResizeCallback(RD_Callback cbck);
 
     void RegisterMesh(std::shared_ptr<RD_Mesh> mesh);
     void RegisterDirLight(std::shared_ptr<RD_DirLight> dlight);
@@ -64,6 +65,7 @@ private:
     std::string m_enginePath;
 
     std::shared_ptr<RD_Callback> m_resize_cbck;
+    std::optional<RD_Callback> m_ext_resize_cbck;
 
     std::vector<std::shared_ptr<RD_Mesh>> m_meshes;
     std::vector<std::shared_ptr<RD_Material>> m_materials;

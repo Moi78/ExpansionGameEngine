@@ -68,6 +68,11 @@ bool RD_RenderPass_Vk::BuildRenderpass(RD_API* api, bool sc) {
 
             m_hasDepth = true;
         }
+
+        m_clean.push_back({{{m_att_desc[i].clearColor.GetX(),
+                             m_att_desc[i].clearColor.GetY(),
+                             m_att_desc[i].clearColor.GetZ()
+        }}});
     }
 
     VkSubpassDescription subpass{};
@@ -152,19 +157,8 @@ void RD_RenderPass_Vk::BeginRenderPass(VkCommandBuffer cmd, VkFramebuffer scFB) 
     rpassInfo.renderArea.offset = {0, 0};
     rpassInfo.renderArea.extent = {(uint32_t)m_w, (uint32_t)m_h};
 
-    constexpr VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-    constexpr VkClearValue clearDepth = {{{1.0f, 0.0f, 0.0f, 1.0f}}};
-    std::vector<VkClearValue> clear;
-    for(auto& a : m_att) {
-        if(a.format == VK_FORMAT_D32_SFLOAT) {
-            clear.push_back(clearDepth);
-        } else {
-            clear.push_back(clearColor);
-        }
-    }
-
-    rpassInfo.clearValueCount = clear.size();
-    rpassInfo.pClearValues = clear.data();
+    rpassInfo.clearValueCount = m_clean.size();
+    rpassInfo.pClearValues = m_clean.data();
 
     vkCmdBeginRenderPass(cmd, &rpassInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
@@ -244,19 +238,8 @@ void RD_RenderPass_Vk::BeginRenderpass(std::shared_ptr<RD_RenderSynchronizer> sy
     rpassInfo.renderArea.offset = {0, 0};
     rpassInfo.renderArea.extent = {(uint32_t)m_w, (uint32_t)m_h};
 
-    constexpr VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-    constexpr VkClearValue clearDepth = {{{1.0f, 0.0f, 0.0f, 1.0f}}};
-    std::vector<VkClearValue> clear;
-    for(auto& a : m_att) {
-        if(a.format == VK_FORMAT_D32_SFLOAT) {
-            clear.push_back(clearDepth);
-        } else {
-            clear.push_back(clearColor);
-        }
-    }
-
-    rpassInfo.clearValueCount = clear.size();
-    rpassInfo.pClearValues = clear.data();
+    rpassInfo.clearValueCount = m_clean.size();
+    rpassInfo.pClearValues = m_clean.data();
 
     vkCmdBeginRenderPass(cmd, &rpassInfo, VK_SUBPASS_CONTENTS_INLINE);
 }

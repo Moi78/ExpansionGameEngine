@@ -12,7 +12,7 @@ public:
     EXP_GuiSolidRect(EXP_Game* game, EXP_GuiWidget* parent = nullptr);
     ~EXP_GuiSolidRect();
 
-    void RenderWidget() override;
+    void RenderWidget(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync) override;
 
 private:
     std::shared_ptr<EXP_Material> m_mat;

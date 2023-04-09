@@ -5,6 +5,8 @@
 #include "RD_ImageFormat.h"
 #include "RD_RenderSynchronizer.h"
 
+#include "vec.h"
+
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -15,7 +17,9 @@ class RD_OrphanFramebuffer;
 struct RD_Attachment {
     int format;
     int sample_count;
+
     bool do_clear;
+    vec4 clearColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     bool is_swapchain_attachment = false;
 };
@@ -93,6 +97,7 @@ private:
 
     std::vector<VkAttachmentDescription> m_att;
     std::vector<RD_Attachment> m_att_desc;
+    std::vector<VkClearValue> m_clean;
     float m_w, m_h;
 };
 

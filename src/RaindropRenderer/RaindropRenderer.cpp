@@ -62,6 +62,10 @@ void RaindropRenderer::Resize() {
 
     m_rpline->Resize(w, h);
     m_viewCam->UpdateProj();
+
+    if(m_ext_resize_cbck.has_value()) {
+        m_ext_resize_cbck.value().Call();
+    }
 }
 
 void RaindropRenderer::RegisterMesh(std::shared_ptr<RD_Mesh> mesh) {
@@ -145,4 +149,8 @@ void RaindropRenderer::SetCurrentCamera(std::shared_ptr<RD_Camera> cam) {
 
 void RaindropRenderer::SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) {
     m_rpline->SetupSkeleton(skel);
+}
+
+void RaindropRenderer::SetExtResizeCallback(RD_Callback cbck) {
+    m_ext_resize_cbck = cbck;
 }

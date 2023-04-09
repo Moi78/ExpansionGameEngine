@@ -20,6 +20,8 @@ public:
     void RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::shared_ptr<RD_RenderSynchronizer> sync);
     void RenderMeshesExtPline(std::shared_ptr<RD_Pipeline> pline, std::shared_ptr<RD_RenderSynchronizer> sync);
 
+    std::shared_ptr<RD_Pipeline> GetRawPipeline();
+
 private:
     std::vector<std::shared_ptr<RD_Mesh>> m_meshes;
     std::shared_ptr<RD_Pipeline> m_pline;

@@ -49,3 +49,7 @@ void RD_Material::RenderMeshesExtPline(std::shared_ptr<RD_Pipeline> pline, std::
         pline->DrawIndexedVertexBuffer(m->GetVertexBuffer(), sync);
     }
 }
+
+std::shared_ptr<RD_Pipeline> RD_Material::GetRawPipeline() {
+    return m_pline;
+}

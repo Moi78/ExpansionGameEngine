@@ -10,6 +10,9 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
 
+    auto rect = std::make_shared<EXP_GuiSolidRect>(game);
+    game->GetGuiManager()->AddWidget(rect);
+
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 
     m_game = game;

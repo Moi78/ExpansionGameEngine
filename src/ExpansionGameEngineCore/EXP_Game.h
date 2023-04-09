@@ -6,6 +6,7 @@
 
 #include <RaindropRenderer.h>
 #include <RD_Skeleton.h>
+#include <RD_Callback.h>
 
 #include "EXP_Conf.h"
 #include "EXP_GenericRessourceManager.h"
@@ -36,12 +37,15 @@ public:
     std::shared_ptr<RaindropRenderer> GetRenderer();
     std::shared_ptr<EXP_InputHandler> GetInputHandler();
     std::shared_ptr<EXP_Animator> GetAnimator();
+    std::shared_ptr<EXP_GuiManager> GetGuiManager();
 
-    std::shared_ptr<EXP_Material> QueryMaterial(std::string matPath);
+    std::shared_ptr<EXP_Material> QueryMaterial(std::string matPath, bool fromEngine = false);
 
     int GetSkeletonOffset();
     void SetupSkeleton(std::shared_ptr<RD_Skeleton> skel);
     void UpdateSkeleton(std::shared_ptr<RD_Skeleton> skel);
+
+    void Resize();
 
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;
@@ -51,7 +55,7 @@ private:
     std::shared_ptr<EXP_InputHandler> m_inhdl;
     std::shared_ptr<EXP_Animator> m_animator;
 
-    std::unique_ptr<EXP_GuiManager> m_guiLayer;
+    std::shared_ptr<EXP_GuiManager> m_guiLayer;
 
     std::shared_ptr<EXP_Level> m_currentLevel;
 

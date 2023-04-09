@@ -15,11 +15,11 @@ void EXP_GuiWidget::AddChild(EXP_GuiWidget *child) {
     m_child.push_back(child);
 }
 
-void EXP_GuiWidget::Paint() {
-    RenderWidget();
+void EXP_GuiWidget::Paint(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync) {
+    RenderWidget(surface, sync);
 
     for(auto& c : m_child) {
-        c->Paint();
+        c->Paint(surface, sync);
     }
 }
 
@@ -40,10 +40,18 @@ EXP_GuiManager::EXP_GuiManager(std::shared_ptr<RD_API> api) {
 
     m_rpass = m_api->CreateRenderPass({color}, api->GetWindowingSystem()->GetWidth(), api->GetWindowingSystem()->GetHeight());
     m_rpass->BuildRenderpass(api.get(), false);
+
+    m_sync = m_api->CreateRenderSynchronizer();
+
+    m_surface = std::make_shared<RD_Quad>(api);
 }
 
 void EXP_GuiManager::AddWidget(std::shared_ptr<EXP_GuiWidget> widget) {
     m_widgets.push_back(widget);
+}
+
+std::shared_ptr<RD_RenderPass> EXP_GuiManager::GetRenderPass() {
+    return m_rpass;
 }
 
 void EXP_GuiManager::RenderGui() {
@@ -51,11 +59,17 @@ void EXP_GuiManager::RenderGui() {
         return;
     }
 
-    m_rpass->BeginRenderpass({});
+    m_sync->Start();
+    m_rpass->BeginRenderpass(m_sync);
 
     for(auto& w : m_widgets) {
-        w->Paint();
+        w->Paint(m_surface, m_sync);
     }
 
-    m_rpass->EndRenderpass({});
+    m_rpass->EndRenderpass(m_sync);
+    m_sync->Stop();
+}
+
+void EXP_GuiManager::Resize(int w, int h) {
+    m_rpass->SetRenderpassSize(m_api.get(), w, h);
 }

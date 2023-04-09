@@ -2,7 +2,7 @@
 #define EXPGE_EXP_GUIMANAGER_H
 
 #include <RD_API.h>
-#include <RD_OrphanFramebuffer.h>
+#include <RD_Quad.h>
 
 #include <memory>
 #include <vector>
@@ -12,8 +12,8 @@ public:
     EXP_GuiWidget(EXP_GuiWidget* parent = nullptr);
     ~EXP_GuiWidget() = default;
 
-    virtual void RenderWidget() = 0;
-    virtual void Paint();
+    virtual void RenderWidget(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
+    virtual void Paint(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync);
 
     const RD_Rect& GetRect();
 
@@ -31,14 +31,19 @@ public:
     EXP_GuiManager(std::shared_ptr<RD_API> api);
     ~EXP_GuiManager() = default;
 
+    std::shared_ptr<RD_RenderPass> GetRenderPass();
+
     void AddWidget(std::shared_ptr<EXP_GuiWidget> widget);
 
     void RenderGui();
+    void Resize(int w, int h);
 
 private:
     std::shared_ptr<RD_API> m_api;
 
     std::shared_ptr<RD_RenderPass> m_rpass;
+    std::shared_ptr<RD_RenderSynchronizer> m_sync;
+    std::shared_ptr<RD_Quad> m_surface;
 
     std::vector<std::shared_ptr<EXP_GuiWidget>> m_widgets;
 };

@@ -12,6 +12,8 @@
 #include <EXP_SkelAnim.h>
 #include <EXP_KeyboardCallback.h>
 
+#include <EXP_WidgetBasic.h>
+
 #include <RD_Mesh.h>
 #include <RD_Skeleton.h>
 

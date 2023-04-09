@@ -29,6 +29,14 @@ public:
         return m_ressources.find(id) != m_ressources.end();
     }
 
+    auto begin() {
+        return m_ressources.begin();
+    }
+
+    auto end() {
+        return m_ressources.end();
+    }
+
 protected:
     std::unordered_map<std::string, T> m_ressources;
 };
