@@ -145,16 +145,34 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     ms.alphaToCoverageEnable = VK_FALSE;
     ms.alphaToOneEnable = VK_FALSE;
 
-    VkPipelineColorBlendAttachmentState colorBlendState{};
-    colorBlendState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+    VkPipelineColorBlendAttachmentState colorBlendState_enabled{};
+    colorBlendState_enabled.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
                                      VK_COLOR_COMPONENT_G_BIT |
                                      VK_COLOR_COMPONENT_B_BIT |
                                      VK_COLOR_COMPONENT_A_BIT;
-    colorBlendState.blendEnable = VK_FALSE;
+    colorBlendState_enabled.blendEnable = VK_TRUE;
+    colorBlendState_enabled.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlendState_enabled.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    colorBlendState_enabled.colorBlendOp = VK_BLEND_OP_ADD;
+    colorBlendState_enabled.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+    colorBlendState_enabled.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendState_enabled.alphaBlendOp = VK_BLEND_OP_ADD;
+
+    VkPipelineColorBlendAttachmentState colorBlendState_disabled{};
+    colorBlendState_disabled.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+                                             VK_COLOR_COMPONENT_G_BIT |
+                                             VK_COLOR_COMPONENT_B_BIT |
+                                             VK_COLOR_COMPONENT_A_BIT;
+    colorBlendState_disabled.blendEnable = VK_FALSE;
+
 
     std::vector<VkPipelineColorBlendAttachmentState> blendAtt;
     for(int i = 0; i < m_rpass->GetAttachmentCount(); i++) {
-        blendAtt.push_back(colorBlendState);
+        if(m_rpass->IsAttachmentTransparent(i)) {
+            blendAtt.push_back(colorBlendState_enabled);
+        } else {
+            blendAtt.push_back(colorBlendState_disabled);
+        }
     }
 
     if(m_rpass->HasDepth()) {

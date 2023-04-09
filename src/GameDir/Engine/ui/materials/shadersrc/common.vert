@@ -6,6 +6,7 @@ layout (location = 3) in vec4 aBWeights;
 layout (location = 4) in vec4 aBonesID;
 
 layout (location = 0) out vec2 UVcoords;
+layout (location = 1) out vec2 FragPos;
 
 struct Rect {
     float x;
@@ -25,4 +26,5 @@ void main() {
     pos += vec2(r.x, r.y);
 
     gl_Position = vec4(pos, 0.0, 1.0);
+    FragPos = pos;
 }

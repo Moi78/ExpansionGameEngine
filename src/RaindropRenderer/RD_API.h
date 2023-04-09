@@ -77,6 +77,8 @@ public:
 
     virtual bool HasPresentTexture() = 0;
     virtual std::shared_ptr<RD_Texture> GetPresentTexture() = 0;
+
+    virtual void EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) = 0;
 };
 
 class RD_DLLAPI RD_API
@@ -198,6 +200,8 @@ public:
 
     bool HasPresentTexture() override;
     std::shared_ptr<RD_Texture> GetPresentTexture() override;
+
+    void EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) override;
 private:
 	static void ResizeCBCK(GLFWwindow* win, int w, int h);
 
@@ -233,6 +237,11 @@ private:
     std::shared_ptr<RD_Pipeline> m_pline;
     std::weak_ptr<RD_Texture> m_presentTex;
     std::shared_ptr<RD_IndexedVertexBuffer> m_verticies;
+
+    std::optional<std::shared_ptr<RD_RenderPass>> m_overlayed_rpass;
+    std::optional<std::shared_ptr<RD_Pipeline>> m_overlay_shader;
+    std::optional<std::shared_ptr<RD_Pipeline>> m_overlay_background;
+    std::optional<std::shared_ptr<RD_RenderSynchronizer>> m_overlay_sync;
 
 	VkQueue m_gfxQueue;
 	VkQueue m_presentQueue;

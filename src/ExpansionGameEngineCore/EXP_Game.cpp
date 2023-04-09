@@ -28,6 +28,10 @@ bool EXP_Game::InitEngine() {
     }
 
     m_guiLayer = std::make_shared<EXP_GuiManager>(m_rndr->GetAPI());
+    m_rndr->GetAPI()->GetWindowingSystem()->EnableOverlaying(
+            m_guiLayer->GetRenderPass()->GetAttachment(0),
+            m_gameinfo.RootEngineContentDir
+    );
 
     RD_Callback resize_cbck{CL_VDFUNCPTR(EXP_Game::Resize)};
     m_rndr->SetExtResizeCallback(resize_cbck);

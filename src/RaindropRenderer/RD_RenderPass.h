@@ -22,6 +22,7 @@ struct RD_Attachment {
     vec4 clearColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
     bool is_swapchain_attachment = false;
+    bool is_transparent = false;
 };
 
 class RD_RenderPass {
@@ -39,6 +40,8 @@ public:
 
     virtual int GetAttachmentCount() = 0;
     virtual std::shared_ptr<RD_Texture> GetAttachment(int index) = 0;
+
+    virtual bool IsAttachmentTransparent(int idx) = 0;
 
     virtual bool HasDepth() = 0;
 };
@@ -77,6 +80,10 @@ public:
 
     int GetAttachmentCount() override {
         return m_att_desc.size();
+    }
+
+    bool IsAttachmentTransparent(int idx) override {
+        return m_att_desc[idx].is_transparent;
     }
 
     bool HasDepth() override {

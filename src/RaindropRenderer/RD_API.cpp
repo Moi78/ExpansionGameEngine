@@ -51,6 +51,13 @@ void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoD
         m_rpass.reset();
         m_pline.reset();
         m_verticies.reset();
+
+        if(m_overlay_sync.has_value()) {
+            m_overlayed_rpass.value().reset();
+            m_overlay_shader.value().reset();
+            m_overlay_sync.value().reset();
+            m_overlay_background.value().reset();
+        }
     }
 
 	if(!surfaceNoDelete) {
@@ -366,15 +373,44 @@ void RD_Windowing_GLFW::Present() {
 		return;
 	}
 
-    bool isFS = 0;
+    uint32_t isFS = false;
 
 	std::shared_ptr<RD_Pipeline_Vk> plineVK = std::reinterpret_pointer_cast<RD_Pipeline_Vk>(m_pline);
-	plineVK->BindSC(m_scFbs[m_imgIdx]);
+
+    if(m_overlayed_rpass.has_value()) {
+        auto sync = m_overlay_sync.value();
+        sync->Start();
+
+        m_overlayed_rpass.value()->BeginRenderpass(sync);
+
+        m_overlay_background.value()->Bind(sync);
+        m_overlay_background.value()->PushConstant(&isFS, sizeof(uint32_t), sync);
+
+        m_overlay_background.value()->DrawIndexedVertexBuffer(m_verticies, sync);
+
+        m_overlay_background.value()->Unbind(sync);
+
+        isFS = true;
+
+        m_overlay_shader.value()->Bind(sync);
+        m_overlay_shader.value()->PushConstant(&isFS, sizeof(uint32_t), sync);
+
+        m_overlay_shader.value()->DrawIndexedVertexBuffer(m_verticies, sync);
+
+        m_overlay_shader.value()->Unbind(sync);
+
+        m_overlayed_rpass.value()->EndRenderpass(sync);
+
+        sync->Stop();
+    }
+
+    plineVK->BindSC(m_scFbs[m_imgIdx]);
     plineVK->PushConstant(&isFS, sizeof(uint32_t), {});
 
     plineVK->DrawIndexedVertexBuffer(m_verticies, {});
 
 	plineVK->UnbindSC();
+
 	vkResetFences(m_dev, 1, &m_inFLight_f);
 
 	plineVK->SubmitCMD(m_gfxQueue, m_imgAvail_s, m_rndrFinished_s, m_inFLight_f);
@@ -570,6 +606,39 @@ bool RD_Windowing_GLFW::HasPresentTexture() {
 
 std::shared_ptr<RD_Texture> RD_Windowing_GLFW::GetPresentTexture() {
     return m_presentTex.lock();
+}
+
+void RD_Windowing_GLFW::EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) {
+    RD_Attachment color {
+        .format = IMGFORMAT_RGBA,
+        .sample_count = 1,
+        .do_clear = true,
+        .clearColor = vec4(0.0f, 0.0f, 0.0f, 1.0f),
+        .is_swapchain_attachment = false,
+        .is_transparent = true,
+    };
+
+    m_overlayed_rpass = m_api->CreateRenderPass({color}, m_w, m_h);
+    m_overlayed_rpass.value()->BuildRenderpass(m_api, false);
+
+    auto sh_loader = m_api->CreateShader();
+    sh_loader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/sc_blit.fspv");
+
+    m_overlay_shader = m_api->CreatePipeline(m_overlayed_rpass.value(), sh_loader);
+    m_overlay_shader.value()->RegisterTexture(overlay, 0);
+    m_overlay_shader.value()->ConfigurePushConstant(sizeof(uint32_t));
+    m_overlay_shader.value()->RegisterUniformBuffer(m_vp_u);
+    m_overlay_shader.value()->BuildPipeline();
+
+    m_overlay_background = m_api->CreatePipeline(m_overlayed_rpass.value(), sh_loader);
+    m_overlay_background.value()->RegisterTexture(GetPresentTexture(), 0);
+    m_overlay_background.value()->ConfigurePushConstant(sizeof(uint32_t));
+    m_overlay_background.value()->RegisterUniformBuffer(m_vp_u);
+    m_overlay_background.value()->BuildPipeline();
+
+    m_overlay_sync = m_api->CreateRenderSynchronizer();
+
+    SetPresentTexture(m_overlayed_rpass.value()->GetAttachment(0));
 }
 
 // ------------------------------------------------------------------------------------
