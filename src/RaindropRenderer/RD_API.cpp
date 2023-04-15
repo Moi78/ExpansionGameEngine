@@ -654,7 +654,7 @@ void RD_Windowing_GLFW::SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) {
 }
 
 void RD_Windowing_GLFW::UpdateOverlaying() {
-    auto bg = m_overlay_shader.value();
+    auto bg = m_overlay_background.value();
     bg->PurgeTextures();
     bg->RegisterTexture(GetPresentTexture(), 0);
     bg->RebuildPipeline();
