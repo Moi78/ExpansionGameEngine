@@ -466,6 +466,12 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
     m_rpass->SetRenderpassSize(nullptr, m_scExtent.width, m_scExtent.height);
     m_pline->RebuildPipeline();
 
+    if(m_overlayed_rpass.has_value()) {
+        m_overlayed_rpass.value()->SetRenderpassSize(m_api, m_scExtent.width, m_scExtent.height);
+        m_overlay_shader.value()->RebuildPipeline();
+        m_overlay_background.value()->RebuildPipeline();
+    }
+
     if(m_vpm == RD_ViewportMode::FLOATING) {
         float offset_x = (m_vp.w / (float)GetScreenWidth()) - 1;
         float offset_y = (m_vp.h / (float)GetScreenHeight()) - 1;
@@ -637,6 +643,21 @@ void RD_Windowing_GLFW::EnableOverlaying(std::shared_ptr<RD_Texture> overlay, st
     m_overlay_background.value()->BuildPipeline();
 
     m_overlay_sync = m_api->CreateRenderSynchronizer();
+
+    SetPresentTexture(m_overlayed_rpass.value()->GetAttachment(0));
+}
+
+void RD_Windowing_GLFW::SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) {
+    m_overlay_shader.value()->PurgeTextures();
+    m_overlay_shader.value()->RegisterTexture(overlay, 0);
+    m_overlay_shader.value()->RebuildPipeline();
+}
+
+void RD_Windowing_GLFW::UpdateOverlaying() {
+    auto bg = m_overlay_shader.value();
+    bg->PurgeTextures();
+    bg->RegisterTexture(GetPresentTexture(), 0);
+    bg->RebuildPipeline();
 
     SetPresentTexture(m_overlayed_rpass.value()->GetAttachment(0));
 }

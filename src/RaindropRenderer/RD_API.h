@@ -79,6 +79,8 @@ public:
     virtual std::shared_ptr<RD_Texture> GetPresentTexture() = 0;
 
     virtual void EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) = 0;
+    virtual void SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) = 0;
+    virtual void UpdateOverlaying() = 0;
 };
 
 class RD_DLLAPI RD_API
@@ -202,6 +204,8 @@ public:
     std::shared_ptr<RD_Texture> GetPresentTexture() override;
 
     void EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) override;
+    void SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) override;
+    void UpdateOverlaying() override;
 private:
 	static void ResizeCBCK(GLFWwindow* win, int w, int h);
 

@@ -127,6 +127,10 @@ void EXP_Game::Resize() {
     auto win = m_rndr->GetAPI()->GetWindowingSystem();
 
     m_guiLayer->Resize(win->GetScreenWidth(), win->GetScreenHeight());
+    m_rndr->GetAPI()->GetWindowingSystem()->SetOverlayTexture(
+            m_guiLayer->GetRenderPass()->GetAttachment(0)
+    );
+    m_rndr->GetAPI()->GetWindowingSystem()->UpdateOverlaying();
 
     for(auto& m : m_materials) {
         m.second->GetPipeline()->RebuildPipeline();
