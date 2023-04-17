@@ -15,6 +15,8 @@ public:
     virtual void RenderWidget(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
     virtual void Paint(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync);
 
+    virtual void ProcessEvents() {};
+
     const RD_Rect& GetRect();
 
 protected:

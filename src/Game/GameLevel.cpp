@@ -5,12 +5,12 @@ EXPGE_LEVEL_CODE(GameLevel);
 GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     std::cout << "INSTANCIATED" << std::endl;
 
-    //game->GetInputHandler()->SetCursorVisibility(false);
+    game->GetInputHandler()->SetCursorVisibility(false);
 
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
 
-    auto rect = std::make_shared<EXP_GuiSolidRect>(game);
+    auto rect = std::make_shared<EXP_GuiSolidRect>(game, RD_Rect{0, 0, 100, 100}, vec4(0.5f, 1.0f, 0.1f, 0.5f));
     game->GetGuiManager()->AddWidget(rect);
 
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);

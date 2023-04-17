@@ -60,7 +60,8 @@ bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath) {
     if(isUI) {
         auto rpass = m_game->GetGuiManager()->GetRenderPass();
         pline = m_game->GetRenderer()->GetAPI()->CreatePipeline(rpass, shaderLoader);
-        pline->ConfigurePushConstant(4 * sizeof(float));
+        pline->ConfigurePushConstant(8 * sizeof(float));
+        pline->RegisterUniformBuffer(m_game->GetRenderer()->GetAPI()->GetWindowingSystem()->GetScreenSizeBuffer());
     } else {
         pline = m_game->GetRenderer()->CreatePipeline(shaderLoader);
     }

@@ -47,6 +47,7 @@ RD_Windowing_GLFW::~RD_Windowing_GLFW() {
 void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoDelete) {
     if(!surfaceNoDelete) {
         m_vp_u.reset();
+        m_screen_size.reset();
 
         m_rpass.reset();
         m_pline.reset();
@@ -466,6 +467,15 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
     m_rpass->SetRenderpassSize(nullptr, m_scExtent.width, m_scExtent.height);
     m_pline->RebuildPipeline();
 
+    RD_Rect currentSize = {
+            .x = 0.0f,
+            .y = 0.0f,
+            .w = (float)m_w,
+            .h = (float)m_h
+    };
+
+    m_screen_size->FillBufferData(&currentSize);
+
     if(m_overlayed_rpass.has_value()) {
         m_overlayed_rpass.value()->SetRenderpassSize(m_api, m_scExtent.width, m_scExtent.height);
         m_overlay_shader.value()->RebuildPipeline();
@@ -524,6 +534,18 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
     m_vp_u = m_api->CreateUniformBuffer(80);
     m_vp_u->BuildAndAllocateBuffer(sizeof(RD_Rect));
     m_vp_u->FillBufferData(&m_vp);
+
+    m_screen_size = m_api->CreateUniformBuffer(81);
+    m_screen_size->BuildAndAllocateBuffer(sizeof(RD_Rect));
+
+    const RD_Rect currentSize = {
+            .x = 0.0f,
+            .y = 0.0f,
+            .w = (float)m_w,
+            .h = (float)m_h
+    };
+
+    m_screen_size->FillBufferData((void*)&currentSize);
 
     m_pline->RegisterUniformBuffer(m_vp_u);
     m_pline->ConfigurePushConstant(sizeof(uint32_t));
@@ -660,6 +682,10 @@ void RD_Windowing_GLFW::UpdateOverlaying() {
     bg->RebuildPipeline();
 
     SetPresentTexture(m_overlayed_rpass.value()->GetAttachment(0));
+}
+
+std::shared_ptr<RD_UniformBuffer> RD_Windowing_GLFW::GetScreenSizeBuffer() {
+    return m_screen_size;
 }
 
 // ------------------------------------------------------------------------------------

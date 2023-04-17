@@ -8,8 +8,6 @@ layout (location = 4) out vec4 oSheen;
 layout (location = 0) in vec2 UVcoords;
 layout (location = 1) in vec3 norm;
 layout (location = 2) in vec3 FragPos;
-layout (location = 3) in vec4 weight;
-layout (location = 4) in vec4 boneID;
 
 void main() {
     oColor = vec4(1.0, 1.0, 0.0, 1.0);

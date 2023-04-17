@@ -81,6 +81,8 @@ public:
     virtual void EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) = 0;
     virtual void SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) = 0;
     virtual void UpdateOverlaying() = 0;
+
+    virtual std::shared_ptr<RD_UniformBuffer> GetScreenSizeBuffer() = 0;
 };
 
 class RD_DLLAPI RD_API
@@ -206,6 +208,8 @@ public:
     void EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) override;
     void SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) override;
     void UpdateOverlaying() override;
+
+    std::shared_ptr<RD_UniformBuffer> GetScreenSizeBuffer() override;
 private:
 	static void ResizeCBCK(GLFWwindow* win, int w, int h);
 
@@ -258,6 +262,7 @@ private:
 
     std::optional<std::shared_ptr<RD_Callback>> m_extCallback;
     std::shared_ptr<RD_UniformBuffer> m_vp_u;
+    std::shared_ptr<RD_UniformBuffer> m_screen_size;
 };
 
 class RD_DLLAPI RD_API_Vk : public RD_API {
