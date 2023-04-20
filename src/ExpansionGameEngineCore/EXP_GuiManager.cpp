@@ -1,8 +1,8 @@
 #include "EXP_GuiManager.h"
 
-EXP_GuiWidget::EXP_GuiWidget(EXP_GuiWidget *parent) {
-    if(parent) {
-        m_parent = parent;
+EXP_GuiWidget::EXP_GuiWidget(std::weak_ptr<EXP_GuiWidget> parent) {
+    if(!parent.expired()) {
+        m_parent = parent.lock();
         m_parent->AddChild(this);
     } else {
         m_parent = nullptr;
@@ -15,11 +15,19 @@ void EXP_GuiWidget::AddChild(EXP_GuiWidget *child) {
     m_child.push_back(child);
 }
 
-void EXP_GuiWidget::Paint(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync) {
-    RenderWidget(surface, sync);
+void EXP_GuiWidget::Paint(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) {
+    RenderWidget(surface, parentRect, sync);
 
     for(auto& c : m_child) {
-        c->Paint(surface, sync);
+        c->Paint(surface, m_rect, sync);
+    }
+}
+
+void EXP_GuiWidget::ProcessEvents() {
+    Event();
+
+    for(auto& c : m_child) {
+        c->ProcessEvents();
     }
 }
 
@@ -63,7 +71,7 @@ void EXP_GuiManager::RenderGui() {
     m_rpass->BeginRenderpass(m_sync);
 
     for(auto& w : m_widgets) {
-        w->Paint(m_surface, m_sync);
+        w->Paint(m_surface, {0, 0, 0, 0}, m_sync);
     }
 
     m_rpass->EndRenderpass(m_sync);
@@ -72,4 +80,10 @@ void EXP_GuiManager::RenderGui() {
 
 void EXP_GuiManager::Resize(int w, int h) {
     m_rpass->SetRenderpassSize(m_api.get(), w, h);
+}
+
+void EXP_GuiManager::ProcessEvents() {
+    for(auto& w : m_widgets) {
+        w->ProcessEvents();
+    }
 }

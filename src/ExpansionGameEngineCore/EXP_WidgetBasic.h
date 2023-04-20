@@ -9,15 +9,15 @@
 
 class EXP_GuiSolidRect : public EXP_GuiWidget {
 public:
-    EXP_GuiSolidRect(EXP_Game* game, RD_Rect rect, vec4 color , EXP_GuiWidget* parent = nullptr);
+    EXP_GuiSolidRect(EXP_Game* game, RD_Rect rect, vec4 color , std::weak_ptr<EXP_GuiWidget> parent = {});
     ~EXP_GuiSolidRect();
 
-    void RenderWidget(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync) override;
+    void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) override;
+    void Event() override {};
 
 private:
     std::shared_ptr<EXP_Material> m_mat;
 
-    RD_Rect m_rect;
     vec4 m_color;
 };
 

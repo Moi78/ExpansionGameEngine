@@ -9,20 +9,21 @@
 
 class EXP_GuiWidget {
 public:
-    EXP_GuiWidget(EXP_GuiWidget* parent = nullptr);
+    EXP_GuiWidget(std::weak_ptr<EXP_GuiWidget> parent = {});
     ~EXP_GuiWidget() = default;
 
-    virtual void RenderWidget(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
-    virtual void Paint(std::shared_ptr<RD_Quad> surface, std::shared_ptr<RD_RenderSynchronizer> sync);
+    virtual void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
+    virtual void Paint(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync);
 
-    virtual void ProcessEvents() {};
+    void ProcessEvents();
+    virtual void Event() = 0;
 
     const RD_Rect& GetRect();
 
 protected:
     void AddChild(EXP_GuiWidget* child);
 
-    EXP_GuiWidget* m_parent;
+    std::shared_ptr<EXP_GuiWidget> m_parent;
     std::vector<EXP_GuiWidget*> m_child;
 
     RD_Rect m_rect;
@@ -39,6 +40,8 @@ public:
 
     void RenderGui();
     void Resize(int w, int h);
+
+    void ProcessEvents();
 
 private:
     std::shared_ptr<RD_API> m_api;
