@@ -10,7 +10,7 @@
 class EXP_GuiWidget {
 public:
     EXP_GuiWidget(std::weak_ptr<EXP_GuiWidget> parent = {});
-    ~EXP_GuiWidget() = default;
+    virtual ~EXP_GuiWidget() = default;
 
     virtual void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
     virtual void Paint(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync);

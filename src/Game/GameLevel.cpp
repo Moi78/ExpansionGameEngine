@@ -10,8 +10,8 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
 
-    auto rect = std::make_shared<EXP_GuiSolidRect>(game, RD_Rect{500, 500, 300, 300}, vec4(0.5f, 1.0f, 0.1f, 0.5f));
-    auto rect2 = std::make_shared<EXP_GuiSolidRect>(game, RD_Rect{20, 10, 100, 100}, vec4(0.0f, 1.0f, 0.6f, 0.8f), rect);
+    auto rect = std::make_shared<EXP_GuiSolidTexturedRect>(game, RD_Rect{500, 500, 300, 300}, "/tex/grad.png");
+    auto rect2 = std::make_shared<EXP_GuiSolidRect>(game, RD_Rect{50, 10, 100, 100}, vec4(0.0f, 1.0f, 0.6f, 0.8f), rect);
 
     game->GetGuiManager()->AddWidget(rect);
     game->GetGuiManager()->AddWidget(rect2);

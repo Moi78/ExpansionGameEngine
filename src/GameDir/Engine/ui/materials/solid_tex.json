@@ -1,0 +1,16 @@
+{
+  "engine_mat": true,
+  "custom_vert": true,
+  "ui_material": true,
+
+  "spirv_file_vert": "/ui/materials/shaderbin/common.vspv",
+  "spirv_file": "/ui/materials/shaderbin/solid_tex.fspv",
+
+  "params": [
+
+  ],
+
+  "texs": [
+
+  ]
+}
