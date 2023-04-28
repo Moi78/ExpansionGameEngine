@@ -40,6 +40,7 @@ public:
     virtual void SetCullMode(RD_CullMode cm) = 0;
 
     virtual void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) = 0;
+    virtual void SetTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) = 0;
 
     virtual void ConfigurePushConstant(size_t size) = 0;
     virtual void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
@@ -79,6 +80,7 @@ public:
     void SetCullMode(RD_CullMode cm) override;
 
     void SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> texs, uint32_t binding) override;
+    void SetTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) override;
 
     void ConfigurePushConstant(size_t size) override;
     void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
@@ -89,6 +91,8 @@ private:
     bool CreateDescriptorPool();
     bool CreateDescriptorSet();
     bool BuildSyncObjects();
+
+    void UpdateDescSets();
 
     VkDevice m_dev;
     VkCommandPool m_pool;

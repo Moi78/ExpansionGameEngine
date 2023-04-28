@@ -317,6 +317,12 @@ bool RD_Pipeline_Vk::CreateDescriptorSet() {
         return false;
     }
 
+    UpdateDescSets();
+
+    return true;
+}
+
+void RD_Pipeline_Vk::UpdateDescSets() {
     for(int i = 0; i < m_bindings.size(); i++) {
         std::shared_ptr<RD_UniformBuffer_Vk> vkUBuff = std::reinterpret_pointer_cast<RD_UniformBuffer_Vk>(m_uBuffs[i]);
 
@@ -378,8 +384,6 @@ bool RD_Pipeline_Vk::CreateDescriptorSet() {
             vkUpdateDescriptorSets(m_dev, 1, &descW, 0, nullptr);
         }
     }
-
-    return true;
 }
 
 bool RD_Pipeline_Vk::AllocCMDBuffer() {
@@ -574,6 +578,14 @@ void RD_Pipeline_Vk::SetTextureArray(std::vector<std::shared_ptr<RD_Texture>> te
             m_texs_array[i] = texs;
             m_bindings_tex_array[i].descriptorCount = texs.size();
             break;
+        }
+    }
+}
+
+void RD_Pipeline_Vk::SetTexture(std::shared_ptr<RD_Texture> tex, uint32_t binding) {
+    for(int i = 0; i < m_bindings_tex.size(); i++) {
+        if(m_bindings_tex[i].binding == binding) {
+            m_texs[i] = tex;
         }
     }
 }

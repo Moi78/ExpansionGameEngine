@@ -13,6 +13,10 @@ target_include_directories(ExpansionGameEngineCore PUBLIC ../BulldozerFileManage
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)
+pkg_check_modules(LIBFREETYPE freetype2)
 
 target_link_libraries(ExpansionGameEngineCore ${JSONCPP_LIBRARIES})
 target_include_directories(ExpansionGameEngineCore PUBLIC ${JSONCPP_INCLUDE_DIRS})
+
+target_link_libraries(ExpansionGameEngineCore ${LIBFREETYPE_LIBRARIES})
+target_include_directories(ExpansionGameEngineCore PUBLIC ${LIBFREETYPE_INCLUDE_DIRS})

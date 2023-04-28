@@ -16,7 +16,7 @@ struct Rect {
     float h;
 };
 
-layout (binding = 81) uniform SCREEN {
+layout (binding = 81) uniform SCREEN_MAT {
     Rect absScreen;
 };
 
@@ -29,7 +29,9 @@ void main() {
     UVcoords = aUV;
 
     vec2 pos = aPos.xy * vec2(r.w / absScreen.w, r.h / absScreen.h);
-    pos += vec2(((r.x + (r.w / 2)) / absScreen.w) - 1.0, ((r.y + (r.h / 2)) / absScreen.h) - 1.0);
+    pos += vec2(r.w / (absScreen.w), r.h / (absScreen.h));
+    pos += 2 * vec2(r.x / absScreen.w, r.y / absScreen.h);
+    pos -= vec2(1.0, 1.0);
 
     gl_Position = vec4(pos, 0.0, 1.0);
     FragPos = pos;

@@ -1,6 +1,9 @@
 #ifndef EXPGE_EXP_GUIMANAGER_H
 #define EXPGE_EXP_GUIMANAGER_H
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include <RD_API.h>
 #include <RD_Quad.h>
 
@@ -29,6 +32,9 @@ protected:
     RD_Rect m_rect;
 };
 
+class EXP_Font;
+class EXP_Game;
+
 class EXP_GuiManager {
 public:
     EXP_GuiManager(std::shared_ptr<RD_API> api);
@@ -43,6 +49,8 @@ public:
 
     void ProcessEvents();
 
+    std::shared_ptr<EXP_Font> ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine);
+
 private:
     std::shared_ptr<RD_API> m_api;
 
@@ -51,6 +59,8 @@ private:
     std::shared_ptr<RD_Quad> m_surface;
 
     std::vector<std::shared_ptr<EXP_GuiWidget>> m_widgets;
+
+    FT_Library m_ft;
 };
 
 

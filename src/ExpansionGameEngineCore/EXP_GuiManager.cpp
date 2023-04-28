@@ -1,4 +1,6 @@
 #include "EXP_GuiManager.h"
+#include "EXP_WidgetBasic.h"
+#include "EXP_Game.h"
 
 EXP_GuiWidget::EXP_GuiWidget(std::weak_ptr<EXP_GuiWidget> parent) {
     if(!parent.expired()) {
@@ -52,6 +54,12 @@ EXP_GuiManager::EXP_GuiManager(std::shared_ptr<RD_API> api) {
     m_sync = m_api->CreateRenderSynchronizer();
 
     m_surface = std::make_shared<RD_Quad>(api);
+
+    if(FT_Init_FreeType(&m_ft)) {
+        std::cerr << "ERROR: Failed to init FreeType." << std::endl;
+    } else {
+        std::cout << "Init FreeType." << std::endl;
+    }
 }
 
 void EXP_GuiManager::AddWidget(std::shared_ptr<EXP_GuiWidget> widget) {
@@ -86,4 +94,8 @@ void EXP_GuiManager::ProcessEvents() {
     for(auto& w : m_widgets) {
         w->ProcessEvents();
     }
+}
+
+std::shared_ptr<EXP_Font> EXP_GuiManager::ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine) {
+    return std::make_shared<EXP_Font>(game, m_ft, fontPath, isEngine);
 }
