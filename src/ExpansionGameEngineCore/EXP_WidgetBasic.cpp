@@ -63,7 +63,7 @@ void EXP_GuiSolidTexturedRect::RenderWidget(std::shared_ptr<RD_Quad> surface, co
     nrect.x += parentRect.x;
     nrect.y += parentRect.y;
 
-    constexpr float zeroData[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    constexpr float zeroData[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
     pline->Bind(sync);
     pline->PartialPushConstant((void*)&nrect, sizeof(RD_Rect), 0, sync);
@@ -141,7 +141,9 @@ EXP_GuiTextStatic::EXP_GuiTextStatic(EXP_Game *game, RD_Rect rect, std::shared_p
     m_font = font;
     m_game = game;
 
-    m_mat = game->QueryMaterial("/ui/materials/solid_tex.json", true);
+    m_mat = game->QueryMaterial("/ui/materials/glyph.json", true);
+    m_blit_mat = game->QueryMaterial("/ui/materials/solid_tex.json", true);
+
     m_rect = rect;
 }
 
@@ -151,13 +153,13 @@ EXP_GuiTextStatic::~EXP_GuiTextStatic() {
 
 void EXP_GuiTextStatic::RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect &parentRect,
                                      std::shared_ptr<RD_RenderSynchronizer> sync) {
-    auto pline = m_mat->GetPipeline();
+    auto pline = m_blit_mat->GetPipeline();
 
     RD_Rect nrect{m_rect};
     nrect.x += parentRect.x;
     nrect.y += parentRect.y;
 
-    vec4 color{1.0f, 1.0f, 0.0f, 0.5f};
+    vec4 color{0.0f, 1.0f, 0.0f, 1.0f};
 
     pline->Bind(sync);
 
@@ -236,7 +238,7 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
         currentX += met.advance;
     }
 
-    pline->PurgeTextures();
-    pline->RegisterTexture(m_text->GetAttachment(0), 3);
-    pline->RebuildPipeline();
+    auto bpline = m_blit_mat->GetPipeline();
+    bpline->RegisterTexture(m_text->GetAttachment(0), 3);
+    bpline->RebuildPipeline();
 }

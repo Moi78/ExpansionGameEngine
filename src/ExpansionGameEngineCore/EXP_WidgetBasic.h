@@ -76,7 +76,9 @@ private:
 
     std::shared_ptr<RD_API> m_api;
     std::shared_ptr<RD_RenderPass> m_text;
+
     std::shared_ptr<EXP_Material> m_mat;
+    std::shared_ptr<EXP_Material> m_blit_mat;
 
     std::shared_ptr<EXP_Font> m_font;
 };
