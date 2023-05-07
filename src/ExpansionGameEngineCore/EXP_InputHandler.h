@@ -20,6 +20,7 @@ public:
     void ResetCursor();
 
     void RegisterKeyboardCallback(std::shared_ptr<EXP_KeyboardCallback> kcbck);
+    void RegisterMouseCallback(std::shared_ptr<EXP_MouseCallback> mcbck);
 
     float GetCursorPosX();
     float GetCursorPosY();
@@ -28,6 +29,7 @@ private:
     std::shared_ptr<RD_Windowing> m_win;
 
     std::vector<std::shared_ptr<EXP_KeyboardCallback>> m_kcbcks;
+    std::vector<std::shared_ptr<EXP_MouseCallback>> m_mcbcks;
 
     bool m_curHidden;
 };

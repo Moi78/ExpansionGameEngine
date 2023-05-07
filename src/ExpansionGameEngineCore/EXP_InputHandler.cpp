@@ -21,9 +21,17 @@ void EXP_InputHandler::RegisterKeyboardCallback(std::shared_ptr <EXP_KeyboardCal
     m_kcbcks.push_back(kcbck);
 }
 
+void EXP_InputHandler::RegisterMouseCallback(std::shared_ptr<EXP_MouseCallback> mcbck) {
+    m_mcbcks.push_back(mcbck);
+}
+
 void EXP_InputHandler::UpdateAll() {
     for(auto& k : m_kcbcks) {
         k->Call(m_win);
+    }
+
+    for(auto& m : m_mcbcks) {
+        m->Call(m_win);
     }
 }
 

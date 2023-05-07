@@ -54,6 +54,7 @@ EXP_GuiManager::EXP_GuiManager(std::shared_ptr<RD_API> api) {
     m_sync = m_api->CreateRenderSynchronizer();
 
     m_surface = std::make_shared<RD_Quad>(api);
+    m_redraw_flag = true;
 
     if(FT_Init_FreeType(&m_ft)) {
         std::cerr << "ERROR: Failed to init FreeType." << std::endl;
@@ -64,6 +65,7 @@ EXP_GuiManager::EXP_GuiManager(std::shared_ptr<RD_API> api) {
 
 void EXP_GuiManager::AddWidget(std::shared_ptr<EXP_GuiWidget> widget) {
     m_widgets.push_back(widget);
+    m_redraw_flag = true;
 }
 
 std::shared_ptr<RD_RenderPass> EXP_GuiManager::GetRenderPass() {
@@ -75,15 +77,19 @@ void EXP_GuiManager::RenderGui() {
         return;
     }
 
-    m_sync->Start();
-    m_rpass->BeginRenderpass(m_sync);
+    if(m_redraw_flag) {
+        m_sync->Start();
+        m_rpass->BeginRenderpass(m_sync);
 
-    for(auto& w : m_widgets) {
-        w->Paint(m_surface, {0, 0, 0, 0}, m_sync);
+        for (auto &w: m_widgets) {
+            w->Paint(m_surface, {0, 0, 0, 0}, m_sync);
+        }
+
+        m_rpass->EndRenderpass(m_sync);
+        m_sync->Stop();
+
+        m_redraw_flag = false;
     }
-
-    m_rpass->EndRenderpass(m_sync);
-    m_sync->Stop();
 }
 
 void EXP_GuiManager::Resize(int w, int h) {
@@ -98,4 +104,17 @@ void EXP_GuiManager::ProcessEvents() {
 
 std::shared_ptr<EXP_Font> EXP_GuiManager::ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine) {
     return std::make_shared<EXP_Font>(game, m_ft, fontPath, isEngine);
+}
+
+void EXP_GuiManager::SetRedrawFlag() {
+    m_redraw_flag = true;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+bool isPointInRect(vec2& point, RD_Rect& r) {
+    const float pX = point.GetX();
+    const float pY = point.GetY();
+
+    return (pX > r.x) && (pX < (r.x + r.w)) && (pY > r.y) && (pY < r.y + r.h);
 }

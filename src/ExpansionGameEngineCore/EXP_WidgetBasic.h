@@ -19,6 +19,7 @@ public:
     void Event() override {};
 
 private:
+    EXP_Game* m_game;
     std::shared_ptr<EXP_Material> m_mat;
 
     vec4 m_color;

@@ -13,6 +13,7 @@
 #include <EXP_KeyboardCallback.h>
 
 #include <EXP_WidgetBasic.h>
+#include <ui_kit/EXP_GuiButton.h>
 
 #include <RD_Mesh.h>
 #include <RD_Skeleton.h>

@@ -20,8 +20,12 @@ RD_Texture_Vk::~RD_Texture_Vk() {
 }
 
 bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
+    uint8_t defaultData[] = {0, 0, 0, 255, 255, 0, 255, 255, 255, 0, 255, 255, 0, 0, 0, 255};
     if(!std::filesystem::exists(filePath)) {
         std::cerr << "ERROR: File " << filePath << " does not exist." << std::endl;
+
+        CreateTextureFromData(IMGFORMAT_RGBA, 2, 2, defaultData);
+
         return false;
     }
 
@@ -30,6 +34,9 @@ bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
 
     if(pixels == nullptr) {
         std::cerr << "ERROR: Failed to load texture stored at " << filePath << std::endl;
+
+        CreateTextureFromData(IMGFORMAT_RGBA, 2, 2, defaultData);
+
         return false;
     }
 

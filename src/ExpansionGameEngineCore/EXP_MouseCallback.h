@@ -17,9 +17,15 @@ public:
 
     void Call(std::shared_ptr<RD_Windowing> win);
 
+    void AttachOnKeyUp(std::function<void()> cbck);
+
 private:
     int m_key;
+
     std::function<void()> m_callbck;
+    std::optional<std::function<void()>> m_up_cbck;
+
+    bool m_oldValue;
 };
 
 

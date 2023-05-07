@@ -8,6 +8,7 @@ EXP_GuiSolidRect::EXP_GuiSolidRect(EXP_Game* game, RD_Rect rect, vec4 color, std
 {
     m_mat = game->QueryMaterial("/ui/materials/solid.json", true);
     m_rect = rect;
+    m_game = game;
 }
 
 EXP_GuiSolidRect::~EXP_GuiSolidRect() {
@@ -16,6 +17,8 @@ EXP_GuiSolidRect::~EXP_GuiSolidRect() {
 
 void EXP_GuiSolidRect::SetColor(vec4 nColor) {
     m_color = nColor;
+
+    m_game->GetGuiManager()->SetRedrawFlag();
 }
 
 void EXP_GuiSolidRect::RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) {

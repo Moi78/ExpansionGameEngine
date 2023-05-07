@@ -53,15 +53,17 @@ void EXP_Game::RunGame() {
     while(!m_rndr->WantToClose()) {
         m_inhdl->ResetCursor();
 
-        m_rndr->UpdateWindow();
-        m_guiLayer->RenderGui();
-        m_rndr->RenderScene();
-
         m_inhdl->UpdateAll();
+        m_guiLayer->ProcessEvents();
+
         m_currentLevel->TickActors();
         m_currentLevel->OnTick();
 
         m_animator->UpdateAnimations();
+
+        m_rndr->UpdateWindow();
+        m_guiLayer->RenderGui();
+        m_rndr->RenderScene();
     }
 }
 

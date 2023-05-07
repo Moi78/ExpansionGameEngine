@@ -1,0 +1,18 @@
+{
+  "engine_mat": true,
+  "custom_vert": true,
+  "ui_material": true,
+
+  "spirv_file_vert": "/ui/materials/shaderbin/common_id.vspv",
+  "spirv_file": "/ui/materials/shaderbin/button.fspv",
+
+  "custom_pctant_size": 36,
+
+  "params": [
+
+  ],
+
+  "texs": [
+
+  ]
+}

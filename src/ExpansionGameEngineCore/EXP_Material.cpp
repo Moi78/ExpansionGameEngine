@@ -19,7 +19,7 @@ bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath) {
     JSONCPP_STRING errs;
 
     Json::CharReaderBuilder builder;
-    builder["collecoComment"] = false;
+    builder["collectComment"] = false;
 
     if(!Json::parseFromStream(builder, file, &root, &errs)) {
         std::cerr << "ERROR: Cannot parse " << material_file << ". " << errs << std::endl;
@@ -57,13 +57,24 @@ bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath) {
     bool isUI = root.get("ui_material", false).asBool();
 
     std::shared_ptr<RD_Pipeline> pline;
+    bool hasCustomPctant = root.isMember("custom_pctant_size");
     if(isUI) {
         auto rpass = m_game->GetGuiManager()->GetRenderPass();
         pline = m_game->GetRenderer()->GetAPI()->CreatePipeline(rpass, shaderLoader);
-        pline->ConfigurePushConstant(8 * sizeof(float));
+
+        if(hasCustomPctant) {
+            pline->ConfigurePushConstant(root["custom_pctant_size"].asInt());
+        } else {
+            pline->ConfigurePushConstant(8 * sizeof(float));
+        }
+
         pline->RegisterUniformBuffer(m_game->GetRenderer()->GetAPI()->GetWindowingSystem()->GetScreenSizeBuffer());
     } else {
         pline = m_game->GetRenderer()->CreatePipeline(shaderLoader);
+
+        if(hasCustomPctant) {
+            pline->ConfigurePushConstant(root["custom_pctant_size"].asInt());
+        }
     }
 
     for(auto& t : root["texs"]) {

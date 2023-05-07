@@ -5,7 +5,7 @@ EXPGE_LEVEL_CODE(GameLevel);
 GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     std::cout << "INSTANCIATED" << std::endl;
 
-    game->GetInputHandler()->SetCursorVisibility(false);
+    //game->GetInputHandler()->SetCursorVisibility(false);
 
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
@@ -16,7 +16,10 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     auto text = std::make_shared<EXP_GuiTextStatic>(game, RD_Rect{200, 100, 0, 0}, ft);
     text->ConstructText("Hellog World", 48);
 
+    auto btn = std::make_shared<EXP_GuiButton>(game, RD_Rect{500, 500, 300, 100}, "/tex/grad.png", "/tex/test.jpg", "/tex/grad.png");
+
     game->GetGuiManager()->AddWidget(text);
+    game->GetGuiManager()->AddWidget(btn);
 
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 

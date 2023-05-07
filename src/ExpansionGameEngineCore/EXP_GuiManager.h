@@ -46,6 +46,7 @@ public:
 
     void RenderGui();
     void Resize(int w, int h);
+    void SetRedrawFlag();
 
     void ProcessEvents();
 
@@ -61,7 +62,10 @@ private:
     std::vector<std::shared_ptr<EXP_GuiWidget>> m_widgets;
 
     FT_Library m_ft;
+
+    bool m_redraw_flag;
 };
 
+bool isPointInRect(vec2& point, RD_Rect& r);
 
 #endif //EXPGE_EXP_GUIMANAGER_H

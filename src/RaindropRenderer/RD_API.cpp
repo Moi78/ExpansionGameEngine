@@ -37,6 +37,7 @@ RD_Windowing_GLFW::RD_Windowing_GLFW(RD_API* api) {
     m_vp_real = {0, 0, 1, 1};
 
     m_initialized = false;
+    m_curHidden = false;
 }
 
 RD_Windowing_GLFW::~RD_Windowing_GLFW() {
@@ -470,8 +471,8 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
     RD_Rect currentSize = {
             .x = 0.0f,
             .y = 0.0f,
-            .w = (float)m_w,
-            .h = (float)m_h
+            .w = (float)GetScreenWidth(),
+            .h = (float)GetScreenHeight()
     };
 
     m_screen_size->FillBufferData(&currentSize);
@@ -575,14 +576,26 @@ void RD_Windowing_GLFW::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
     m_pline->RebuildPipeline();
 }
 
-float RD_Windowing_GLFW::GetCursorPositionX() {
+float RD_Windowing_GLFW::GetCursorPositionX(bool abs) {
+    if(!abs && !m_curHidden) {
+        return 0;
+    } else if(abs && m_curHidden) {
+        return 0;
+    }
+
     double x = 0.0f;
     glfwGetCursorPos(m_win, &x, nullptr);
 
     return (float)x;
 }
 
-float RD_Windowing_GLFW::GetCursorPositionY() {
+float RD_Windowing_GLFW::GetCursorPositionY(bool abs) {
+    if(!abs && !m_curHidden) {
+        return 0;
+    } else if(abs && m_curHidden) {
+        return 0;
+    }
+
     double y = 0.0f;
     glfwGetCursorPos(m_win, nullptr, &y);
 
@@ -590,6 +603,8 @@ float RD_Windowing_GLFW::GetCursorPositionY() {
 }
 
 void RD_Windowing_GLFW::SetCursorVisibility(bool visibility) {
+    m_curHidden = !visibility;
+
     glfwSetInputMode(m_win, GLFW_CURSOR, visibility ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 }
 

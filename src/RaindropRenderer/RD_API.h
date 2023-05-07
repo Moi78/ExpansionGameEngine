@@ -65,8 +65,8 @@ public:
     virtual bool GetKeyPress(int key) = 0;
     virtual bool GetMouseButtonPress(int mbutton) = 0;
 
-    virtual float GetCursorPositionX() = 0;
-    virtual float GetCursorPositionY() = 0;
+    virtual float GetCursorPositionX(bool abs = false) = 0;
+    virtual float GetCursorPositionY(bool abs = false) = 0;
     virtual void SetCursorPosition(double x, double y) = 0;
 
     virtual void SetCursorVisibility(bool visibility) = 0;
@@ -180,8 +180,8 @@ public:
 
     void SetCursorVisibility(bool visibility) override;
 
-    float GetCursorPositionX() override;
-    float GetCursorPositionY() override;
+    float GetCursorPositionX(bool abs = false) override;
+    float GetCursorPositionY(bool abs = false) override;
     void SetCursorPosition(double x, double y) override;
 
     bool GetKeyPress(int key) override;
@@ -263,6 +263,8 @@ private:
     std::optional<std::shared_ptr<RD_Callback>> m_extCallback;
     std::shared_ptr<RD_UniformBuffer> m_vp_u;
     std::shared_ptr<RD_UniformBuffer> m_screen_size;
+
+    bool m_curHidden;
 };
 
 class RD_DLLAPI RD_API_Vk : public RD_API {
