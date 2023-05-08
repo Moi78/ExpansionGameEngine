@@ -164,6 +164,11 @@ void EXP_GuiTextStatic::RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_
 
     vec4 color{0.0f, 1.0f, 0.0f, 1.0f};
 
+    auto bpline = m_blit_mat->GetPipeline();
+    bpline->PurgeTextures();
+    bpline->RegisterTexture(m_text->GetAttachment(0), 3);
+    bpline->RebuildPipeline();
+
     pline->Bind(sync);
 
     pline->PartialPushConstant((void*)&nrect, sizeof(RD_Rect), 0, sync);
@@ -179,9 +184,12 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
     selfRect.h = size + (size / 2);
     selfRect.w = 0;
     for(auto c : text) {
-        auto met = m_font->GetGlyphMetrics(c, size);
-
-        selfRect.w += met.advance;
+        if(c == '\n') {
+            selfRect.h += size + (size/2);
+        } else {
+            auto met = m_font->GetGlyphMetrics(c, size);
+            selfRect.w += met.advance;
+        }
     }
 
     m_rect = selfRect;
@@ -205,7 +213,14 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
     int currentX = 0;
     vec4 color{1.0f, 1.0f, 1.0f, 1.0f};
 
+    int lineNumber = 0;
     for(auto c : text) {
+        if(c == '\n') {
+            lineNumber++;
+            currentX = 0;
+            continue;
+        }
+
         EXP_GlyphMetrics met = m_font->GetGlyphMetrics(c, size);
 
         if((met.size.GetX() == 0) || (met.size.GetY() == 0)) {
@@ -224,7 +239,7 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
         r.h = met.size.GetY();
 
         r.x = currentX + met.bearing.GetX();
-        r.y = size - met.bearing.GetY();
+        r.y = (size - met.bearing.GetY()) + (lineNumber * size);
 
         sync->Start();
         m_text->BeginRenderpass(sync);
@@ -240,8 +255,4 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
 
         currentX += met.advance;
     }
-
-    auto bpline = m_blit_mat->GetPipeline();
-    bpline->RegisterTexture(m_text->GetAttachment(0), 3);
-    bpline->RebuildPipeline();
 }

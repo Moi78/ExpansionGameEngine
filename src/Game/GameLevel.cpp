@@ -14,12 +14,15 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     ft->LoadFont();
 
     auto text = std::make_shared<EXP_GuiTextStatic>(game, RD_Rect{200, 100, 0, 0}, ft);
-    text->ConstructText("Hellog World", 48);
+    text->ConstructText("Hellog World\nYYYYY\nNew freaking line of text\nMultiline is kewl", 25);
 
     auto btn = std::make_shared<EXP_GuiButton>(game, RD_Rect{500, 500, 300, 100}, "/tex/grad.png", "/tex/test.jpg", "/tex/grad.png");
+    auto btnText = std::make_shared<EXP_GuiTextStatic>(game, RD_Rect{0, 0, 0, 0}, ft, btn);
+    btnText->ConstructText("This is a button", 30);
 
     game->GetGuiManager()->AddWidget(text);
     game->GetGuiManager()->AddWidget(btn);
+    game->GetGuiManager()->AddWidget(btnText);
 
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 

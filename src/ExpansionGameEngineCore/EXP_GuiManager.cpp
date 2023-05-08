@@ -94,6 +94,7 @@ void EXP_GuiManager::RenderGui() {
 
 void EXP_GuiManager::Resize(int w, int h) {
     m_rpass->SetRenderpassSize(m_api.get(), w, h);
+    SetRedrawFlag();
 }
 
 void EXP_GuiManager::ProcessEvents() {
