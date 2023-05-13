@@ -56,14 +56,14 @@ void EXP_Game::RunGame() {
         m_inhdl->UpdateAll();
         m_guiLayer->ProcessEvents();
 
-        m_currentLevel->TickActors();
-        m_currentLevel->OnTick();
-
         m_animator->UpdateAnimations();
 
         m_rndr->UpdateWindow();
         m_guiLayer->RenderGui();
         m_rndr->RenderScene();
+
+        m_currentLevel->TickActors();
+        m_currentLevel->OnTick();
     }
 }
 
@@ -84,17 +84,20 @@ std::string EXP_Game::GetEngineContentPath() {
     return m_gameinfo.RootEngineContentDir;
 }
 
-std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath, bool fromEngine) {
-    if(m_materials.DoIDExists(matPath)) {
+std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath, bool fromEngine, bool no_cache, bool autobuild) {
+    if(m_materials.DoIDExists(matPath) && !(no_cache)) {
         return m_materials.GetRessource(matPath);
     }
 
     auto material = std::make_shared<EXP_Material>(this);
-    if(!material->LoadMaterial(matPath, fromEngine)) {
+    if(!material->LoadMaterial(matPath, fromEngine, autobuild)) {
         std::cout << "ERROR: Failed to load material" << std::endl;
         return nullptr; // TODO: Create a default material to be returned
     }
-    m_materials.AddRessource(material, matPath);
+
+    if(!no_cache) {
+        m_materials.AddRessource(material, matPath);
+    }
 
     return material;
 }

@@ -8,7 +8,7 @@ EXP_Material::~EXP_Material() {
 
 }
 
-bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath) {
+bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath, bool autobuild) {
     std::string rootPath = enginePath ? m_game->GetEngineContentPath() : m_game->GetGameContentPath();
     std::ifstream file(rootPath + material_file);
     if(!file.is_open()) {
@@ -61,6 +61,7 @@ bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath) {
     if(isUI) {
         auto rpass = m_game->GetGuiManager()->GetRenderPass();
         pline = m_game->GetRenderer()->GetAPI()->CreatePipeline(rpass, shaderLoader);
+        pline->EnableTransparency();
 
         if(hasCustomPctant) {
             pline->ConfigurePushConstant(root["custom_pctant_size"].asInt());
@@ -85,7 +86,10 @@ bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath) {
 
         pline->RegisterTexture(tex, t["binding"].asInt());
     }
-    pline->BuildPipeline();
+
+    if(autobuild) {
+        pline->BuildPipeline();
+    }
 
     m_mat = std::make_shared<RD_Material>(pline);
     m_game->GetRenderer()->RegisterMaterial(m_mat);

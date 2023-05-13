@@ -145,7 +145,7 @@ EXP_GuiTextStatic::EXP_GuiTextStatic(EXP_Game *game, RD_Rect rect, std::shared_p
     m_game = game;
 
     m_mat = game->QueryMaterial("/ui/materials/glyph.json", true);
-    m_blit_mat = game->QueryMaterial("/ui/materials/solid_tex.json", true);
+    m_blit_mat = game->QueryMaterial("/ui/materials/solid_tex.json", true, true, false);
 
     m_rect = rect;
 }
@@ -163,11 +163,6 @@ void EXP_GuiTextStatic::RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_
     nrect.y += parentRect.y;
 
     vec4 color{0.0f, 1.0f, 0.0f, 1.0f};
-
-    auto bpline = m_blit_mat->GetPipeline();
-    bpline->PurgeTextures();
-    bpline->RegisterTexture(m_text->GetAttachment(0), 3);
-    bpline->RebuildPipeline();
 
     pline->Bind(sync);
 
@@ -255,4 +250,8 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
 
         currentX += met.advance;
     }
+
+    auto bpline = m_blit_mat->GetPipeline();
+    bpline->RegisterTexture(m_text->GetAttachment(0), 3);
+    bpline->BuildPipeline();
 }

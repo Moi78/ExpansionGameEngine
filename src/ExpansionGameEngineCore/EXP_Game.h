@@ -39,7 +39,12 @@ public:
     std::shared_ptr<EXP_Animator> GetAnimator();
     std::shared_ptr<EXP_GuiManager> GetGuiManager();
 
-    std::shared_ptr<EXP_Material> QueryMaterial(std::string matPath, bool fromEngine = false);
+    std::shared_ptr<EXP_Material> QueryMaterial(
+            std::string matPath,
+            bool fromEngine = false,
+            bool no_cache = false,
+            bool autobuild = true
+    );
 
     int GetSkeletonOffset();
     void SetupSkeleton(std::shared_ptr<RD_Skeleton> skel);

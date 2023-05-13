@@ -45,6 +45,9 @@ public:
     virtual void ConfigurePushConstant(size_t size) = 0;
     virtual void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
     virtual void PartialPushConstant(void* data, size_t size, size_t offest, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) = 0;
+
+    virtual bool IsBuilt() = 0;
+    virtual void EnableTransparency() = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -86,6 +89,8 @@ public:
     void PushConstant(void* data, size_t size, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
     void PartialPushConstant(void* data, size_t size, size_t offset, std::optional<std::shared_ptr<RD_RenderSynchronizer>> sync) override;
 
+    bool IsBuilt() override;
+    void EnableTransparency() override;
 private:
     bool AllocCMDBuffer();
     bool CreateDescriptorPool();
@@ -125,6 +130,8 @@ private:
     VkCommandBuffer m_cmdBuffer;
 
     size_t m_push_ctant_size;
+
+    bool m_isTransparent;
 };
 
 #endif //BUILD_VULKAN

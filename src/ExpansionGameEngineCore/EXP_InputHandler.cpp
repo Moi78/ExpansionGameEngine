@@ -42,3 +42,11 @@ float EXP_InputHandler::GetCursorPosX() {
 float EXP_InputHandler::GetCursorPosY() {
     return m_win->GetCursorPositionY();
 }
+
+float EXP_InputHandler::GetCursotPosXAbs() {
+    return m_win->GetCursorPositionX(true);
+}
+
+float EXP_InputHandler::GetCursorPosYAbs() {
+    return m_win->GetCursorPositionY(true);
+}

@@ -25,6 +25,9 @@ public:
     float GetCursorPosX();
     float GetCursorPosY();
 
+    float GetCursotPosXAbs();
+    float GetCursorPosYAbs();
+
 private:
     std::shared_ptr<RD_Windowing> m_win;
 

@@ -17,9 +17,9 @@ EXP_GuiButton::EXP_GuiButton(EXP_Game* game,
     m_texs[1]->LoadTextureFromFile(game->GetGameContentPath() + texPush);
     m_texs[2]->LoadTextureFromFile(game->GetGameContentPath() + texPress);
 
-    m_mat = game->QueryMaterial("/ui/materials/button.json", true);
+    m_mat = game->QueryMaterial("/ui/materials/button.json", true, true, false);
     m_mat->GetPipeline()->RegisterTextureArray(m_texs, 3);
-    m_mat->GetPipeline()->RebuildPipeline();
+    m_mat->GetPipeline()->BuildPipeline();
 
     m_cbck = std::make_shared<EXP_MouseCallback>(GLFW_MOUSE_BUTTON_LEFT, CL_VDFUNCPTR(EXP_GuiButton::RegisterClick));
     m_cbck->AttachOnKeyUp(CL_VDFUNCPTR(EXP_GuiButton::UnregisterClick));

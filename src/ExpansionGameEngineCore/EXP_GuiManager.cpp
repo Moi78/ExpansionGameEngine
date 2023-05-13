@@ -47,6 +47,7 @@ EXP_GuiManager::EXP_GuiManager(std::shared_ptr<RD_API> api) {
     color.format = IMGFORMAT_RGBA;
     color.is_swapchain_attachment = false;
     color.sample_count = 1;
+    color.is_transparent = true;
 
     m_rpass = m_api->CreateRenderPass({color}, api->GetWindowingSystem()->GetWidth(), api->GetWindowingSystem()->GetHeight());
     m_rpass->BuildRenderpass(api.get(), false);

@@ -19,14 +19,14 @@ int main(int argc, char* argv[]) {
     gameinfo.GameLib = "./libGame.so";
     gameinfo.RootEngineContentDir = "./Engine/";
     gameinfo.RootGameContentDir = "./Content/";
-    gameinfo.WindowHeight = 1270;
-    gameinfo.WindowWidth = 720;
+    gameinfo.WindowHeight = 720;
+    gameinfo.WindowWidth = 1270;
     gameinfo.StartLevel = "/levels/level1.json";
 
 	std::shared_ptr<RD_API> api = std::make_shared<RD_API_Vk>();
     std::shared_ptr<RD_RenderingPipeline> rpline = std::make_shared<RD_RenderingPipeline_PBR>(api);
 
-	std::shared_ptr<RaindropRenderer> rndr = std::make_shared<RaindropRenderer>(std::shared_ptr<RD_API>(api), std::shared_ptr<RD_RenderingPipeline>(rpline), 1270, 720, "ExGame");
+	std::shared_ptr<RaindropRenderer> rndr = std::make_shared<RaindropRenderer>(std::shared_ptr<RD_API>(api), std::shared_ptr<RD_RenderingPipeline>(rpline), gameinfo.WindowWidth, gameinfo.WindowHeight, "ExGame");
 
     std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>(rndr, gameinfo);
 

@@ -24,6 +24,8 @@ RD_Pipeline_Vk::RD_Pipeline_Vk (VkDevice dev, VkCommandPool pool, VkQueue gfxQue
     m_fence = VK_NULL_HANDLE;
 
     m_cullMode = VK_CULL_MODE_BACK_BIT;
+
+    m_isTransparent = false;
 }
 
 RD_Pipeline_Vk::~RD_Pipeline_Vk() {
@@ -147,15 +149,17 @@ bool RD_Pipeline_Vk::BuildPipeline() {
 
     VkPipelineColorBlendAttachmentState colorBlendState_enabled{};
     colorBlendState_enabled.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-                                     VK_COLOR_COMPONENT_G_BIT |
-                                     VK_COLOR_COMPONENT_B_BIT |
-                                     VK_COLOR_COMPONENT_A_BIT;
+                                             VK_COLOR_COMPONENT_G_BIT |
+                                             VK_COLOR_COMPONENT_B_BIT |
+                                             VK_COLOR_COMPONENT_A_BIT;
     colorBlendState_enabled.blendEnable = VK_TRUE;
+
     colorBlendState_enabled.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
     colorBlendState_enabled.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
     colorBlendState_enabled.colorBlendOp = VK_BLEND_OP_ADD;
-    colorBlendState_enabled.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendState_enabled.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+
+    colorBlendState_enabled.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlendState_enabled.dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
     colorBlendState_enabled.alphaBlendOp = VK_BLEND_OP_ADD;
 
     VkPipelineColorBlendAttachmentState colorBlendState_disabled{};
@@ -168,7 +172,7 @@ bool RD_Pipeline_Vk::BuildPipeline() {
 
     std::vector<VkPipelineColorBlendAttachmentState> blendAtt;
     for(int i = 0; i < m_rpass->GetAttachmentCount(); i++) {
-        if(m_rpass->IsAttachmentTransparent(i)) {
+        if(m_rpass->IsAttachmentTransparent(i) || m_isTransparent) {
             blendAtt.push_back(colorBlendState_enabled);
         } else {
             blendAtt.push_back(colorBlendState_disabled);
@@ -323,6 +327,8 @@ bool RD_Pipeline_Vk::CreateDescriptorSet() {
 }
 
 void RD_Pipeline_Vk::UpdateDescSets() {
+    // TODO: Call vkUpdateDescriptorSets only once
+
     for(int i = 0; i < m_bindings.size(); i++) {
         std::shared_ptr<RD_UniformBuffer_Vk> vkUBuff = std::reinterpret_pointer_cast<RD_UniformBuffer_Vk>(m_uBuffs[i]);
 
@@ -639,6 +645,14 @@ void RD_Pipeline_Vk::SetCullMode(RD_CullMode cm) {
     } else if(cm == RD_CullMode::CM_NONE) {
         m_cullMode = VK_CULL_MODE_NONE;
     }
+}
+
+bool RD_Pipeline_Vk::IsBuilt() {
+    return m_pipeline != VK_NULL_HANDLE;
+}
+
+void RD_Pipeline_Vk::EnableTransparency() {
+    m_isTransparent = true;
 }
 
 #endif //BUILD_VULKAN
