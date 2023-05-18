@@ -95,7 +95,9 @@ std::shared_ptr<EXP_Material> EXP_Game::QueryMaterial(std::string matPath, bool 
         return nullptr; // TODO: Create a default material to be returned
     }
 
-    if(!no_cache) {
+    if(no_cache) {
+        m_materials.AddRessource(material, matPath + std::to_string(std::rand())); // TODO: Need to find a better solution...
+    } else {
         m_materials.AddRessource(material, matPath);
     }
 

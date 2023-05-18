@@ -46,9 +46,9 @@ EXP_GuiSolidTexturedRect::EXP_GuiSolidTexturedRect(EXP_Game *game, RD_Rect rect,
 
     std::string gamePath = game->GetGameContentPath();
     if(m_tex->LoadTextureFromFile(gamePath + texPath)) {
-        m_mat = game->QueryMaterial("/ui/materials/solid_tex.json", true);
+        m_mat = game->QueryMaterial("/ui/materials/solid_tex.json", true, true, false);
         m_mat->GetPipeline()->RegisterTexture(m_tex, 3);
-        m_mat->GetPipeline()->RebuildPipeline();
+        m_mat->GetPipeline()->BuildPipeline();
     } else {
         m_mat = game->QueryMaterial("/ui/materials/solid.json", true);
     }
