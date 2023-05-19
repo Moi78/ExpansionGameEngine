@@ -84,12 +84,36 @@ EXP_Font::EXP_Font(EXP_Game* game, FT_Library ft, std::string fontPath, bool isE
 
     m_game = game;
     m_ft = ft;
+
+    m_flags = EXP_FontCacheFlags::OVER_TIME;
+    m_cached_size = 25;
 }
 
 bool EXP_Font::LoadFont() {
     if(FT_New_Face(m_ft, m_fpath.c_str(), 0, &m_font)) {
         std::cerr << "ERROR: Failed to load font " << m_fpath << std::endl;
         return false;
+    }
+
+    switch (m_flags) {
+        case OVER_TIME:
+            break;
+
+        case ALL_LETTERS:
+            CacheLetters();
+            break;
+
+        case ALL_NUMBERS:
+            CacheNumbers();
+            break;
+
+        case ALL_ALPHANUM:
+            CacheNumbers();
+            CacheLetters();
+            break;
+
+        default:
+            break;
     }
 
     return true;
@@ -135,10 +159,52 @@ EXP_GlyphMetrics EXP_Font::GetGlyphMetrics(char character, int size) {
     return met;
 }
 
+void EXP_Font::SetCacheFlag(EXP_FontCacheFlags flags) {
+    m_flags = flags;
+}
+
+void EXP_Font::CacheNumbers() {
+    for(int i = 0; i < 10; i++) {
+        GetGlyphTex(0x30 + i, m_cached_size);
+    }
+}
+
+void EXP_Font::CacheLetters() {
+    // Symbols
+    for(int i = 0; i < 15; i++) {
+        GetGlyphTex(0x21 + i, m_cached_size);
+    }
+
+    for(int i = 0; i < 6; i++) {
+        GetGlyphTex(0x3A + i, m_cached_size);
+    }
+
+    for(int i = 0; i < 5; i++) {
+        GetGlyphTex(0x5B + i, m_cached_size);
+    }
+
+    for(int i = 0; i < 4; i++) {
+        GetGlyphTex(0x7B + i, m_cached_size);
+    }
+
+    // Letters
+    for(int i = 0; i < 26; i++) {
+        GetGlyphTex(0x41 + i, m_cached_size);
+    }
+
+    for(int i = 0; i < 26; i++) {
+        GetGlyphTex(0x61 + i, m_cached_size);
+    }
+}
+
+void EXP_Font::SetCacheSize(unsigned int size) {
+    m_cached_size = size;
+}
+
 //----------------------------------------------------------------------------------------------------------------------
 // EXP_GuiTextStatic
 
-EXP_GuiTextStatic::EXP_GuiTextStatic(EXP_Game *game, RD_Rect rect, std::shared_ptr<EXP_Font> font,
+EXP_GuiTextStatic::EXP_GuiTextStatic(EXP_Game *game, RD_Rect rect, std::shared_ptr<EXP_Font> font, vec4 color,
                                      std::weak_ptr<EXP_GuiWidget> parent) : EXP_GuiWidget(parent) {
     m_api = game->GetRenderer()->GetAPI();
     m_font = font;
@@ -148,6 +214,7 @@ EXP_GuiTextStatic::EXP_GuiTextStatic(EXP_Game *game, RD_Rect rect, std::shared_p
     m_blit_mat = game->QueryMaterial("/ui/materials/solid_tex.json", true, true, false);
 
     m_rect = rect;
+    m_color = color;
 }
 
 EXP_GuiTextStatic::~EXP_GuiTextStatic() {
@@ -162,12 +229,10 @@ void EXP_GuiTextStatic::RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_
     nrect.x += parentRect.x;
     nrect.y += parentRect.y;
 
-    vec4 color{0.0f, 1.0f, 0.0f, 1.0f};
-
     pline->Bind(sync);
 
     pline->PartialPushConstant((void*)&nrect, sizeof(RD_Rect), 0, sync);
-    pline->PartialPushConstant((void*)color.GetData(), 4 * sizeof(float), 4 * sizeof(float), sync);
+    pline->PartialPushConstant((void*)m_color.GetData(), 4 * sizeof(float), 4 * sizeof(float), sync);
     pline->DrawIndexedVertexBuffer(surface->GetVertexBuffer(), sync);
 
     pline->Unbind(sync);

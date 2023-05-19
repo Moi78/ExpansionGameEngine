@@ -104,8 +104,11 @@ void EXP_GuiManager::ProcessEvents() {
     }
 }
 
-std::shared_ptr<EXP_Font> EXP_GuiManager::ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine) {
-    return std::make_shared<EXP_Font>(game, m_ft, fontPath, isEngine);
+std::shared_ptr<EXP_Font> EXP_GuiManager::ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine, EXP_FontCacheFlags flag) {
+    auto f = std::make_shared<EXP_Font>(game, m_ft, fontPath, isEngine);
+    f->SetCacheFlag(flag);
+
+    return f;
 }
 
 void EXP_GuiManager::SetRedrawFlag() {
