@@ -27,6 +27,9 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     game->GetGuiManager()->AddWidget(btn2);
     game->GetGuiManager()->AddWidget(btnText);
 
+    game->GetRenderer()->GetAPI()->GetWindowingSystem()->SetViewportMode(RD_ViewportMode::FLOATING);
+    game->GetRenderer()->GetAPI()->GetWindowingSystem()->SetViewport(RD_Rect{500, 500, 600, 200});
+
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 
     m_game = game;
