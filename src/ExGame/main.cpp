@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     gameinfo.RootEngineContentDir = "./Engine/";
     gameinfo.RootGameContentDir = "./Content/";
     gameinfo.WindowHeight = 720;
-    gameinfo.WindowWidth = 1270;
+    gameinfo.WindowWidth = 1280;
     gameinfo.StartLevel = "/levels/level1.json";
 
 	std::shared_ptr<RD_API> api = std::make_shared<RD_API_Vk>();

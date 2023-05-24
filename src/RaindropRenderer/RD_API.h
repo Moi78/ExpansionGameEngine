@@ -23,7 +23,9 @@
 #include "RD_Callback.h"
 #include "RD_RenderSynchronizer.h"
 #include "RD_OrphanFramebuffer.h"
+
 #include "vec.h"
+#include "mat4.h"
 
 enum class RD_ViewportMode {
     FLOATING,

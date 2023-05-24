@@ -19,6 +19,7 @@ struct Rect {
 
 layout (binding = 81) uniform SCREEN_MAT {
     Rect absScreen;
+    mat4 screen_mat;
 };
 
 layout(push_constant) uniform RECT_COLOR_ID {
@@ -30,9 +31,9 @@ layout(push_constant) uniform RECT_COLOR_ID {
 void main() {
     UVcoords = aUV;
 
-    vec2 pos = aPos.xy * vec2(r.w / absScreen.w, r.h / absScreen.h);
-    pos += vec2(r.w / (absScreen.w), r.h / (absScreen.h));
-    pos += 2 * vec2(r.x / absScreen.w, r.y / absScreen.h);
+    vec2 pos = aPos.xy * vec2(r.w, r.h) / vec2(absScreen.w, absScreen.h);
+    pos += vec2(r.w, r.h) / vec2(absScreen.w, absScreen.h);
+    pos += 2 * vec2(r.x, r.y) / vec2(absScreen.w, absScreen.h);
     pos -= vec2(1.0, 1.0);
 
     gl_Position = vec4(pos, 0.0, 1.0);

@@ -41,6 +41,8 @@ private:
 
     std::shared_ptr<EXP_KeyboardCallback> m_playpause;
     bool m_pause_state;
+
+    std::shared_ptr<EXP_Font> m_ft;
 };
 
 EXPGE_LEVEL_HEADER(GameLevel);

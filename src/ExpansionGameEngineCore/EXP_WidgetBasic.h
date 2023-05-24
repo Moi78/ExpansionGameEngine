@@ -52,7 +52,13 @@ public:
 
     std::shared_ptr<RD_Texture> GetGlyphTex(char character, int size);
     EXP_GlyphMetrics GetGlyphMetrics(char character, int size);
+
+    void SetCacheFlag(EXP_FontCacheFlags flags);
+    void SetCacheSize(unsigned int size);
 private:
+    void CacheNumbers();
+    void CacheLetters();
+
     EXP_Game* m_game;
     FT_Library m_ft;
 
@@ -60,11 +66,14 @@ private:
     FT_Face m_font;
 
     EXP_GenericRessourceManager<std::shared_ptr<RD_Texture>> m_tex_man;
+
+    EXP_FontCacheFlags m_flags;
+    unsigned int m_cached_size;
 };
 
 class EXP_GuiTextStatic : public EXP_GuiWidget {
 public:
-    EXP_GuiTextStatic(EXP_Game* game, RD_Rect rect, std::shared_ptr<EXP_Font> font, std::weak_ptr<EXP_GuiWidget> parent = {});
+    EXP_GuiTextStatic(EXP_Game* game, RD_Rect rect, std::shared_ptr<EXP_Font> font, vec4 color, std::weak_ptr<EXP_GuiWidget> parent = {});
     ~EXP_GuiTextStatic();
 
     void ConstructText(std::string text, int size);
@@ -82,6 +91,8 @@ private:
     std::shared_ptr<EXP_Material> m_blit_mat;
 
     std::shared_ptr<EXP_Font> m_font;
+
+    vec4 m_color;
 };
 
 #endif //EXPGE_EXP_WIDGETBASIC_H

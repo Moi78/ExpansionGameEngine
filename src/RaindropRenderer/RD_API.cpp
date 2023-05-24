@@ -484,10 +484,12 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
     }
 
     if(m_vpm == RD_ViewportMode::FLOATING) {
-        float offset_x = (m_vp.w / (float)GetScreenWidth()) - 1;
-        float offset_y = (m_vp.h / (float)GetScreenHeight()) - 1;
+        vec2 offset = vec2(m_vp.w / (float)GetScreenWidth(), (m_vp.h / (float)GetScreenHeight()));
+        offset = offset + (vec2(m_vp.x / (float)GetScreenWidth(), (m_vp.y / (float)GetScreenHeight())) * 2);
+        offset = offset - vec2(1, 1);
+
         m_vp_real = {
-                offset_x, offset_y,
+                offset.GetX(), offset.GetY(),
                 m_vp.w / (float)GetScreenWidth(),
                 m_vp.h / (float)GetScreenHeight()
         };
@@ -546,7 +548,10 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
             .h = (float)m_h
     };
 
-    m_screen_size->FillBufferData((void*)&currentSize);
+    const mat4f scr_mat = ProjOrtho(0, m_w, 0, m_h, -1, 1);
+
+    m_screen_size->PartialFillBufferData((void*)&currentSize, 4 * sizeof(float), 0);
+    m_screen_size->PartialFillBufferData((void*)&currentSize, 4 * sizeof(float), 0);
 
     m_pline->RegisterUniformBuffer(m_vp_u);
     m_pline->ConfigurePushConstant(sizeof(uint32_t));

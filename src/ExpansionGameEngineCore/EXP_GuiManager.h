@@ -35,6 +35,13 @@ protected:
 class EXP_Font;
 class EXP_Game;
 
+enum EXP_FontCacheFlags {
+    OVER_TIME,
+    ALL_LETTERS,
+    ALL_NUMBERS,
+    ALL_ALPHANUM
+};
+
 class EXP_GuiManager {
 public:
     EXP_GuiManager(std::shared_ptr<RD_API> api);
@@ -50,7 +57,7 @@ public:
 
     void ProcessEvents();
 
-    std::shared_ptr<EXP_Font> ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine);
+    std::shared_ptr<EXP_Font> ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine = false, EXP_FontCacheFlags cache_flag = OVER_TIME);
 
 private:
     std::shared_ptr<RD_API> m_api;
