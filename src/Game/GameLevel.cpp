@@ -20,9 +20,12 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     auto btnText = std::make_shared<EXP_GuiTextStatic>(game, RD_Rect{0, 0, 0, 0}, ft, btn);
     btnText->ConstructText("This is a button", 30);
 
+    auto win = std::make_shared<EXP_GuiWindow>(game, RD_Rect{500, 100, 200, 100}, "Hello world", EXP_WindowFlags::WIN_DRAGABLE);
+
     game->GetGuiManager()->AddWidget(text);
     game->GetGuiManager()->AddWidget(btn);
     game->GetGuiManager()->AddWidget(btnText);
+    game->GetGuiManager()->AddWidget(win);
 
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 

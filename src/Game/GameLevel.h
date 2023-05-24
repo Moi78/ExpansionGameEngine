@@ -14,6 +14,7 @@
 
 #include <EXP_WidgetBasic.h>
 #include <ui_kit/EXP_GuiButton.h>
+#include <ui_kit/EXP_GuiWindow.h>
 
 #include <RD_Mesh.h>
 #include <RD_Skeleton.h>
