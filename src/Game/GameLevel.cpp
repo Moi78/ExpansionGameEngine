@@ -23,7 +23,7 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     auto btnText = std::make_shared<EXP_GuiTextStatic>(game, RD_Rect{0, 0, 0, 0}, m_ft, vec4(1.0f, 0.0f, 0.2f, 1.0f), btn);
     btnText->ConstructText("This is a button", 30);
 
-    auto win = std::make_shared<EXP_GuiWindow>(game, RD_Rect{500, 100, 200, 100}, "Hello world", EXP_WindowFlags::WIN_DRAGABLE);
+    auto win = std::make_shared<EXP_GuiWindow>(game, RD_Rect{500, 100, 500, 400}, "Hello world", EXP_WindowFlags::WIN_DRAGABLE);
 
     game->GetGuiManager()->AddWidget(text);
     game->GetGuiManager()->AddWidget(btn);

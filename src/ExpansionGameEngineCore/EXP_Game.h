@@ -21,6 +21,7 @@ class EXP_MapLoader;
 class EXP_Level;
 class EXP_Material;
 class EXP_Animator;
+class EXP_Font;
 
 class EXP_Game {
 public:
@@ -54,6 +55,8 @@ public:
 
     void Resize();
 
+    std::shared_ptr<EXP_Font> GetEngineFont();
+
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;
 
@@ -63,6 +66,7 @@ private:
     std::shared_ptr<EXP_Animator> m_animator;
 
     std::shared_ptr<EXP_GuiManager> m_guiLayer;
+    std::shared_ptr<EXP_Font> m_defaultFont;
 
     std::shared_ptr<EXP_Level> m_currentLevel;
 

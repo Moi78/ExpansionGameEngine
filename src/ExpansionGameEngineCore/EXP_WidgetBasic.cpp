@@ -243,27 +243,42 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
 
     selfRect.h = size + (size / 2);
     selfRect.w = 0;
+
+    int currentLineLength = 0;
     for(auto c : text) {
         if(c == '\n') {
-            selfRect.h += size + (size/2);
+            selfRect.h += size + (size/2); // TODO: Use the correct formula.
+
+            if(currentLineLength > selfRect.w) {
+                selfRect.w = currentLineLength;
+            }
+
+            currentLineLength = 0;
+
         } else {
             auto met = m_font->GetGlyphMetrics(c, size);
-            selfRect.w += met.advance;
+            currentLineLength += met.advance;
         }
     }
 
-    m_rect = selfRect;
-    RD_Attachment monocolor{
-            .format = IMGFORMAT_RGBA,
-            .sample_count = 1,
-            .do_clear = false,
-            .clearColor = vec4(0.0f, 0.0f, 0.0f, 0.0f),
-            .is_swapchain_attachment = false,
-            .is_transparent = true
-    };
+    if(currentLineLength && (selfRect.w == 0)) {
+        selfRect.w = currentLineLength;
+    }
 
-    m_text = m_api->CreateRenderPass({monocolor}, selfRect.w, selfRect.h);
-    m_text->BuildRenderpass(m_api.get(), false);
+    if(!m_text.use_count()) {
+        m_rect = selfRect;
+        RD_Attachment monocolor{
+                .format = IMGFORMAT_RGBA,
+                .sample_count = 1,
+                .do_clear = false,
+                .clearColor = vec4(0.0f, 0.0f, 0.0f, 0.0f),
+                .is_swapchain_attachment = false,
+                .is_transparent = true
+        };
+
+        m_text = m_api->CreateRenderPass({monocolor}, selfRect.w, selfRect.h);
+        m_text->BuildRenderpass(m_api.get(), false);
+    }
 
     auto pline = m_mat->GetPipeline();
 

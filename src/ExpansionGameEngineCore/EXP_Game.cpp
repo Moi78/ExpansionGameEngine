@@ -5,6 +5,7 @@
 #include "EXP_Level.h"
 #include "EXP_Material.h"
 #include "EXP_Animator.h"
+#include "EXP_WidgetBasic.h"
 
 EXP_Game::EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo) {
     m_rndr = rndr;
@@ -32,6 +33,11 @@ bool EXP_Game::InitEngine() {
             m_guiLayer->GetRenderPass()->GetAttachment(0),
             m_gameinfo.RootEngineContentDir
     );
+
+    m_defaultFont = m_guiLayer->ConstructFont(this, "/ui/fonts/opensans.ttf", true, EXP_FontCacheFlags::OVER_TIME);
+    if(!m_defaultFont->LoadFont()) {
+        return false;
+    }
 
     RD_Callback resize_cbck{CL_VDFUNCPTR(EXP_Game::Resize)};
     m_rndr->SetExtResizeCallback(resize_cbck);
@@ -142,4 +148,8 @@ void EXP_Game::Resize() {
     for(auto& m : m_materials) {
         m.second->GetPipeline()->RebuildPipeline();
     }
+}
+
+std::shared_ptr<EXP_Font> EXP_Game::GetEngineFont() {
+    return m_defaultFont;
 }
