@@ -95,4 +95,13 @@ private:
     vec4 m_color;
 };
 
+class EXP_GuiEmpty : public EXP_GuiWidget {
+public:
+    EXP_GuiEmpty(RD_Rect rect, std::weak_ptr<EXP_GuiWidget> parent = {}) : EXP_GuiWidget(parent) {}
+    ~EXP_GuiEmpty() = default;
+
+    void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) override {}
+    void Event() override {}
+};
+
 #endif //EXPGE_EXP_WIDGETBASIC_H
