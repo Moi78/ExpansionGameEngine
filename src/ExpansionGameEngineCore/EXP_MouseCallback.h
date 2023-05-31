@@ -12,7 +12,7 @@
 
 class EXP_MouseCallback {
 public:
-    EXP_MouseCallback(int key, std::function<void()> callbck);
+    EXP_MouseCallback(int key, std::function<void()> callbck, bool repeat = true);
     ~EXP_MouseCallback();
 
     void Call(std::shared_ptr<RD_Windowing> win);
@@ -26,6 +26,7 @@ private:
     std::optional<std::function<void()>> m_up_cbck;
 
     bool m_oldValue;
+    bool m_repeat;
 };
 
 

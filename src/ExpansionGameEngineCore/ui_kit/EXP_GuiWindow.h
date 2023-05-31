@@ -4,6 +4,7 @@
 #include <EXP_Game.h>
 #include <EXP_GuiManager.h>
 #include <EXP_WidgetBasic.h>
+#include <EXP_MouseCallback.h>
 
 enum EXP_WindowFlags {
     WIN_NONE = 0,
@@ -24,6 +25,11 @@ public:
     void Event() override;
 
 private:
+    void OnClick();
+    void OnRelease();
+
+    enum grab_state_t {RELEASED, GRABBED, CLICKED};
+
     EXP_Game* m_game;
 
     std::string m_title;
@@ -32,6 +38,12 @@ private:
 
     std::shared_ptr<EXP_GuiSolidRect> m_bg_surface, m_bar_surface;
     std::shared_ptr<EXP_GuiTextStatic> m_title_text;
+    RD_Rect m_draggable_area;
+
+    std::shared_ptr<EXP_MouseCallback> m_click;
+
+    grab_state_t m_state;
+    vec2 m_mouse_pos;
 
     EXP_WindowFlags m_flags;
 };
