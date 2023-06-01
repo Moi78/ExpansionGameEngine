@@ -20,8 +20,13 @@ void EXP_GuiWidget::AddChild(EXP_GuiWidget *child) {
 void EXP_GuiWidget::Paint(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) {
     RenderWidget(surface, parentRect, sync);
 
+    // To make the three follows the parent
+    RD_Rect parented_rect{m_rect};
+    parented_rect.x += parentRect.x;
+    parented_rect.y += parentRect.y;
+
     for(auto& c : m_child) {
-        c->Paint(surface, m_rect, sync);
+        c->Paint(surface, parented_rect, sync);
     }
 }
 

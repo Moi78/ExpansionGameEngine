@@ -1,0 +1,35 @@
+{
+  "levelObjectName": "OmbrageMainLevel",
+  "nodes": [
+    {
+      "type": "mesh",
+      "mesh": "/mdls/plane.msh",
+      "material": "/materials/mat_grey.json",
+      "tag": "floor",
+
+      "pos": [0, 0, 0],
+      "rot": [0, 0, 0],
+      "scale": [1.5, 1.5, 1.5]
+    },
+
+    {
+      "type": "mesh",
+      "mesh": "/mdls/sphere.msh",
+      "material": "/materials/mat_grey.json",
+      "tag": "floor",
+
+      "pos": [0, 0, 1.2],
+      "rot": [0, 0, 0],
+      "scale": [1, 1, 1]
+    },
+
+    {
+      "type": "dirlight",
+      "tag": "sun",
+
+      "color": [1.0, 1.0, 1.0],
+      "dir": [1.0, 0.5, -1],
+      "brightness": 1.0
+    }
+  ]
+}

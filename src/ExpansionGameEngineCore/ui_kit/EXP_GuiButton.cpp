@@ -4,8 +4,9 @@ EXP_GuiButton::EXP_GuiButton(EXP_Game* game,
                              RD_Rect pos,
                              std::string texBase, std::string texPush, std::string texPress,
                              std::shared_ptr<EXP_GuiWidget> parent
-) {
+) : EXP_GuiWidget(parent) {
     m_game = game;
+    m_parent = parent;
 
     m_state = states_t::INIT;
 
@@ -56,16 +57,23 @@ void EXP_GuiButton::Event() {
     auto guiman = m_game->GetGuiManager();
     vec2 curPos = vec2(winsys->GetCursorPositionX(true), winsys->GetCursorPositionY(true));
 
+    RD_Rect transRect{m_rect};
+    if(m_parent.use_count()) {
+        auto parentRect = m_parent->GetRect();
+        transRect.x += parentRect.x;
+        transRect.y += parentRect.y;
+    }
+
     switch(m_state) {
         case states_t::INIT:
-            if(isPointInRect(curPos, m_rect)) {
+            if(isPointInRect(curPos, transRect)) {
                 m_state = states_t::HOVER;
                 guiman->SetRedrawFlag();
             }
             break;
 
         case states_t::HOVER:
-            if(!isPointInRect(curPos, m_rect)) {
+            if(!isPointInRect(curPos, transRect)) {
                 m_state = states_t::INIT;
                 guiman->SetRedrawFlag();
             }

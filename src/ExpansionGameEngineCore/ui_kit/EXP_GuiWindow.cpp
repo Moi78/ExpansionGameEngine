@@ -5,7 +5,8 @@ EXP_GuiWindow::EXP_GuiWindow(EXP_Game *game, RD_Rect pos, std::string title, EXP
                              EXP_GuiWidget(parent),
                              m_game(game), m_title(title), m_flags(flags), m_bar_height(30),
                              m_bg_color(COLOR_HEX_FLOAT(0x20, 0x4E, 0x4A, 0xFF)),
-                             m_accent_color(COLOR_HEX_FLOAT(0x29, 0x70, 0x45, 0xFF))
+                             m_accent_color(COLOR_HEX_FLOAT(0x29, 0x70, 0x45, 0xFF)),
+                             m_border_color(COLOR_HEX_FLOAT(0x0A, 0x17, 0x16, 0xFF))
 {
     m_rect = pos;
     m_draggable_area = RD_Rect{0, 0, pos.w, pos.h};
@@ -44,6 +45,19 @@ EXP_GuiWindow::EXP_GuiWindow(EXP_Game *game, RD_Rect pos, std::string title, EXP
 
         AddChild(m_bar_surface.get());
         AddChild(m_title_text.get());
+    }
+
+    if(!(flags & EXP_WindowFlags::WIN_NO_BORDERS)) {
+        RD_Rect fill_bg{pos};
+        fill_bg.x = 1;
+        fill_bg.y = 1;
+        fill_bg.w -= 2;
+        fill_bg.h -= 2;
+
+        m_border_surface = std::make_shared<EXP_GuiSolidRect>(game, fill_bg, m_bg_color);
+        m_bg_surface->SetColor(m_border_color);
+
+        AddChild(m_border_surface.get());
     }
 }
 

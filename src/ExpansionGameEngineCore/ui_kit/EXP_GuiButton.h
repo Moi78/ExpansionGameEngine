@@ -20,6 +20,7 @@ private:
     void UnregisterClick();
 
     EXP_Game* m_game;
+    std::shared_ptr<EXP_GuiWidget> m_parent;
 
     enum states_t {INIT, HOVER, CLICKED};
     states_t m_state;

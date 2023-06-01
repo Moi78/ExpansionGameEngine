@@ -10,7 +10,8 @@ enum EXP_WindowFlags {
     WIN_NONE = 0,
     WIN_DRAGABLE = 1,
     WIN_RESIZABLE = 2,
-    WIN_NO_BAR = 4
+    WIN_NO_BAR = 4,
+    WIN_NO_BORDERS = 8,
 };
 
 class EXP_GuiWindow : public EXP_GuiWidget {
@@ -33,10 +34,10 @@ private:
     EXP_Game* m_game;
 
     std::string m_title;
-    vec4 m_bg_color, m_accent_color;
+    vec4 m_bg_color, m_accent_color, m_border_color;
     unsigned int m_bar_height;
 
-    std::shared_ptr<EXP_GuiSolidRect> m_bg_surface, m_bar_surface;
+    std::shared_ptr<EXP_GuiSolidRect> m_bg_surface, m_bar_surface, m_border_surface;
     std::shared_ptr<EXP_GuiTextStatic> m_title_text;
     RD_Rect m_draggable_area;
 
