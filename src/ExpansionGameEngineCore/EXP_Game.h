@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <string>
+#include <thread>
 
 #include <RaindropRenderer.h>
 #include <RD_Skeleton.h>

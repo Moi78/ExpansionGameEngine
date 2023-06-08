@@ -9,16 +9,13 @@
 
 class EXP_GuiButton : public EXP_GuiWidget {
 public:
-    EXP_GuiButton(EXP_Game* game, RD_Rect pos, std::string texBase, std::string texPush, std::string texPress, std::shared_ptr<EXP_GuiWidget> parent = {});
+    EXP_GuiButton(EXP_Game* game, RD_Rect pos, std::string texBase, std::string texHover, std::string texPress, std::shared_ptr<EXP_GuiWidget> parent = {});
     ~EXP_GuiButton();
 
     void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) override;
-    void Event() override;
+    void Event(vec2 curPos, bool leftButtonPress) override;
 
 private:
-    void RegisterClick();
-    void UnregisterClick();
-
     EXP_Game* m_game;
     std::shared_ptr<EXP_GuiWidget> m_parent;
 
@@ -28,7 +25,8 @@ private:
     std::vector<std::shared_ptr<RD_Texture>> m_texs;
     std::shared_ptr<EXP_Material> m_mat;
 
-    std::shared_ptr<EXP_MouseCallback> m_cbck;
+    bool m_oldMLB;
+    bool m_clickFlag;
 };
 
 

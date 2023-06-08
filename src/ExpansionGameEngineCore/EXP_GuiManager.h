@@ -7,6 +7,8 @@
 #include <RD_API.h>
 #include <RD_Quad.h>
 
+#include <EXP_MouseCallback.h>
+
 #include <memory>
 #include <vector>
 
@@ -18,8 +20,8 @@ public:
     virtual void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) = 0;
     virtual void Paint(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync);
 
-    void ProcessEvents();
-    virtual void Event() = 0;
+    void ProcessEvents(vec2 curPos, bool leftButtonPress);
+    virtual void Event(vec2 curPos, bool leftButtonPress) = 0;
 
     const RD_Rect& GetRect();
 
@@ -44,7 +46,7 @@ enum EXP_FontCacheFlags {
 
 class EXP_GuiManager {
 public:
-    EXP_GuiManager(std::shared_ptr<RD_API> api);
+    EXP_GuiManager(EXP_Game* game, std::shared_ptr<RD_API> api);
     ~EXP_GuiManager() = default;
 
     std::shared_ptr<RD_RenderPass> GetRenderPass();
@@ -60,13 +62,20 @@ public:
     std::shared_ptr<EXP_Font> ConstructFont(EXP_Game* game, std::string fontPath, bool isEngine = false, EXP_FontCacheFlags cache_flag = OVER_TIME);
 
 private:
+    void OnPressMB();
+    void OnReleaseMB();
+
     std::shared_ptr<RD_API> m_api;
+    std::shared_ptr<RD_Windowing> m_winsys;
 
     std::shared_ptr<RD_RenderPass> m_rpass;
     std::shared_ptr<RD_RenderSynchronizer> m_sync;
     std::shared_ptr<RD_Quad> m_surface;
 
     std::vector<std::shared_ptr<EXP_GuiWidget>> m_widgets;
+
+    std::shared_ptr<EXP_MouseCallback> m_leftClick;
+    bool m_mb_press;
 
     FT_Library m_ft;
 

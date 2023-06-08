@@ -9,9 +9,11 @@ RD_Skeleton::~RD_Skeleton() {
 }
 
 void RD_Skeleton::UploadSkeleton(std::shared_ptr<RD_UniformBuffer> dest) {
-    for(int i = 0; i < m_final_matrices.size(); i++) {
-        dest->PartialFillBufferData(m_final_matrices[i].GetPTR(), 16 * sizeof(float), (i * 16 * sizeof(float)) + m_skel_offset);
-    }
+    //for(int i = 0; i < m_final_matrices.size(); i++) {
+    //    dest->PartialFillBufferData(m_final_matrices[i].GetPTR(), 16 * sizeof(float), (i * 16 * sizeof(float)) + m_skel_offset);
+    //}
+
+    dest->PartialFillBufferData(m_final_matrices.data(), m_final_matrices.size() * 16 * sizeof(float), m_skel_offset);
 }
 
 size_t RD_Skeleton::GetOffset() {

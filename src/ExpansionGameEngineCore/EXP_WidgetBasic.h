@@ -16,7 +16,7 @@ public:
     void SetColor(vec4 nColor);
 
     void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) override;
-    void Event() override {};
+    void Event(vec2 curPos, bool leftButtonPress) override {};
 
 private:
     EXP_Game* m_game;
@@ -31,7 +31,7 @@ public:
     ~EXP_GuiSolidTexturedRect();
 
     void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) override;
-    void Event() override {};
+    void Event(vec2 curPos, bool leftButtonPress) override {};
 
 private:
     std::shared_ptr<EXP_Material> m_mat;
@@ -79,7 +79,7 @@ public:
     void ConstructText(std::string text, int size);
 
     void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parentRect, std::shared_ptr<RD_RenderSynchronizer> sync) override;
-    void Event() override {};
+    void Event(vec2 curPos, bool leftButtonPress) override {};
 
 private:
     EXP_Game* m_game;

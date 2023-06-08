@@ -23,12 +23,9 @@ public:
     void SetAccentColor(vec4 color);
 
     void RenderWidget(std::shared_ptr<RD_Quad> surface, const RD_Rect& parent_rect, std::shared_ptr<RD_RenderSynchronizer> sync) override;
-    void Event() override;
+    void Event(vec2 curPos, bool leftButtonPress) override;
 
 private:
-    void OnClick();
-    void OnRelease();
-
     enum grab_state_t {RELEASED, GRABBED, CLICKED};
 
     EXP_Game* m_game;
@@ -40,8 +37,6 @@ private:
     std::shared_ptr<EXP_GuiSolidRect> m_bg_surface, m_bar_surface, m_border_surface;
     std::shared_ptr<EXP_GuiTextStatic> m_title_text;
     RD_Rect m_draggable_area;
-
-    std::shared_ptr<EXP_MouseCallback> m_click;
 
     grab_state_t m_state;
     vec2 m_mouse_pos;

@@ -30,11 +30,11 @@ void EXP_GuiWidget::Paint(std::shared_ptr<RD_Quad> surface, const RD_Rect& paren
     }
 }
 
-void EXP_GuiWidget::ProcessEvents() {
-    Event();
+void EXP_GuiWidget::ProcessEvents(vec2 curPos, bool leftButtonPress) {
+    Event(curPos, leftButtonPress);
 
     for(auto& c : m_child) {
-        c->ProcessEvents();
+        c->ProcessEvents(curPos, leftButtonPress);
     }
 }
 
@@ -44,8 +44,15 @@ const RD_Rect& EXP_GuiWidget::GetRect() {
 
 //-------------------------------------------------------------------
 
-EXP_GuiManager::EXP_GuiManager(std::shared_ptr<RD_API> api) {
+EXP_GuiManager::EXP_GuiManager(EXP_Game* game, std::shared_ptr<RD_API> api) {
     m_api = api;
+    m_winsys = api->GetWindowingSystem();
+
+    m_mb_press = false;
+
+    m_leftClick = std::make_shared<EXP_MouseCallback>(MOUSE_BUTTON_LEFT, CL_VDFUNCPTR(EXP_GuiManager::OnPressMB));
+    m_leftClick->AttachOnKeyUp(CL_VDFUNCPTR(EXP_GuiManager::OnReleaseMB));
+    game->GetInputHandler()->RegisterMouseCallback(m_leftClick);
 
     RD_Attachment color{};
     color.do_clear = true;
@@ -104,8 +111,10 @@ void EXP_GuiManager::Resize(int w, int h) {
 }
 
 void EXP_GuiManager::ProcessEvents() {
+    vec2 curPos = vec2(m_winsys->GetCursorPositionX(true), m_winsys->GetCursorPositionY(true));
+
     for(auto& w : m_widgets) {
-        w->ProcessEvents();
+        w->ProcessEvents(curPos, m_mb_press);
     }
 }
 
@@ -118,6 +127,14 @@ std::shared_ptr<EXP_Font> EXP_GuiManager::ConstructFont(EXP_Game* game, std::str
 
 void EXP_GuiManager::SetRedrawFlag() {
     m_redraw_flag = true;
+}
+
+void EXP_GuiManager::OnPressMB() {
+    m_mb_press = true;
+}
+
+void EXP_GuiManager::OnReleaseMB() {
+    m_mb_press = false;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

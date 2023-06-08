@@ -18,7 +18,7 @@
       "material": "/materials/mat_grey.json",
       "tag": "floor",
 
-      "pos": [0, 0, 1.2],
+      "pos": [-1, 0, 1.2],
       "rot": [0, 0, 0],
       "scale": [1, 1, 1]
     },

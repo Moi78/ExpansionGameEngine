@@ -28,7 +28,17 @@ bool EXP_Game::InitEngine() {
         return false;
     }
 
-    m_guiLayer = std::make_shared<EXP_GuiManager>(m_rndr->GetAPI());
+    RD_Callback resize_cbck{CL_VDFUNCPTR(EXP_Game::Resize)};
+    m_rndr->SetExtResizeCallback(resize_cbck);
+
+    if(!m_hotloader->LoadLib(m_gameinfo.GameLib.c_str())) {
+        return false;
+    }
+
+    // Init Input Handler jut before it is used by actors
+    m_inhdl = std::make_shared<EXP_InputHandler>(m_rndr->GetAPI()->GetWindowingSystem());
+
+    m_guiLayer = std::make_shared<EXP_GuiManager>(this, m_rndr->GetAPI());
     m_rndr->GetAPI()->GetWindowingSystem()->EnableOverlaying(
             m_guiLayer->GetRenderPass()->GetAttachment(0),
             m_gameinfo.RootEngineContentDir
@@ -39,15 +49,7 @@ bool EXP_Game::InitEngine() {
         return false;
     }
 
-    RD_Callback resize_cbck{CL_VDFUNCPTR(EXP_Game::Resize)};
-    m_rndr->SetExtResizeCallback(resize_cbck);
 
-    if(!m_hotloader->LoadLib(m_gameinfo.GameLib.c_str())) {
-        return false;
-    }
-
-    // Init Input Handler jut before it is used by actors
-    m_inhdl = std::make_shared<EXP_InputHandler>(m_rndr->GetAPI()->GetWindowingSystem());
     m_animator = std::make_shared<EXP_Animator>();
 
     LoadLevel(m_gameinfo.RootGameContentDir + m_gameinfo.StartLevel);
@@ -59,17 +61,24 @@ void EXP_Game::RunGame() {
     while(!m_rndr->WantToClose()) {
         m_inhdl->ResetCursor();
 
-        m_inhdl->UpdateAll();
-        m_guiLayer->ProcessEvents();
-
-        m_animator->UpdateAnimations();
-
         m_rndr->UpdateWindow();
         m_guiLayer->RenderGui();
         m_rndr->RenderScene();
 
-        m_currentLevel->TickActors();
-        m_currentLevel->OnTick();
+        std::thread anim([this]() {
+            m_animator->UpdateAnimations();
+        });
+
+        std::thread logic([this]() {
+            m_inhdl->UpdateAll();
+            m_guiLayer->ProcessEvents();
+
+            m_currentLevel->TickActors();
+            m_currentLevel->OnTick();
+        });
+
+        anim.join();
+        logic.join();
     }
 }
 
