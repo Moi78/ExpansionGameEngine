@@ -193,8 +193,8 @@ bool RD_Pipeline_Vk::BuildPipeline() {
     VkPipelineLayoutCreateInfo plineLayoutInfo{};
     plineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
+    VkPushConstantRange push_constant{}; // In case of push constant creation
     if(m_push_ctant_size > 0) {
-        VkPushConstantRange push_constant{};
         push_constant.size = m_push_ctant_size;
         push_constant.offset = 0;
         push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;

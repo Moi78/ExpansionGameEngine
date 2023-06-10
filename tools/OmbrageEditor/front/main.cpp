@@ -11,7 +11,7 @@ int main() {
 
     EXP_GameInfo gameinfo{};
     gameinfo.GameLib = "./ombrage_content/lib/libOmbrageLib.so";
-    gameinfo.RootEngineContentDir = "/media/mathis/3CBAC3ADBAC3624E/Dev/ExpansionGameEngine/src/GameDir/Engine/";
+    gameinfo.RootEngineContentDir = "../../../src/GameDir/Engine/";
     gameinfo.RootGameContentDir = "./ombrage_content/";
     gameinfo.WindowHeight = 720;
     gameinfo.WindowWidth = 1280;
