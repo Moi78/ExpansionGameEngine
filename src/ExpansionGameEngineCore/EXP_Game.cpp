@@ -64,6 +64,7 @@ void EXP_Game::RunGame() {
         m_rndr->UpdateWindow();
         m_guiLayer->RenderGui();
         m_rndr->RenderScene();
+        m_rndr->Present();
 
         std::thread anim([this]() {
             m_animator->UpdateAnimations();
@@ -161,4 +162,8 @@ void EXP_Game::Resize() {
 
 std::shared_ptr<EXP_Font> EXP_Game::GetEngineFont() {
     return m_defaultFont;
+}
+
+std::shared_ptr<EXP_Level> EXP_Game::GetCurrentLevel() {
+    return m_currentLevel;
 }

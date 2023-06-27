@@ -93,6 +93,8 @@ public:
 	RD_API() {};
 	virtual ~RD_API() {};
 
+    virtual void SetWindowSystem(std::shared_ptr<RD_Windowing> win) = 0;
+
 	virtual bool InitAPI(std::string name, const int w, const int h) = 0;
 	virtual bool MakeFramebuffers() = 0;
 
@@ -144,15 +146,12 @@ struct RD_DLLAPI QueueFamilyIndices {
 	}
 };
 
-class RD_DLLAPI RD_Windowing_GLFW : public RD_Windowing {
+class RD_DLLAPI RD_VulkanWindow : public RD_Windowing {
 public:
-	RD_Windowing_GLFW(RD_API* api);
-	~RD_Windowing_GLFW() override;
+	RD_VulkanWindow(std::shared_ptr<RD_API> api);
+	~RD_VulkanWindow() override;
 
 	void CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoDelete = false);
-
-	bool OpenWindow(std::string name, const int w, const int h) override;
-	bool WantToClose() override;
 
 	bool ResizeFrame(const int w, const int h) override;
     void SetExternalResizeCallback(std::shared_ptr<RD_Callback> cbck) override;
@@ -160,7 +159,8 @@ public:
 
     void SetPresentTexture(std::shared_ptr<RD_Texture> tex) override;
 
-	VkResult CreateWindowSurface(VkInstance inst);
+	virtual VkResult CreateWindowSurface(VkInstance inst) = 0;
+
 	RD_SwapChainDetails QuerySwapchainSupport(VkPhysicalDevice dev);
 	VkSurfaceFormatKHR ChooseSwapFormat(const std::vector<VkSurfaceFormatKHR> availFmt);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availPmodes);
@@ -172,27 +172,12 @@ public:
 	int GetHeight() override;
 	int GetWidth() override;
 
-    int GetScreenWidth() override;
-    int GetScreenHeight() override;
-
 	void Present() override;
     void BuildBlitPipeline(std::string enginePath) override;
 
-	void PollEvents() override;
+	virtual int GetExtensionsCount() = 0;
+	virtual const char** GetExtensionsNames() = 0;
 
-    void SetCursorVisibility(bool visibility) override;
-
-    float GetCursorPositionX(bool abs = false) override;
-    float GetCursorPositionY(bool abs = false) override;
-    void SetCursorPosition(double x, double y) override;
-
-    bool GetKeyPress(int key) override;
-    bool GetMouseButtonPress(int mbutton) override;
-
-	int GetExtensionsCount();
-	const char** GetExtensionsNames();
-
-	GLFWwindow* GetWindow();
 	VkSurfaceKHR GetSurfaceHandle();
 
 	bool MakeFramebuffers(VkDevice dev);
@@ -212,15 +197,10 @@ public:
     void UpdateOverlaying() override;
 
     std::shared_ptr<RD_UniformBuffer> GetScreenSizeBuffer() override;
+
 private:
-	static void ResizeCBCK(GLFWwindow* win, int w, int h);
+    std::shared_ptr<RD_API> m_api;
 
-	GLFWwindow* m_win;
-    RD_API* m_api;
-
-    bool m_initialized;
-
-	VkSurfaceKHR m_surface;
 	VkSwapchainKHR m_swapChain;
 
 	VkFormat m_scFormat;
@@ -234,12 +214,10 @@ private:
 	VkSemaphore m_rndrFinished_s;
 	VkFence m_inFLight_f;
 
-	int m_w, m_h;
 	uint32_t m_imgIdx;
 
 	VkDevice m_dev;
 	VkPhysicalDevice m_pdev;
-	VkInstance m_inst;
 
 	QueueFamilyIndices m_ind;
 
@@ -256,7 +234,6 @@ private:
 	VkQueue m_gfxQueue;
 	VkQueue m_presentQueue;
 
-	bool m_resizedFlag;
     RD_ViewportMode m_vpm;
 
     RD_Rect m_vp;
@@ -266,6 +243,49 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_vp_u;
     std::shared_ptr<RD_UniformBuffer> m_screen_size;
 
+protected:
+    bool m_resizedFlag;
+    bool m_initialized;
+
+    VkInstance m_inst;
+    VkSurfaceKHR m_surface;
+};
+
+class RD_Windowing_GLFW_Vk : public RD_VulkanWindow {
+public:
+    RD_Windowing_GLFW_Vk(std::shared_ptr<RD_API> api);
+    ~RD_Windowing_GLFW_Vk();
+
+    GLFWwindow* GetWindow();
+
+    bool OpenWindow(std::string name, const int w, const int h) override;
+    bool WantToClose() override;
+
+    void PollEvents() override;
+
+    void SetCursorVisibility(bool visibility) override;
+
+    float GetCursorPositionX(bool abs = false) override;
+    float GetCursorPositionY(bool abs = false) override;
+    void SetCursorPosition(double x, double y) override;
+
+    bool GetKeyPress(int key) override;
+    bool GetMouseButtonPress(int mbutton) override;
+
+    int GetScreenHeight() override;
+    int GetScreenWidth() override;
+
+    int GetExtensionsCount() override;
+    const char** GetExtensionsNames() override;
+
+    VkResult CreateWindowSurface(VkInstance inst) override;
+
+private:
+    static void ResizeCBCK(GLFWwindow* win, int w, int h);
+
+    GLFWwindow* m_win;
+
+    int m_h, m_w;
     bool m_curHidden;
 };
 
@@ -278,6 +298,8 @@ public:
 	bool MakeFramebuffers() override;
 
     void ProperQuit() override;
+
+    void SetWindowSystem(std::shared_ptr<RD_Windowing> win) override;
 
 	std::shared_ptr<RD_ShaderLoader> CreateShader() override;
 	std::shared_ptr<RD_RenderPass> CreateRenderPass(std::vector<RD_Attachment> attachments, float width, float height) override;
@@ -320,7 +342,7 @@ private:
 	bool m_validationLayers;
 	VkDebugUtilsMessengerEXT m_cbck_dbg;
 
-	std::shared_ptr<RD_Windowing_GLFW> m_winsys;
+	std::shared_ptr<RD_VulkanWindow> m_winsys;
 };
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(

@@ -33,6 +33,7 @@ public:
 
 	void UpdateWindow();
 	void RenderScene();
+    void Present();
 
 	bool WantToClose();
     void Resize();

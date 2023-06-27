@@ -42,6 +42,7 @@ public:
     std::shared_ptr<EXP_InputHandler> GetInputHandler();
     std::shared_ptr<EXP_Animator> GetAnimator();
     std::shared_ptr<EXP_GuiManager> GetGuiManager();
+    std::shared_ptr<EXP_Level> GetCurrentLevel();
 
     std::shared_ptr<EXP_Material> QueryMaterial(
             std::string matPath,

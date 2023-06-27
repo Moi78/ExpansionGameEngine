@@ -29,7 +29,7 @@ void vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerE
 
 //-----------------------------------------
 
-RD_Windowing_GLFW::RD_Windowing_GLFW(RD_API* api) {
+RD_VulkanWindow::RD_VulkanWindow(std::shared_ptr<RD_API> api) {
     m_api = api;
     m_resizedFlag = false;
     m_vpm = RD_ViewportMode::FULL_WINDOW;
@@ -37,15 +37,13 @@ RD_Windowing_GLFW::RD_Windowing_GLFW(RD_API* api) {
     m_vp_real = {0, 0, 1, 1};
 
     m_initialized = false;
-    m_curHidden = false;
 }
 
-RD_Windowing_GLFW::~RD_Windowing_GLFW() {
-	glfwDestroyWindow(m_win);
-	glfwTerminate();
+RD_VulkanWindow::~RD_VulkanWindow() {
+
 }
 
-void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoDelete) {
+void RD_VulkanWindow::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoDelete) {
     if(!surfaceNoDelete) {
         m_vp_u.reset();
         m_screen_size.reset();
@@ -83,46 +81,7 @@ void RD_Windowing_GLFW::CleanupVk(VkInstance inst, VkDevice dev, bool surfaceNoD
 	}
 }
 
-bool RD_Windowing_GLFW::OpenWindow(std::string name, const int w, const int h) {
-	if (!glfwInit()) {
-		std::cerr << "ERROR: Failed to init GLFW." << std::endl;
-		return false;
-	}
-
-	m_w = w;
-	m_h = h;
-
-	m_resizedFlag = false;;
-
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	m_win = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
-	glfwSetWindowUserPointer(m_win, this);
-	glfwSetFramebufferSizeCallback(m_win, RD_Windowing_GLFW::ResizeCBCK);
-
-	if (m_win == nullptr) {
-		std::cerr << "ERROR: Cannot create the GLFW window." << std::endl;
-		return false;
-	}
-
-    m_initialized = true;
-
-	return true;
-}
-
-bool RD_Windowing_GLFW::WantToClose() {
-	return glfwWindowShouldClose(m_win) == GLFW_TRUE;
-}
-
-VkResult RD_Windowing_GLFW::CreateWindowSurface(VkInstance inst) {
-	assert(m_win != nullptr && "A window must be opened to create a surface");
-	m_inst = inst;
-
-	VkResult res = glfwCreateWindowSurface(inst, m_win, nullptr, &m_surface);
-
-	return res;
-}
-
-RD_SwapChainDetails RD_Windowing_GLFW::QuerySwapchainSupport(VkPhysicalDevice dev) {
+RD_SwapChainDetails RD_VulkanWindow::QuerySwapchainSupport(VkPhysicalDevice dev) {
 	assert(m_surface != VK_NULL_HANDLE && "Surface must be initialized.");
 
 	RD_SwapChainDetails details{};
@@ -148,7 +107,7 @@ RD_SwapChainDetails RD_Windowing_GLFW::QuerySwapchainSupport(VkPhysicalDevice de
 	return details;
 }
 
-VkSurfaceFormatKHR RD_Windowing_GLFW::ChooseSwapFormat(const std::vector<VkSurfaceFormatKHR> availFmt) {
+VkSurfaceFormatKHR RD_VulkanWindow::ChooseSwapFormat(const std::vector<VkSurfaceFormatKHR> availFmt) {
 	for (const auto& fmt : availFmt) {
 		if (fmt.format == VK_FORMAT_R8G8B8_SRGB && fmt.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR) {
 			return fmt;
@@ -158,7 +117,7 @@ VkSurfaceFormatKHR RD_Windowing_GLFW::ChooseSwapFormat(const std::vector<VkSurfa
 	return availFmt[0]; // If the format that I want is not listed...
 }
 
-VkPresentModeKHR RD_Windowing_GLFW::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availPmodes) {
+VkPresentModeKHR RD_VulkanWindow::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availPmodes) {
 	for (auto& pmode : availPmodes) {
 		if (pmode == VK_PRESENT_MODE_MAILBOX_KHR) {
 			return pmode;
@@ -168,7 +127,7 @@ VkPresentModeKHR RD_Windowing_GLFW::ChooseSwapPresentMode(const std::vector<VkPr
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D RD_Windowing_GLFW::ChooseSwapExtent(VkSurfaceCapabilitiesKHR& cap) {
+VkExtent2D RD_VulkanWindow::ChooseSwapExtent(VkSurfaceCapabilitiesKHR& cap) {
 	if (cap.currentExtent.width != std::numeric_limits<uint32_t>::max() && cap.currentExtent.height != std::numeric_limits<uint32_t>::max()) {
 		return cap.currentExtent;
 	}
@@ -188,7 +147,7 @@ VkExtent2D RD_Windowing_GLFW::ChooseSwapExtent(VkSurfaceCapabilitiesKHR& cap) {
 	}
 }
 
-bool RD_Windowing_GLFW::CreateSwapChain(VkDevice dev, VkPhysicalDevice pdev, QueueFamilyIndices ind) {
+bool RD_VulkanWindow::CreateSwapChain(VkDevice dev, VkPhysicalDevice pdev, QueueFamilyIndices ind) {
 	m_ind = ind;
 	m_pdev = pdev;
 
@@ -247,7 +206,7 @@ bool RD_Windowing_GLFW::CreateSwapChain(VkDevice dev, VkPhysicalDevice pdev, Que
 	}
 }
 
-bool RD_Windowing_GLFW::CreateImageViews(VkDevice dev) {
+bool RD_VulkanWindow::CreateImageViews(VkDevice dev) {
 	m_scViews.resize(m_scImages.size());
 
 	for(int i = 0; i < m_scImages.size(); i++) {
@@ -278,67 +237,35 @@ bool RD_Windowing_GLFW::CreateImageViews(VkDevice dev) {
 }
 
 
-int RD_Windowing_GLFW::GetHeight() {
+int RD_VulkanWindow::GetHeight() {
     if(!m_initialized) {
         return 0;
     }
 
-    glfwGetFramebufferSize(m_win, NULL, &m_h);
     if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
-        return m_h;
+        return GetScreenHeight();
     } else {
         return m_vp.h;
     }
 }
 
-int RD_Windowing_GLFW::GetWidth() {
+int RD_VulkanWindow::GetWidth() {
     if(!m_initialized) {
         return 0;
     }
 
-    glfwGetFramebufferSize(m_win, &m_w, nullptr);
     if(m_vpm == RD_ViewportMode::FULL_WINDOW) {
-        return m_w;
+        return GetScreenWidth();
     } else {
         return m_vp.w;
     }
 }
 
-int RD_Windowing_GLFW::GetScreenHeight() {
-    glfwGetFramebufferSize(m_win, NULL, &m_h);
-    return m_h;
-}
-
-int RD_Windowing_GLFW::GetScreenWidth() {
-    glfwGetFramebufferSize(m_win, &m_w, nullptr);
-    return m_w;
-}
-
-void RD_Windowing_GLFW::PollEvents() {
-	glfwPollEvents();
-}
-
-int RD_Windowing_GLFW::GetExtensionsCount() {
-	uint32_t count = 0;
-	glfwGetRequiredInstanceExtensions(&count);
-
-	return count;
-}
-
-const char** RD_Windowing_GLFW::GetExtensionsNames() {
-	uint32_t count;
-	return glfwGetRequiredInstanceExtensions(&count);
-}
-
-GLFWwindow* RD_Windowing_GLFW::GetWindow() {
-	return m_win;
-}
-
-VkSurfaceKHR RD_Windowing_GLFW::GetSurfaceHandle() {
+VkSurfaceKHR RD_VulkanWindow::GetSurfaceHandle() {
 	return m_surface;
 }
 
-bool RD_Windowing_GLFW::MakeFramebuffers (VkDevice dev) {
+bool RD_VulkanWindow::MakeFramebuffers (VkDevice dev) {
 	m_dev = dev; // Needed for the renderer to work, I know, this is ugly af
 
 	m_scFbs.resize(m_scViews.size());
@@ -364,7 +291,7 @@ bool RD_Windowing_GLFW::MakeFramebuffers (VkDevice dev) {
 	return true;
 }
 
-void RD_Windowing_GLFW::Present() {
+void RD_VulkanWindow::Present() {
 	vkWaitForFences(m_dev, 1, &m_inFLight_f, VK_TRUE, UINT64_MAX);
 
 	if(vkAcquireNextImageKHR(m_dev, m_swapChain, UINT64_MAX, m_imgAvail_s, VK_NULL_HANDLE, &m_imgIdx) == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -429,7 +356,7 @@ void RD_Windowing_GLFW::Present() {
 	vkQueuePresentKHR(m_presentQueue, &presentInfo);
 }
 
-bool RD_Windowing_GLFW::BuildSyncObjects(VkDevice dev) {
+bool RD_VulkanWindow::BuildSyncObjects(VkDevice dev) {
 	VkSemaphoreCreateInfo scInfo{};
 	scInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -448,15 +375,15 @@ bool RD_Windowing_GLFW::BuildSyncObjects(VkDevice dev) {
 	return true;
 }
 
-void RD_Windowing_GLFW::SendGraphicsQueue(VkQueue queue) {
+void RD_VulkanWindow::SendGraphicsQueue(VkQueue queue) {
 	m_gfxQueue = queue;
 }
 
-void RD_Windowing_GLFW::SendPresentQueue(VkQueue queue) {
+void RD_VulkanWindow::SendPresentQueue(VkQueue queue) {
 	m_presentQueue = queue;
 }
 
-bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
+bool RD_VulkanWindow::ResizeFrame(const int w, const int h) {
 	vkDeviceWaitIdle(m_dev);
 	m_resizedFlag = true;
 
@@ -478,7 +405,7 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
     m_screen_size->FillBufferData(&currentSize);
 
     if(m_overlayed_rpass.has_value()) {
-        m_overlayed_rpass.value()->SetRenderpassSize(m_api, m_scExtent.width, m_scExtent.height);
+        m_overlayed_rpass.value()->SetRenderpassSize(m_api.get(), m_scExtent.width, m_scExtent.height);
         m_overlay_shader.value()->RebuildPipeline();
         m_overlay_background.value()->RebuildPipeline();
     }
@@ -503,25 +430,23 @@ bool RD_Windowing_GLFW::ResizeFrame(const int w, const int h) {
 	return res_a && res_b;
 }
 
-void RD_Windowing_GLFW::ResizeCBCK(GLFWwindow* win, int w, int h) {
-	auto app = reinterpret_cast<RD_Windowing_GLFW*>(glfwGetWindowUserPointer(win));
-	app->ResizeFrame(w, h);
-}
-
-void RD_Windowing_GLFW::SetExternalResizeCallback(std::shared_ptr<RD_Callback> cbck) {
+void RD_VulkanWindow::SetExternalResizeCallback(std::shared_ptr<RD_Callback> cbck) {
     m_extCallback = cbck;
 }
 
-bool RD_Windowing_GLFW::WasResized() {
+bool RD_VulkanWindow::WasResized() {
 	bool buff = m_resizedFlag;
 	m_resizedFlag = false;
 
 	return buff;
 }
 
-void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
+void RD_VulkanWindow::BuildBlitPipeline(std::string enginePath) {
     std::shared_ptr<RD_ShaderLoader> blitShader = m_api->CreateShader();
     blitShader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/sc_blit.fspv");
+
+    const int scrW = GetScreenWidth();
+    const int scrH = GetScreenHeight();
 
     RD_Attachment att{};
     att.do_clear = true;
@@ -529,8 +454,8 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
     att.is_swapchain_attachment = true;
     att.sample_count = 1;
 
-    m_rpass = m_api->CreateRenderPass({att}, m_w, m_h);
-    m_rpass->BuildRenderpass(m_api, true);
+    m_rpass = m_api->CreateRenderPass({att}, scrW, scrH);
+    m_rpass->BuildRenderpass(m_api.get(), true);
 
     m_pline = m_api->CreatePipeline(m_rpass, blitShader, true);
 
@@ -544,11 +469,11 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
     const RD_Rect currentSize = {
             .x = 0.0f,
             .y = 0.0f,
-            .w = (float)m_w,
-            .h = (float)m_h
+            .w = (float)scrW,
+            .h = (float)scrH
     };
 
-    const mat4f scr_mat = ProjOrtho(0, m_w, 0, m_h, -1, 1);
+    const mat4f scr_mat = ProjOrtho(0, scrW, 0, scrH, -1, 1);
 
     m_screen_size->PartialFillBufferData((void*)&currentSize, 4 * sizeof(float), 0);
     m_screen_size->PartialFillBufferData((void*)&currentSize, 4 * sizeof(float), 0);
@@ -573,7 +498,7 @@ void RD_Windowing_GLFW::BuildBlitPipeline(std::string enginePath) {
     m_verticies->FillBufferData(vData, indices);
 }
 
-void RD_Windowing_GLFW::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
+void RD_VulkanWindow::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
     m_presentTex = tex;
 
     m_pline->PurgeTextures();
@@ -581,51 +506,7 @@ void RD_Windowing_GLFW::SetPresentTexture(std::shared_ptr<RD_Texture> tex) {
     m_pline->RebuildPipeline();
 }
 
-float RD_Windowing_GLFW::GetCursorPositionX(bool abs) {
-    if(!abs && !m_curHidden) {
-        return 0;
-    } else if(abs && m_curHidden) {
-        return 0;
-    }
-
-    double x = 0.0f;
-    glfwGetCursorPos(m_win, &x, nullptr);
-
-    return (float)x;
-}
-
-float RD_Windowing_GLFW::GetCursorPositionY(bool abs) {
-    if(!abs && !m_curHidden) {
-        return 0;
-    } else if(abs && m_curHidden) {
-        return 0;
-    }
-
-    double y = 0.0f;
-    glfwGetCursorPos(m_win, nullptr, &y);
-
-    return (float)y;
-}
-
-void RD_Windowing_GLFW::SetCursorVisibility(bool visibility) {
-    m_curHidden = !visibility;
-
-    glfwSetInputMode(m_win, GLFW_CURSOR, visibility ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-}
-
-void RD_Windowing_GLFW::SetCursorPosition(double x, double y) {
-    glfwSetCursorPos(m_win, x, y);
-}
-
-bool RD_Windowing_GLFW::GetKeyPress(int key) {
-    return glfwGetKey(m_win, key) == GLFW_PRESS;
-}
-
-bool RD_Windowing_GLFW::GetMouseButtonPress(int mbutton) {
-    return glfwGetMouseButton(m_win, mbutton) == GLFW_PRESS;
-}
-
-void RD_Windowing_GLFW::SetViewportMode(RD_ViewportMode vpm) {
+void RD_VulkanWindow::SetViewportMode(RD_ViewportMode vpm) {
     m_vpm = vpm;
 
     if(m_vpm == RD_ViewportMode::FLOATING) {
@@ -636,7 +517,7 @@ void RD_Windowing_GLFW::SetViewportMode(RD_ViewportMode vpm) {
     }
 }
 
-void RD_Windowing_GLFW::SetViewport(RD_Rect vp) {
+void RD_VulkanWindow::SetViewport(RD_Rect vp) {
     m_vp = vp;
 
     if(m_vpm == RD_ViewportMode::FLOATING) {
@@ -644,19 +525,19 @@ void RD_Windowing_GLFW::SetViewport(RD_Rect vp) {
     }
 }
 
-RD_Rect RD_Windowing_GLFW::GetViewportRect() {
+RD_Rect RD_VulkanWindow::GetViewportRect() {
     return m_vp_real;
 }
 
-bool RD_Windowing_GLFW::HasPresentTexture() {
+bool RD_VulkanWindow::HasPresentTexture() {
     return !m_presentTex.expired();
 }
 
-std::shared_ptr<RD_Texture> RD_Windowing_GLFW::GetPresentTexture() {
+std::shared_ptr<RD_Texture> RD_VulkanWindow::GetPresentTexture() {
     return m_presentTex.lock();
 }
 
-void RD_Windowing_GLFW::EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) {
+void RD_VulkanWindow::EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std::string enginePath) {
     RD_Attachment color {
         .format = IMGFORMAT_RGBA,
         .sample_count = 1,
@@ -666,8 +547,8 @@ void RD_Windowing_GLFW::EnableOverlaying(std::shared_ptr<RD_Texture> overlay, st
         .is_transparent = true,
     };
 
-    m_overlayed_rpass = m_api->CreateRenderPass({color}, m_w, m_h);
-    m_overlayed_rpass.value()->BuildRenderpass(m_api, false);
+    m_overlayed_rpass = m_api->CreateRenderPass({color}, GetScreenWidth(), GetScreenHeight());
+    m_overlayed_rpass.value()->BuildRenderpass(m_api.get(), false);
 
     auto sh_loader = m_api->CreateShader();
     sh_loader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/sc_blit.fspv");
@@ -689,13 +570,13 @@ void RD_Windowing_GLFW::EnableOverlaying(std::shared_ptr<RD_Texture> overlay, st
     SetPresentTexture(m_overlayed_rpass.value()->GetAttachment(0));
 }
 
-void RD_Windowing_GLFW::SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) {
+void RD_VulkanWindow::SetOverlayTexture(std::shared_ptr<RD_Texture> overlay) {
     m_overlay_shader.value()->PurgeTextures();
     m_overlay_shader.value()->RegisterTexture(overlay, 0);
     m_overlay_shader.value()->RebuildPipeline();
 }
 
-void RD_Windowing_GLFW::UpdateOverlaying() {
+void RD_VulkanWindow::UpdateOverlaying() {
     auto bg = m_overlay_background.value();
     bg->PurgeTextures();
     bg->RegisterTexture(GetPresentTexture(), 0);
@@ -704,15 +585,148 @@ void RD_Windowing_GLFW::UpdateOverlaying() {
     SetPresentTexture(m_overlayed_rpass.value()->GetAttachment(0));
 }
 
-std::shared_ptr<RD_UniformBuffer> RD_Windowing_GLFW::GetScreenSizeBuffer() {
+std::shared_ptr<RD_UniformBuffer> RD_VulkanWindow::GetScreenSizeBuffer() {
     return m_screen_size;
 }
 
 // ------------------------------------------------------------------------------------
 
-RD_API_Vk::RD_API_Vk() {
-	m_winsys = std::make_unique<RD_Windowing_GLFW>(this);
+RD_Windowing_GLFW_Vk::RD_Windowing_GLFW_Vk(std::shared_ptr<RD_API> api) : RD_VulkanWindow(api) {
+    m_curHidden = false;
 
+    m_w = 0;
+    m_h = 0;
+
+    m_resizedFlag = false;
+    m_initialized = false;
+}
+
+RD_Windowing_GLFW_Vk::~RD_Windowing_GLFW_Vk() {
+    glfwDestroyWindow(m_win);
+    glfwTerminate();
+}
+
+void RD_Windowing_GLFW_Vk::ResizeCBCK(GLFWwindow* win, int w, int h) {
+    auto app = reinterpret_cast<RD_VulkanWindow*>(glfwGetWindowUserPointer(win));
+    app->ResizeFrame(w, h);
+}
+
+bool RD_Windowing_GLFW_Vk::OpenWindow(std::string name, const int w, const int h) {
+    if (!glfwInit()) {
+        std::cerr << "ERROR: Failed to init GLFW." << std::endl;
+        return false;
+    }
+
+    m_w = w;
+    m_h = h;
+
+    m_resizedFlag = false;
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    m_win = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
+    glfwSetWindowUserPointer(m_win, this);
+    glfwSetFramebufferSizeCallback(m_win, RD_Windowing_GLFW_Vk::ResizeCBCK);
+
+    if (m_win == nullptr) {
+        std::cerr << "ERROR: Cannot create the GLFW window." << std::endl;
+        return false;
+    }
+
+    m_initialized = true;
+
+    return true;
+}
+
+bool RD_Windowing_GLFW_Vk::WantToClose() {
+    return glfwWindowShouldClose(m_win) == GLFW_TRUE;
+}
+
+int RD_Windowing_GLFW_Vk::GetScreenHeight() {
+    glfwGetFramebufferSize(m_win, NULL, &m_h);
+    return m_h;
+}
+
+int RD_Windowing_GLFW_Vk::GetScreenWidth() {
+    glfwGetFramebufferSize(m_win, &m_w, nullptr);
+    return m_w;
+}
+
+GLFWwindow* RD_Windowing_GLFW_Vk::GetWindow() {
+    return m_win;
+}
+
+void RD_Windowing_GLFW_Vk::PollEvents() {
+    glfwPollEvents();
+}
+
+float RD_Windowing_GLFW_Vk::GetCursorPositionX(bool abs) {
+    if(!abs && !m_curHidden) {
+        return 0;
+    } else if(abs && m_curHidden) {
+        return 0;
+    }
+
+    double x = 0.0f;
+    glfwGetCursorPos(m_win, &x, nullptr);
+
+    return (float)x;
+}
+
+float RD_Windowing_GLFW_Vk::GetCursorPositionY(bool abs) {
+    if(!abs && !m_curHidden) {
+        return 0;
+    } else if(abs && m_curHidden) {
+        return 0;
+    }
+
+    double y = 0.0f;
+    glfwGetCursorPos(m_win, nullptr, &y);
+
+    return (float)y;
+}
+
+void RD_Windowing_GLFW_Vk::SetCursorVisibility(bool visibility) {
+    m_curHidden = !visibility;
+
+    glfwSetInputMode(m_win, GLFW_CURSOR, visibility ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+}
+
+void RD_Windowing_GLFW_Vk::SetCursorPosition(double x, double y) {
+    glfwSetCursorPos(m_win, x, y);
+}
+
+bool RD_Windowing_GLFW_Vk::GetKeyPress(int key) {
+    return glfwGetKey(m_win, key) == GLFW_PRESS;
+}
+
+bool RD_Windowing_GLFW_Vk::GetMouseButtonPress(int mbutton) {
+    return glfwGetMouseButton(m_win, mbutton) == GLFW_PRESS;
+}
+
+int RD_Windowing_GLFW_Vk::GetExtensionsCount() {
+    uint32_t count = 0;
+    glfwGetRequiredInstanceExtensions(&count);
+
+    return count;
+}
+
+const char** RD_Windowing_GLFW_Vk::GetExtensionsNames() {
+    uint32_t count;
+    return glfwGetRequiredInstanceExtensions(&count);
+}
+
+VkResult RD_Windowing_GLFW_Vk::CreateWindowSurface(VkInstance inst) {
+    assert(m_win != nullptr && "A window must be opened to create a surface");
+    m_inst = inst;
+
+    VkResult res = glfwCreateWindowSurface(inst, m_win, nullptr, &m_surface);
+
+    return res;
+}
+
+// ------------------------------------------------------------------------------------
+
+RD_API_Vk::RD_API_Vk() {
 	m_validationLayers = true;
 
     m_pool = VK_NULL_HANDLE;
@@ -735,6 +749,10 @@ RD_API_Vk::~RD_API_Vk() {
 	}
 
 	vkDestroyInstance(m_inst, nullptr);
+}
+
+void RD_API_Vk::SetWindowSystem(std::shared_ptr<RD_Windowing> win) {
+    m_winsys = std::reinterpret_pointer_cast<RD_VulkanWindow>(win);
 }
 
 bool RD_API_Vk::InitAPI(std::string name, const int w, const int h) {

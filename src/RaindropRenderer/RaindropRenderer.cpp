@@ -39,8 +39,10 @@ bool RaindropRenderer::InitRenderer(std::string enginePath) {
 void RaindropRenderer::RenderScene() {
     m_rpline->RenderShadows(m_materials, m_dirLights);
     m_rpline->RenderScene(m_materials, m_viewCam);
+}
 
-	m_api->GetWindowingSystem()->Present();
+void RaindropRenderer::Present() {
+    m_api->GetWindowingSystem()->Present();
 }
 
 void RaindropRenderer::UpdateWindow() {

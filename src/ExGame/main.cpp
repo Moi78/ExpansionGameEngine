@@ -26,6 +26,9 @@ int main(int argc, char* argv[]) {
 	std::shared_ptr<RD_API> api = std::make_shared<RD_API_Vk>();
     std::shared_ptr<RD_RenderingPipeline> rpline = std::make_shared<RD_RenderingPipeline_PBR>(api);
 
+    std::shared_ptr<RD_Windowing_GLFW_Vk> winsys = std::make_shared<RD_Windowing_GLFW_Vk>(api);
+    api->SetWindowSystem(winsys);
+
 	std::shared_ptr<RaindropRenderer> rndr = std::make_shared<RaindropRenderer>(std::shared_ptr<RD_API>(api), std::shared_ptr<RD_RenderingPipeline>(rpline), gameinfo.WindowWidth, gameinfo.WindowHeight, "ExGame");
 
     std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>(rndr, gameinfo);

@@ -2,6 +2,8 @@
 
 #include <EXP_Game.h>
 #include <EXP_Conf.h>
+#include <EXP_Animator.h>
+#include <EXP_Level.h>
 
 #include <RaindropRenderer.h>
 #include <RD_API.h>
@@ -29,7 +31,30 @@ int main() {
         return -1;
     }
 
-    game->RunGame();
+    while(!rndr->WantToClose()) {
+        game->GetInputHandler()->ResetCursor();
+
+        rndr->UpdateWindow();
+        game->GetGuiManager()->RenderGui();
+        rndr->RenderScene();
+
+        rndr->Present();
+
+        std::thread anim([&game]() {
+            game->GetAnimator()->UpdateAnimations();
+        });
+
+        std::thread logic([&game]() {
+            game->GetInputHandler()->UpdateAll();
+            game->GetGuiManager()->ProcessEvents();
+
+            game->GetCurrentLevel()->TickActors();
+            game->GetCurrentLevel()->OnTick();
+        });
+
+        anim.join();
+        logic.join();
+    }
 
     return 0;
 }
