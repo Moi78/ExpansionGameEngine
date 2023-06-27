@@ -198,6 +198,8 @@ public:
 
     std::shared_ptr<RD_UniformBuffer> GetScreenSizeBuffer() override;
 
+    virtual std::vector<const char*> GetRequiredExtensions(bool validationEnable) = 0;
+
 private:
     std::shared_ptr<RD_API> m_api;
 
@@ -280,6 +282,8 @@ public:
 
     VkResult CreateWindowSurface(VkInstance inst) override;
 
+    std::vector<const char*> GetRequiredExtensions(bool validationEnable) override;
+
 private:
     static void ResizeCBCK(GLFWwindow* win, int w, int h);
 
@@ -316,6 +320,8 @@ public:
     ) override;
 
 	std::shared_ptr<RD_Windowing> GetWindowingSystem() override;
+
+    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice dev);
 private:
 	bool CreateVkInst();
 	bool CheckRequestedValidationLayers(std::vector<std::string> layers);
@@ -324,9 +330,6 @@ private:
 	bool CreateDevice();
 	bool CreateCommandPool();
 
-	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice dev);
-
-	std::vector<const char*> GetRequiredExtensions();
 	bool IsDeviceSuitable(VkPhysicalDevice dev);
 
 	VkInstance m_inst;

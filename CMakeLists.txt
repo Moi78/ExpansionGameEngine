@@ -12,6 +12,9 @@ add_subdirectory("./src/ExpansionGameEngineCore/")
 add_subdirectory("./src/ExGame/")
 add_subdirectory("./src/Game/")
 
+add_subdirectory("./src/QtPlugin/")
+add_subdirectory("./src/QtPluginTest/")
+
 add_subdirectory("./tools/FBX2MSH/")
 add_subdirectory("./tools/OmbrageEditor/front")
 

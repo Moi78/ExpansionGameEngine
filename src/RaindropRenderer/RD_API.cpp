@@ -724,6 +724,19 @@ VkResult RD_Windowing_GLFW_Vk::CreateWindowSurface(VkInstance inst) {
     return res;
 }
 
+std::vector<const char*> RD_Windowing_GLFW_Vk::GetRequiredExtensions(bool validationEnable) {
+    uint32_t extCount;
+    const char** extNames;
+    extNames = glfwGetRequiredInstanceExtensions(&extCount);
+
+    std::vector<const char*> requiredExtensions(extNames, extNames + extCount);
+    if (validationEnable) {
+        requiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+    }
+
+    return requiredExtensions;
+}
+
 // ------------------------------------------------------------------------------------
 
 RD_API_Vk::RD_API_Vk() {
@@ -836,7 +849,7 @@ bool RD_API_Vk::CreateVkInst() {
 	cInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	cInfo.pApplicationInfo = &appInfo;
 
-	auto extensions = GetRequiredExtensions();
+	auto extensions = m_winsys->GetRequiredExtensions(m_validationLayers);
 	cInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	cInfo.ppEnabledExtensionNames = extensions.data();
 
@@ -1008,19 +1021,6 @@ QueueFamilyIndices RD_API_Vk::FindQueueFamilies(VkPhysicalDevice dev) {
 	}
 
 	return indices;
-}
-
-std::vector<const char*> RD_API_Vk::GetRequiredExtensions() {
-	uint32_t extCount;
-	const char** extNames;
-	extNames = glfwGetRequiredInstanceExtensions(&extCount);
-
-	std::vector<const char*> requiredExtensions(extNames, extNames + extCount);
-	if (m_validationLayers) {
-		requiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-	}
-
-	return requiredExtensions;
 }
 
 bool RD_API_Vk::IsDeviceSuitable(VkPhysicalDevice dev) {
