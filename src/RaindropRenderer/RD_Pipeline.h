@@ -91,6 +91,8 @@ public:
 
     bool IsBuilt() override;
     void EnableTransparency() override;
+
+    VkDescriptorPool GetDescPool() { return m_descPool; };
 private:
     bool AllocCMDBuffer();
     bool CreateDescriptorPool();

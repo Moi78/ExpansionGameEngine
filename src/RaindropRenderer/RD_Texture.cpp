@@ -371,7 +371,7 @@ bool RD_Texture_Vk::CreateImageSampler() {
 VkDescriptorImageInfo RD_Texture_Vk::GetDescriptorInfo() {
     VkDescriptorImageInfo info;
     info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    info.imageView = m_imgView;
+    info.imageView = GetView();
     info.sampler = m_imgSampler;
 
     return info;

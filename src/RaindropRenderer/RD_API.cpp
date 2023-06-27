@@ -306,12 +306,11 @@ void RD_VulkanWindow::Present() {
 
 	std::shared_ptr<RD_Pipeline_Vk> plineVK = std::reinterpret_pointer_cast<RD_Pipeline_Vk>(m_pline);
 
+    auto sync = m_overlay_sync.value();
+    sync->Start();
+    m_overlayed_rpass.value()->BeginRenderpass(sync);
+
     if(m_overlayed_rpass.has_value()) {
-        auto sync = m_overlay_sync.value();
-        sync->Start();
-
-        m_overlayed_rpass.value()->BeginRenderpass(sync);
-
         m_overlay_background.value()->Bind(sync);
         m_overlay_background.value()->PushConstant(&isFS, sizeof(uint32_t), sync);
 
@@ -327,11 +326,17 @@ void RD_VulkanWindow::Present() {
         m_overlay_shader.value()->DrawIndexedVertexBuffer(m_verticies, sync);
 
         m_overlay_shader.value()->Unbind(sync);
-
-        m_overlayed_rpass.value()->EndRenderpass(sync);
-
-        sync->Stop();
     }
+
+    isFS = true;
+
+    m_imgui_pline->Bind(sync);
+    m_imgui_pline->PushConstant(&isFS, sizeof(uint32_t), sync);
+    m_imgui_pline->DrawIndexedVertexBuffer(m_verticies, sync);
+    m_imgui_pline->Unbind(sync);
+
+    m_overlayed_rpass.value()->EndRenderpass(sync);
+    sync->Stop();
 
     plineVK->BindSC(m_scFbs[m_imgIdx]);
     plineVK->PushConstant(&isFS, sizeof(uint32_t), {});
@@ -406,9 +411,20 @@ bool RD_VulkanWindow::ResizeFrame(const int w, const int h) {
 
     if(m_overlayed_rpass.has_value()) {
         m_overlayed_rpass.value()->SetRenderpassSize(m_api.get(), m_scExtent.width, m_scExtent.height);
+    }
+
+    if(m_overlay_shader.has_value()) {
         m_overlay_shader.value()->RebuildPipeline();
         m_overlay_background.value()->RebuildPipeline();
     }
+
+    m_imgui_rpass->SetRenderpassSize(m_api.get(), m_scExtent.width, m_scExtent.height);
+
+    m_imgui_ui = m_imgui_rpass->GetAttachment(0);
+
+    m_imgui_pline->PurgeTextures();
+    m_imgui_pline->RegisterTexture(m_imgui_ui, 0);
+    m_imgui_pline->RebuildPipeline();
 
     if(m_vpm == RD_ViewportMode::FLOATING) {
         vec2 offset = vec2(m_vp.w / (float)GetScreenWidth(), (m_vp.h / (float)GetScreenHeight()));
@@ -458,6 +474,8 @@ void RD_VulkanWindow::BuildBlitPipeline(std::string enginePath) {
     m_rpass->BuildRenderpass(m_api.get(), true);
 
     m_pline = m_api->CreatePipeline(m_rpass, blitShader, true);
+
+    m_imgui_pline = m_api->CreatePipeline(m_imgui_rpass, blitShader);
 
     m_vp_u = m_api->CreateUniformBuffer(80);
     m_vp_u->BuildAndAllocateBuffer(sizeof(RD_Rect));
@@ -547,8 +565,10 @@ void RD_VulkanWindow::EnableOverlaying(std::shared_ptr<RD_Texture> overlay, std:
         .is_transparent = true,
     };
 
-    m_overlayed_rpass = m_api->CreateRenderPass({color}, GetScreenWidth(), GetScreenHeight());
-    m_overlayed_rpass.value()->BuildRenderpass(m_api.get(), false);
+    if(!m_overlayed_rpass.has_value()) {
+        m_overlayed_rpass = m_api->CreateRenderPass({color}, GetScreenWidth(), GetScreenHeight());
+        m_overlayed_rpass.value()->BuildRenderpass(m_api.get(), false);
+    }
 
     auto sh_loader = m_api->CreateShader();
     sh_loader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/sc_blit.fspv");
@@ -722,6 +742,131 @@ VkResult RD_Windowing_GLFW_Vk::CreateWindowSurface(VkInstance inst) {
     VkResult res = glfwCreateWindowSurface(inst, m_win, nullptr, &m_surface);
 
     return res;
+}
+
+void chk_vk_res(VkResult res) {
+    assert(res == VK_SUCCESS && "ImGui failure");
+}
+
+void RD_Windowing_GLFW_Vk::InitImgui(std::string enginePath) {
+    RD_Attachment color = {};
+    color.do_clear = true;
+    color.format = IMGFORMAT_RGBA;
+    color.is_swapchain_attachment = false;
+    color.sample_count = 1;
+    color.clearColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    color.is_transparent = true;
+
+    auto rpass = m_api->CreateRenderPass({color}, GetScreenWidth(), GetScreenHeight());
+    if(!rpass->BuildRenderpass(m_api.get(), false)) {
+        std::cerr << "FAILED TO INIT IMGUI (RPASS BUILD FAILURE)" << std::endl;
+        return;
+    }
+    m_imgui_rpass = std::reinterpret_pointer_cast<RD_RenderPass_Vk>(rpass);
+
+    auto rsync = m_api->CreateRenderSynchronizer();
+    m_imgui_rsync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(rsync);
+
+    VkDescriptorPoolSize psizes[] = {
+            { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+            { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+    };
+
+    VkDescriptorPoolCreateInfo pcInfo{};
+    pcInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pcInfo.maxSets = 1000 * IM_ARRAYSIZE(psizes);
+    pcInfo.pPoolSizes = psizes;
+    pcInfo.poolSizeCount = (uint32_t) IM_ARRAYSIZE(psizes);
+
+    VkResult res = vkCreateDescriptorPool(m_dev, &pcInfo, nullptr, &m_imgui_pool);
+    if(res != VK_SUCCESS) {
+        std::cerr << "FAILED TO INIT IMGUI (DESC POOL FAIL)" << std::endl;
+        return;
+    }
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    ImGui_ImplGlfw_InitForVulkan(m_win, true);
+
+    ImGui_ImplVulkan_InitInfo i_inf{};
+    i_inf.Instance = m_inst;
+    i_inf.PhysicalDevice = m_pdev;
+    i_inf.Device = m_dev;
+    i_inf.QueueFamily = m_ind.graphicsFamily.value();
+    i_inf.Queue = m_gfxQueue;
+    i_inf.PipelineCache = VK_NULL_HANDLE;
+
+    i_inf.DescriptorPool = m_imgui_pool;
+
+    i_inf.Subpass = 0;
+    i_inf.MinImageCount = 2;
+    i_inf.ImageCount = 3;
+    i_inf.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    i_inf.Allocator = nullptr;
+    i_inf.CheckVkResultFn = chk_vk_res;
+
+    ImGui_ImplVulkan_Init(&i_inf, m_imgui_rpass->GetRenderPassHandle());
+
+    auto vkapi = std::reinterpret_pointer_cast<RD_API_Vk>(m_api);
+    auto cmd = BeginOneTimeCommand(m_dev, vkapi->GetCommandPoolHdl());
+
+    ImGui_ImplVulkan_CreateFontsTexture(cmd);
+
+    EndOneTimeCommand(m_dev, vkapi->GetCommandPoolHdl(), cmd, m_gfxQueue);
+
+    ImGui_ImplVulkan_DestroyFontUploadObjects();
+
+    m_imgui_ui = m_imgui_rpass->GetAttachment(0);
+
+    m_overlayed_rpass = m_api->CreateRenderPass({color}, GetScreenWidth(), GetScreenHeight());
+    m_overlayed_rpass.value()->BuildRenderpass(m_api.get(), false);
+
+    std::shared_ptr<RD_ShaderLoader> blitShader = m_api->CreateShader();
+    blitShader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/sc_blit.fspv");
+
+    m_imgui_pline = m_api->CreatePipeline(m_imgui_rpass, blitShader);
+    m_imgui_pline->ConfigurePushConstant(sizeof(uint32_t));
+    m_imgui_pline->RegisterTexture(m_imgui_ui, 0);
+    m_imgui_pline->RegisterUniformBuffer(m_vp_u);
+    m_imgui_pline->BuildPipeline();
+}
+
+void RD_Windowing_GLFW_Vk::ImguiNewFrame() {
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
+
+void RD_Windowing_GLFW_Vk::ImguiEndFrame() {
+    ImGui::Render();
+
+    //ImGui::UpdatePlatformWindows();
+    //ImGui::RenderPlatformWindowsDefault();
+
+    ImDrawData* data = ImGui::GetDrawData();
+
+    m_imgui_rsync->Start();
+    m_imgui_rpass->BeginRenderpass(m_imgui_rsync);
+
+    ImGui_ImplVulkan_RenderDrawData(data, m_imgui_rsync->GetCommandBuffer());
+
+    m_imgui_rpass->EndRenderpass(m_imgui_rsync);
+    m_imgui_rsync->Stop();
 }
 
 // ------------------------------------------------------------------------------------

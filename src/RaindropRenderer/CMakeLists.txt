@@ -3,17 +3,62 @@ cmake_minimum_required(VERSION 3.7)
 project(RaindropRenderer)
 
 add_library(RaindropRenderer SHARED
-    RaindropRenderer.cpp
-    RaindropRenderer.h
-    RD_API.cpp
-    RD_API.h
-    RD_ShaderLoader.h
-    RD_ShaderLoader.cpp
-    RD_RenderPass.h
-    RD_RenderPass.cpp
-    RD_Pipeline.h
-    RD_Pipeline.cpp
-    RD_VertexBuffer.cpp RD_VertexBuffer.h RD_Buffer.h RD_Buffer.cpp RD_UniformBuffer.cpp RD_UniformBuffer.h RD_Texture.cpp RD_Texture.h RD_RenderingPipeline.cpp RD_RenderingPipeline.h RD_ImageFormat.h RD_ImageFormat.cpp RD_Camera.cpp RD_Camera.h RD_Callback.h RD_Mesh.cpp RD_Mesh.h RD_DirLight.cpp RD_DirLight.h RD_Quad.cpp RD_Quad.h RD_PointLight.cpp RD_PointLight.h RD_Material.cpp RD_Material.h RD_RenderSynchronizer.cpp RD_RenderSynchronizer.h RD_OrphanFramebuffer.cpp RD_OrphanFramebuffer.h RD_Skeleton.cpp RD_Skeleton.h)
+        ../third_party/imgui.cpp
+        ../third_party/imgui.h
+        ../third_party/imgui_impl_glfw.cpp
+        ../third_party/imgui_impl_glfw.h
+        ../third_party/imgui_impl_vulkan.cpp
+        ../third_party/imgui_impl_vulkan.h
+        ../third_party/imgui_draw.cpp
+        ../third_party/imgui_internal.h
+        ../third_party/imgui_tables.cpp
+        ../third_party/imgui_widgets.cpp
+        ../third_party/imstb_rectpack.h
+        ../third_party/imstb_textedit.h
+        ../third_party/imstb_truetype.h
+
+        RaindropRenderer.cpp
+        RaindropRenderer.h
+        RD_API.cpp
+        RD_API.h
+        RD_ShaderLoader.h
+        RD_ShaderLoader.cpp
+        RD_RenderPass.h
+        RD_RenderPass.cpp
+        RD_Pipeline.h
+        RD_Pipeline.cpp
+        RD_VertexBuffer.cpp
+        RD_VertexBuffer.h
+        RD_Buffer.h
+        RD_Buffer.cpp
+        RD_UniformBuffer.cpp
+        RD_UniformBuffer.h
+        RD_Texture.cpp
+        RD_Texture.h
+        RD_RenderingPipeline.cpp
+        RD_RenderingPipeline.h
+        RD_ImageFormat.h
+        RD_ImageFormat.cpp
+        RD_Camera.cpp
+        RD_Camera.h
+        RD_Callback.h
+        RD_Mesh.cpp
+        RD_Mesh.h
+        RD_DirLight.cpp
+        RD_DirLight.h
+        RD_Quad.cpp
+        RD_Quad.h
+        RD_PointLight.cpp
+        RD_PointLight.h
+        RD_Material.cpp
+        RD_Material.h
+        RD_RenderSynchronizer.cpp
+        RD_RenderSynchronizer.h
+        RD_OrphanFramebuffer.cpp
+        RD_OrphanFramebuffer.h
+        RD_Skeleton.cpp
+        RD_Skeleton.h
+)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(glfw3 3.3 REQUIRED FATAL_ERROR)

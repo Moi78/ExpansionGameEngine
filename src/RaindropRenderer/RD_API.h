@@ -27,6 +27,8 @@
 #include "vec.h"
 #include "mat4.h"
 
+#include "../third_party/imgui.h"
+
 enum class RD_ViewportMode {
     FLOATING,
     FULL_WINDOW
@@ -85,6 +87,10 @@ public:
     virtual void UpdateOverlaying() = 0;
 
     virtual std::shared_ptr<RD_UniformBuffer> GetScreenSizeBuffer() = 0;
+
+    virtual void InitImgui(std::string enginePath) = 0;
+    virtual void ImguiNewFrame() = 0;
+    virtual void ImguiEndFrame() = 0;
 };
 
 class RD_DLLAPI RD_API
@@ -128,6 +134,9 @@ public:
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
+
+#include "../third_party/imgui_impl_vulkan.h"
+#include "../third_party/imgui_impl_glfw.h"
 
 bool CheckDeviceExtensionSupport(VkPhysicalDevice dev);
 
@@ -198,7 +207,7 @@ public:
 
     std::shared_ptr<RD_UniformBuffer> GetScreenSizeBuffer() override;
 
-private:
+protected:
     std::shared_ptr<RD_API> m_api;
 
 	VkSwapchainKHR m_swapChain;
@@ -243,7 +252,14 @@ private:
     std::shared_ptr<RD_UniformBuffer> m_vp_u;
     std::shared_ptr<RD_UniformBuffer> m_screen_size;
 
-protected:
+    std::shared_ptr<RD_Texture> m_imgui_ui;
+    std::shared_ptr<RD_Pipeline> m_imgui_pline;
+
+    std::shared_ptr<RD_RenderPass_Vk> m_imgui_rpass;
+    std::shared_ptr<RD_RenderSynchronizer_Vk> m_imgui_rsync;
+
+    VkDescriptorPool m_imgui_pool;
+
     bool m_resizedFlag;
     bool m_initialized;
 
@@ -279,6 +295,10 @@ public:
     const char** GetExtensionsNames() override;
 
     VkResult CreateWindowSurface(VkInstance inst) override;
+
+    void InitImgui(std::string enginePath) override;
+    void ImguiNewFrame() override;
+    void ImguiEndFrame() override;
 
 private:
     static void ResizeCBCK(GLFWwindow* win, int w, int h);
@@ -316,6 +336,8 @@ public:
     ) override;
 
 	std::shared_ptr<RD_Windowing> GetWindowingSystem() override;
+
+    VkCommandPool GetCommandPoolHdl() { return m_pool; }
 private:
 	bool CreateVkInst();
 	bool CheckRequestedValidationLayers(std::vector<std::string> layers);

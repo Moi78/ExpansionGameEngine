@@ -33,6 +33,8 @@ bool RaindropRenderer::InitRenderer(std::string enginePath) {
     m_resize_cbck = std::make_shared<RD_Callback>(CL_VDFUNCPTR(RaindropRenderer::Resize));
     m_api->GetWindowingSystem()->SetExternalResizeCallback(m_resize_cbck);
 
+    m_api->GetWindowingSystem()->InitImgui(enginePath);
+
 	return true;
 }
 
@@ -42,6 +44,9 @@ void RaindropRenderer::RenderScene() {
 }
 
 void RaindropRenderer::Present() {
+    m_api->GetWindowingSystem()->ImguiNewFrame();
+    m_api->GetWindowingSystem()->ImguiEndFrame();
+
     m_api->GetWindowingSystem()->Present();
 }
 
