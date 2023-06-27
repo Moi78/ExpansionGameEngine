@@ -28,6 +28,7 @@
 #include "mat4.h"
 
 #include "../third_party/imgui.h"
+#include "../third_party/imnodes.h"
 
 enum class RD_ViewportMode {
     FLOATING,
@@ -78,6 +79,7 @@ public:
     virtual void SetViewportMode(RD_ViewportMode vpm) = 0;
     virtual void SetViewport(RD_Rect vp) = 0;
     virtual RD_Rect GetViewportRect() = 0;
+    virtual void UpdateViewport() = 0;
 
     virtual bool HasPresentTexture() = 0;
     virtual std::shared_ptr<RD_Texture> GetPresentTexture() = 0;
@@ -197,6 +199,7 @@ public:
     void SetViewportMode(RD_ViewportMode vpm) override;
     void SetViewport(RD_Rect vp) override;
     RD_Rect GetViewportRect() override;
+    void UpdateViewport() override;
 
     bool HasPresentTexture() override;
     std::shared_ptr<RD_Texture> GetPresentTexture() override;

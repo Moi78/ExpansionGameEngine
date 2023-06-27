@@ -5,7 +5,7 @@
 #include <EXP_Actor.h>
 #include <EXP_Camera.h>
 
-namespace Ombrage {
+namespace OmbrageUI {
     class OmbrageCamera : public EXP_Actor {
     public:
         OmbrageCamera(EXP_Game *game);

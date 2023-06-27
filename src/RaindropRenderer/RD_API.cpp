@@ -536,10 +536,28 @@ void RD_VulkanWindow::SetViewportMode(RD_ViewportMode vpm) {
 }
 
 void RD_VulkanWindow::SetViewport(RD_Rect vp) {
+    bool sizeChanged = (vp.w != m_vp.w) || (vp.h != m_vp.h);
     m_vp = vp;
 
-    if(m_vpm == RD_ViewportMode::FLOATING) {
+    if(m_vpm == RD_ViewportMode::FLOATING && sizeChanged) {
         ResizeFrame(vp.w, vp.h);
+    } else {
+        UpdateViewport();
+    }
+}
+
+void RD_VulkanWindow::UpdateViewport() {
+    if(m_vpm == RD_ViewportMode::FLOATING) {
+        vec2 offset = vec2(m_vp.w / (float)GetScreenWidth(), (m_vp.h / (float)GetScreenHeight()));
+        offset = offset + (vec2(m_vp.x / (float)GetScreenWidth(), (m_vp.y / (float)GetScreenHeight())) * 2);
+        offset = offset - vec2(1, 1);
+
+        m_vp_real = {
+                offset.GetX(), offset.GetY(),
+                m_vp.w / (float)GetScreenWidth(),
+                m_vp.h / (float)GetScreenHeight()
+        };
+        m_vp_u->FillBufferData(&m_vp_real);
     }
 }
 
@@ -622,6 +640,9 @@ RD_Windowing_GLFW_Vk::RD_Windowing_GLFW_Vk(std::shared_ptr<RD_API> api) : RD_Vul
 }
 
 RD_Windowing_GLFW_Vk::~RD_Windowing_GLFW_Vk() {
+    ImGui::DestroyContext();
+    ImNodes::DestroyContext();
+
     glfwDestroyWindow(m_win);
     glfwTerminate();
 }
@@ -801,6 +822,8 @@ void RD_Windowing_GLFW_Vk::InitImgui(std::string enginePath) {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+    io.Fonts->AddFontFromFileTTF(std::string(enginePath + "/ui/fonts/opensans.ttf").c_str(), 15.0f);
+
     ImGui_ImplGlfw_InitForVulkan(m_win, true);
 
     ImGui_ImplVulkan_InitInfo i_inf{};
@@ -844,6 +867,8 @@ void RD_Windowing_GLFW_Vk::InitImgui(std::string enginePath) {
     m_imgui_pline->RegisterTexture(m_imgui_ui, 0);
     m_imgui_pline->RegisterUniformBuffer(m_vp_u);
     m_imgui_pline->BuildPipeline();
+
+    ImNodes::CreateContext();
 }
 
 void RD_Windowing_GLFW_Vk::ImguiNewFrame() {

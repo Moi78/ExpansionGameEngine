@@ -16,6 +16,7 @@ add_library(RaindropRenderer SHARED
         ../third_party/imstb_rectpack.h
         ../third_party/imstb_textedit.h
         ../third_party/imstb_truetype.h
+        ../third_party/imnodes.cpp
 
         RaindropRenderer.cpp
         RaindropRenderer.h
@@ -58,7 +59,7 @@ add_library(RaindropRenderer SHARED
         RD_OrphanFramebuffer.h
         RD_Skeleton.cpp
         RD_Skeleton.h
-)
+        ../third_party/imgui_demo.cpp)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(glfw3 3.3 REQUIRED FATAL_ERROR)

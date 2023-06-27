@@ -18,8 +18,8 @@ public:
     void OnStart() override;
 
 private:
-    std::shared_ptr<Ombrage::UI> m_ui;
-    std::shared_ptr<Ombrage::OmbrageCamera> m_cam;
+    std::shared_ptr<OmbrageUI::UI> m_ui;
+    std::shared_ptr<OmbrageUI::OmbrageCamera> m_cam;
 };
 
 EXPGE_LEVEL_HEADER(OmbrageMainLevel);

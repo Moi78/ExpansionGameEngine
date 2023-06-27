@@ -44,9 +44,6 @@ void RaindropRenderer::RenderScene() {
 }
 
 void RaindropRenderer::Present() {
-    m_api->GetWindowingSystem()->ImguiNewFrame();
-    m_api->GetWindowingSystem()->ImguiEndFrame();
-
     m_api->GetWindowingSystem()->Present();
 }
 

@@ -64,6 +64,13 @@ void EXP_Game::RunGame() {
         m_rndr->UpdateWindow();
         m_guiLayer->RenderGui();
         m_rndr->RenderScene();
+
+        m_rndr->GetAPI()->GetWindowingSystem()->ImguiNewFrame();
+        for(auto& ig : m_imgui_classes) {
+            ig->RenderImGui();
+        }
+        m_rndr->GetAPI()->GetWindowingSystem()->ImguiEndFrame();
+
         m_rndr->Present();
 
         std::thread anim([this]() {
@@ -166,4 +173,10 @@ std::shared_ptr<EXP_Font> EXP_Game::GetEngineFont() {
 
 std::shared_ptr<EXP_Level> EXP_Game::GetCurrentLevel() {
     return m_currentLevel;
+}
+
+void EXP_Game::AddImGuiClass(std::shared_ptr<EXP_ImGuiClass> gui_class) {
+    std::cout << "REGISTERED NEW IMGUI CLASS" << std::endl;
+
+    m_imgui_classes.push_back(gui_class);
 }

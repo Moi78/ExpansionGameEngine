@@ -15,6 +15,7 @@
 #include "EXP_GenericRessourceManager.h"
 #include "EXP_InputHandler.h"
 #include "EXP_GuiManager.h"
+#include "EXP_ImGuiClass.h"
 
 //Forward decl.
 class EXP_HotLoad;
@@ -59,6 +60,8 @@ public:
 
     std::shared_ptr<EXP_Font> GetEngineFont();
 
+    void AddImGuiClass(std::shared_ptr<EXP_ImGuiClass> gui_class);
+
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;
 
@@ -74,6 +77,8 @@ private:
 
     EXP_GameInfo m_gameinfo;
     EXP_GenericRessourceManager<std::shared_ptr<EXP_Material>> m_materials;
+
+    std::vector<std::shared_ptr<EXP_ImGuiClass>> m_imgui_classes;
 
     int m_last_skel_offset;
 };
