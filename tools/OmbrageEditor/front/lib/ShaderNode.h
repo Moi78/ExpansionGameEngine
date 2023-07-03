@@ -8,9 +8,7 @@
 
 class ShaderNode : public Node {
 public:
-    void RenderNode() override;
-
-    void ConnectTo(int src, int dst) override {};
+    ShaderNode(uint32_t id);
 };
 
 

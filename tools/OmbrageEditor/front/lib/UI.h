@@ -5,7 +5,9 @@
 #include <EXP_ImGuiClass.h>
 
 #include "NodeGraph_UI.h"
+
 #include "ShaderNode.h"
+#include "MathNodes.h"
 
 #define IMVEC2_DIFF(a, b) ((a.x != b.x) || (a.y != b.y))
 

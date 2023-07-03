@@ -14,5 +14,6 @@ add_subdirectory("./src/Game/")
 
 add_subdirectory("./tools/FBX2MSH/")
 add_subdirectory("./tools/OmbrageEditor/front")
+add_subdirectory("./tools/OmbrageEditor/compiler")
 
 install(TARGETS ExGame RUNTIME DESTINATION bin)

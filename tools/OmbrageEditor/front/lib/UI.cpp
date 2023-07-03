@@ -1,4 +1,5 @@
 #include "UI.h"
+#include "MathNodes.h"
 
 OmbrageUI::UI::UI(EXP_Game *game) {
     m_game = game;
@@ -8,8 +9,16 @@ OmbrageUI::UI::UI(EXP_Game *game) {
 
     m_node_editor = std::make_unique<NodeGraph_UI>();
 
-    auto rootNode = std::make_shared<ShaderNode>();
-    m_node_editor->SetRootNode(rootNode);
+    auto rootNode = std::make_shared<ShaderNode>(0);
+    m_node_editor->AddNode(rootNode);
+
+    m_node_editor->AddNodeToCatalog("Constants", "Const Float", [this](int id) { return std::make_shared<OmbrageNodes::ConstFloatNode>(id); });
+    m_node_editor->AddNodeToCatalog("Constants", "Const Vec2", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec2Node>(id); });
+    m_node_editor->AddNodeToCatalog("Constants", "Const Vec3", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec3Node>(id); });
+    m_node_editor->AddNodeToCatalog("Constants", "Const Vec4", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec4Node>(id); });
+
+    m_node_editor->AddNodeToCatalog("Basic Maths", "Add", [this](int id) { return std::make_shared<OmbrageNodes::AddNode>(id); });
+    m_node_editor->AddNodeToCatalog("Basic Maths", "Multiply", [this](int id) { return std::make_shared<OmbrageNodes::MultNode>(id); });
 }
 
 OmbrageUI::UI::~UI() {

@@ -1,0 +1,49 @@
+#ifndef EXPGE_SPIRVPROGRAM_H
+#define EXPGE_SPIRVPROGRAM_H
+
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <iostream>
+#include <cstring>
+
+#include "SpirvFunction.h"
+#include "SpirvTypes.h"
+
+class SpirvProgram {
+public:
+    SpirvProgram() : m_IDcounter(1) {};
+    virtual ~SpirvProgram() = default;
+
+    void RegisterFunction(std::unique_ptr<SpirvFunction> func);
+    void SetEntryPoint(std::unique_ptr<SpirvFunction> entry);
+
+    std::shared_ptr<SpirvFunction> GetFunc(std::string funcName);
+    std::shared_ptr<SPVType> GetType(HLTypes t);
+
+    void SetShaderLayout(std::vector<HLTypes> layout);
+
+    std::vector<uint32_t>& GetProgramListing();
+    void AssignFuncIDs();
+
+    void CompileHeader();
+    void CompileTypesFunctions();
+    void Concat();
+
+private:
+    void FunctionTypeLinker(std::shared_ptr<SpirvFunction>& func);
+
+    std::vector<std::shared_ptr<SpirvFunction>> m_functions;
+    std::shared_ptr<SpirvFunction> m_entryPoint;
+
+    std::vector<uint32_t> m_progBin;
+    std::vector<uint32_t> m_shaderBody;
+
+    std::vector<int> m_layoutIDs;
+
+    std::unordered_map<HLTypes, std::shared_ptr<SPVType>> m_types;
+
+    int m_IDcounter;
+};
+
+#endif //EXPGE_SPIRVPROGRAM_H

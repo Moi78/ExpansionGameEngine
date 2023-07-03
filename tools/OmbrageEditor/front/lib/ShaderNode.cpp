@@ -1,35 +1,15 @@
 #include "ShaderNode.h"
 
-void ShaderNode::RenderNode() {
-    ImNodes::BeginNode(0);
+ShaderNode::ShaderNode(uint32_t id) : Node(id) {
+    m_io = {
+            { NodePinMode::INPUT, NodePinTypes::VEC3, "Color", 0 },
+            { NodePinMode::INPUT, NodePinTypes::VEC3, "Normal", 1 },
+            { NodePinMode::INPUT, NodePinTypes::VEC3, "Pos", 2 },
+            { NodePinMode::INPUT, NodePinTypes::FLOAT, "Metallic", 3 },
+            { NodePinMode::INPUT, NodePinTypes::FLOAT, "Roughness", 4 },
+            { NodePinMode::INPUT, NodePinTypes::FLOAT, "AO", 5 },
+            { NodePinMode::INPUT, NodePinTypes::VEC4, "Sheen", 6 }
+    };
 
-    ImNodes::BeginNodeTitleBar();
-    ImGui::Text("Shader Node");
-    ImNodes::EndNodeTitleBar();
-
-    ImNodes::BeginInputAttribute(1);
-    ImGui::Text("Color");
-    ImNodes::EndInputAttribute();
-
-    ImNodes::BeginInputAttribute(2);
-    ImGui::Text("Normal");
-    ImNodes::EndInputAttribute();
-
-    ImNodes::BeginInputAttribute(3);
-    ImGui::Text("Pos");
-    ImNodes::EndInputAttribute();
-
-    ImNodes::BeginInputAttribute(4);
-    ImGui::Text("Metal");
-    ImNodes::EndInputAttribute();
-
-    ImNodes::BeginInputAttribute(5);
-    ImGui::Text("Roughness");
-    ImNodes::EndInputAttribute();
-
-    ImNodes::BeginInputAttribute(7);
-    ImGui::Text("AO");
-    ImNodes::EndInputAttribute();
-
-    ImNodes::EndNode();
+    m_nodeName = "Shader Node";
 }

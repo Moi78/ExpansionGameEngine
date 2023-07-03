@@ -2,12 +2,27 @@
 #define EXPGE_NODEGRAPH_UI_H
 
 #include <memory>
+#include <vector>
+#include <iostream>
+#include <functional>
+#include <string>
 
 #include <imnodes.h>
 
 #include "Node.h"
+#include "MathNodes.h"
 
 namespace OmbrageUI {
+
+    struct NodeCatalogItem {
+        std::string name;
+        std::function<std::shared_ptr<Node>(int)> factory;
+    };
+
+    struct NodeCatalogCat {
+        std::string catName;
+        std::vector<NodeCatalogItem> items;
+    };
 
     class NodeGraph_UI {
     public:
@@ -16,10 +31,17 @@ namespace OmbrageUI {
 
         void RenderGraph();
 
-        void SetRootNode(std::shared_ptr<Node> rootNode);
+        void AddNode(std::shared_ptr<Node> Node);
 
+        void AddNodeToCatalog(std::string cat, std::string name, std::function<std::shared_ptr<Node>(int)> factory);
     private:
-        std::shared_ptr<Node> m_root_node;
+        void ManageContextMenu();
+
+        std::vector<std::shared_ptr<Node>> m_nodes;
+        std::vector<NodeCatalogCat> m_catalog;
+
+        int m_linkCount;
+        int m_next_id;
     };
 
 } // OmbrageUI
