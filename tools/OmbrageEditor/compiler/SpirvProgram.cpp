@@ -7,7 +7,8 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
     }
 
     std::shared_ptr<SPVType> newType;
-    switch(t & 0x00FF) {
+    HLTypes test = t & 0xF;
+    switch(t & 0xF) {
         case HLTypes::VOID:
             newType = std::make_shared<TVoid>(m_IDcounter);
             break;
@@ -35,6 +36,8 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
         newType->m_isPointer = true;
         newType->m_ptrAttr = StorageClass::Output;
     }
+
+    std::cout << "TYPE " << (int)t << " IS " << m_IDcounter << std::endl;
 
     m_types[t] = newType;
     m_IDcounter++;
@@ -147,8 +150,16 @@ void SpirvProgram::CompileHeader() {
 void SpirvProgram::CompileTypesFunctions() {
     FunctionTypeLinker(m_entryPoint);
 
-    m_entryPoint->funcID = m_IDcounter;
     auto entryFunc = m_entryPoint->CompileFunction(m_types, m_IDcounter);
+
+    std::vector<uint32_t> funcs;
+    for(auto& f : m_functions) {
+        FunctionTypeLinker(f);
+
+        auto compiled = f->CompileFunction(m_types, m_IDcounter);
+
+        funcs.insert(funcs.end(), compiled.begin(), compiled.end());
+    }
 
     // Primary types
     for(auto& t : m_types) {
@@ -169,6 +180,7 @@ void SpirvProgram::CompileTypesFunctions() {
     }
 
     m_shaderBody.insert(m_shaderBody.end(), entryFunc.begin(), entryFunc.end());
+    m_shaderBody.insert(m_shaderBody.end(), funcs.begin(), funcs.end());
 }
 
 void SpirvProgram::FunctionTypeLinker(std::shared_ptr<SpirvFunction> &func) {
@@ -180,12 +192,12 @@ void SpirvProgram::FunctionTypeLinker(std::shared_ptr<SpirvFunction> &func) {
 
 void SpirvProgram::AssignFuncIDs() {
     m_entryPoint->funcID = m_IDcounter;
-    m_IDcounter++;
+    m_IDcounter += m_entryPoint->funcSize + 4;
 
     for(auto& f : m_functions) {
         f->funcID = m_IDcounter;
 
-        m_IDcounter++;
+        m_IDcounter += f->funcSize + 4 + f->argsType.size();
     }
 }
 

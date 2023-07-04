@@ -15,6 +15,7 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
 
     uint32_t rtypeID = realTypes[returnType]->m_id;
 
+    std::cout << "---- " << funcName << " ----" << std::endl;
     std::cout << "FUNC ID : " << funcID << std::endl;
 
     SpirvOperation OpFunctionType{};
@@ -23,6 +24,8 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
             (uint32_t)(funcID + 1),                         // Type function ID
             (uint32_t)rtypeID                               // Return type ID
     };
+
+    std::cout << "FUNC TYPE ID : " << funcID + 1 << std::endl;
 
     // Params type IDs
     for(auto& t : argsType) {
@@ -39,49 +42,70 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
             (uint32_t)(funcID + 1)                          // Type function ID
     };
 
-    nextID += 2; // function id + type id
+    SpirvOperation OpLabel{};
+    OpLabel.LoadOp(248, 2);
+    OpLabel.words = { (uint32_t)funcID + 2};
+
+    std::cout << "LABEL ID " << funcID + 2 << std::endl;
 
     // Treating parameters
 
-    int paramOffset = nextID + 1; // Param 0 is at paramOffset + 0, Param 1 is at paramOffset + 1, etc...
+    int paramOffset = funcID + 3; // Param 0 is at paramOffset + 0, Param 1 is at paramOffset + 1, etc...
+    int id_track = paramOffset;
     // Every other labels will be at paramOffset + numberOfParams + x
 
+    std::cout << "PARAM OFFSET : " << paramOffset << std::endl;
+
     std::vector<SpirvOperation> params;
+
     for(auto& t : argsType) {
         SpirvOperation OpFunctionParam{};
         OpFunctionParam.LoadOp(55, 3);
         OpFunctionParam.words = {
                 (uint32_t)realTypes[t]->m_id,               // Param type ID
-                uint32_t (nextID + 1)                       // Param ID
+                (uint32_t)(id_track)                        // Param ID
         };
 
-        nextID++;
+        std::cout << "Func param id " << id_track << std::endl;
+
+        id_track++;
     }
-
-    SpirvOperation OpLabel{};
-    OpLabel.LoadOp(248, 2);
-    OpLabel.words = { (uint32_t)(nextID + 1) };
-
-    nextID++;
 
     // Replacing placeholder with real param id
     std::vector<SpirvOperation> offsetedListing;
     for(auto& op : funcBody) {
-        if(op.result_id.has_value()) {
-            for(auto& inst : op.words) {
-                if(inst == ID_PLACEHOLDER) {
-                    inst = paramOffset + op.result_id.value();
-                }
+        int counter = 0;
+        for(auto& inst : op.words) {
+            if((inst == ID_PLACEHOLDER) && (op.id_repl[counter] == -1)) {
+                inst = op.result_id.value() + paramOffset;
+
+                std::cout << "Repl placeholder with " << op.result_id.value() + paramOffset << std::endl;
+
+                counter++;
+
+            } else if((inst == ID_PLACEHOLDER) && (op.id_repl[counter] & FLAG_IS_NOT_TYPE)) {
+                inst = paramOffset + (op.id_repl[counter] & 0xFFFF);
+
+                std::cout << "Repl placeholder with " << inst << std::endl;
+
+                counter++;
+
+            } else if(inst == ID_PLACEHOLDER) {
+                HLTypes t = (HLTypes)op.id_repl[counter];
+                auto realType = realTypes[t];
+                inst = realType->m_id;
+
+                std::cout << "Repl placeholder with " << inst << std::endl;
+
+                counter++;
             }
-        } else {
-            offsetedListing.push_back(op);
         }
+
+        offsetedListing.push_back(op);
     }
 
     SpirvOperation OpFunctionEnd{};
     OpFunctionEnd.LoadOp(56, 1);
-
-    nextID += funcSize;
 
     std::vector<uint32_t> funcData;
 

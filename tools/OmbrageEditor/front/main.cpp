@@ -21,10 +21,60 @@ int main() {
 
     std::unique_ptr<SpirvFunction> entry = std::make_unique<SpirvFunction>();
     entry->returnType = HLTypes::VOID;
+    entry->funcName = "main";
 
     SpirvOperation ret{};
     ret.LoadOp(253, 1);
     entry->funcBody.push_back(ret);
+    entry->funcSize = 0;
+
+    std::unique_ptr<SpirvFunction> add = std::make_unique<SpirvFunction>();
+    add->returnType = HLTypes::FLOAT;
+    add->argsType = { HLTypes::FLOATPTR, HLTypes::FLOATPTR };
+    add->funcName = "add";
+
+    SpirvOperation OpLoadA{};
+    OpLoadA.LoadOp(61, 4);
+    OpLoadA.words = {
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER
+    };
+    OpLoadA.result_id = 2;
+    OpLoadA.id_repl = { (uint32_t)HLTypes::FLOAT, -1, 0 | FLAG_IS_NOT_TYPE};
+
+    SpirvOperation OpLoadB{};
+    OpLoadB.LoadOp(61, 4);
+    OpLoadB.words = {
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER
+    };
+    OpLoadB.result_id = 3;
+    OpLoadB.id_repl = { (uint32_t)HLTypes::FLOAT, -1, 1 | FLAG_IS_NOT_TYPE };
+
+    SpirvOperation OpAdd{};
+    OpAdd.LoadOp(129, 5);
+    OpAdd.words = {
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER
+    };
+    OpAdd.result_id = 4;
+    OpAdd.id_repl = { (uint32_t)HLTypes::FLOAT, -1, 2 | FLAG_IS_NOT_TYPE, 3 | FLAG_IS_NOT_TYPE };
+
+    SpirvOperation OpReturnVal{};
+    OpReturnVal.LoadOp(254, 2);
+    OpReturnVal.words = {
+        ID_PLACEHOLDER
+    };
+    OpReturnVal.id_repl = {4 | FLAG_IS_NOT_TYPE};
+
+    add->funcBody = {OpLoadA, OpLoadB, OpAdd, OpReturnVal};
+    add->funcSize = 3;
+
+    prog.RegisterFunction(std::move(add));
 
     prog.SetEntryPoint(std::move(entry));
     prog.AssignFuncIDs();

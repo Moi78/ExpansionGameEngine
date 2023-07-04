@@ -17,6 +17,7 @@ struct SpirvOperation {
     std::vector<uint32_t> words;
 
     std::optional<uint32_t> result_id;
+    std::vector<int32_t> id_repl;
 
     void LoadOp(uint32_t opid, uint32_t opsize) { op = (opsize << 16) | opid; }
 

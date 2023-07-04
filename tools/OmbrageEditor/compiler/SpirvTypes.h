@@ -13,28 +13,30 @@
 #define FLAG_PTR_FUNCTION 0x4000
 #define FLAG_PTR_OUTPUT 0x8000
 
+#define FLAG_IS_NOT_TYPE 0x20000000
+
 enum class HLTypes {
     // Primary types
     VOID = 0,
     FLOAT = 1,
-    INT = 1 << 2,
-    VECTOR2 = 1 << 3,
-    VECTOR3 = 1 << 4,
-    VECTOR4 = 1 << 5,
+    INT = 2,
+    VECTOR2 = 3,
+    VECTOR3 = 4,
+    VECTOR4 = 5,
 
     // Function type pointers
-    FLOATPTR = (1 << 1) | 0x4000,
-    INTPTR = (1 << 2) | 0x4000,
-    VECTOR2PTR = (1 << 3) | 0x4000,
-    VECTOR3PTR = (1 << 4) | 0x4000,
-    VECTOR4PTR = (1 << 5) | 0x4000,
+    FLOATPTR = 1 | 0x4000,
+    INTPTR = 2 | 0x4000,
+    VECTOR2PTR = 3 | 0x4000,
+    VECTOR3PTR = 4 | 0x4000,
+    VECTOR4PTR = 5 | 0x4000,
 
     // Output type pointers
-    FLOATPTRO = (1 << 1) | 0x8000,
-    INTPTRO = (1 << 2) | 0x8000,
-    VECTOR2PTRO = (1 << 3) | 0x8000,
-    VECTOR3PTRO = (1 << 4) | 0x8000,
-    VECTOR4PTRO = (1 << 5) | 0x8000,
+    FLOATPTRO = 1 | 0x8000,
+    INTPTRO = 2 | 0x8000,
+    VECTOR2PTRO = 3 | 0x8000,
+    VECTOR3PTRO = 4 | 0x8000,
+    VECTOR4PTRO = 5 | 0x8000,
 };
 
 HLTypes operator&(const HLTypes& a, const int& b);
@@ -60,7 +62,7 @@ public:
 
 class TVoid : public SPVType {
 public:
-    TVoid(int id) { m_id = id; std::cout << "TYPE ID " << id << std::endl; }
+    TVoid(int id) { m_id = id; }
 
     virtual unsigned GetOpcode() override { return 19; }
 
