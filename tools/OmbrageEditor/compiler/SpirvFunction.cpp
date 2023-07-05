@@ -1,12 +1,6 @@
 #include <iostream>
+
 #include "SpirvFunction.h"
-
-std::vector<uint32_t> SpirvOperation::GetData() {
-    std::vector<uint32_t> vec(words);
-    vec.insert(vec.begin(), op);
-
-    return vec;
-}
 
 std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID) {
     // Type check
@@ -66,32 +60,36 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
                 (uint32_t)(id_track)                        // Param ID
         };
 
+        params.push_back(OpFunctionParam);
+
         std::cout << "Func param id " << id_track << std::endl;
 
         id_track++;
     }
 
     // Replacing placeholder with real param id
-    std::vector<SpirvOperation> offsetedListing;
+    std::vector<std::shared_ptr<SpirvOperation>> offsetedListing;
     for(auto& op : funcBody) {
-        int counter = 0;
-        for(auto& inst : op.words) {
-            if((inst == ID_PLACEHOLDER) && (op.id_repl[counter] == -1)) {
-                inst = op.result_id.value() + paramOffset;
+        op->PreCompile(realTypes);
 
-                std::cout << "Repl placeholder with " << op.result_id.value() + paramOffset << std::endl;
+        int counter = 0;
+        for(auto& inst : op->words) {
+            if((inst == ID_PLACEHOLDER) && (op->id_repl[counter] == -1)) {
+                inst = op->result_id.value() + paramOffset;
+
+                std::cout << "Repl placeholder with " << op->result_id.value() + paramOffset << std::endl;
 
                 counter++;
 
-            } else if((inst == ID_PLACEHOLDER) && (op.id_repl[counter] & FLAG_IS_NOT_TYPE)) {
-                inst = paramOffset + (op.id_repl[counter] & 0xFFFF);
+            } else if((inst == ID_PLACEHOLDER) && (op->id_repl[counter] & FLAG_IS_NOT_TYPE)) {
+                inst = paramOffset + (op->id_repl[counter] & 0xFFFF);
 
                 std::cout << "Repl placeholder with " << inst << std::endl;
 
                 counter++;
 
             } else if(inst == ID_PLACEHOLDER) {
-                HLTypes t = (HLTypes)op.id_repl[counter];
+                HLTypes t = (HLTypes)op->id_repl[counter];
                 auto realType = realTypes[t];
                 inst = realType->m_id;
 
@@ -124,7 +122,7 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
     funcData.insert(funcData.end(), oplabel.begin(), oplabel.end());
 
     for(auto& i : offsetedListing) {
-        auto data = i.GetData();
+        auto data = i->GetData();
         funcData.insert(funcData.end(), data.begin(), data.end());
     }
 

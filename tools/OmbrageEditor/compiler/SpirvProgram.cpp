@@ -1,4 +1,5 @@
 #include "SpirvProgram.h"
+#include "SpirvOperation.h"
 
 std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
     // Do type exists
@@ -8,7 +9,7 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
 
     std::shared_ptr<SPVType> newType;
     HLTypes test = t & 0xF;
-    switch(t & 0xF) {
+    switch(t & 0xFF) {
         case HLTypes::VOID:
             newType = std::make_shared<TVoid>(m_IDcounter);
             break;
@@ -29,18 +30,23 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
             break;
     }
 
+    m_IDcounter++;
+
     if((uint32_t)(t & FLAG_PTR_FUNCTION)) {
         newType->m_isPointer = true;
         newType->m_ptrAttr = StorageClass::Function;
+
+        auto deptype = GetType(t & 0xFF);
     } else if ((uint32_t)(t & FLAG_PTR_OUTPUT)) {
         newType->m_isPointer = true;
         newType->m_ptrAttr = StorageClass::Output;
+
+        auto deptype = GetType(t & 0xFF);
     }
 
-    std::cout << "TYPE " << (int)t << " IS " << m_IDcounter << std::endl;
+    std::cout << "TYPE " << (int)t << " IS " << newType->m_id << std::endl;
 
     m_types[t] = newType;
-    m_IDcounter++;
 
     return newType;
 }
@@ -59,15 +65,39 @@ std::vector<uint32_t>& SpirvProgram::GetProgramListing() {
     return m_progBin;
 }
 
-void SpirvProgram::RegisterFunction(std::unique_ptr<SpirvFunction> func) {
-    m_functions.push_back(std::move(func));
+void SpirvProgram::RegisterFunction(std::shared_ptr<SpirvFunction> func) {
+    m_functions.push_back(func);
+}
+
+void SpirvProgram::RegisterConstant(std::shared_ptr<SpirvConstant> ctant) {
+    ctant->id = m_IDcounter;
+    m_IDcounter++;
+
+    auto gettype = GetType(ctant->type);
+
+    std::cout << "CTANT IS " << ctant->id << std::endl;
+
+    m_ctants.push_back(ctant);
+}
+
+void SpirvProgram::RegisterVariable(std::shared_ptr<SpirvVariable> var) {
+    var->id = m_IDcounter;
+    m_IDcounter++;
+
+    auto gettype = GetType(var->type);
+
+    m_vars.push_back(var);
 }
 
 void SpirvProgram::SetShaderLayout(std::vector<HLTypes> layout) {
     for(auto& t : layout) {
         auto t_res = GetType(t);
 
-        m_layoutIDs.push_back(m_IDcounter);
+        auto var = std::make_shared<SpirvVariable>();
+        var->id = m_IDcounter;
+        var->type = t;
+
+        m_shaderLayout.push_back(var);
         m_IDcounter++;
     }
 }
@@ -94,15 +124,15 @@ void SpirvProgram::CompileHeader() {
     memcpy(&toint, name, 4);
 
     SpirvOperation OpEntryP{};
-    OpEntryP.LoadOp(15, 4 + m_layoutIDs.size());
+    OpEntryP.LoadOp(15, 4 + m_shaderLayout.size());
     OpEntryP.words = {
            0x04,
            (uint32_t)m_entryPoint->funcID,
            toint
     };
 
-    for(auto& lid : m_layoutIDs) {
-        OpEntryP.words.push_back(lid);
+    for(auto& lid : m_shaderLayout) {
+        OpEntryP.words.push_back(lid->id);
     }
     allOp.emplace_back(OpEntryP);
 
@@ -116,12 +146,12 @@ void SpirvProgram::CompileHeader() {
     allOp.emplace_back(OpExecMode);
 
     // Handling interface decoration
-    for(int i = 0; i < m_layoutIDs.size(); i++) {
+    for(int i = 0; i < m_shaderLayout.size(); i++) {
         // OpDecorate ID Location i
         SpirvOperation opdec{};
         opdec.LoadOp(71, 3 + 1);
         opdec.words = {
-                (uint32_t)m_layoutIDs[i],
+                (uint32_t)m_shaderLayout[i]->id,
                 30,
                 (uint32_t)i
         };
@@ -161,10 +191,19 @@ void SpirvProgram::CompileTypesFunctions() {
         funcs.insert(funcs.end(), compiled.begin(), compiled.end());
     }
 
-    // Primary types
+    // Primary monotypes
     for(auto& t : m_types) {
         std::vector<uint32_t> tdecl;
-        if(!t.second->m_isPointer) {
+        if(!t.second->m_isPointer && (t.first == HLTypes::FLOAT || t.first == HLTypes::INT || t.first == HLTypes::VOID)) {
+            tdecl = t.second->GetTypeDecl();
+            m_shaderBody.insert(m_shaderBody.end(), tdecl.begin(), tdecl.end());
+        }
+    }
+
+    // Primary multitypes
+    for(auto& t : m_types) {
+        std::vector<uint32_t> tdecl;
+        if(!(t.second->m_isPointer) && ((uint32_t)(t.first & FLAG_IS_VECTOR))) {
             tdecl = t.second->GetTypeDecl();
             m_shaderBody.insert(m_shaderBody.end(), tdecl.begin(), tdecl.end());
         }
@@ -179,8 +218,26 @@ void SpirvProgram::CompileTypesFunctions() {
         }
     }
 
-    m_shaderBody.insert(m_shaderBody.end(), entryFunc.begin(), entryFunc.end());
+    // Vars & Ctants
+    for(auto& c : m_ctants) {
+        std::vector<uint32_t> cdecl = c->DeclConstant(m_types);
+        m_shaderBody.insert(m_shaderBody.end(), cdecl.begin(), cdecl.end());
+    }
+
+    for(auto& v : m_vars) {
+        std::vector<uint32_t> cdecl = v->DeclVariable(m_types);
+        m_shaderBody.insert(m_shaderBody.end(), cdecl.begin(), cdecl.end());
+    }
+
+
+    // Shader layout
+    for(auto& var : m_shaderLayout) {
+        std::vector<uint32_t> vardecl = var->DeclVariable(m_types);
+        m_shaderBody.insert(m_shaderBody.end(), vardecl.begin(), vardecl.end());
+    }
+
     m_shaderBody.insert(m_shaderBody.end(), funcs.begin(), funcs.end());
+    m_shaderBody.insert(m_shaderBody.end(), entryFunc.begin(), entryFunc.end());
 }
 
 void SpirvProgram::FunctionTypeLinker(std::shared_ptr<SpirvFunction> &func) {
@@ -207,4 +264,15 @@ void SpirvProgram::SetEntryPoint(std::unique_ptr<SpirvFunction> entry) {
 
 void SpirvProgram::Concat() {
     m_progBin.insert(m_progBin.end(), m_shaderBody.begin(), m_shaderBody.end());
+}
+
+std::shared_ptr<SpirvVariable> SpirvProgram::GetLayoutVariable(int idx) {
+    return m_shaderLayout[idx];
+}
+
+int SpirvProgram::GetAvailableID() {
+    int id = m_IDcounter;
+    m_IDcounter++;
+
+    return id;
 }

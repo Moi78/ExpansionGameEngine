@@ -9,19 +9,24 @@
 
 #include "SpirvFunction.h"
 #include "SpirvTypes.h"
+#include "SpirvData.h"
 
 class SpirvProgram {
 public:
     SpirvProgram() : m_IDcounter(1) {};
     virtual ~SpirvProgram() = default;
 
-    void RegisterFunction(std::unique_ptr<SpirvFunction> func);
+    void RegisterFunction(std::shared_ptr<SpirvFunction> func);
     void SetEntryPoint(std::unique_ptr<SpirvFunction> entry);
 
     std::shared_ptr<SpirvFunction> GetFunc(std::string funcName);
     std::shared_ptr<SPVType> GetType(HLTypes t);
 
     void SetShaderLayout(std::vector<HLTypes> layout);
+    void RegisterConstant(std::shared_ptr<SpirvConstant> ctant);
+    void RegisterVariable(std::shared_ptr<SpirvVariable> var);
+
+    std::shared_ptr<SpirvVariable> GetLayoutVariable(int idx);
 
     std::vector<uint32_t>& GetProgramListing();
     void AssignFuncIDs();
@@ -29,6 +34,8 @@ public:
     void CompileHeader();
     void CompileTypesFunctions();
     void Concat();
+
+    int GetAvailableID();
 
 private:
     void FunctionTypeLinker(std::shared_ptr<SpirvFunction>& func);
@@ -39,7 +46,10 @@ private:
     std::vector<uint32_t> m_progBin;
     std::vector<uint32_t> m_shaderBody;
 
-    std::vector<int> m_layoutIDs;
+    std::vector<std::shared_ptr<SpirvVariable>> m_shaderLayout;
+
+    std::vector<std::shared_ptr<SpirvConstant>> m_ctants;
+    std::vector<std::shared_ptr<SpirvVariable>> m_vars;
 
     std::unordered_map<HLTypes, std::shared_ptr<SPVType>> m_types;
 

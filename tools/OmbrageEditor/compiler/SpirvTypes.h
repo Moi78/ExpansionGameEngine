@@ -10,8 +10,10 @@
 
 #define OPTYPEPTR 32
 
-#define FLAG_PTR_FUNCTION 0x4000
-#define FLAG_PTR_OUTPUT 0x8000
+#define FLAG_PTR_FUNCTION 0x4000000
+#define FLAG_PTR_OUTPUT 0x8000000
+
+#define FLAG_IS_VECTOR 0x80
 
 #define FLAG_IS_NOT_TYPE 0x20000000
 
@@ -20,23 +22,23 @@ enum class HLTypes {
     VOID = 0,
     FLOAT = 1,
     INT = 2,
-    VECTOR2 = 3,
-    VECTOR3 = 4,
-    VECTOR4 = 5,
+    VECTOR2 = 3 | FLAG_IS_VECTOR,
+    VECTOR3 = 4 | FLAG_IS_VECTOR,
+    VECTOR4 = 5 | FLAG_IS_VECTOR,
 
     // Function type pointers
-    FLOATPTR = 1 | 0x4000,
-    INTPTR = 2 | 0x4000,
-    VECTOR2PTR = 3 | 0x4000,
-    VECTOR3PTR = 4 | 0x4000,
-    VECTOR4PTR = 5 | 0x4000,
+    FLOATPTR = 1 | FLAG_PTR_FUNCTION,
+    INTPTR = 2 | FLAG_PTR_FUNCTION,
+    VECTOR2PTR = 3 | FLAG_IS_VECTOR | FLAG_PTR_FUNCTION,
+    VECTOR3PTR = 4 | FLAG_IS_VECTOR | FLAG_PTR_FUNCTION,
+    VECTOR4PTR = 5 | FLAG_IS_VECTOR | FLAG_PTR_FUNCTION,
 
     // Output type pointers
-    FLOATPTRO = 1 | 0x8000,
-    INTPTRO = 2 | 0x8000,
-    VECTOR2PTRO = 3 | 0x8000,
-    VECTOR3PTRO = 4 | 0x8000,
-    VECTOR4PTRO = 5 | 0x8000,
+    FLOATPTRO = 1 | FLAG_PTR_OUTPUT,
+    INTPTRO = 2 | FLAG_PTR_OUTPUT,
+    VECTOR2PTRO = 3 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
+    VECTOR3PTRO = 4 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
+    VECTOR4PTRO = 5 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
 };
 
 HLTypes operator&(const HLTypes& a, const int& b);
@@ -93,9 +95,9 @@ public:
     virtual unsigned GetOpcode() override { return 23; }
 
     virtual std::vector<uint32_t> GetTypeDecl() override {
-        uint32_t firstWord = (GetOpcode() << 16) | 4;
+        uint32_t firstWord = (4 << 16) | GetOpcode();
 
-        return {firstWord, (uint32_t)m_id, (uint32_t)m_primType->m_id};
+        return {firstWord, (uint32_t)m_id, (uint32_t)m_primType->m_id, _size};
     }
 
 private:

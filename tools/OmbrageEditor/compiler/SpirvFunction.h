@@ -2,6 +2,8 @@
 #define EXPGE_SPIRVFUNCTION_H
 
 #include "SpirvTypes.h"
+#include "SpirvData.h"
+#include "SpirvOperation.h"
 
 #include <memory>
 #include <vector>
@@ -12,22 +14,12 @@
 
 #define ID_PLACEHOLDER 0xFFFFFFFF
 
-struct SpirvOperation {
-    uint32_t op;
-    std::vector<uint32_t> words;
-
-    std::optional<uint32_t> result_id;
-    std::vector<int32_t> id_repl;
-
-    void LoadOp(uint32_t opid, uint32_t opsize) { op = (opsize << 16) | opid; }
-
-    std::vector<uint32_t> GetData();
-};
-
 struct SpirvFunction {
     HLTypes returnType;
     std::vector<HLTypes> argsType;
-    std::vector<SpirvOperation> funcBody;
+
+    std::vector<std::shared_ptr<SpirvOperation>> funcBody;
+    //std::vector<std::shared_ptr<SpirvVariable>> funcVars;
 
     uint32_t funcID;
     std::string funcName;

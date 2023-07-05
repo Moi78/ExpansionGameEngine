@@ -11,6 +11,8 @@
 
 #include "SpirvProgram.h"
 #include "SpirvFunction.h"
+#include "SpirvSpecialOP.h"
+#include "SpirvOperation.h"
 
 int main() {
     std::cout << "OMBRAGE MATERIAL EDITOR" << std::endl;
@@ -19,62 +21,80 @@ int main() {
 
     SpirvProgram prog{};
 
-    std::unique_ptr<SpirvFunction> entry = std::make_unique<SpirvFunction>();
-    entry->returnType = HLTypes::VOID;
-    entry->funcName = "main";
+    std::shared_ptr<SpirvOperation> ret = std::make_shared<SpirvOperation>();
+    ret->LoadOp(253, 1);
 
-    SpirvOperation ret{};
-    ret.LoadOp(253, 1);
-    entry->funcBody.push_back(ret);
-    entry->funcSize = 0;
+    std::shared_ptr<SpirvOperation> OpLoadA = std::make_shared<SpirvOperation>();
+    OpLoadA->LoadOp(61, 4);
+    OpLoadA->words = {
+            ID_PLACEHOLDER,
+            ID_PLACEHOLDER,
+            ID_PLACEHOLDER
+    };
+    OpLoadA->result_id = 2;
+    OpLoadA->id_repl = { (uint32_t)HLTypes::FLOAT, -1, 0 | FLAG_IS_NOT_TYPE};
 
-    std::unique_ptr<SpirvFunction> add = std::make_unique<SpirvFunction>();
+    std::shared_ptr<SpirvOperation> OpLoadB = std::make_shared<SpirvOperation>();
+    OpLoadB->LoadOp(61, 4);
+    OpLoadB->words = {
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER
+    };
+    OpLoadB->result_id = 3;
+    OpLoadB->id_repl = { (uint32_t)HLTypes::FLOAT, -1, 1 | FLAG_IS_NOT_TYPE };
+
+    std::shared_ptr<SpirvOperation> OpAdd = std::make_shared<SpirvOperation>();
+    OpAdd->LoadOp(129, 5);
+    OpAdd->words = {
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER,
+        ID_PLACEHOLDER
+    };
+    OpAdd->result_id = 4;
+    OpAdd->id_repl = { (uint32_t)HLTypes::FLOAT, -1, 2 | FLAG_IS_NOT_TYPE, 3 | FLAG_IS_NOT_TYPE };
+
+    std::shared_ptr<SpirvOperation> OpReturnVal = std::make_shared<SpirvOperation>();
+    OpReturnVal->LoadOp(254, 2);
+    OpReturnVal->words = {
+        ID_PLACEHOLDER
+    };
+    OpReturnVal->id_repl = {4 | FLAG_IS_NOT_TYPE};
+
+    std::shared_ptr<SpirvFunction> add = std::make_shared<SpirvFunction>();
     add->returnType = HLTypes::FLOAT;
     add->argsType = { HLTypes::FLOATPTR, HLTypes::FLOATPTR };
     add->funcName = "add";
-
-    SpirvOperation OpLoadA{};
-    OpLoadA.LoadOp(61, 4);
-    OpLoadA.words = {
-        ID_PLACEHOLDER,
-        ID_PLACEHOLDER,
-        ID_PLACEHOLDER
-    };
-    OpLoadA.result_id = 2;
-    OpLoadA.id_repl = { (uint32_t)HLTypes::FLOAT, -1, 0 | FLAG_IS_NOT_TYPE};
-
-    SpirvOperation OpLoadB{};
-    OpLoadB.LoadOp(61, 4);
-    OpLoadB.words = {
-        ID_PLACEHOLDER,
-        ID_PLACEHOLDER,
-        ID_PLACEHOLDER
-    };
-    OpLoadB.result_id = 3;
-    OpLoadB.id_repl = { (uint32_t)HLTypes::FLOAT, -1, 1 | FLAG_IS_NOT_TYPE };
-
-    SpirvOperation OpAdd{};
-    OpAdd.LoadOp(129, 5);
-    OpAdd.words = {
-        ID_PLACEHOLDER,
-        ID_PLACEHOLDER,
-        ID_PLACEHOLDER,
-        ID_PLACEHOLDER
-    };
-    OpAdd.result_id = 4;
-    OpAdd.id_repl = { (uint32_t)HLTypes::FLOAT, -1, 2 | FLAG_IS_NOT_TYPE, 3 | FLAG_IS_NOT_TYPE };
-
-    SpirvOperation OpReturnVal{};
-    OpReturnVal.LoadOp(254, 2);
-    OpReturnVal.words = {
-        ID_PLACEHOLDER
-    };
-    OpReturnVal.id_repl = {4 | FLAG_IS_NOT_TYPE};
-
     add->funcBody = {OpLoadA, OpLoadB, OpAdd, OpReturnVal};
     add->funcSize = 3;
 
-    prog.RegisterFunction(std::move(add));
+    auto ct = std::make_shared<SPVFloatConstant>();
+    ct->type = HLTypes::FLOAT;
+    ct->data = 1.5f;
+
+    prog.RegisterConstant(ct);
+
+    prog.SetShaderLayout({HLTypes::FLOATPTRO, HLTypes::VECTOR4PTRO, HLTypes::VECTOR3PTRO, HLTypes::VECTOR2PTRO, HLTypes::INT});
+
+    auto var = prog.GetLayoutVariable(0);
+
+    auto datawrap = std::make_shared<SpirvDataWrapperCtant>();
+    datawrap->ctant = ct;
+
+    std::vector<std::shared_ptr<SpirvDataWrapperBase>> wraps = {datawrap, datawrap};
+    std::shared_ptr<SpOpFunCall> fcall = std::make_shared<SpOpFunCall>(add, wraps);
+    fcall->target = var;
+    fcall->id = prog.GetAvailableID();
+
+    std::unique_ptr<SpirvFunction> entry = std::make_unique<SpirvFunction>();
+    entry->returnType = HLTypes::VOID;
+    entry->funcName = "main";
+    entry->funcBody.push_back(fcall);
+    entry->funcBody.push_back(ret);
+    entry->funcSize = 0;
+
+    prog.RegisterFunction(add);
 
     prog.SetEntryPoint(std::move(entry));
     prog.AssignFuncIDs();
@@ -90,6 +110,7 @@ int main() {
         f.write(reinterpret_cast<const char*>(&instr), sizeof(uint32_t));
     }
 
+    f.close();
 
     EXP_GameInfo gameinfo{};
     gameinfo.GameLib = "./ombrage_content/lib/libOmbrageLib.so";
