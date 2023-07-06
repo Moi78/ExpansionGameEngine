@@ -30,6 +30,7 @@ namespace OmbrageUI {
         ~NodeGraph_UI();
 
         void RenderGraph();
+        void RenderNodeProperties();
 
         void AddNode(std::shared_ptr<Node> Node);
 

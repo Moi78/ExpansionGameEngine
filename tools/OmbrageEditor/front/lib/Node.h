@@ -27,7 +27,7 @@ struct NodePinDesc {
     NodePinMode mode;
     NodePinTypes type;
 
-    char pinName[50];
+    std::string pinName;
 
     uint32_t pinID;
 };
@@ -40,7 +40,15 @@ bool TypeWeightCompare(NodePinTypes a, NodePinTypes b);
 // Returns if the two types can be used together in a math op
 bool TypeCompatibility(NodePinTypes a, NodePinTypes b);
 
-struct NodeConnection;
+struct Node;
+struct NodeConnection {
+    std::shared_ptr<Node> OtherNode;
+
+    uint32_t dst_pinID;
+    uint32_t src_pinID;
+
+    uint32_t linkID;
+};
 
 class Node {
 public:
@@ -49,6 +57,10 @@ public:
 
     void RenderNode();
     void RenderLinks();
+
+    uint32_t GetNodeID() { return m_id; }
+
+    virtual void RenderProperties() {};
 
     bool ContainsPin(uint32_t globID);
     virtual bool ConnectPins(std::shared_ptr<Node> other, uint32_t srcID, uint32_t pID, uint32_t linkID);
@@ -66,15 +78,8 @@ protected:
 
     std::vector<NodePinDesc> m_io;
     std::vector<NodeConnection> m_connections;
-};
 
-struct NodeConnection {
-    std::shared_ptr<Node> OtherNode;
-
-    uint32_t dst_pinID;
-    uint32_t src_pinID;
-
-    uint32_t linkID;
+    float m_color[3];
 };
 
 #endif //EXPGE_NODE_H

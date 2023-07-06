@@ -12,4 +12,5 @@ ShaderNode::ShaderNode(uint32_t id) : Node(id) {
     };
 
     m_nodeName = "Shader Node";
+    m_color[1] = 190.0f;
 }

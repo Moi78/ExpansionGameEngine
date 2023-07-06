@@ -38,14 +38,20 @@ bool TypeCompatibility(NodePinTypes a, NodePinTypes b) {
 // -----------------------------------------------------
 
 Node::Node(uint32_t id) : m_id(id) {
-
+    for(auto& c : m_color) {
+        c = 0.0f;
+    }
 }
 
 void Node::RenderNode() {
+    ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(m_color[0], m_color[1], m_color[2], 255));
+    ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(m_color[0] / 2, m_color[1] / 2, m_color[2] / 2, 255));
+    ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(m_color[0] / 3, m_color[1] / 3, m_color[2] / 3, 255));
+
     ImNodes::BeginNode(m_id);
 
     ImNodes::BeginNodeTitleBar();
-    ImGui::Text(m_nodeName.c_str());
+    ImGui::Text("%s", m_nodeName.c_str());
     ImNodes::EndNodeTitleBar();
 
     for(auto& pin : m_io) {
@@ -60,7 +66,7 @@ void Node::RenderNode() {
             ImNodes::BeginOutputAttribute(pin.pinID + m_id);
         }
 
-        ImGui::Text(pin.pinName);
+        ImGui::Text("%s", pin.pinName.c_str());
 
         if(pin.mode == NodePinMode::INPUT) {
             ImNodes::EndInputAttribute();
@@ -72,6 +78,8 @@ void Node::RenderNode() {
     }
 
     ImNodes::EndNode();
+
+    ImNodes::PopColorStyle();
 }
 
 void Node::RenderLinks() {

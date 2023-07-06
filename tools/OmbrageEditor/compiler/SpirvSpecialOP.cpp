@@ -1,7 +1,9 @@
 #include "SpirvSpecialOP.h"
 #include "SpirvOperation.h"
 
-SpOpFunCall::SpOpFunCall(std::shared_ptr<SpirvFunction> fn, std::vector<std::shared_ptr<SpirvDataWrapperBase>> arg) : SpirvOperation(), func(fn), args(arg) {
+SpOpFunCall::SpOpFunCall(std::shared_ptr<SpirvFunction> fn, std::vector<std::shared_ptr<SpirvDataWrapperBase>> arg, bool nStore)
+: SpirvOperation(), func(fn), args(arg), noStore(nStore)
+{
     LoadOp(57, 4 + fn->argsType.size());
 }
 
@@ -21,16 +23,28 @@ void SpOpFunCall::PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType
     }
 
     // Appending store op
-    SpirvOperation OpStore{};
-    OpStore.LoadOp(62, 3);
-    OpStore.words = {
-            (uint32_t)target->id,
-            (uint32_t)id
-    };
+    if(!noStore) {
+        SpirvOperation OpStore{};
+        OpStore.LoadOp(62, 3);
+        OpStore.words = {
+                (uint32_t) target->id,
+                (uint32_t) id
+        };
 
-    auto store = OpStore.GetData();
-    words.insert(words.end(), store.begin(), store.end());
+        auto store = OpStore.GetData();
+        words.insert(words.end(), store.begin(), store.end());
+    }
 }
+
+uint32_t SpirvDataWrapperFunRet::GetReflectedID() {
+    return fcall->id;
+}
+
+HLTypes SpirvDataWrapperFunRet::GetReflectedType() {
+    return fcall->func->returnType;
+}
+
+// ---------------------------------------------------------------------
 
 SpOpStoreCtant::SpOpStoreCtant(std::shared_ptr<SpirvVariable> targ, std::shared_ptr<SpirvConstant> ct) {
     target = targ;

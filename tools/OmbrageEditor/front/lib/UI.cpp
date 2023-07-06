@@ -70,6 +70,8 @@ void OmbrageUI::UI::RenderImGui() {
 
     ImGui::Begin("Properties");
 
+    m_node_editor->RenderNodeProperties();
+
     ImGui::End();
 }
 

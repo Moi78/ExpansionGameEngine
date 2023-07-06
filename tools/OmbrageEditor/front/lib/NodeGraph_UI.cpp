@@ -107,4 +107,22 @@ namespace OmbrageUI {
         ImGui::PopStyleVar(2);
     }
 
+    void NodeGraph_UI::RenderNodeProperties() {
+        int selectedCount = ImNodes::NumSelectedNodes();
+
+        int* selNodes = new int[selectedCount];
+        ImNodes::GetSelectedNodes(selNodes);
+
+        for(auto& n : m_nodes) {
+            for(int i = 0; i < selectedCount; i++) {
+                if(n->GetNodeID() == selNodes[i]) {
+                    n->RenderProperties();
+                    break;
+                }
+            }
+        }
+
+        delete[] selNodes;
+    }
+
 } // OmbrageUI
