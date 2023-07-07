@@ -67,6 +67,7 @@ OmbrageNodes::ConstFloatNode::ConstFloatNode(uint32_t id) : Node(id) {
     m_nodeName = "Const Float";
 
     m_float = 0.0f;
+    m_isConst = true;
 }
 
 void OmbrageNodes::ConstFloatNode::RenderProperties() {
@@ -77,6 +78,14 @@ void OmbrageNodes::ConstFloatNode::RenderProperties() {
     }
 }
 
+void OmbrageNodes::ConstFloatNode::MakeCtant() {
+    auto fconst = std::make_shared<SPVFloatConstant>();
+    fconst->data = m_float;
+    fconst->type = HLTypes::FLOAT;
+
+    ctant = fconst;
+}
+
 OmbrageNodes::ConstVec4Node::ConstVec4Node(uint32_t id) : Node(id) {
     m_io = {{ NodePinMode::OUTPUT, NodePinTypes::VEC4, "Const 0.0 0.0 0.0 0.0", 0 }};
     m_nodeName = "Const Vec4";
@@ -84,6 +93,8 @@ OmbrageNodes::ConstVec4Node::ConstVec4Node(uint32_t id) : Node(id) {
     for(auto& v : m_vec4) {
         v = 0.0f;
     }
+
+    m_isConst = true;
 }
 
 void OmbrageNodes::ConstVec4Node::RenderProperties() {
@@ -108,6 +119,8 @@ OmbrageNodes::ConstVec3Node::ConstVec3Node(uint32_t id) : Node(id) {
     for(auto& v : m_vec3) {
         v = 0.0f;
     }
+
+    m_isConst = true;
 }
 
 void OmbrageNodes::ConstVec3Node::RenderProperties() {
@@ -132,6 +145,8 @@ OmbrageNodes::ConstVec2Node::ConstVec2Node(uint32_t id) : Node(id) {
     for(auto& v : m_vec2) {
         v = 0.0f;
     }
+
+    m_isConst = true;
 }
 
 void OmbrageNodes::ConstVec2Node::RenderProperties() {
@@ -154,6 +169,31 @@ OmbrageNodes::AddNode::AddNode(uint32_t id) : MathNode(id) {
     m_nodeName = "Add";
 }
 
+std::string OmbrageNodes::AddNode::GetNodeFunctionName() {
+    std::string base = "math.add";
+    std::string suffix = "";
+
+    if(m_io[0].type == m_io[1].type) {
+        if(m_io[0].type == NodePinTypes::OMNI) {
+            return "err";
+        }
+
+        suffix = GetTypeSuffix(m_io[0].type);
+        return base + suffix;
+    }
+
+    int ioidx = 1;
+    if(m_io[1].type == FLOAT) {
+        ioidx = 0;
+    } else if(m_io[0].type != FLOAT) {
+        return "err";
+    }
+
+    suffix += "f";
+    suffix += GetTypeSuffix(m_io[ioidx].type);
+    return base + suffix;
+}
+
 // -----------------------------------------------------------------------------------------
 
 OmbrageNodes::MultNode::MultNode(uint32_t id) : MathNode(id) {
@@ -164,4 +204,25 @@ OmbrageNodes::MultNode::MultNode(uint32_t id) : MathNode(id) {
     };
 
     m_nodeName = "Multiply";
+}
+
+std::string OmbrageNodes::MultNode::GetNodeFunctionName() {
+    std::string base = "math.mul";
+    std::string suffix = "";
+
+    if(m_io[0].type == m_io[1].type) {
+        suffix = GetTypeSuffix(m_io[0].type);
+        return base + suffix;
+    }
+
+    int ioidx = 1;
+    if(m_io[1].type == FLOAT) {
+        ioidx = 0;
+    } else if(m_io[0].type != FLOAT) {
+        return "err";
+    }
+
+    suffix += "f";
+    suffix += GetTypeSuffix(m_io[ioidx].type);
+    return base + suffix;
 }

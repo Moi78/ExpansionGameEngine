@@ -35,18 +35,43 @@ bool TypeCompatibility(NodePinTypes a, NodePinTypes b) {
     return (AisVec != BisVec) || typaA_is_typeB || (b == NodePinTypes::OMNI) || (a == NodePinTypes::OMNI);
 }
 
+std::string GetTypeSuffix(NodePinTypes t) {
+    switch(t) {
+        case INT:
+            return "i";
+            break;
+        case FLOAT:
+            return "f";
+            break;
+        case VEC2:
+            return "2v";
+            break;
+        case VEC3:
+            return "3v";
+            break;
+        case VEC4:
+            return "4v";
+            break;
+        case OMNI:
+            return "err";
+            break;
+    }
+}
+
 // -----------------------------------------------------
 
 Node::Node(uint32_t id) : m_id(id) {
     for(auto& c : m_color) {
         c = 0.0f;
     }
+
+    m_isConst = false;
 }
 
 void Node::RenderNode() {
-    ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(m_color[0], m_color[1], m_color[2], 255));
-    ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(m_color[0] / 2, m_color[1] / 2, m_color[2] / 2, 255));
-    ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(m_color[0] / 3, m_color[1] / 3, m_color[2] / 3, 255));
+    ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(m_color[0] / 2, m_color[1] / 2, m_color[2] / 2, 255));
+    ImNodes::PushColorStyle(ImNodesCol_TitleBarHovered, IM_COL32(m_color[0] / 3, m_color[1] / 3, m_color[2] / 3, 255));
+    ImNodes::PushColorStyle(ImNodesCol_TitleBarSelected, IM_COL32(m_color[0] / 4, m_color[1] / 4, m_color[2] / 4, 255));
 
     ImNodes::BeginNode(m_id);
 
@@ -151,4 +176,48 @@ void Node::ValidateLinks() {
     for(auto del : toDelete) {
         m_connections.erase(del);
     }
+}
+
+std::shared_ptr<Node> Node::GetParent(int pinID) {
+    for(auto& c : m_connections) {
+        if(c.dst_pinID == pinID) {
+            return c.OtherNode;
+        }
+    }
+
+    return {};
+}
+
+std::unique_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler) {
+    std::shared_ptr<Node> parent = GetParent(m_id + locID);
+    if(!parent.use_count()) {
+        std::cerr << "PIN " << m_id + locID << "NOT CONNECTED" << std::endl;
+        return {};
+    }
+
+    uint32_t par_id = parent->GetNodeID();
+
+    if(!parent->isConst()) {
+        auto elem = std::make_unique<HighLevelFunCall>();
+        elem->func = parent->GetNodeFunctionName();
+
+        for(int i = 0; i < parent->GetNodeSize(); i++) {
+            if(parent->GetPinMode(par_id + i) != NodePinMode::OUTPUT) {
+                elem->parents.push_back(parent->EvalFrom(i, compiler));
+            }
+        }
+
+        return elem;
+    } else {
+        auto ctant = std::dynamic_pointer_cast<Constant>(parent);
+
+        auto elem = std::make_unique<HighLevelCtant>();
+        elem->ctant = compiler->GetConstantW(ctant->ctant);
+
+        return elem;
+    }
+}
+
+NodePinMode Node::GetPinMode(uint32_t globID) {
+    return m_io[globID - m_id].mode;
 }

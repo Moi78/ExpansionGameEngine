@@ -1,1 +1,1 @@
-add_library(OmbrageCompiler SHARED SpirvCompiler.cpp SpirvCompiler.h SpirvTypes.h SpirvFunction.h SpirvProgram.h SpirvProgram.cpp SpirvTypes.cpp SpirvFunction.cpp SpirvData.h SpirvData.cpp SpirvSpecialOP.h SpirvSpecialOP.cpp SpirvOperation.cpp)
+add_library(OmbrageCompiler SHARED SpirvCompiler.cpp SpirvCompiler.h SpirvTypes.h SpirvFunction.h SpirvProgram.h SpirvProgram.cpp SpirvTypes.cpp SpirvFunction.cpp SpirvData.h SpirvData.cpp SpirvSpecialOP.h SpirvSpecialOP.cpp SpirvOperation.cpp FunctionGraph.cpp FunctionGraph.h)

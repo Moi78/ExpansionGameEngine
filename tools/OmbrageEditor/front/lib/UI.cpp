@@ -9,6 +9,8 @@ OmbrageUI::UI::UI(EXP_Game *game) {
 
     m_node_editor = std::make_unique<NodeGraph_UI>();
 
+    m_compiler = std::make_shared<SpirvCompiler>();
+
     auto rootNode = std::make_shared<ShaderNode>(0);
     m_node_editor->AddNode(rootNode);
 
@@ -36,6 +38,48 @@ void OmbrageUI::UI::RenderImGui() {
     static auto winsys = m_game->GetRenderer()->GetAPI()->GetWindowingSystem();
 
     DockSpaceHandling();
+
+    if(ImGui::IsKeyPressed(ImGuiKey_R, false)) {
+        if(!ImGui::IsPopupOpen("Recompiling")) {
+            ImGui::OpenPopup("Recompiling");
+
+            ImVec2 winSize = ImGui::GetMainViewport()->Size;
+            ImVec2 popupSize{};
+
+            auto imwin = ImGui::FindWindowByName("Recompiling");
+            if(imwin) {
+                popupSize = imwin->Size;
+            }
+
+            ImVec2 finalPos = (winSize / 2) - (popupSize / 2);
+
+            ImGui::SetNextWindowPos(finalPos);
+        }
+
+        m_cstate = DEPS_LOAD;
+        if(CompileLoadDeps()) {
+            m_cstate = COMPILING_SHADER;
+            if(CompileShader()) {
+                m_cstate = DONE;
+            }
+        }
+    }
+    if(ImGui::BeginPopupModal(
+            "Recompiling", nullptr,
+            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar)
+    ) {
+        ImGui::Text("Recompiling...");
+
+        if(m_cstate == DEPS_LOAD) {
+            ImGui::Text("Loading deps...");
+        } else if(m_cstate == COMPILING_SHADER) {
+            ImGui::Text("Compiling shader...");
+        } else if(m_cstate == DONE) {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{0.0, 0.0, 0.0, 0.0});
@@ -102,4 +146,44 @@ void OmbrageUI::UI::DockSpaceHandling() {
     ImGui::PopStyleVar(3);
     ImGui::PopStyleColor(2);
 
+}
+
+bool OmbrageUI::UI::CompileLoadDeps() {
+    for(auto& n : m_node_editor->GetNodes()) {
+        std::string dep = n->GetNodeFunctionName();
+        if(!((dep == "err") || (dep == "shadernode"))) {
+            m_compiler->LoadDependency(dep);
+        }
+    }
+
+    return true;
+}
+
+bool OmbrageUI::UI::CompileShader() {
+    // Make function graph for each outputs
+
+    std::vector<HLTypes> layout = {
+            HLTypes::VECTOR4PTRO,
+            HLTypes::VECTOR4PTRO,
+            HLTypes::VECTOR4PTRO,
+            HLTypes::VECTOR4PTRO,
+            HLTypes::VECTOR4PTRO,
+    };
+
+    std::vector<std::shared_ptr<Node>>& nodes = m_node_editor->GetNodes();
+
+    // Const analysis
+    for(auto& n : nodes) {
+        if(n->isConst()) {
+            auto ct = std::dynamic_pointer_cast<Constant>(n);
+            ct->MakeCtant();
+
+            m_compiler->RegisterConstant(ct->ctant);
+        }
+    }
+
+    std::shared_ptr<Node> rootNode = nodes[0];
+    auto evaluated = rootNode->EvalFrom(3, m_compiler);
+
+    return true;
 }

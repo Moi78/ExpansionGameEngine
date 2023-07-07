@@ -125,4 +125,14 @@ namespace OmbrageUI {
         delete[] selNodes;
     }
 
+    std::shared_ptr<Node> NodeGraph_UI::GetNodeByID(int id) {
+        for(auto& n : m_nodes) {
+            if(n->GetNodeID() == id) {
+                return n;
+            }
+        }
+
+        return {};
+    }
+
 } // OmbrageUI

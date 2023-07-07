@@ -664,6 +664,7 @@ bool RD_Windowing_GLFW_Vk::OpenWindow(std::string name, const int w, const int h
     m_resizedFlag = false;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
     m_win = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
     glfwSetWindowUserPointer(m_win, this);
     glfwSetFramebufferSizeCallback(m_win, RD_Windowing_GLFW_Vk::ResizeCBCK);

@@ -9,6 +9,9 @@
 
 #include "imnodes.h"
 
+#include "SpirvCompiler.h"
+#include "FunctionGraph.h"
+
 enum NodePinTypes {
     INT,
     FLOAT,
@@ -40,6 +43,8 @@ bool TypeWeightCompare(NodePinTypes a, NodePinTypes b);
 // Returns if the two types can be used together in a math op
 bool TypeCompatibility(NodePinTypes a, NodePinTypes b);
 
+std::string GetTypeSuffix(NodePinTypes t);
+
 struct Node;
 struct NodeConnection {
     std::shared_ptr<Node> OtherNode;
@@ -48,6 +53,12 @@ struct NodeConnection {
     uint32_t src_pinID;
 
     uint32_t linkID;
+};
+
+struct Constant {
+    std::shared_ptr<SpirvConstant> ctant;
+
+    virtual void MakeCtant() {};
 };
 
 class Node {
@@ -67,8 +78,15 @@ public:
     virtual void ValidateLinks();
 
     NodePinTypes GetPinType(uint32_t globID);
+    NodePinMode GetPinMode(uint32_t globID);
 
     uint32_t GetNodeSize() { return m_io.size(); };
+    std::shared_ptr<Node> GetParent(int pinID);
+
+    virtual std::string GetNodeFunctionName() = 0;
+    bool isConst() { return m_isConst; };
+
+    std::unique_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler);
 
 protected:
     bool CheckConnectionValidity(NodePinTypes atype, NodePinTypes btype, int destPin);
@@ -80,6 +98,7 @@ protected:
     std::vector<NodeConnection> m_connections;
 
     float m_color[3];
+    bool m_isConst;
 };
 
 #endif //EXPGE_NODE_H

@@ -9,6 +9,8 @@
 class ShaderNode : public Node {
 public:
     ShaderNode(uint32_t id);
+
+    std::string GetNodeFunctionName() override { return "shadernode"; };
 };
 
 

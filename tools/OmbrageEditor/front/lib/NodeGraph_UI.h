@@ -35,6 +35,9 @@ namespace OmbrageUI {
         void AddNode(std::shared_ptr<Node> Node);
 
         void AddNodeToCatalog(std::string cat, std::string name, std::function<std::shared_ptr<Node>(int)> factory);
+
+        std::vector<std::shared_ptr<Node>>& GetNodes() { return m_nodes; }
+        std::shared_ptr<Node> GetNodeByID(int id);
     private:
         void ManageContextMenu();
 

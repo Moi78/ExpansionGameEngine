@@ -5,44 +5,57 @@
 
 #include <iostream>
 #include <fmt/core.h>
+#include <string>
 
 namespace OmbrageNodes {
-    class ConstFloatNode : public Node {
+    class ConstFloatNode : public Node, public Constant {
     public:
         ConstFloatNode(uint32_t id);
 
         void RenderProperties() override;
 
+        std::string GetNodeFunctionName() override { return "math.cfloat"; }
+
+        void MakeCtant() override;
     private:
         float m_float;
     };
 
-    class ConstVec4Node : public Node {
+    class ConstVec4Node : public Node, public Constant {
     public:
         ConstVec4Node(uint32_t id);
 
         void RenderProperties() override;
 
+        std::string GetNodeFunctionName() override { return "math.cvec4"; }
+
+        void MakeCtant() override {}
     private:
         float m_vec4[4];
     };
 
-    class ConstVec3Node : public Node {
+    class ConstVec3Node : public Node, public Constant {
     public:
         ConstVec3Node(uint32_t id);
 
         void RenderProperties() override;
 
+        std::string GetNodeFunctionName() override { return "math.cvec3"; }
+
+        void MakeCtant() override {}
     private:
         float m_vec3[3];
     };
 
-    class ConstVec2Node : public Node {
+    class ConstVec2Node : public Node, public Constant {
     public:
         ConstVec2Node(uint32_t id);
 
         void RenderProperties() override;
 
+        std::string GetNodeFunctionName() override { return "math.cvec2"; }
+
+        void MakeCtant() override {}
     private:
         float m_vec2[2];
     };
@@ -62,11 +75,15 @@ namespace OmbrageNodes {
     class AddNode : public MathNode {
     public:
         AddNode(uint32_t id);
+
+        std::string GetNodeFunctionName() override;
     };
 
     class MultNode : public MathNode {
     public:
         MultNode(uint32_t id);
+
+        std::string GetNodeFunctionName() override;
     };
 }
 
