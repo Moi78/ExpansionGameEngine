@@ -6,6 +6,12 @@ HLTypes operator&(const HLTypes& a, const int& b) {
     return static_cast<HLTypes>(casted_a & b);
 }
 
+HLTypes operator|(const HLTypes& a, const int& b) {
+    uint32_t casted_a = static_cast<uint32_t>(a);
+
+    return static_cast<HLTypes>(casted_a | b);
+}
+
 std::vector<uint32_t> SPVType::GetTypePtrDecl(std::shared_ptr<SPVType> baseType) {
     assert(m_isPointer && m_ptrAttr.has_value() && "Invalid pointer type");
 

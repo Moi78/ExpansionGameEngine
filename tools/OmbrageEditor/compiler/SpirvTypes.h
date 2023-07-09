@@ -42,6 +42,7 @@ enum class HLTypes {
 };
 
 HLTypes operator&(const HLTypes& a, const int& b);
+HLTypes operator|(const HLTypes& a, const int& b);
 
 enum class StorageClass {
     Uniform = 2,
