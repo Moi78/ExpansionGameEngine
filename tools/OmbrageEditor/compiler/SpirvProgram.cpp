@@ -236,8 +236,8 @@ void SpirvProgram::CompileTypesFunctions() {
         m_shaderBody.insert(m_shaderBody.end(), vardecl.begin(), vardecl.end());
     }
 
-    m_shaderBody.insert(m_shaderBody.end(), funcs.begin(), funcs.end());
     m_shaderBody.insert(m_shaderBody.end(), entryFunc.begin(), entryFunc.end());
+    m_shaderBody.insert(m_shaderBody.end(), funcs.begin(), funcs.end());
 }
 
 void SpirvProgram::FunctionTypeLinker(std::shared_ptr<SpirvFunction> &func) {

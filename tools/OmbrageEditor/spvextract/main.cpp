@@ -6,6 +6,9 @@
 #include <jsoncpp/json/json.h>
 
 #include "SpirvTypes.h"
+#include "SpirvFunction.h"
+#include "SpirvProgram.h"
+#include "SpirvSpecialOP.h"
 
 void showUsage() {
     std::cout << "Usage : spvextract in_file function" << std::endl;
@@ -62,6 +65,16 @@ HLTypes OpToType(std::vector<uint32_t> op, std::unordered_map<int, HLTypes> know
     }
 
     return t;
+}
+
+Json::Value FindOp(Json::Value instrRoot, int opcode) {
+    for(auto& i : instrRoot) {
+        if(opcode == i["opcode"].asInt()) {
+            return i;
+        }
+    }
+
+    return {};
 }
 
 int main(int argc, char* argv[]) {
@@ -166,8 +179,99 @@ int main(int argc, char* argv[]) {
     }
 
     std::vector<uint32_t> funcBody(funcBeg, funcEnd);
+    std::shared_ptr<SpirvFunction> func = std::make_shared<SpirvFunction>();
+    func->funcName = funcName;
+
+    int idcounter = 0;
+    std::unordered_map<int, int> local_id_map;
+    std::vector<uint32_t> repl;
+
+    std::ifstream spvJson("third_party/spirv.core.grammar.json");
+
+    Json::Value root;
+    Json::String err;
+
+    Json::CharReaderBuilder builder;
+    if(!parseFromStream(builder, spvJson, &root, &err)) {
+        std::cerr << "ERROR: Failed to parse spirv core grammar." << std::endl;
+        std::cerr << err << std::endl;
+
+        return -5;
+    }
+
+    Json::Value instrs = root["instructions"];
+
+    for(int i = 0; i < funcBody.size(); i += GetOpSize(funcBody[i])) {
+        if(GetOpCode(funcBody[i]) == 54) {              // Func decl
+            std::cout << "FUNC RTYPE : " << (int)types_map[funcBody[i + 1]] << std::endl;
+            func->returnType = types_map[funcBody[i + 1]];
+
+        } else if(GetOpCode(funcBody[i]) == 55) {       // Func params
+            std::cout << "FUNC PARAM" << idcounter << " -> " << funcBody[i + 2] << std::endl;
+            func->argsType.push_back(types_map[funcBody[i + 1]]);
+
+            local_id_map[funcBody[i + 2]] = idcounter;
+            idcounter++;
+        } else if(GetOpCode(funcBody[i]) == 56) {       // Func end
+            break;
+        } else if(GetOpCode(funcBody[i]) == 248) {      // OpLabel ignore
+            continue;
+        } else {                                        // Other ops
+            auto op = FindOp(instrs, GetOpCode(funcBody[i]));
+            auto spvOp = std::make_shared<SpirvOperation>();
+            spvOp->op = funcBody[i];
+
+            if(op.empty()) {
+                std::cout << "Failed to fetch op" << std::endl;
+            } else {
+                Json::Value operands = op["operands"];
+                int count = 0;
+
+                for(auto& o : operands) {
+                    uint32_t word = ID_PLACEHOLDER;
+
+                    if(o["kind"] == "IdResultType") {
+                        spvOp->id_repl.push_back((int)types_map[funcBody[i + count + 1]]);
+                    } else if(o["kind"] == "IdResult") {
+                        local_id_map[funcBody[i + count + 1]] = idcounter;
+                        spvOp->result_id = idcounter;
+                        spvOp->id_repl.push_back(-1);
+
+                        std::cout << funcBody[i + count + 1] << " -> " << idcounter << std::endl;
+
+                        idcounter++;
+                    } else if(o["kind"] == "IdRef") {
+                        if(local_id_map.find(funcBody[i + count + 1]) == local_id_map.end()) {
+                            local_id_map[funcBody[i + count + 1]] = idcounter;
+                            spvOp->id_repl.push_back(idcounter | FLAG_IS_NOT_TYPE);
+
+                            std::cout << funcBody[i + count + 1] << " -> " << idcounter << std::endl;
+
+                            idcounter++;
+                        } else {
+                            std::cout << funcBody[i + count + 1] << " -> " << local_id_map[funcBody[i + count + 1]] << std::endl;
+                            spvOp->id_repl.push_back(local_id_map[funcBody[i + count + 1]] | FLAG_IS_NOT_TYPE);
+                        }
+                    } else {
+                        word = funcBody[i + count + 1];
+                    }
+
+                    spvOp->words.push_back(word);
+                    count++;
+
+                    if(count == (GetOpSize(funcBody[i]) - 1)) {
+                        break;
+                    }
+                }
+
+                func->funcBody.push_back(spvOp);
+            }
+        }
+    }
+    func->funcSize = idcounter;
 
     f.close();
+    spvJson.close();
 
     return 0;
 }
