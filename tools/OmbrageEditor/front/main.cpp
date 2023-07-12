@@ -14,6 +14,9 @@
 #include "SpirvSpecialOP.h"
 #include "SpirvOperation.h"
 
+//Enabling Nvidia Optimus
+extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
+
 int main() {
     std::cout << "OMBRAGE MATERIAL EDITOR" << std::endl;
 
