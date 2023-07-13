@@ -9,6 +9,7 @@
 #include "SpirvFunction.h"
 #include "SpirvProgram.h"
 #include "SpirvSpecialOP.h"
+#include "FunctionSerializer.h"
 
 void showUsage() {
     std::cout << "Usage : spvextract in_file function" << std::endl;
@@ -41,11 +42,11 @@ HLTypes OpToType(std::vector<uint32_t> op, std::unordered_map<int, HLTypes> know
             t = HLTypes::FLOAT;
             break;
         case 23:
-            if(op[2] == 2) {
+            if(op[3] == 2) {
                 t = HLTypes::VECTOR2;
-            } else if(op[2] == 3) {
+            } else if(op[3] == 3) {
                 t = HLTypes::VECTOR3;
-            } else if(op[2] == 4) {
+            } else if(op[3] == 4) {
                 t = HLTypes::VECTOR4;
             }
             break;
@@ -89,6 +90,11 @@ int main(int argc, char* argv[]) {
     if(!std::filesystem::exists(file)) {
         std::cerr << "ERROR: File " << file << " does not exists." << std::endl;
         return -2;
+    }
+
+    std::string output = "out.func";
+    if(argc > 3) {
+        output = std::string(argv[3]);
     }
 
     std::string funcName = argv[2];
@@ -136,6 +142,11 @@ int main(int argc, char* argv[]) {
         } else {
             idx += GetOpSize(spvData[idx]);
         }
+    }
+
+    if(!fid) {
+        std::cerr << "ERROR: Function " << funcName << " not found." << std::endl;
+        return -6;
     }
 
     idx = 5;
@@ -186,7 +197,8 @@ int main(int argc, char* argv[]) {
     std::unordered_map<int, int> local_id_map;
     std::vector<uint32_t> repl;
 
-    std::ifstream spvJson("third_party/spirv.core.grammar.json");
+    std::string binDir = std::filesystem::path(std::string(argv[0])).parent_path();
+    std::ifstream spvJson(binDir + "/third_party/spirv.core.grammar.json");
 
     Json::Value root;
     Json::String err;
@@ -202,6 +214,9 @@ int main(int argc, char* argv[]) {
     Json::Value instrs = root["instructions"];
 
     for(int i = 0; i < funcBody.size(); i += GetOpSize(funcBody[i])) {
+        auto dbg = GetOpCode(funcBody[i]);
+        std::string dbg2 = FindOp(instrs, dbg)["opname"].asString();
+
         if(GetOpCode(funcBody[i]) == 54) {              // Func decl
             std::cout << "FUNC RTYPE : " << (int)types_map[funcBody[i + 1]] << std::endl;
             func->returnType = types_map[funcBody[i + 1]];
@@ -272,6 +287,9 @@ int main(int argc, char* argv[]) {
 
     f.close();
     spvJson.close();
+
+    FunctionSerializer ser{};
+    ser.Serialize(func, output);
 
     return 0;
 }

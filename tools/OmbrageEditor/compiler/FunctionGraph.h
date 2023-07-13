@@ -23,7 +23,7 @@ enum FuncGraphElemType {
 struct FuncGraphElem {
     FuncGraphElemType t;
 
-    std::vector<std::unique_ptr<FuncGraphElem>> parents;
+    std::vector<std::shared_ptr<FuncGraphElem>> parents;
 };
 
 struct HighLevelFunCall : public FuncGraphElem {
@@ -31,6 +31,7 @@ struct HighLevelFunCall : public FuncGraphElem {
 
     std::string func;
     std::vector<std::shared_ptr<SpirvDataWrapperBase>> args;
+    std::shared_ptr<SpOpFunCall> funCall;
 };
 
 struct HighLevelCtant : public FuncGraphElem {

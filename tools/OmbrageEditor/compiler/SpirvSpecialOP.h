@@ -26,10 +26,10 @@ struct SpirvDataWrapperFunRet : public SpirvDataWrapperBase {
 };
 
 struct SpOpStoreCtant : public SpirvOperation {
-    SpOpStoreCtant(std::shared_ptr<SpirvVariable> targ, std::shared_ptr<SpirvConstant> ct);
+    SpOpStoreCtant(std::shared_ptr<SpirvVariable> targ, std::shared_ptr<SpirvDataWrapperBase> ct);
 
     std::shared_ptr<SpirvVariable> target;
-    std::shared_ptr<SpirvConstant> ctant;
+    std::shared_ptr<SpirvDataWrapperBase> ctant;
 
     void PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) override;
 

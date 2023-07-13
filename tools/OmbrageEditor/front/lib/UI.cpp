@@ -149,10 +149,13 @@ void OmbrageUI::UI::DockSpaceHandling() {
 }
 
 bool OmbrageUI::UI::CompileLoadDeps() {
+    m_compiler.reset();
+    m_compiler = std::make_unique<SpirvCompiler>();
+
     for(auto& n : m_node_editor->GetNodes()) {
         std::string dep = n->GetNodeFunctionName();
-        if(!((dep == "err") || (dep == "shadernode"))) {
-            m_compiler->LoadDependency(dep);
+        if(!((dep == "err") || (dep == "shadernode") || (dep == "ctant"))) {
+            m_compiler->LoadDependency(dep, "ombrage_content/spv_lib/");
         }
     }
 
@@ -160,15 +163,18 @@ bool OmbrageUI::UI::CompileLoadDeps() {
 }
 
 bool OmbrageUI::UI::CompileShader() {
+    m_compiler->MakeEntry();
+
     // Make function graph for each outputs
 
     std::vector<HLTypes> layout = {
-            HLTypes::VECTOR4PTRO,
+            HLTypes::FLOATPTRO,
             HLTypes::VECTOR4PTRO,
             HLTypes::VECTOR4PTRO,
             HLTypes::VECTOR4PTRO,
             HLTypes::VECTOR4PTRO,
     };
+    m_compiler->SetShaderLayout(layout);
 
     std::vector<std::shared_ptr<Node>>& nodes = m_node_editor->GetNodes();
 
@@ -184,6 +190,23 @@ bool OmbrageUI::UI::CompileShader() {
 
     std::shared_ptr<Node> rootNode = nodes[0];
     auto evaluated = rootNode->EvalFrom(3, m_compiler);
+    auto var = m_compiler->GetLayoutVariable(0);
+
+    if(evaluated->t == FuncGraphElemType::FUNCTION) {
+        auto funcall = std::reinterpret_pointer_cast<HighLevelFunCall>(evaluated)->funCall;
+        funcall->target = var;
+        funcall->noStore = false;
+    } else {
+        auto ctant = std::reinterpret_pointer_cast<HighLevelCtant>(evaluated)->ctant;
+        auto opStore = std::make_shared<SpOpStoreCtant>(var, ctant);
+        m_compiler->AddOpToEntry(opStore);
+    }
+
+    std::vector<uint32_t> progBin = m_compiler->CompileAll();
+
+    std::ofstream f("test.bin", std::ios::binary);
+    f.write((char*)progBin.data(), sizeof(uint32_t) * progBin.size());
+    f.close();
 
     return true;
 }

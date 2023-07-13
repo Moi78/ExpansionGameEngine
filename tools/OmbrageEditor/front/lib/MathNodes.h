@@ -14,7 +14,7 @@ namespace OmbrageNodes {
 
         void RenderProperties() override;
 
-        std::string GetNodeFunctionName() override { return "math.cfloat"; }
+        std::string GetNodeFunctionName() override { return "ctant"; }
 
         void MakeCtant() override;
     private:
@@ -27,7 +27,7 @@ namespace OmbrageNodes {
 
         void RenderProperties() override;
 
-        std::string GetNodeFunctionName() override { return "math.cvec4"; }
+        std::string GetNodeFunctionName() override { return "ctant"; }
 
         void MakeCtant() override {}
     private:
@@ -40,7 +40,7 @@ namespace OmbrageNodes {
 
         void RenderProperties() override;
 
-        std::string GetNodeFunctionName() override { return "math.cvec3"; }
+        std::string GetNodeFunctionName() override { return "ctant"; }
 
         void MakeCtant() override {}
     private:
@@ -53,7 +53,7 @@ namespace OmbrageNodes {
 
         void RenderProperties() override;
 
-        std::string GetNodeFunctionName() override { return "math.cvec2"; }
+        std::string GetNodeFunctionName() override { return "ctant"; }
 
         void MakeCtant() override {}
     private:

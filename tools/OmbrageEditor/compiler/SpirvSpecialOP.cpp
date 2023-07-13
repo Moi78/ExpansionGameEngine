@@ -46,7 +46,7 @@ HLTypes SpirvDataWrapperFunRet::GetReflectedType() {
 
 // ---------------------------------------------------------------------
 
-SpOpStoreCtant::SpOpStoreCtant(std::shared_ptr<SpirvVariable> targ, std::shared_ptr<SpirvConstant> ct) {
+SpOpStoreCtant::SpOpStoreCtant(std::shared_ptr<SpirvVariable> targ, std::shared_ptr<SpirvDataWrapperBase> ct) {
     target = targ;
     ctant = ct;
 
@@ -54,10 +54,10 @@ SpOpStoreCtant::SpOpStoreCtant(std::shared_ptr<SpirvVariable> targ, std::shared_
 }
 
 void SpOpStoreCtant::PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) {
-    assert((target->type & 0xFF) == ctant->type && "Constant and variable type must match");
+    assert((target->type & 0xFF) == ctant->GetReflectedType() && "Constant and variable type must match");
 
     words = {
             (uint32_t)target->id,
-            (uint32_t)ctant->id
+            (uint32_t)ctant->GetReflectedID()
     };
 }

@@ -165,10 +165,8 @@ void SpirvProgram::CompileHeader() {
     m_progBin.push_back(0x07230203); // Magic number
     m_progBin.push_back(0x00010600); // Version number
     m_progBin.push_back(0x00);
-    m_progBin.push_back(m_IDcounter + 1); // Bound
+    m_progBin.push_back(0); // Bound SET LATER
     m_progBin.push_back(0x00); // Bound
-
-    std::cout << "Bound : " << m_IDcounter << std::endl;
 
     for(auto& op : allOp) {
         auto opdata = op.GetData();
@@ -235,6 +233,9 @@ void SpirvProgram::CompileTypesFunctions() {
         std::vector<uint32_t> vardecl = var->DeclVariable(m_types);
         m_shaderBody.insert(m_shaderBody.end(), vardecl.begin(), vardecl.end());
     }
+
+    std::cout << "Bound : " << m_IDcounter << std::endl;
+    m_progBin[3] = m_IDcounter + 1;
 
     m_shaderBody.insert(m_shaderBody.end(), entryFunc.begin(), entryFunc.end());
     m_shaderBody.insert(m_shaderBody.end(), funcs.begin(), funcs.end());

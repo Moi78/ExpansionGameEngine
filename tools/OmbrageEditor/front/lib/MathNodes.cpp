@@ -170,7 +170,7 @@ OmbrageNodes::AddNode::AddNode(uint32_t id) : MathNode(id) {
 }
 
 std::string OmbrageNodes::AddNode::GetNodeFunctionName() {
-    std::string base = "math.add";
+    std::string base = "math/add";
     std::string suffix = "";
 
     if(m_io[0].type == m_io[1].type) {
@@ -207,7 +207,7 @@ OmbrageNodes::MultNode::MultNode(uint32_t id) : MathNode(id) {
 }
 
 std::string OmbrageNodes::MultNode::GetNodeFunctionName() {
-    std::string base = "math.mul";
+    std::string base = "math/mul";
     std::string suffix = "";
 
     if(m_io[0].type == m_io[1].type) {

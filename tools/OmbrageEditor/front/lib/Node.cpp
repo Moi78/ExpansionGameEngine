@@ -188,7 +188,7 @@ std::shared_ptr<Node> Node::GetParent(int pinID) {
     return {};
 }
 
-std::unique_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler) {
+std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler) {
     std::shared_ptr<Node> parent = GetParent(m_id + locID);
     if(!parent.use_count()) {
         std::cerr << "PIN " << m_id + locID << "NOT CONNECTED" << std::endl;
@@ -201,11 +201,32 @@ std::unique_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCo
         auto elem = std::make_unique<HighLevelFunCall>();
         elem->func = parent->GetNodeFunctionName();
 
+        std::vector<std::shared_ptr<SpirvDataWrapperBase>> wraps;
         for(int i = 0; i < parent->GetNodeSize(); i++) {
             if(parent->GetPinMode(par_id + i) != NodePinMode::OUTPUT) {
-                elem->parents.push_back(parent->EvalFrom(i, compiler));
+                std::shared_ptr<FuncGraphElem> evaluated = parent->EvalFrom(i, compiler);
+
+                if(evaluated->t == FuncGraphElemType::FUNCTION) {
+                    auto funcnode = std::reinterpret_pointer_cast<HighLevelFunCall>(evaluated);
+
+                    std::shared_ptr<SpirvDataWrapperFunRet> ret = std::make_shared<SpirvDataWrapperFunRet>();
+                    ret->fcall = funcnode->funCall;
+
+                    wraps.push_back(ret);
+                } else {
+                    auto ctantnode = std::reinterpret_pointer_cast<HighLevelCtant>(evaluated);
+                    wraps.push_back(ctantnode->ctant);
+                }
+
+                elem->parents.push_back(std::move(evaluated));
             }
         }
+
+        auto function = compiler->GetFunction(elem->func);
+
+        std::shared_ptr<SpOpFunCall> fcall = std::make_shared<SpOpFunCall>(function, wraps, true);
+        compiler->AddFunCallToEntry(fcall);
+        elem->funCall = fcall;
 
         return elem;
     } else {
