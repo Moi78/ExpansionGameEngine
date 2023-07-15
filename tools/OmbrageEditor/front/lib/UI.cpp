@@ -166,17 +166,11 @@ bool OmbrageUI::UI::CompileShader() {
     m_compiler->MakeEntry();
 
     // Make function graph for each outputs
-
-    std::vector<HLTypes> layout = {
-            HLTypes::FLOATPTRO,
-            HLTypes::VECTOR4PTRO,
-            HLTypes::VECTOR4PTRO,
-            HLTypes::VECTOR4PTRO,
-            HLTypes::VECTOR4PTRO,
-    };
-    m_compiler->SetShaderLayout(layout);
-
     std::vector<std::shared_ptr<Node>>& nodes = m_node_editor->GetNodes();
+    auto rootNode = std::reinterpret_pointer_cast<ShaderNode>(nodes[0]);
+
+    m_compiler->SetShaderLayout(rootNode->GetShaderLayout());
+    m_compiler->SetShaderInputs({HLTypes::VECTOR2PTRI, HLTypes::VECTOR3PTRI, HLTypes::VECTOR3PTRI});
 
     // Const analysis
     for(auto& n : nodes) {
@@ -188,18 +182,27 @@ bool OmbrageUI::UI::CompileShader() {
         }
     }
 
-    std::shared_ptr<Node> rootNode = nodes[0];
-    auto evaluated = rootNode->EvalFrom(3, m_compiler);
-    auto var = m_compiler->GetLayoutVariable(0);
+    for(int i = 0; i < rootNode->GetNodeSize(); i++) {
+        auto evaluated = rootNode->EvalFrom(i, m_compiler);
 
-    if(evaluated->t == FuncGraphElemType::FUNCTION) {
-        auto funcall = std::reinterpret_pointer_cast<HighLevelFunCall>(evaluated)->funCall;
-        funcall->target = var;
-        funcall->noStore = false;
-    } else {
-        auto ctant = std::reinterpret_pointer_cast<HighLevelCtant>(evaluated)->ctant;
-        auto opStore = std::make_shared<SpOpStoreCtant>(var, ctant);
-        m_compiler->AddOpToEntry(opStore);
+        std::shared_ptr<SpirvDataWrapperBase> toStore;
+        if(evaluated->t == FuncGraphElemType::NONE) {
+            toStore = rootNode->GetDefault(m_compiler, i);
+
+        } else if (evaluated->t == FuncGraphElemType::FUNCTION) {
+            auto funcall = std::reinterpret_pointer_cast<HighLevelFunCall>(evaluated)->funCall;
+            auto funcall_wrapper = std::make_shared<SpirvDataWrapperFunRet>();
+            funcall_wrapper->fcall = funcall;
+
+            toStore = funcall_wrapper;
+        } else {
+            toStore = std::reinterpret_pointer_cast<HighLevelCtant>(evaluated)->ctant;
+        }
+
+        std::vector<std::shared_ptr<SpirvOperation>> ops = rootNode->GetStoreOpForNode(m_compiler, i, toStore);
+        for (auto &op: ops) {
+            m_compiler->AddOpToEntry(op);
+        }
     }
 
     std::vector<uint32_t> progBin = m_compiler->CompileAll();

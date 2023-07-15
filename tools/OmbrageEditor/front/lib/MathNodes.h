@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fmt/core.h>
 #include <string>
+#include <iterator>
 
 namespace OmbrageNodes {
     class ConstFloatNode : public Node, public Constant {
@@ -29,7 +30,7 @@ namespace OmbrageNodes {
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
-        void MakeCtant() override {}
+        void MakeCtant() override;
     private:
         float m_vec4[4];
     };
@@ -42,7 +43,7 @@ namespace OmbrageNodes {
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
-        void MakeCtant() override {}
+        void MakeCtant() override;
     private:
         float m_vec3[3];
     };
@@ -55,7 +56,7 @@ namespace OmbrageNodes {
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
-        void MakeCtant() override {}
+        void MakeCtant() override;
     private:
         float m_vec2[2];
     };

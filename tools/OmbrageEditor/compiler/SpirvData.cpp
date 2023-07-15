@@ -1,5 +1,6 @@
 #include "SpirvData.h"
 #include "SpirvOperation.h"
+#include "SpirvConstant.h"
 
 std::vector<uint32_t> SpirvVariable::DeclVariable(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) {
     uint32_t rID = realTypes[type]->m_id;
@@ -29,21 +30,4 @@ uint32_t SpirvDataWrapperVar::GetReflectedID() {
 
 HLTypes SpirvDataWrapperVar::GetReflectedType() {
     return var->type;
-}
-
-std::vector<uint32_t> SPVFloatConstant::DeclConstant(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) {
-    uint32_t converted = 0;
-    memcpy(&converted, &data, sizeof(float));
-
-    uint32_t tID = realTypes[HLTypes::FLOAT]->m_id;
-
-    SpirvOperation OpConstant{};
-    OpConstant.LoadOp(43, 4);
-    OpConstant.words = {
-            tID,
-            (uint32_t)id,
-            converted
-    };
-
-    return OpConstant.GetData();
 }

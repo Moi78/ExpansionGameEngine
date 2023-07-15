@@ -16,8 +16,10 @@
 #include "SpirvProgram.h"
 
 enum FuncGraphElemType {
+    NONE,
     FUNCTION,
-    CONST
+    CONST,
+    SHADER_VAR
 };
 
 struct FuncGraphElem {

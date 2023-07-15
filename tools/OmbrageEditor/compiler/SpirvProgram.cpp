@@ -42,6 +42,11 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
         newType->m_ptrAttr = StorageClass::Output;
 
         auto deptype = GetType(t & 0xFF);
+    } else if((uint32_t)(t & FLAG_PTR_INPUT)) {
+        newType->m_isPointer = true;
+        newType->m_ptrAttr = StorageClass::Input;
+
+        auto deptype = GetType(t & 0xFF);
     }
 
     std::cout << "TYPE " << (int)t << " IS " << newType->m_id << std::endl;
@@ -102,6 +107,20 @@ void SpirvProgram::SetShaderLayout(std::vector<HLTypes> layout) {
     }
 }
 
+void SpirvProgram::SetShaderInputs(std::vector<HLTypes> inputs) {
+    for(auto& t : inputs) {
+        auto t_res = GetType(t);
+
+        auto var = std::make_shared<SpirvVariable>();
+        var->id = m_IDcounter;
+        var->type = t;
+        var->st_class = StorageClass::Input;
+
+        m_shaderInputs.push_back(var);
+        m_IDcounter++;
+    }
+}
+
 void SpirvProgram::CompileHeader() {
     assert(m_entryPoint.use_count() != 0 && "An entry point must be defined");
 
@@ -124,7 +143,7 @@ void SpirvProgram::CompileHeader() {
     memcpy(&toint, name, 4);
 
     SpirvOperation OpEntryP{};
-    OpEntryP.LoadOp(15, 4 + m_shaderLayout.size());
+    OpEntryP.LoadOp(15, 4 + m_shaderLayout.size() + m_shaderInputs.size());
     OpEntryP.words = {
            0x04,
            (uint32_t)m_entryPoint->funcID,
@@ -134,6 +153,11 @@ void SpirvProgram::CompileHeader() {
     for(auto& lid : m_shaderLayout) {
         OpEntryP.words.push_back(lid->id);
     }
+
+    for(auto& inp_id : m_shaderInputs) {
+        OpEntryP.words.push_back(inp_id->id);
+    }
+
     allOp.emplace_back(OpEntryP);
 
     // Exec Mode OriginUpperLeft
@@ -152,6 +176,19 @@ void SpirvProgram::CompileHeader() {
         opdec.LoadOp(71, 3 + 1);
         opdec.words = {
                 (uint32_t)m_shaderLayout[i]->id,
+                30,
+                (uint32_t)i
+        };
+
+        allOp.push_back(opdec);
+    }
+
+    for(int i = 0; i < m_shaderInputs.size(); i++) {
+        // OpDecorate ID Location i
+        SpirvOperation opdec{};
+        opdec.LoadOp(71, 3 + 1);
+        opdec.words = {
+                (uint32_t)m_shaderInputs[i]->id,
                 30,
                 (uint32_t)i
         };
@@ -218,7 +255,7 @@ void SpirvProgram::CompileTypesFunctions() {
 
     // Vars & Ctants
     for(auto& c : m_ctants) {
-        std::vector<uint32_t> cdecl = c->DeclConstant(m_types);
+        std::vector<uint32_t> cdecl = c->DeclConstant(m_types, m_IDcounter);
         m_shaderBody.insert(m_shaderBody.end(), cdecl.begin(), cdecl.end());
     }
 
@@ -230,6 +267,12 @@ void SpirvProgram::CompileTypesFunctions() {
 
     // Shader layout
     for(auto& var : m_shaderLayout) {
+        std::vector<uint32_t> vardecl = var->DeclVariable(m_types);
+        m_shaderBody.insert(m_shaderBody.end(), vardecl.begin(), vardecl.end());
+    }
+
+    // Shader inputs
+    for(auto& var : m_shaderInputs) {
         std::vector<uint32_t> vardecl = var->DeclVariable(m_types);
         m_shaderBody.insert(m_shaderBody.end(), vardecl.begin(), vardecl.end());
     }
@@ -276,4 +319,8 @@ int SpirvProgram::GetAvailableID() {
     m_IDcounter++;
 
     return id;
+}
+
+std::shared_ptr<SpirvVariable> SpirvProgram::GetInputVariable(int idx) {
+    return m_shaderInputs[idx];
 }

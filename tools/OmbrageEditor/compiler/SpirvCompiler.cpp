@@ -32,31 +32,36 @@ void SpirvCompiler::SetShaderLayout(std::vector<HLTypes> layout) {
     m_prog->SetShaderLayout(layout);
 }
 
-void SpirvCompiler::SetFunctionGraphForOutput(int idx, std::unique_ptr<FuncGraphElem> root) {
-    m_callGraph[idx] = std::move(root);
+void SpirvCompiler::SetShaderInputs(std::vector<HLTypes> inputs) {
+    m_prog->SetShaderInputs(inputs);
 }
 
 void SpirvCompiler::RegisterConstant(std::shared_ptr<SpirvConstant> ctant) {
     std::cout << "Registered constant of type " << (int)ctant->type << std::endl;
 
+    for(auto& c : m_ctant_table) {
+        if(CtantCompare(c, ctant)) {
+            m_ctant_overflow.push_back(ctant);
+
+            auto wrap = m_ctant_wrap[c];
+            m_ctant_wrap[ctant] = wrap;
+            return;
+        }
+    }
+
     m_ctant_table.push_back(ctant);
 
     auto datawrap = std::make_shared<SpirvDataWrapperCtant>();
     datawrap->ctant = ctant;
-    m_ctant_wrap.push_back(datawrap);
+    m_ctant_wrap[ctant] = datawrap;
 }
 
 std::shared_ptr<SpirvDataWrapperBase> SpirvCompiler::GetConstantW(std::shared_ptr<SpirvConstant> ctant) {
-    int i = 0;
-    for(auto& c : m_ctant_table) {
-        if(c == ctant) {
-            return m_ctant_wrap[i];
-        }
-
-        i++;
+    if(m_ctant_wrap.find(ctant) != m_ctant_wrap.end()) {
+        return m_ctant_wrap[ctant];
+    } else {
+        return {};
     }
-
-    return {};
 }
 
 void SpirvCompiler::MakeEntry() {
@@ -74,6 +79,7 @@ void SpirvCompiler::MakeEntry() {
     m_entry->argsType = {};
     m_entry->returnType = HLTypes::VOID;
     m_entry->funcName = "main";
+    m_entry->funcSize = 0;
 }
 
 std::shared_ptr<SpirvFunction> SpirvCompiler::GetFunction(std::string funcName) {
@@ -111,4 +117,8 @@ std::vector<uint32_t> SpirvCompiler::CompileAll() {
     m_prog->Concat();
 
     return m_prog->GetProgramListing();
+}
+
+int SpirvCompiler::GetAvailableID() {
+    return m_prog->GetAvailableID();
 }

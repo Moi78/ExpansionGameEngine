@@ -23,10 +23,13 @@ public:
     std::shared_ptr<SPVType> GetType(HLTypes t);
 
     void SetShaderLayout(std::vector<HLTypes> layout);
+    void SetShaderInputs(std::vector<HLTypes> inputs);
+
     void RegisterConstant(std::shared_ptr<SpirvConstant> ctant);
     void RegisterVariable(std::shared_ptr<SpirvVariable> var);
 
     std::shared_ptr<SpirvVariable> GetLayoutVariable(int idx);
+    std::shared_ptr<SpirvVariable> GetInputVariable(int idx);
 
     std::vector<uint32_t>& GetProgramListing();
     void AssignFuncIDs();
@@ -47,6 +50,7 @@ private:
     std::vector<uint32_t> m_shaderBody;
 
     std::vector<std::shared_ptr<SpirvVariable>> m_shaderLayout;
+    std::vector<std::shared_ptr<SpirvVariable>> m_shaderInputs;
 
     std::vector<std::shared_ptr<SpirvConstant>> m_ctants;
     std::vector<std::shared_ptr<SpirvVariable>> m_vars;

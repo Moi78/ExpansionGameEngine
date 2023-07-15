@@ -12,6 +12,7 @@
 
 #define FLAG_PTR_FUNCTION 0x4000000
 #define FLAG_PTR_OUTPUT 0x8000000
+#define FLAG_PTR_INPUT 0x1000000
 
 #define FLAG_IS_VECTOR 0x80
 
@@ -39,6 +40,13 @@ enum class HLTypes {
     VECTOR2PTRO = 3 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
     VECTOR3PTRO = 4 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
     VECTOR4PTRO = 5 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
+
+    // Input type pointers
+    FLOATPTRI = 1 | FLAG_PTR_INPUT,
+    INTPTRI = 2 | FLAG_PTR_INPUT,
+    VECTOR2PTRI = 3 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
+    VECTOR3PTRI = 4 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
+    VECTOR4PTRI = 5 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
 };
 
 HLTypes operator&(const HLTypes& a, const int& b);
@@ -47,7 +55,8 @@ HLTypes operator|(const HLTypes& a, const int& b);
 enum class StorageClass {
     Uniform = 2,
     Output = 3,
-    Function = 7
+    Function = 7,
+    Input = 1
 };
 
 class SPVType {

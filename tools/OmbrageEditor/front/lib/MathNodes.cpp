@@ -1,4 +1,5 @@
 #include "MathNodes.h"
+#include "SpirvConstant.h"
 
 bool OmbrageNodes::MathNode::LinkPostCheck(std::shared_ptr<Node> other, uint32_t src, uint32_t dest) {
     NodePinTypes otherType = other->GetPinType(src);
@@ -71,7 +72,7 @@ OmbrageNodes::ConstFloatNode::ConstFloatNode(uint32_t id) : Node(id) {
 }
 
 void OmbrageNodes::ConstFloatNode::RenderProperties() {
-    if(ImGui::CollapsingHeader("Const float")) {
+    if(ImGui::CollapsingHeader(fmt::format("Const Float##{}", m_id).c_str())) {
         if(ImGui::InputFloat(fmt::format("Value##{}", m_id).c_str(), &m_float)) {
             m_io[0].pinName = fmt::format("Const {:.2f}", m_float);
         }
@@ -98,7 +99,7 @@ OmbrageNodes::ConstVec4Node::ConstVec4Node(uint32_t id) : Node(id) {
 }
 
 void OmbrageNodes::ConstVec4Node::RenderProperties() {
-    if(ImGui::CollapsingHeader("Const Vec 4")) {
+    if(ImGui::CollapsingHeader(fmt::format("Const Vec 4##{}", m_id).c_str())) {
         if(
                 ImGui::InputFloat4(fmt::format("Value##{}", m_id).c_str(), m_vec4) ||
                 ImGui::ColorEdit4(fmt::format("Color##{}", m_id).c_str(), m_vec4, ImGuiColorEditFlags_NoInputs)
@@ -110,6 +111,14 @@ void OmbrageNodes::ConstVec4Node::RenderProperties() {
             }
         }
     }
+}
+
+void OmbrageNodes::ConstVec4Node::MakeCtant() {
+    auto fconst = std::make_shared<SPVVecConstant<4>>();
+    std::copy(std::begin(m_vec4), std::end(m_vec4), fconst->data.begin());
+    fconst->type = HLTypes::VECTOR4;
+
+    ctant = fconst;
 }
 
 OmbrageNodes::ConstVec3Node::ConstVec3Node(uint32_t id) : Node(id) {
@@ -124,7 +133,7 @@ OmbrageNodes::ConstVec3Node::ConstVec3Node(uint32_t id) : Node(id) {
 }
 
 void OmbrageNodes::ConstVec3Node::RenderProperties() {
-    if(ImGui::CollapsingHeader("Const Vec 3")) {
+    if(ImGui::CollapsingHeader(fmt::format("Const Vec 3##{}", m_id).c_str())) {
         if(
                 ImGui::InputFloat3(fmt::format("Value##{}", m_id).c_str(), m_vec3) ||
                 ImGui::ColorEdit3(fmt::format("Color##{}", m_id).c_str(), m_vec3, ImGuiColorEditFlags_NoInputs)
@@ -136,6 +145,14 @@ void OmbrageNodes::ConstVec3Node::RenderProperties() {
             }
         }
     }
+}
+
+void OmbrageNodes::ConstVec3Node::MakeCtant() {
+    auto fconst = std::make_shared<SPVVecConstant<3>>();
+    std::copy(std::begin(m_vec3), std::end(m_vec3), fconst->data.begin());
+    fconst->type = HLTypes::VECTOR3;
+
+    ctant = fconst;
 }
 
 OmbrageNodes::ConstVec2Node::ConstVec2Node(uint32_t id) : Node(id) {
@@ -150,11 +167,19 @@ OmbrageNodes::ConstVec2Node::ConstVec2Node(uint32_t id) : Node(id) {
 }
 
 void OmbrageNodes::ConstVec2Node::RenderProperties() {
-    if(ImGui::CollapsingHeader("Const Vec 2")) {
+    if(ImGui::CollapsingHeader(fmt::format("Const Vec 2##{}", m_id).c_str())) {
         if(ImGui::InputFloat2(fmt::format("Value##{}", m_id).c_str(), m_vec2)) {
             m_io[0].pinName = fmt::format("Const {:0.2f} {:0.2f}", m_vec2[0], m_vec2[1]);
         }
     }
+}
+
+void OmbrageNodes::ConstVec2Node::MakeCtant() {
+    auto fconst = std::make_shared<SPVVecConstant<2>>();
+    std::copy(std::begin(m_vec2), std::end(m_vec2), fconst->data.begin());
+    fconst->type = HLTypes::VECTOR2;
+
+    ctant = fconst;
 }
 
 // ----------------------------------------------------------------------------------------

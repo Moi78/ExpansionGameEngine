@@ -26,13 +26,48 @@ struct SpirvDataWrapperFunRet : public SpirvDataWrapperBase {
 };
 
 struct SpOpStoreCtant : public SpirvOperation {
-    SpOpStoreCtant(std::shared_ptr<SpirvVariable> targ, std::shared_ptr<SpirvDataWrapperBase> ct);
+    SpOpStoreCtant(std::shared_ptr<SpirvDataWrapperBase> targ, std::shared_ptr<SpirvDataWrapperBase> ct);
 
-    std::shared_ptr<SpirvVariable> target;
+    std::shared_ptr<SpirvDataWrapperBase> target;
     std::shared_ptr<SpirvDataWrapperBase> ctant;
 
     void PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) override;
+};
 
+struct SpOpAccessChain : public SpirvOperation {
+    SpOpAccessChain(std::shared_ptr<SpirvVariable> target, std::shared_ptr<SpirvDataWrapperBase> idx, uint32_t rid);
+
+    std::shared_ptr<SpirvVariable> target;
+    std::shared_ptr<SpirvDataWrapperBase> vecIdx;
+    uint32_t resID;
+
+    StorageClass stcl = StorageClass::Output;
+
+    void PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) override;
+};
+
+struct SpirvDataWrapperAccessChain : public SpirvDataWrapperBase {
+    uint32_t GetReflectedID() override;
+    HLTypes GetReflectedType() override;
+
+    std::shared_ptr<SpOpAccessChain> ptr;
+};
+
+struct SpOpCompExtract : public SpirvOperation {
+    SpOpCompExtract(std::shared_ptr<SpirvDataWrapperBase> src, int idx, uint32_t rid);
+
+    std::shared_ptr<SpirvDataWrapperBase> source;
+    int vecIdx;
+    uint32_t resId;
+
+    void PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) override;
+};
+
+struct SpirvDataWrapperCompExtracted : public SpirvDataWrapperBase {
+    uint32_t GetReflectedID() override;
+    HLTypes GetReflectedType() override;
+
+    std::shared_ptr<SpOpCompExtract> ptr;
 };
 
 #endif //EXPGE_SPIRVSPECIALOP_H

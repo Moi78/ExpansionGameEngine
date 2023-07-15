@@ -19,7 +19,7 @@ struct SpirvConstant {
     int id;
     HLTypes type;
 
-    virtual std::vector<uint32_t> DeclConstant(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) = 0;
+    virtual std::vector<uint32_t> DeclConstant(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& idcounter) = 0;
 };
 
 struct SpirvDataWrapperBase {
@@ -39,12 +39,6 @@ struct SpirvDataWrapperVar : public SpirvDataWrapperBase {
 
     uint32_t GetReflectedID() override;
     HLTypes GetReflectedType() override;
-};
-
-struct SPVFloatConstant : public SpirvConstant {
-    float data;
-
-    std::vector<uint32_t> DeclConstant(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) override;
 };
 
 #endif //EXPGE_SPIRVDATA_H

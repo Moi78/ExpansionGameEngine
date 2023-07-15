@@ -191,8 +191,10 @@ std::shared_ptr<Node> Node::GetParent(int pinID) {
 std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler) {
     std::shared_ptr<Node> parent = GetParent(m_id + locID);
     if(!parent.use_count()) {
-        std::cerr << "PIN " << m_id + locID << "NOT CONNECTED" << std::endl;
-        return {};
+        auto noneFGE = std::make_shared<FuncGraphElem>();
+        noneFGE->t = FuncGraphElemType::NONE;
+
+        return noneFGE;
     }
 
     uint32_t par_id = parent->GetNodeID();
