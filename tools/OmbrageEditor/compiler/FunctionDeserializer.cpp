@@ -58,17 +58,17 @@ std::shared_ptr<SpirvOperation> FunctionDeserializer::DeserializeOp(std::ifstrea
     uint32_t replcount = 0;
     file.read((char*)&replcount, sizeof(uint32_t));
 
-    for(int i = 0; i < replcount; i++) {
-        uint32_t repl_tmp = 0;
-        file.read((char*)&repl_tmp, sizeof(uint32_t));
+     for(int i = 0; i < replcount; i++) {
+         uint32_t repl_tmp = 0;
+         file.read((char*)&repl_tmp, sizeof(uint32_t));
 
         loaded_op->id_repl.push_back(repl_tmp);
-    }
+     }
 
     uint32_t hasResID = false;
-    file.read((char*)&hasResID, sizeof(uint32_t));
+     file.read((char*)&hasResID, sizeof(uint32_t));
 
-    if(hasResID) {
+      if(hasResID) {
         uint32_t resID = 0;
         file.read((char*)&resID, sizeof(uint32_t));
         loaded_op->result_id = resID;

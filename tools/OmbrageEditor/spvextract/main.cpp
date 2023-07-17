@@ -247,32 +247,47 @@ int main(int argc, char* argv[]) {
 
                     if(o["kind"] == "IdResultType") {
                         spvOp->id_repl.push_back((int)types_map[funcBody[i + count + 1]]);
+                        spvOp->words.push_back(word);
+                        count++;
                     } else if(o["kind"] == "IdResult") {
                         local_id_map[funcBody[i + count + 1]] = idcounter;
                         spvOp->result_id = idcounter;
                         spvOp->id_repl.push_back(-1);
+                        spvOp->words.push_back(word);
 
                         std::cout << funcBody[i + count + 1] << " -> " << idcounter << std::endl;
 
                         idcounter++;
+                        count++;
                     } else if(o["kind"] == "IdRef") {
-                        if(local_id_map.find(funcBody[i + count + 1]) == local_id_map.end()) {
-                            local_id_map[funcBody[i + count + 1]] = idcounter;
-                            spvOp->id_repl.push_back(idcounter | FLAG_IS_NOT_TYPE);
+                        int nbIDs = 1;
+                        if(o.get("quantifier", "") == "*") {
+                            nbIDs = GetOpSize(funcBody[i]) - count - 1;
+                        }
 
-                            std::cout << funcBody[i + count + 1] << " -> " << idcounter << std::endl;
+                        for(int a = 0; a < nbIDs; a++) {
+                            if (local_id_map.find(funcBody[i + count + 1]) == local_id_map.end()) {
+                                local_id_map[funcBody[i + count + 1]] = idcounter;
+                                spvOp->id_repl.push_back(idcounter | FLAG_IS_NOT_TYPE);
 
-                            idcounter++;
-                        } else {
-                            std::cout << funcBody[i + count + 1] << " -> " << local_id_map[funcBody[i + count + 1]] << std::endl;
-                            spvOp->id_repl.push_back(local_id_map[funcBody[i + count + 1]] | FLAG_IS_NOT_TYPE);
+                                std::cout << funcBody[i + count + 1] << " -> " << idcounter << std::endl;
+
+                                idcounter++;
+                            } else {
+                                std::cout << funcBody[i + count + 1] << " -> " << local_id_map[funcBody[i + count + 1]]
+                                          << std::endl;
+                                spvOp->id_repl.push_back(local_id_map[funcBody[i + count + 1]] | FLAG_IS_NOT_TYPE);
+                            }
+
+                            spvOp->words.push_back(word);
+                            count++;
                         }
                     } else {
                         word = funcBody[i + count + 1];
-                    }
+                        spvOp->words.push_back(word);
 
-                    spvOp->words.push_back(word);
-                    count++;
+                        count++;
+                    }
 
                     if(count == (GetOpSize(funcBody[i]) - 1)) {
                         break;
