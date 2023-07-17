@@ -71,6 +71,7 @@ namespace OmbrageNodes {
         bool ConnectPins(std::shared_ptr<Node> other, uint32_t srcID, uint32_t pID, uint32_t linkID) override;
 
         void ValidateLinks() override;
+        std::shared_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler) override;
     };
 
     class AddNode : public MathNode {

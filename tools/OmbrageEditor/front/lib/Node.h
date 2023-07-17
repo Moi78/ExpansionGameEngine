@@ -86,7 +86,7 @@ public:
     virtual std::string GetNodeFunctionName() = 0;
     bool isConst() { return m_isConst; };
 
-    std::shared_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler);
+    virtual std::shared_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler);
 
 protected:
     bool CheckConnectionValidity(NodePinTypes atype, NodePinTypes btype, int destPin);
