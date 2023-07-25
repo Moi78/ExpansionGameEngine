@@ -12,6 +12,8 @@ public:
     void OnStart() override {}
     void OnTick() override {}
 
+    std::shared_ptr<EXP_StaticMesh> GetMeshComponent() { return m_smesh_comp; }
+
 private:
     std::shared_ptr<EXP_StaticMesh> m_smesh_comp;
 };

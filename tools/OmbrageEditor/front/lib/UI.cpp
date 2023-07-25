@@ -193,6 +193,7 @@ bool OmbrageUI::UI::CompileShader() {
             auto funcall = std::reinterpret_pointer_cast<HighLevelFunCall>(evaluated)->funCall;
             auto funcall_wrapper = std::make_shared<SpirvDataWrapperFunRet>();
             funcall_wrapper->fcall = funcall;
+            funcall_wrapper->stcl = StorageClass::Function;
 
             toStore = funcall_wrapper;
         } else {
@@ -210,6 +211,16 @@ bool OmbrageUI::UI::CompileShader() {
     std::ofstream f("test.bin", std::ios::binary);
     f.write((char*)progBin.data(), sizeof(uint32_t) * progBin.size());
     f.close();
+
+    std::shared_ptr<RD_ShaderLoader> shaderLoader = m_game->GetRenderer()->GetAPI()->CreateShader();
+    shaderLoader->LoadFragBinary(m_game->GetEngineContentPath() + "/shaders/bin/base.vspv", progBin);
+
+    std::shared_ptr<EXP_Level> lvl = m_game->GetCurrentLevel();
+    auto model = lvl->GetCastedActorByName<EXP_StaticMeshActor>("sphere");
+
+    std::shared_ptr<EXP_Material> mat = model->GetMeshComponent()->GetMeshMaterial();
+    mat->GetPipeline()->SwapShader(shaderLoader);
+    mat->GetPipeline()->RebuildPipeline();
 
     return true;
 }

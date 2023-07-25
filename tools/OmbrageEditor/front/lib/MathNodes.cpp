@@ -72,6 +72,8 @@ std::shared_ptr<FuncGraphElem> OmbrageNodes::MathNode::EvalFrom(int locID, std::
         } else {
             evalBase = Node::EvalFrom(locID - 1, compiler);
         }
+    } else {
+        evalBase = Node::EvalFrom(locID, compiler);
     }
 
     return evalBase;

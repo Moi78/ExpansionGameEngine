@@ -40,6 +40,8 @@ public:
 
     std::shared_ptr<SpirvFunction> GetFunction(std::string funcName);
     std::shared_ptr<SpirvVariable> GetLayoutVariable(int idx) { return m_prog->GetLayoutVariable(idx); }
+
+    std::shared_ptr<SpirvDataWrapperBase> GetInputVariableW(int idx);
     std::shared_ptr<SpirvVariable> GetInputVariable(int idx) { return m_prog->GetInputVariable(idx); }
 
     int GetAvailableID();

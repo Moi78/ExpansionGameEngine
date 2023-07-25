@@ -7,6 +7,7 @@ EXP_StaticMesh::EXP_StaticMesh(EXP_Game* game, std::string mesh_file, std::share
     m_mesh->LoadMesh(game->GetGameContentPath() + mesh_file);
 
     mat->RegisterMesh(m_mesh);
+    m_matref = mat;
 }
 
 void EXP_StaticMesh::SetParentMatrix(mat4f& pmat) {
@@ -14,4 +15,8 @@ void EXP_StaticMesh::SetParentMatrix(mat4f& pmat) {
     mat4f realTransf = pmat * compTransf;
 
     m_mesh->SetTransform(realTransf);
+}
+
+std::shared_ptr<EXP_Material> EXP_StaticMesh::GetMeshMaterial() {
+    return m_matref;
 }

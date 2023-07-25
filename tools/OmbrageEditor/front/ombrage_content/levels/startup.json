@@ -16,7 +16,7 @@
       "type": "mesh",
       "mesh": "/mdls/sphere.msh",
       "material": "/materials/mat_grey.json",
-      "tag": "floor",
+      "tag": "sphere",
 
       "pos": [-1, 0, 1.2],
       "rot": [0, 0, 0],

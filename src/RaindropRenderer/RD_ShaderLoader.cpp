@@ -58,6 +58,34 @@ bool RD_ShaderLoader_Vk::CompileShaderFromFile(std::string vert, std::string fra
     return true;
 }
 
+bool RD_ShaderLoader_Vk::LoadFragBinary(std::string vert, std::vector<uint32_t> bin) {
+    auto vFile = ReadFileBin(vert);
+
+    //VERTEX
+    VkShaderModuleCreateInfo vcInfo{};
+    vcInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    vcInfo.codeSize = vFile.size();
+    vcInfo.pCode = reinterpret_cast<const uint32_t*>(vFile.data());
+
+    if(vkCreateShaderModule(m_dev, &vcInfo, nullptr, &m_vert) != VK_SUCCESS) {
+        std::cerr << "Failed to load " << vert << std::endl;
+        return false;
+    }
+
+    //FRAGMENT
+    VkShaderModuleCreateInfo fcInfo{};
+    fcInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    fcInfo.codeSize = bin.size() * sizeof(uint32_t);
+    fcInfo.pCode = reinterpret_cast<const uint32_t*>(bin.data());
+
+    if(vkCreateShaderModule(m_dev, &fcInfo, nullptr, &m_frag) != VK_SUCCESS) {
+        std::cerr << "ERROR: Failed to load binary fragment shader" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 bool RD_ShaderLoader_Vk::CompileShaderFromCode(std::string vert, std::string frag) {
     return true;
 }

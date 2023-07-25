@@ -48,6 +48,8 @@ public:
 
     virtual bool IsBuilt() = 0;
     virtual void EnableTransparency() = 0;
+
+    virtual void SwapShader(std::shared_ptr<RD_ShaderLoader> newShader) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -91,6 +93,8 @@ public:
 
     bool IsBuilt() override;
     void EnableTransparency() override;
+
+    void SwapShader(std::shared_ptr<RD_ShaderLoader> newShader) override;
 
     VkDescriptorPool GetDescPool() { return m_descPool; };
 private:

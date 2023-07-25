@@ -655,4 +655,8 @@ void RD_Pipeline_Vk::EnableTransparency() {
     m_isTransparent = true;
 }
 
+void RD_Pipeline_Vk::SwapShader(std::shared_ptr<RD_ShaderLoader> newShader) {
+    m_shader = std::reinterpret_pointer_cast<RD_ShaderLoader_Vk>(newShader);
+}
+
 #endif //BUILD_VULKAN

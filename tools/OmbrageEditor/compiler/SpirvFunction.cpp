@@ -2,6 +2,30 @@
 
 #include "SpirvFunction.h"
 
+std::vector<uint32_t> SpirvFunction::GetTypeDecl(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID) {
+    assert(realTypes.find(returnType) != realTypes.end() && "This type was not constructed");
+    for(auto& t : argsType) { assert(realTypes.find(t) != realTypes.end() && "This type was not constructed"); }
+
+    uint32_t rtypeID = realTypes[returnType]->m_id;
+
+    SpirvOperation OpFunctionType{};
+    OpFunctionType.LoadOp(33, 3 + argsType.size());
+    OpFunctionType.words = {
+            (uint32_t)(funcID + 1),                         // Type function ID
+            (uint32_t)rtypeID                               // Return type ID
+    };
+
+    // Params type IDs
+    for(auto& t : argsType) {
+        uint32_t tp = realTypes[t]->m_id;
+        OpFunctionType.words.push_back(tp);
+    }
+
+    std::cout << "FUNC TYPE ID : " << funcID + 1 << std::endl;
+
+    return OpFunctionType.GetData();
+}
+
 std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID) {
     // Type check
     assert(realTypes.find(returnType) != realTypes.end() && "This type was not constructed");
@@ -11,21 +35,6 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
 
     std::cout << "---- " << funcName << " ----" << std::endl;
     std::cout << "FUNC ID : " << funcID << std::endl;
-
-    SpirvOperation OpFunctionType{};
-    OpFunctionType.LoadOp(33, 3 + argsType.size());
-    OpFunctionType.words = {
-            (uint32_t)(funcID + 1),                         // Type function ID
-            (uint32_t)rtypeID                               // Return type ID
-    };
-
-    std::cout << "FUNC TYPE ID : " << funcID + 1 << std::endl;
-
-    // Params type IDs
-    for(auto& t : argsType) {
-        uint32_t tp = realTypes[t]->m_id;
-        OpFunctionType.words.push_back(tp);
-    }
 
     SpirvOperation OpFunction{};
     OpFunction.LoadOp(54, 5);
@@ -70,7 +79,7 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
     // Replacing placeholder with real param id
     std::vector<std::shared_ptr<SpirvOperation>> offsetedListing;
     for(auto& op : funcBody) {
-        op->PreCompile(realTypes);
+        op->PreCompile(realTypes, nextID);
 
         int counter = 0;
         for(auto& inst : op->words) {
@@ -106,9 +115,6 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
     OpFunctionEnd.LoadOp(56, 1);
 
     std::vector<uint32_t> funcData;
-
-    auto optype = OpFunctionType.GetData();
-    funcData.insert(funcData.end(), optype.begin(), optype.end());
 
     auto opfunc = OpFunction.GetData();
     funcData.insert(funcData.end(), opfunc.begin(), opfunc.end());

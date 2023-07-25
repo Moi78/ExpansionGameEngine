@@ -138,16 +138,17 @@ void SpirvProgram::CompileHeader() {
     allOp.emplace_back(OpMemModel);
 
     // Entry point declaration as Fragment
-    char name[4] = {'m', 'n', '\0', '\0'};
-    uint32_t toint = 0;
-    memcpy(&toint, name, 4);
+    char name[5] = {'m', 'a', 'i', 'n', '\0'};
+    uint32_t toint[2];
+    memcpy(&toint, name, 5);
 
     SpirvOperation OpEntryP{};
-    OpEntryP.LoadOp(15, 4 + m_shaderLayout.size() + m_shaderInputs.size());
+    OpEntryP.LoadOp(15, 5 + m_shaderLayout.size() + m_shaderInputs.size());
     OpEntryP.words = {
            0x04,
            (uint32_t)m_entryPoint->funcID,
-           toint
+           toint[0],
+           toint[1]
     };
 
     for(auto& lid : m_shaderLayout) {
@@ -213,18 +214,25 @@ void SpirvProgram::CompileHeader() {
 }
 
 void SpirvProgram::CompileTypesFunctions() {
-    FunctionTypeLinker(m_entryPoint);
-
-    auto entryFunc = m_entryPoint->CompileFunction(m_types, m_IDcounter);
-
     std::vector<uint32_t> funcs;
+    std::vector<uint32_t> funcsTypeDecls;
+
     for(auto& f : m_functions) {
         FunctionTypeLinker(f);
 
+        auto ftypedecl = f->GetTypeDecl(m_types, m_IDcounter);
         auto compiled = f->CompileFunction(m_types, m_IDcounter);
 
         funcs.insert(funcs.end(), compiled.begin(), compiled.end());
+        funcsTypeDecls.insert(funcsTypeDecls.end(), ftypedecl.begin(), ftypedecl.end());
     }
+
+    FunctionTypeLinker(m_entryPoint);
+
+    auto entryType = m_entryPoint->GetTypeDecl(m_types, m_IDcounter);
+    funcsTypeDecls.insert(funcsTypeDecls.end(), entryType.begin(), entryType.end());
+
+    auto entryFunc = m_entryPoint->CompileFunction(m_types, m_IDcounter);
 
     // Primary monotypes
     for(auto& t : m_types) {
@@ -252,6 +260,9 @@ void SpirvProgram::CompileTypesFunctions() {
             m_shaderBody.insert(m_shaderBody.end(), tdecl.begin(), tdecl.end());
         }
     }
+
+    // Func types
+    m_shaderBody.insert(m_shaderBody.end(), funcsTypeDecls.begin(), funcsTypeDecls.end());
 
     // Vars & Ctants
     for(auto& c : m_ctants) {
@@ -286,8 +297,11 @@ void SpirvProgram::CompileTypesFunctions() {
 
 void SpirvProgram::FunctionTypeLinker(std::shared_ptr<SpirvFunction> &func) {
     auto rtype = GetType(func->returnType);
+    auto rtype_ptr = GetType(func->returnType | FLAG_PTR_FUNCTION);
+    auto floatptr = GetType(HLTypes::FLOAT | FLAG_PTR_FUNCTION);
     for(auto type : func->argsType) {
         auto argType = GetType(type);
+        auto argPtr_t = GetType(type | FLAG_PTR_FUNCTION);
     }
 }
 

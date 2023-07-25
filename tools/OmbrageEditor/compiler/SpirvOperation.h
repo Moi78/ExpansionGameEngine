@@ -20,14 +20,15 @@
 struct SpirvOperation {
     uint32_t op;
     std::vector<uint32_t> words;
+    std::vector<std::shared_ptr<SpirvOperation>> preOp;
 
     std::optional<uint32_t> result_id;
     std::vector<int32_t> id_repl;
 
     void LoadOp(uint32_t opid, uint32_t opsize) { op = (opsize << 16) | opid; }
 
-    std::vector<uint32_t> GetData();
-    virtual void PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes) {}
+    virtual std::vector<uint32_t> GetData();
+    virtual void PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int &idcounter) {}
 };
 
 #endif //EXPGE_SPIRVOPERATION_H

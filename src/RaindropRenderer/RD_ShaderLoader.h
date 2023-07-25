@@ -15,6 +15,7 @@ public:
 
     virtual bool CompileShaderFromFile(std::string vert, std::string frag) = 0;
     virtual bool CompileShaderFromCode(std::string vert, std::string frag) = 0;
+    virtual bool LoadFragBinary(std::string vert, std::vector<uint32_t> bin) = 0;
 };
 
 #ifdef BUILD_VULKAN
@@ -26,8 +27,9 @@ public:
     RD_ShaderLoader_Vk(VkDevice dev);
     virtual ~RD_ShaderLoader_Vk();
 
-    virtual bool CompileShaderFromFile(std::string vert, std::string frag);
-    virtual bool CompileShaderFromCode(std::string vert, std::string frag);
+    bool CompileShaderFromFile(std::string vert, std::string frag) override;
+    bool CompileShaderFromCode(std::string vert, std::string frag) override;
+    bool LoadFragBinary(std::string vert, std::vector<uint32_t> bin) override;
 
     VkShaderModule GetVertShaderModule();
     VkShaderModule GetFragShaderModule();

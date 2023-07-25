@@ -5,6 +5,8 @@
 
 #include <EXP_Game.h>
 #include <EXP_ImGuiClass.h>
+#include <EXP_Level.h>
+#include <EXP_StaticMeshActor.h>
 
 #include <SpirvCompiler.h>
 

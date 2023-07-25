@@ -27,6 +27,7 @@ struct SpirvFunction {
     int funcSize;
 
     std::vector<uint32_t> CompileFunction(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID);
+    std::vector<uint32_t> GetTypeDecl(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID);
 };
 
 #endif //EXPGE_SPIRVFUNCTION_H

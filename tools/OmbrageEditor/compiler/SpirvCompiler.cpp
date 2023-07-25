@@ -92,6 +92,7 @@ void SpirvCompiler::AddOpToEntry(std::shared_ptr<SpirvOperation> op) {
 
 void SpirvCompiler::AddFunCallToEntry(std::shared_ptr<SpOpFunCall> call) {
     call->id = m_prog->GetAvailableID();
+    call->data_id = m_prog->GetAvailableID();
     m_entry->funcBody.push_back(call);
 }
 
@@ -121,4 +122,14 @@ std::vector<uint32_t> SpirvCompiler::CompileAll() {
 
 int SpirvCompiler::GetAvailableID() {
     return m_prog->GetAvailableID();
+}
+
+std::shared_ptr<SpirvDataWrapperBase> SpirvCompiler::GetInputVariableW(int idx) {
+    RequireType(HLTypes::FLOATPTRI);
+
+    auto wrap = std::make_shared<SpirvDataWrapperVar>();
+    wrap->var = GetInputVariable(idx);
+    wrap->stcl = StorageClass::Input;
+
+    return wrap;
 }

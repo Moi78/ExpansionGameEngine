@@ -25,6 +25,11 @@ struct SpirvConstant {
 struct SpirvDataWrapperBase {
     virtual uint32_t GetReflectedID() = 0;
     virtual HLTypes GetReflectedType() = 0;
+
+    virtual bool isConst() { return false; }
+    virtual bool isVarStored() { return false; }
+
+    StorageClass stcl = StorageClass::Output;
 };
 
 struct SpirvDataWrapperCtant : public SpirvDataWrapperBase {
@@ -32,6 +37,8 @@ struct SpirvDataWrapperCtant : public SpirvDataWrapperBase {
 
     uint32_t GetReflectedID() override;
     HLTypes GetReflectedType() override;
+
+    bool isConst() override { return true; }
 };
 
 struct SpirvDataWrapperVar : public SpirvDataWrapperBase {
@@ -39,6 +46,8 @@ struct SpirvDataWrapperVar : public SpirvDataWrapperBase {
 
     uint32_t GetReflectedID() override;
     HLTypes GetReflectedType() override;
+
+    bool isVarStored() override { return true; }
 };
 
 #endif //EXPGE_SPIRVDATA_H

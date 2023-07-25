@@ -61,22 +61,42 @@ ShaderNode::StoreVec3ToVec4(std::shared_ptr<SpirvCompiler> compiler, int layouti
     std::vector<std::shared_ptr<SpirvOperation>> ops;
 
     auto var = compiler->GetLayoutVariable(layoutidx);
+    auto varwrap = std::make_shared<SpirvDataWrapperVar>();
+    varwrap->var = var;
 
     for(int i = 0; i < 3; i++) {
-        auto achain = std::make_shared<SpOpAccessChain>(var, compiler->GetConstantW(ct[i]), compiler->GetAvailableID());
+        auto achain = std::make_shared<SpOpAccessChain>(varwrap, compiler->GetConstantW(ct[i]), compiler->GetAvailableID());
         auto achainptr = std::make_shared<SpirvDataWrapperAccessChain>();
         achainptr->ptr = achain;
 
-        auto opExtract = std::make_shared<SpOpCompExtract>(toStore, i, compiler->GetAvailableID());
-
-        auto extracted = std::make_shared<SpirvDataWrapperCompExtracted>();
-        extracted->ptr = opExtract;
-
-        auto store = std::make_shared<SpOpStoreCtant>(achainptr, extracted);
-
         ops.push_back(achain);
-        ops.push_back(opExtract);
-        ops.push_back(store);
+
+        if(!toStore->isConst()) {
+            auto achain_2 = std::make_shared<SpOpAccessChain>(toStore, compiler->GetConstantW(ct[i]),
+                                                              compiler->GetAvailableID());
+
+            auto extracted = std::make_shared<SpirvDataWrapperAccessChain>();
+            extracted->ptr = achain_2;
+
+            auto load = std::make_shared<SpOpLoad>(extracted, compiler->GetAvailableID());
+            auto loadptr = std::make_shared<SpirvDataWrapperLoad>();
+            loadptr->ptr = load;
+
+            auto store = std::make_shared<SpOpStoreCtant>(achainptr, loadptr);
+
+            ops.push_back(achain_2);
+            ops.push_back(load);
+            ops.push_back(store);
+        } else {
+            auto extract = std::make_shared<SpOpCompExtract>(toStore, i, compiler->GetAvailableID());
+            auto extracted = std::make_shared<SpirvDataWrapperCompExtracted>();
+            extracted->ptr = extract;
+
+            auto store = std::make_shared<SpOpStoreCtant>(achainptr, extracted);
+
+            ops.push_back(extract);
+            ops.push_back(store);
+        }
     }
 
     return ops;
@@ -93,8 +113,10 @@ ShaderNode::StoreFloatToVec4(std::shared_ptr<SpirvCompiler> compiler, int layout
     std::vector<std::shared_ptr<SpirvOperation>> ops;
 
     auto var = compiler->GetLayoutVariable(layoutidx);
+    auto varwrap = std::make_shared<SpirvDataWrapperVar>();
+    varwrap->var = var;
 
-    auto achain = std::make_shared<SpOpAccessChain>(var, compiler->GetConstantW(idx), compiler->GetAvailableID());
+    auto achain = std::make_shared<SpOpAccessChain>(varwrap, compiler->GetConstantW(idx), compiler->GetAvailableID());
     auto achainptr = std::make_shared<SpirvDataWrapperAccessChain>();
     achainptr->ptr = achain;
 
@@ -120,15 +142,21 @@ ShaderNode::StoreVec4ToVec4(std::shared_ptr<SpirvCompiler> compiler, int layouti
 
 std::shared_ptr<SpirvDataWrapperBase> ShaderNode::GetDefault(std::shared_ptr<SpirvCompiler> compiler, int idx) {
     switch (idx) {
-    case 0: case 1: case 2:
-            return GetVec30(compiler);
-            break;
+    case 0:
+        return GetVec30(compiler);
+        break;
+    case 1:
+        return compiler->GetInputVariableW(1);
+        break;
+    case 2:
+        return compiler->GetInputVariableW(2);
+        break;
     case 3: case 4: case 5:
-            return GetFloat0(compiler);
-            break;
+        return GetFloat0(compiler);
+        break;
     case 6:
-            return GetVec40(compiler);
-            break;
+        return GetVec40(compiler);
+        break;
     }
 
     return {};
