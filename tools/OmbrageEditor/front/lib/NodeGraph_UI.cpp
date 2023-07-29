@@ -113,12 +113,20 @@ namespace OmbrageUI {
         int* selNodes = new int[selectedCount];
         ImNodes::GetSelectedNodes(selNodes);
 
+        bool requestLinkValidation = false;
+
         for(auto& n : m_nodes) {
             for(int i = 0; i < selectedCount; i++) {
                 if(n->GetNodeID() == selNodes[i]) {
-                    n->RenderProperties();
+                    requestLinkValidation |= n->RenderProperties();
                     break;
                 }
+            }
+        }
+
+        if(requestLinkValidation) {
+            for(auto& n : m_nodes) {
+                n->ValidateLinks();
             }
         }
 

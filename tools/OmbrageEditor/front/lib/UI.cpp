@@ -22,7 +22,8 @@ OmbrageUI::UI::UI(EXP_Game *game) {
     m_node_editor->AddNodeToCatalog("Basic Maths", "Add", [this](int id) { return std::make_shared<OmbrageNodes::AddNode>(id); });
     m_node_editor->AddNodeToCatalog("Basic Maths", "Multiply", [this](int id) { return std::make_shared<OmbrageNodes::MultNode>(id); });
 
-    m_node_editor->AddNodeToCatalog("Vector", "Split vector", [this](int id) { return std::make_shared<OmbrageNodes::SplitNode>(id); });
+    m_node_editor->AddNodeToCatalog("Vector", "Split", [this](int id) { return std::make_shared<OmbrageNodes::SplitNode>(id); });
+    m_node_editor->AddNodeToCatalog("Vector", "Combine", [this](int id) { return std::make_shared<OmbrageNodes::CombineNode>(id); });
 }
 
 OmbrageUI::UI::~UI() {
@@ -157,7 +158,9 @@ bool OmbrageUI::UI::CompileLoadDeps() {
     for(auto& n : m_node_editor->GetNodes()) {
         std::string dep = n->GetNodeFunctionName();
         if(!((dep == "err") || (dep == "shadernode") || (dep == "ctant"))) {
-            m_compiler->LoadDependency(dep, "ombrage_content/spv_lib/");
+            if(!m_compiler->LoadDependency(dep, "ombrage_content/spv_lib/")) {
+                return false;
+            }
         }
     }
 

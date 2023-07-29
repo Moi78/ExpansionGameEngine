@@ -14,8 +14,10 @@
 
 #include "ShaderNode.h"
 #include "MathNodes.h"
-#include "FunctionGraph.h"
 #include "SplitNode.h"
+#include "CombineNode.h"
+
+#include "FunctionGraph.h"
 
 #define IMVEC2_DIFF(a, b) ((a.x != b.x) || (a.y != b.y))
 

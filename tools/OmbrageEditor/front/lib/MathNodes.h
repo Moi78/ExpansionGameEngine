@@ -13,7 +13,7 @@ namespace OmbrageNodes {
     public:
         ConstFloatNode(uint32_t id);
 
-        void RenderProperties() override;
+        bool RenderProperties() override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
@@ -26,7 +26,7 @@ namespace OmbrageNodes {
     public:
         ConstVec4Node(uint32_t id);
 
-        void RenderProperties() override;
+        bool RenderProperties() override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
@@ -39,7 +39,7 @@ namespace OmbrageNodes {
     public:
         ConstVec3Node(uint32_t id);
 
-        void RenderProperties() override;
+        bool RenderProperties() override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
@@ -52,7 +52,7 @@ namespace OmbrageNodes {
     public:
         ConstVec2Node(uint32_t id);
 
-        void RenderProperties() override;
+        bool RenderProperties() override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 

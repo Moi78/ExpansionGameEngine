@@ -90,12 +90,14 @@ OmbrageNodes::ConstFloatNode::ConstFloatNode(uint32_t id) : Node(id) {
     m_isConst = true;
 }
 
-void OmbrageNodes::ConstFloatNode::RenderProperties() {
+bool OmbrageNodes::ConstFloatNode::RenderProperties() {
     if(ImGui::CollapsingHeader(fmt::format("Const Float##{}", m_id).c_str())) {
         if(ImGui::InputFloat(fmt::format("Value##{}", m_id).c_str(), &m_float)) {
             m_io[0].pinName = fmt::format("Const {:.2f}", m_float);
         }
     }
+
+    return false;
 }
 
 void OmbrageNodes::ConstFloatNode::MakeCtant() {
@@ -117,7 +119,7 @@ OmbrageNodes::ConstVec4Node::ConstVec4Node(uint32_t id) : Node(id) {
     m_isConst = true;
 }
 
-void OmbrageNodes::ConstVec4Node::RenderProperties() {
+bool OmbrageNodes::ConstVec4Node::RenderProperties() {
     if(ImGui::CollapsingHeader(fmt::format("Const Vec 4##{}", m_id).c_str())) {
         if(
                 ImGui::InputFloat4(fmt::format("Value##{}", m_id).c_str(), m_vec4) ||
@@ -130,6 +132,8 @@ void OmbrageNodes::ConstVec4Node::RenderProperties() {
             }
         }
     }
+
+    return false;
 }
 
 void OmbrageNodes::ConstVec4Node::MakeCtant() {
@@ -151,7 +155,7 @@ OmbrageNodes::ConstVec3Node::ConstVec3Node(uint32_t id) : Node(id) {
     m_isConst = true;
 }
 
-void OmbrageNodes::ConstVec3Node::RenderProperties() {
+bool OmbrageNodes::ConstVec3Node::RenderProperties() {
     if(ImGui::CollapsingHeader(fmt::format("Const Vec 3##{}", m_id).c_str())) {
         if(
                 ImGui::InputFloat3(fmt::format("Value##{}", m_id).c_str(), m_vec3) ||
@@ -164,6 +168,8 @@ void OmbrageNodes::ConstVec3Node::RenderProperties() {
             }
         }
     }
+
+    return false;
 }
 
 void OmbrageNodes::ConstVec3Node::MakeCtant() {
@@ -185,12 +191,14 @@ OmbrageNodes::ConstVec2Node::ConstVec2Node(uint32_t id) : Node(id) {
     m_isConst = true;
 }
 
-void OmbrageNodes::ConstVec2Node::RenderProperties() {
+bool OmbrageNodes::ConstVec2Node::RenderProperties() {
     if(ImGui::CollapsingHeader(fmt::format("Const Vec 2##{}", m_id).c_str())) {
         if(ImGui::InputFloat2(fmt::format("Value##{}", m_id).c_str(), m_vec2)) {
             m_io[0].pinName = fmt::format("Const {:0.2f} {:0.2f}", m_vec2[0], m_vec2[1]);
         }
     }
+
+    return false;
 }
 
 void OmbrageNodes::ConstVec2Node::MakeCtant() {

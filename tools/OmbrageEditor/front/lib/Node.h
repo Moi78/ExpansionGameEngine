@@ -71,7 +71,7 @@ public:
 
     uint32_t GetNodeID() { return m_id; }
 
-    virtual void RenderProperties() {};
+    virtual bool RenderProperties() { return false; };
 
     bool ContainsPin(uint32_t globID);
     virtual bool ConnectPins(std::shared_ptr<Node> other, uint32_t srcID, uint32_t pID, uint32_t linkID);

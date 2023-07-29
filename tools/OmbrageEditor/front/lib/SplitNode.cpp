@@ -6,7 +6,7 @@ namespace OmbrageNodes {
                 {NodePinMode::INPUT, NodePinTypes::OMNI, "Vector Input", 0},
         };
 
-        m_nodeName = "Split Vector";
+        m_nodeName = "Split";
 
         m_color[0] = 35.0f;
         m_color[1] = 109.0f;
