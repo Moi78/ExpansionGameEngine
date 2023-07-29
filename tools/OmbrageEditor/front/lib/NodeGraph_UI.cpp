@@ -13,7 +13,7 @@ namespace OmbrageUI {
     void NodeGraph_UI::AddNode(std::shared_ptr<Node> node) {
         m_nodes.push_back(node);
 
-        m_next_id += node->GetNodeSize();
+        m_next_id += node->GetNodeIDOffset();
     }
 
     void NodeGraph_UI::RenderGraph() {

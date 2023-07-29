@@ -215,7 +215,7 @@ std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCo
                     ret->fcall = funcnode->funCall;
 
                     wraps.push_back(ret);
-                } else {
+                } else if(evaluated->t == FuncGraphElemType::CONST) {
                     auto ctantnode = std::reinterpret_pointer_cast<HighLevelCtant>(evaluated);
                     wraps.push_back(ctantnode->ctant);
                 }
@@ -224,11 +224,14 @@ std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCo
             }
         }
 
-        auto function = compiler->GetFunction(elem->func);
+        int outID = -1;
+        for(auto& link : m_connections) {
+            if(link.dst_pinID == (locID + m_id)) {
+                outID = link.src_pinID;
+            }
+        }
 
-        std::shared_ptr<SpOpFunCall> fcall = std::make_shared<SpOpFunCall>(function, wraps, true);
-        compiler->AddFunCallToEntry(fcall);
-        elem->funCall = fcall;
+        elem->funCall = parent->MakeFunctionCall(compiler, elem->func, wraps, outID);
 
         return elem;
     } else {
@@ -243,4 +246,18 @@ std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCo
 
 NodePinMode Node::GetPinMode(uint32_t globID) {
     return m_io[globID - m_id].mode;
+}
+
+std::shared_ptr<SpOpFunCall> Node::MakeFunctionCall(
+        std::shared_ptr<SpirvCompiler> compiler,
+        std::string funcName,
+        std::vector<std::shared_ptr<SpirvDataWrapperBase>> args,
+        int outID
+) {
+    auto function = compiler->GetFunction(funcName);
+
+    std::shared_ptr<SpOpFunCall> fcall = std::make_shared<SpOpFunCall>(function, args, true);
+    compiler->AddFunCallToEntry(fcall);
+
+    return fcall;
 }

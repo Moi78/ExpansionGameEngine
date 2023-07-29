@@ -120,10 +120,23 @@ ShaderNode::StoreFloatToVec4(std::shared_ptr<SpirvCompiler> compiler, int layout
     auto achainptr = std::make_shared<SpirvDataWrapperAccessChain>();
     achainptr->ptr = achain;
 
-    auto store = std::make_shared<SpOpStoreCtant>(achainptr, toStore);
-
     ops.push_back(achain);
-    ops.push_back(store);
+
+    if(toStore->isVarStored()) {
+        auto load = std::make_shared<SpOpLoad>(toStore, compiler->GetAvailableID());
+        ops.push_back(load);
+
+        auto wrap = std::make_shared<SpirvDataWrapperLoad>();
+        wrap->ptr = load;
+
+        auto store = std::make_shared<SpOpStoreCtant>(achainptr, wrap);
+
+        ops.push_back(load);
+        ops.push_back(store);
+    } else {
+        auto store = std::make_shared<SpOpStoreCtant>(achainptr, toStore);
+        ops.push_back(store);
+    }
 
     return ops;
 }

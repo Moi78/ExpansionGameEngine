@@ -61,16 +61,17 @@ void OmbrageNodes::MathNode::ValidateLinks() {
     }
 }
 
-std::shared_ptr<FuncGraphElem> OmbrageNodes::MathNode::EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler) {
+std::shared_ptr<FuncGraphElem>
+OmbrageNodes::MathNode::EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler) {
     std::shared_ptr<FuncGraphElem> evalBase;
 
     if(m_io.size() != 3) {
-        evalBase = Node::EvalFrom(locID, compiler);
+        evalBase = Node::EvalFrom(locID, std::shared_ptr<SpirvCompiler>());
     } else if((m_io[0].type != m_io[1].type) && (m_io[0].type != NodePinTypes::FLOAT)) {
         if(locID == 0) {
-            evalBase = Node::EvalFrom(locID + 1, compiler);
+            evalBase = Node::EvalFrom(locID + 1, std::shared_ptr<SpirvCompiler>());
         } else {
-            evalBase = Node::EvalFrom(locID - 1, compiler);
+            evalBase = Node::EvalFrom(locID - 1, std::shared_ptr<SpirvCompiler>());
         }
     } else {
         evalBase = Node::EvalFrom(locID, compiler);

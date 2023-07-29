@@ -21,6 +21,8 @@ OmbrageUI::UI::UI(EXP_Game *game) {
 
     m_node_editor->AddNodeToCatalog("Basic Maths", "Add", [this](int id) { return std::make_shared<OmbrageNodes::AddNode>(id); });
     m_node_editor->AddNodeToCatalog("Basic Maths", "Multiply", [this](int id) { return std::make_shared<OmbrageNodes::MultNode>(id); });
+
+    m_node_editor->AddNodeToCatalog("Vector", "Split vector", [this](int id) { return std::make_shared<OmbrageNodes::SplitNode>(id); });
 }
 
 OmbrageUI::UI::~UI() {

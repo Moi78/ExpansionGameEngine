@@ -81,12 +81,18 @@ public:
     NodePinMode GetPinMode(uint32_t globID);
 
     uint32_t GetNodeSize() { return m_io.size(); };
+    virtual uint32_t GetNodeIDOffset() { return m_io.size(); } // Separating to allow dynamics nodes to have enough IDs
+                                                               // allocated and return a higher offset than the size of
+                                                               // its IO which can change depending on the input
+
     std::shared_ptr<Node> GetParent(int pinID);
 
     virtual std::string GetNodeFunctionName() = 0;
     bool isConst() { return m_isConst; };
 
     virtual std::shared_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler);
+
+    virtual std::shared_ptr<SpOpFunCall> MakeFunctionCall(std::shared_ptr<SpirvCompiler> compiler, std::string funcName, std::vector<std::shared_ptr<SpirvDataWrapperBase>> args, int outID);
 
 protected:
     bool CheckConnectionValidity(NodePinTypes atype, NodePinTypes btype, int destPin);
