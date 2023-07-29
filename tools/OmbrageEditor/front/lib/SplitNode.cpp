@@ -55,9 +55,13 @@ namespace OmbrageNodes {
     }
 
     std::string SplitNode::GetNodeFunctionName() {
-        std::string suffix = GetTypeSuffix(m_io[0].type);
+        if(m_io[0].type == NodePinTypes::OMNI) {
+            return "vector/split2v";
+        } else {
+            std::string suffix = GetTypeSuffix(m_io[0].type);
 
-        return "vector/split" + suffix;
+            return "vector/split" + suffix;
+        }
     }
 
     std::shared_ptr<SpOpFunCall> SplitNode::MakeFunctionCall(

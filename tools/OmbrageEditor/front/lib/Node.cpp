@@ -53,7 +53,7 @@ std::string GetTypeSuffix(NodePinTypes t) {
             return "4v";
             break;
         case OMNI:
-            return "err";
+            return "f"; // Defaulting to FLOAT when an omni is not defined
             break;
     }
 }
@@ -218,6 +218,9 @@ std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCo
                 } else if(evaluated->t == FuncGraphElemType::CONST) {
                     auto ctantnode = std::reinterpret_pointer_cast<HighLevelCtant>(evaluated);
                     wraps.push_back(ctantnode->ctant);
+                } else if(evaluated->t == FuncGraphElemType::NONE) {
+                    auto default_value = GetDefaultValue(compiler, parent->GetPinType(par_id + i));
+                    wraps.push_back(default_value);
                 }
 
                 elem->parents.push_back(std::move(evaluated));
@@ -260,4 +263,39 @@ std::shared_ptr<SpOpFunCall> Node::MakeFunctionCall(
     compiler->AddFunCallToEntry(fcall);
 
     return fcall;
+}
+
+std::shared_ptr<SpirvDataWrapperBase> Node::GetDefaultValue(
+        std::shared_ptr<SpirvCompiler> compiler,
+        NodePinTypes type
+) {
+    std::shared_ptr<SpirvConstant> ctant;
+    std::shared_ptr<SpirvDataWrapperBase> zero_wrapper;
+
+    if(type == NodePinTypes::OMNI || type == NodePinTypes::FLOAT) {
+        ctant = std::make_shared<SPVFloatConstant>();
+        ctant->type = HLTypes::FLOAT;
+
+    } else if(type == NodePinTypes::VEC2) {
+        ctant = std::make_shared<SPVVecConstant<2>>();
+        ctant->type = HLTypes::VECTOR2;
+
+    } else if(type == NodePinTypes::VEC3) {
+        ctant = std::make_shared<SPVVecConstant<3>>();
+        ctant->type = HLTypes::VECTOR3;
+
+    } else if(type == NodePinTypes::VEC4) {
+        ctant = std::make_shared<SPVVecConstant<4>>();
+        ctant->type = HLTypes::VECTOR4;
+
+    } else if(type == NodePinTypes::INT) {
+        ctant = std::make_shared<SPVIntConstant>();
+        ctant->type = HLTypes::INT;
+
+    }
+
+    compiler->RegisterConstant(ctant);
+    zero_wrapper = compiler->GetConstantW(ctant);
+
+    return zero_wrapper;
 }

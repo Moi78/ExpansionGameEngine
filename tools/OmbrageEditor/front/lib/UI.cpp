@@ -11,6 +11,8 @@ OmbrageUI::UI::UI(EXP_Game *game) {
 
     m_compiler = std::make_shared<SpirvCompiler>();
 
+    m_cstate = CompileState::DONE;
+
     auto rootNode = std::make_shared<ShaderNode>(0);
     m_node_editor->AddNode(rootNode);
 
@@ -65,6 +67,8 @@ void OmbrageUI::UI::RenderImGui() {
             if(CompileShader()) {
                 m_cstate = DONE;
             }
+        } else {
+            m_cstate = DONE;
         }
     }
     if(ImGui::BeginPopupModal(

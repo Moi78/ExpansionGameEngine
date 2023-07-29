@@ -95,6 +95,7 @@ public:
     virtual std::shared_ptr<SpOpFunCall> MakeFunctionCall(std::shared_ptr<SpirvCompiler> compiler, std::string funcName, std::vector<std::shared_ptr<SpirvDataWrapperBase>> args, int outID);
 
 protected:
+    std::shared_ptr<SpirvDataWrapperBase> GetDefaultValue(std::shared_ptr<SpirvCompiler> compiler, NodePinTypes type);
     bool CheckConnectionValidity(NodePinTypes atype, NodePinTypes btype, int destPin);
 
     uint32_t m_id;
