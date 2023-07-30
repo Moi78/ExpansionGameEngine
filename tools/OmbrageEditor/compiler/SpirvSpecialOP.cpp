@@ -14,13 +14,13 @@ void SpOpFunCall::PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType
 
     std::vector<uint32_t> argVarID;
     for(auto& arg : args) {
-        if(arg->isVarStored()) {
+        if(arg->isVarStored() && (arg->stcl != StorageClass::Input)) {
             argVarID.push_back(arg->GetReflectedID());
         } else {
             auto OpVariable = std::make_shared<SpirvOperation>();
             OpVariable->LoadOp(59, 4);
 
-            HLTypes vartype = arg->GetReflectedType() | FLAG_PTR_FUNCTION;
+            HLTypes vartype = (arg->GetReflectedType() & 0xFF) | FLAG_PTR_FUNCTION;
             uint32_t rtype_id = realTypes[vartype]->m_id;
 
             OpVariable->words = {
@@ -29,15 +29,30 @@ void SpOpFunCall::PreCompile(std::unordered_map<HLTypes, std::shared_ptr<SPVType
                     (uint32_t) StorageClass::Function
             };
             argVarID.push_back(idcounter);
+            preOp.push_back(OpVariable);
+
+            idcounter++;
+
+            std::shared_ptr<SpirvDataWrapperBase> toStore = arg;
+            if(arg->stcl == StorageClass::Input) {
+                auto OpLoad = std::make_shared<SpOpLoad>(arg, idcounter);
+                idcounter++;
+
+                auto loadwrap = std::make_shared<SpirvDataWrapperLoad>();
+                loadwrap->ptr = OpLoad;
+
+                toStore = loadwrap;
+
+                OpLoad->PreCompile(realTypes, idcounter);
+                preOp.push_back(OpLoad);
+            }
 
             auto OpStore = std::make_shared<SpirvOperation>();
             OpStore->LoadOp(62, 3);
             OpStore->words = {
                     OpVariable->words[1],
-                    arg->GetReflectedID()
+                    toStore->GetReflectedID()
             };
-
-            preOp.push_back(OpVariable);
             preOp.push_back(OpStore);
 
             idcounter++;
@@ -200,6 +215,7 @@ HLTypes SpirvDataWrapperCompExtracted::GetReflectedType() {
 SpOpLoad::SpOpLoad(std::shared_ptr<SpirvDataWrapperBase> src, int rid) {
     ptr = src;
     resID = rid;
+    std::cout << "LOAD RES ID IS " << rid << std::endl;
 
     LoadOp(61, 4);
 }

@@ -5,7 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(OmbrageEditor main.cpp)
 add_library(OmbrageLib SHARED lib/OmbrageMainLevel.cpp lib/OmbrageMainLevel.h lib/UI.cpp lib/UI.h lib/OmbrageCamera.cpp lib/OmbrageCamera.h lib/NodeGraph_UI.cpp lib/NodeGraph_UI.h lib/Node.h lib/ShaderNode.cpp lib/ShaderNode.h lib/Node.cpp lib/MathNodes.cpp lib/MathNodes.h lib/SplitNode.cpp lib/SplitNode.h
         lib/CombineNode.cpp
-        lib/CombineNode.h)
+        lib/CombineNode.h
+        lib/ShaderInNode.cpp
+        lib/ShaderInNode.h)
 
 find_package(fmt REQUIRED)
 

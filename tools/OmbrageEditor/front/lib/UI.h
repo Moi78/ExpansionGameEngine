@@ -16,6 +16,7 @@
 #include "MathNodes.h"
 #include "SplitNode.h"
 #include "CombineNode.h"
+#include "ShaderInNode.h"
 
 #include "FunctionGraph.h"
 

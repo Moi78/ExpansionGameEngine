@@ -124,7 +124,6 @@ ShaderNode::StoreFloatToVec4(std::shared_ptr<SpirvCompiler> compiler, int layout
 
     if(toStore->isVarStored()) {
         auto load = std::make_shared<SpOpLoad>(toStore, compiler->GetAvailableID());
-        ops.push_back(load);
 
         auto wrap = std::make_shared<SpirvDataWrapperLoad>();
         wrap->ptr = load;

@@ -1,0 +1,26 @@
+#ifndef EXPGE_SHADERINNODE_H
+#define EXPGE_SHADERINNODE_H
+
+#include "Node.h"
+
+namespace OmbrageNodes {
+
+    class NormalNode : public Node, public ShaderInWrapper {
+    public:
+        NormalNode(uint32_t id);
+        ~NormalNode() = default;
+
+        std::string GetNodeFunctionName() override { return "ctant"; }
+    };
+
+    class PosNode : public Node, public ShaderInWrapper {
+    public:
+        PosNode(uint32_t id);
+        ~PosNode() = default;
+
+        std::string GetNodeFunctionName() override { return "ctant"; }
+    };
+
+}
+
+#endif //EXPGE_SHADERINNODE_H

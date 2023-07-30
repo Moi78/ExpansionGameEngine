@@ -61,6 +61,10 @@ struct Constant {
     virtual void MakeCtant() {};
 };
 
+struct ShaderInWrapper {
+    int shaderVarID;
+};
+
 class Node {
 public:
     Node(uint32_t id);
@@ -89,6 +93,7 @@ public:
 
     virtual std::string GetNodeFunctionName() = 0;
     bool isConst() { return m_isConst; };
+    bool isShaderIn() { return m_isShaderIn; }
 
     virtual std::shared_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler);
 
@@ -106,6 +111,7 @@ protected:
 
     float m_color[3];
     bool m_isConst;
+    bool m_isShaderIn;
 };
 
 #endif //EXPGE_NODE_H

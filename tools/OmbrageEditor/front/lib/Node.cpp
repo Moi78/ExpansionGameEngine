@@ -66,6 +66,7 @@ Node::Node(uint32_t id) : m_id(id) {
     }
 
     m_isConst = false;
+    m_isShaderIn = false;
 }
 
 void Node::RenderNode() {
@@ -199,7 +200,22 @@ std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCo
 
     uint32_t par_id = parent->GetNodeID();
 
-    if(!parent->isConst()) {
+    if(parent->isConst()) {
+        auto ctant = std::dynamic_pointer_cast<Constant>(parent);
+
+        auto elem = std::make_shared<HighLevelCtant>();
+        elem->ctant = compiler->GetConstantW(ctant->ctant);
+
+        return elem;
+
+    } else if(parent->isShaderIn()) {
+        auto in_id = std::dynamic_pointer_cast<ShaderInWrapper>(parent);
+
+        auto elem = std::make_shared<HighLevelCtant>();
+        elem->ctant = compiler->GetInputVariableW(in_id->shaderVarID);
+
+        return elem;
+    } else {
         auto elem = std::make_unique<HighLevelFunCall>();
         elem->func = parent->GetNodeFunctionName();
 
@@ -235,13 +251,6 @@ std::shared_ptr<FuncGraphElem> Node::EvalFrom(int locID, std::shared_ptr<SpirvCo
         }
 
         elem->funCall = parent->MakeFunctionCall(compiler, elem->func, wraps, outID);
-
-        return elem;
-    } else {
-        auto ctant = std::dynamic_pointer_cast<Constant>(parent);
-
-        auto elem = std::make_unique<HighLevelCtant>();
-        elem->ctant = compiler->GetConstantW(ctant->ctant);
 
         return elem;
     }
