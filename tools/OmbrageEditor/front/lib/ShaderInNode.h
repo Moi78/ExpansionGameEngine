@@ -21,6 +21,14 @@ namespace OmbrageNodes {
         std::string GetNodeFunctionName() override { return "ctant"; }
     };
 
+    class UVNode : public Node, public ShaderInWrapper {
+    public:
+        UVNode(uint32_t id);
+        ~UVNode() = default;
+
+        std::string GetNodeFunctionName() override { return "ctant";}
+    };
+
 }
 
 #endif //EXPGE_SHADERINNODE_H

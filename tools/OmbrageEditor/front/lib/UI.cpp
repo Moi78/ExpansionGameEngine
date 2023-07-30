@@ -26,6 +26,7 @@ OmbrageUI::UI::UI(EXP_Game *game) {
 
     m_node_editor->AddNodeToCatalog("Variables", "Normal", [this](int id) { return std::make_shared<OmbrageNodes::NormalNode>(id); });
     m_node_editor->AddNodeToCatalog("Variables", "Position", [this](int id) { return std::make_shared<OmbrageNodes::PosNode>(id); });
+    m_node_editor->AddNodeToCatalog("Variables", "UV Coordinates", [this](int id) { return std::make_shared<OmbrageNodes::UVNode>(id); });
 
     m_node_editor->AddNodeToCatalog("Vector", "Combine", [this](int id) { return std::make_shared<OmbrageNodes::CombineNode>(id); });
     m_node_editor->AddNodeToCatalog("Vector", "Split", [this](int id) { return std::make_shared<OmbrageNodes::SplitNode>(id); });
