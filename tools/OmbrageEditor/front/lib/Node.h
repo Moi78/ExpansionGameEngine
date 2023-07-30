@@ -47,7 +47,7 @@ std::string GetTypeSuffix(NodePinTypes t);
 
 struct Node;
 struct NodeConnection {
-    std::shared_ptr<Node> OtherNode;
+    std::weak_ptr<Node> OtherNode;
 
     uint32_t dst_pinID;
     uint32_t src_pinID;
@@ -80,6 +80,9 @@ public:
     bool ContainsPin(uint32_t globID);
     virtual bool ConnectPins(std::shared_ptr<Node> other, uint32_t srcID, uint32_t pID, uint32_t linkID);
     virtual void ValidateLinks();
+
+    bool ContainsLink(int linkID);
+    void DeleteLink(int linkID);
 
     NodePinTypes GetPinType(uint32_t globID);
     NodePinMode GetPinMode(uint32_t globID);

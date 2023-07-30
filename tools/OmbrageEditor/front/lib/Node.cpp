@@ -164,14 +164,19 @@ void Node::ValidateLinks() {
 
     std::vector<NodeConnection>::iterator it = m_connections.begin();
     for(auto& con : m_connections) {
-        NodePinTypes tother = con.OtherNode->GetPinType(con.src_pinID);
-        NodePinTypes tself = GetPinType(con.dst_pinID);
-
-        if(tother != tself) {
+        if(!con.OtherNode.use_count()) {
             toDelete.push_back(it);
-        }
+        } else {
+            auto othern = std::shared_ptr<Node>(con.OtherNode);
+            NodePinTypes tother = othern->GetPinType(con.src_pinID);
+            NodePinTypes tself = GetPinType(con.dst_pinID);
 
-        it++;
+            if (tother != tself) {
+                toDelete.push_back(it);
+            }
+
+            it++;
+        }
     }
 
     for(auto del : toDelete) {
@@ -182,7 +187,7 @@ void Node::ValidateLinks() {
 std::shared_ptr<Node> Node::GetParent(int pinID) {
     for(auto& c : m_connections) {
         if(c.dst_pinID == pinID) {
-            return c.OtherNode;
+            return std::shared_ptr<Node>(c.OtherNode);
         }
     }
 
@@ -307,4 +312,24 @@ std::shared_ptr<SpirvDataWrapperBase> Node::GetDefaultValue(
     zero_wrapper = compiler->GetConstantW(ctant);
 
     return zero_wrapper;
+}
+
+bool Node::ContainsLink(int linkID) {
+    for(auto& l : m_connections) {
+        if(l.linkID == linkID) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Node::DeleteLink(int linkID) {
+    std::vector<int> deleteInd;
+    for(int i = 0; i < m_connections.size(); i++) {
+        if(m_connections[i].linkID == linkID) {
+            m_connections.erase(m_connections.begin() + i);
+            break;
+        }
+    }
 }

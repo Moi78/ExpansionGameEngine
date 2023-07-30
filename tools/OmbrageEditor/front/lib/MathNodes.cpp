@@ -42,7 +42,8 @@ void OmbrageNodes::MathNode::ValidateLinks() {
 
     std::vector<NodeConnection>::iterator it = m_connections.begin();
     for(auto& con : m_connections) {
-        NodePinTypes tother = con.OtherNode->GetPinType(con.src_pinID);
+        auto othern = std::shared_ptr<Node>(con.OtherNode);
+        NodePinTypes tother = othern->GetPinType(con.src_pinID);
         NodePinTypes tself = GetPinType(con.dst_pinID);
 
         if(tother != tself) {

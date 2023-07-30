@@ -32,6 +32,9 @@ namespace OmbrageUI {
         void RenderGraph();
         void RenderNodeProperties();
 
+        void DeleteSelectedNodes();
+        void DeleteSelectedLinks();
+
         void AddNode(std::shared_ptr<Node> Node);
 
         void AddNodeToCatalog(std::string cat, std::string name, std::function<std::shared_ptr<Node>(int)> factory);

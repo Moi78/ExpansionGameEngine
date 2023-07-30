@@ -39,6 +39,7 @@ namespace OmbrageUI {
 
     private:
         void DockSpaceHandling();
+        void MainMenuBar();
 
         bool CompileLoadDeps();
         bool CompileShader();

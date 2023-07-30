@@ -133,6 +133,54 @@ namespace OmbrageUI {
         delete[] selNodes;
     }
 
+    void NodeGraph_UI::DeleteSelectedNodes() {
+        int selectedCount = ImNodes::NumSelectedNodes();
+
+        int* selNodes = new int[selectedCount];
+        ImNodes::GetSelectedNodes(selNodes);
+
+        std::vector<int> delIndicies;
+        for(int i = 0; i < m_nodes.size(); i++) {
+            for(int a = 0; a < selectedCount; a++) {
+                if(m_nodes[i]->GetNodeID() == selNodes[a] && selNodes[a] != 0) {
+                    m_nodes[i].reset();
+                    delIndicies.push_back(i);
+
+                    break;
+                }
+            }
+        }
+
+        for(auto& ind : delIndicies) {
+            m_nodes.erase(m_nodes.begin() + ind);
+        }
+
+        for(auto& n : m_nodes) {
+            n->ValidateLinks();
+        }
+
+        delete[] selNodes;
+    }
+
+    void NodeGraph_UI::DeleteSelectedLinks() {
+        int selectedCount = ImNodes::NumSelectedLinks();
+
+        int* selLinks = new int[selectedCount];
+        ImNodes::GetSelectedLinks(selLinks);
+
+        for(int i = 0; i < m_nodes.size(); i++) {
+            for(int a = 0; a < selectedCount; a++) {
+                if(m_nodes[i]->ContainsLink(selLinks[a])) {
+                    m_nodes[i]->DeleteLink(selLinks[a]);
+                }
+            }
+        }
+
+        for(auto& n : m_nodes) {
+            n->ValidateLinks();
+        }
+    }
+
     std::shared_ptr<Node> NodeGraph_UI::GetNodeByID(int id) {
         for(auto& n : m_nodes) {
             if(n->GetNodeID() == id) {

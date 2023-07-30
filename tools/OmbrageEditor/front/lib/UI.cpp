@@ -47,6 +47,7 @@ void OmbrageUI::UI::RenderImGui() {
     static auto winsys = m_game->GetRenderer()->GetAPI()->GetWindowingSystem();
 
     DockSpaceHandling();
+    MainMenuBar();
 
     if(ImGui::IsKeyPressed(ImGuiKey_R, false)) {
         if(!ImGui::IsPopupOpen("Recompiling")) {
@@ -75,6 +76,12 @@ void OmbrageUI::UI::RenderImGui() {
             m_cstate = DONE;
         }
     }
+
+    if(ImGui::IsKeyPressed(ImGuiKey_Delete, false)) {
+        m_node_editor->DeleteSelectedNodes();
+        m_node_editor->DeleteSelectedLinks();
+    }
+
     if(ImGui::BeginPopupModal(
             "Recompiling", nullptr,
             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar)
@@ -131,7 +138,7 @@ void OmbrageUI::UI::RenderImGui() {
 }
 
 void OmbrageUI::UI::DockSpaceHandling() {
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
     const ImGuiViewport* imvp = ImGui::GetMainViewport();
 
@@ -157,6 +164,17 @@ void OmbrageUI::UI::DockSpaceHandling() {
     ImGui::PopStyleVar(3);
     ImGui::PopStyleColor(2);
 
+}
+
+void OmbrageUI::UI::MainMenuBar() {
+    ImGui::BeginMainMenuBar();
+
+    if(ImGui::BeginMenu("File")) {
+        ImGui::MenuItem("Save", "CTRL+S");
+        ImGui::EndMenu();
+    }
+
+    ImGui::EndMainMenuBar();
 }
 
 bool OmbrageUI::UI::CompileLoadDeps() {
