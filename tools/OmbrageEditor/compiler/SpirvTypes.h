@@ -13,6 +13,7 @@
 #define FLAG_PTR_FUNCTION 0x4000000
 #define FLAG_PTR_OUTPUT 0x8000000
 #define FLAG_PTR_INPUT 0x1000000
+#define FLAG_PTR_UNIFORM_CTANT 0x0800000
 
 #define FLAG_IS_VECTOR 0x80
 
@@ -26,6 +27,8 @@ enum class HLTypes {
     VECTOR2 = 3 | FLAG_IS_VECTOR,
     VECTOR3 = 4 | FLAG_IS_VECTOR,
     VECTOR4 = 5 | FLAG_IS_VECTOR,
+    IMAGE = 6,
+    SAMPLED_IMAGE = 7,
 
     // Function type pointers
     FLOATPTR = 1 | FLAG_PTR_FUNCTION,
@@ -47,6 +50,9 @@ enum class HLTypes {
     VECTOR2PTRI = 3 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
     VECTOR3PTRI = 4 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
     VECTOR4PTRI = 5 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
+
+    // Uniform Constant pointers
+    SAMPLED_IMAGE_PTRUC = 7 | FLAG_PTR_UNIFORM_CTANT
 };
 
 HLTypes operator&(const HLTypes& a, const int& b);
@@ -112,6 +118,15 @@ public:
 
 private:
     std::shared_ptr<SPVType> m_primType;
+};
+
+class TImage : public SPVType {
+public:
+    TImage(int id) { m_id = id; }
+
+    virtual unsigned GetOpcode() override { return 25; }
+
+    virtual std::vector<uint32_t> GetTypeDecl() override;
 };
 
 #endif //EXPGE_SPIRVTYPES_H

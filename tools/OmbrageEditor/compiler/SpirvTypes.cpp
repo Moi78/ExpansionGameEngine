@@ -21,19 +21,25 @@ std::vector<uint32_t> SPVType::GetTypePtrDecl(std::shared_ptr<SPVType> baseType)
 }
 
 std::vector<uint32_t> TVoid::GetTypeDecl() {
-uint32_t firstWord = (2 << 16) | GetOpcode();
+    uint32_t firstWord = (2 << 16) | GetOpcode();
 
-return {firstWord, (uint32_t)m_id};
+    return {firstWord, (uint32_t)m_id};
 }
 
 std::vector<uint32_t> TFloat::GetTypeDecl() {
-uint32_t firstWord = (3 << 16) | GetOpcode();
+    uint32_t firstWord = (3 << 16) | GetOpcode();
 
-return {firstWord, (uint32_t)m_id, 32};
+    return {firstWord, (uint32_t)m_id, 32};
 }
 
 std::vector<uint32_t> TInt::GetTypeDecl() {
     uint32_t firstWord = (4 << 16) | GetOpcode();
 
     return {firstWord, (uint32_t)m_id, 32, 1};
+}
+
+std::vector<uint32_t> TImage::GetTypeDecl() {
+    uint32_t firstword = (9 << 16) | GetOpcode();
+
+    return {firstword, (uint32_t)m_id, 0x01, 0, 0, 0, 1};
 }
