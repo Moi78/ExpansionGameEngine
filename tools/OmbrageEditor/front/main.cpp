@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 
 #include <EXP_Game.h>
 #include <EXP_Conf.h>
@@ -10,9 +9,6 @@
 #include <RD_API.h>
 
 #include "SpirvProgram.h"
-#include "SpirvFunction.h"
-#include "SpirvSpecialOP.h"
-#include "SpirvOperation.h"
 
 //Enabling Nvidia Optimus
 extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
