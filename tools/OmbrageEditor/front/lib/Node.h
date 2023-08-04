@@ -95,8 +95,12 @@ public:
     std::shared_ptr<Node> GetParent(int pinID);
 
     virtual std::string GetNodeFunctionName() = 0;
+
     bool isConst() { return m_isConst; };
     bool isShaderIn() { return m_isShaderIn; }
+
+    bool doHoldTexture() { return m_holdTexture; }
+    virtual std::string GetTexturePath() { return ""; }
 
     virtual std::shared_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler);
 
@@ -113,8 +117,10 @@ protected:
     std::vector<NodeConnection> m_connections;
 
     float m_color[3];
+
     bool m_isConst;
     bool m_isShaderIn;
+    bool m_holdTexture;
 };
 
 #endif //EXPGE_NODE_H

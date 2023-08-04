@@ -62,7 +62,8 @@ enum class StorageClass {
     Uniform = 2,
     Output = 3,
     Function = 7,
-    Input = 1
+    Input = 1,
+    UniformConstant = 0
 };
 
 class SPVType {
@@ -122,11 +123,26 @@ private:
 
 class TImage : public SPVType {
 public:
-    TImage(int id) { m_id = id; }
+    TImage(int id, std::shared_ptr<SPVType> tvector4) { m_id = id; m_4v = tvector4; }
 
     virtual unsigned GetOpcode() override { return 25; }
 
     virtual std::vector<uint32_t> GetTypeDecl() override;
+
+private:
+    std::shared_ptr<SPVType> m_4v;
+};
+
+class TSampledImage : public SPVType {
+public:
+    TSampledImage(int id, std::shared_ptr<SPVType> image) { m_id = id; m_img = image; }
+
+    virtual unsigned GetOpcode() override { return 27; }
+
+    virtual std::vector<uint32_t> GetTypeDecl() override;
+
+private:
+    std::shared_ptr<SPVType> m_img;
 };
 
 #endif //EXPGE_SPIRVTYPES_H

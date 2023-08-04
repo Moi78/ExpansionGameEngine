@@ -7,7 +7,9 @@ add_library(OmbrageLib SHARED lib/OmbrageMainLevel.cpp lib/OmbrageMainLevel.h li
         lib/CombineNode.cpp
         lib/CombineNode.h
         lib/ShaderInNode.cpp
-        lib/ShaderInNode.h)
+        lib/ShaderInNode.h
+        lib/TextureNode.cpp
+        lib/TextureNode.h)
 
 find_package(fmt REQUIRED)
 

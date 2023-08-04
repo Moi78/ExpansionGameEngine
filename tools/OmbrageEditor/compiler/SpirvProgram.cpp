@@ -8,7 +8,7 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
     }
 
     std::shared_ptr<SPVType> newType;
-    HLTypes test = t & 0xF;
+    HLTypes test = t & 0xFF;
     switch(t & 0xFF) {
         case HLTypes::VOID:
             newType = std::make_shared<TVoid>(m_IDcounter);
@@ -28,6 +28,12 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
         case HLTypes::VECTOR4:
             newType = std::make_shared<TVector<4>>(m_IDcounter, GetType(HLTypes::FLOAT));
             break;
+        case HLTypes::IMAGE:
+            newType = std::make_shared<TImage>(m_IDcounter, GetType(HLTypes::FLOAT));
+            break;
+        case HLTypes::SAMPLED_IMAGE:
+            newType = std::make_shared<TSampledImage>(m_IDcounter, GetType(HLTypes::IMAGE));
+            break;
     }
 
     m_IDcounter++;
@@ -45,6 +51,11 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
     } else if((uint32_t)(t & FLAG_PTR_INPUT)) {
         newType->m_isPointer = true;
         newType->m_ptrAttr = StorageClass::Input;
+
+        auto deptype = GetType(t & 0xFF);
+    } else if((uint32_t)(t & FLAG_PTR_UNIFORM_CTANT)) {
+        newType->m_isPointer = true;
+        newType->m_ptrAttr = StorageClass::UniformConstant;
 
         auto deptype = GetType(t & 0xFF);
     }
@@ -197,6 +208,18 @@ void SpirvProgram::CompileHeader() {
         allOp.push_back(opdec);
     }
 
+    for(auto& v : m_vars) {
+        std::vector<uint32_t> vdecorate = v->DecorateVariable();
+
+        if(!vdecorate.empty()) {
+            SpirvOperation deco{};
+            deco.op = vdecorate[0];
+            deco.words.insert(deco.words.begin(), vdecorate.begin() + 1, vdecorate.end());
+
+            allOp.push_back(deco);
+        }
+    }
+
     // Making header raw binary
 
     m_progBin.clear();
@@ -237,7 +260,12 @@ void SpirvProgram::CompileTypesFunctions() {
     // Primary monotypes
     for(auto& t : m_types) {
         std::vector<uint32_t> tdecl;
-        if(!t.second->m_isPointer && (t.first == HLTypes::FLOAT || t.first == HLTypes::INT || t.first == HLTypes::VOID)) {
+        if(
+                !t.second->m_isPointer &&
+                (t.first == HLTypes::FLOAT ||
+                t.first == HLTypes::INT ||
+                t.first == HLTypes::VOID)
+        ) {
             tdecl = t.second->GetTypeDecl();
             m_shaderBody.insert(m_shaderBody.end(), tdecl.begin(), tdecl.end());
         }
@@ -247,6 +275,14 @@ void SpirvProgram::CompileTypesFunctions() {
     for(auto& t : m_types) {
         std::vector<uint32_t> tdecl;
         if(!(t.second->m_isPointer) && ((uint32_t)(t.first & FLAG_IS_VECTOR))) {
+            tdecl = t.second->GetTypeDecl();
+            m_shaderBody.insert(m_shaderBody.end(), tdecl.begin(), tdecl.end());
+        }
+    }
+
+    for(auto& t : m_types) {
+        std::vector<uint32_t> tdecl;
+        if(t.first == HLTypes::IMAGE || t.first == HLTypes::SAMPLED_IMAGE) {
             tdecl = t.second->GetTypeDecl();
             m_shaderBody.insert(m_shaderBody.end(), tdecl.begin(), tdecl.end());
         }
@@ -271,8 +307,8 @@ void SpirvProgram::CompileTypesFunctions() {
     }
 
     for(auto& v : m_vars) {
-        std::vector<uint32_t> cdecl = v->DeclVariable(m_types);
-        m_shaderBody.insert(m_shaderBody.end(), cdecl.begin(), cdecl.end());
+        std::vector<uint32_t> vdecl = v->DeclVariable(m_types);
+        m_shaderBody.insert(m_shaderBody.end(), vdecl.begin(), vdecl.end());
     }
 
 

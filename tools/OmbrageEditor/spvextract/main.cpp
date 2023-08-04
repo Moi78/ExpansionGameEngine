@@ -50,12 +50,20 @@ HLTypes OpToType(std::vector<uint32_t> op, std::unordered_map<int, HLTypes> know
                 t = HLTypes::VECTOR4;
             }
             break;
+        case 25:
+            t = HLTypes::IMAGE;
+            break;
+        case 27:
+            t = HLTypes::SAMPLED_IMAGE;
+            break;
         case 32:
             if(known_types.find(op[3]) != known_types.end()) {
                 if(op[2] == (uint32_t)StorageClass::Function) {
                     t = known_types[op[3]] | FLAG_PTR_FUNCTION;
                 } else if(op[2] == (uint32_t)StorageClass::Output) {
                     t = known_types[op[3]] | FLAG_PTR_OUTPUT;
+                } else if(op[2] == (uint32_t)StorageClass::UniformConstant) {
+                    t = known_types[op[3]] | FLAG_PTR_UNIFORM_CTANT;
                 } else {
                     throw "UNSUPPORTED STORAGE CLASS";
                 }

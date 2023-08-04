@@ -1,7 +1,7 @@
 #include "SpirvCompiler.h"
 
 SpirvCompiler::SpirvCompiler() {
-
+    m_bindingCounter = 2;
 }
 
 SpirvCompiler::~SpirvCompiler() {
@@ -132,4 +132,31 @@ std::shared_ptr<SpirvDataWrapperBase> SpirvCompiler::GetInputVariableW(int idx) 
     wrap->stcl = StorageClass::Input;
 
     return wrap;
+}
+
+void SpirvCompiler::RegisterTexture(std::string texName) {
+    if(m_texTable.find(texName) != m_texTable.end()) {
+        return;
+    }
+
+    auto uniTex = std::make_shared<SpirvUniform>();
+    uniTex->type = HLTypes::SAMPLED_IMAGE_PTRUC;
+    uniTex->binding = m_bindingCounter;
+    uniTex->id = GetAvailableID();
+    uniTex->st_class = StorageClass::UniformConstant;
+
+    m_texTable[texName] = uniTex;
+
+    m_prog->RegisterVariable(uniTex);
+
+    m_bindingCounter++;
+}
+
+std::shared_ptr<SpirvDataWrapperBase> SpirvCompiler::GetTextureW(std::string texName) {
+    std::shared_ptr<SpirvUniform> uniform = m_texTable[texName];
+
+    auto wrapper = std::make_shared<SpirvDataWrapperVar>();
+    wrapper->var = uniform;
+
+    return wrapper;
 }

@@ -13,6 +13,14 @@ struct SpirvVariable {
     StorageClass st_class = StorageClass::Output;
 
     std::vector<uint32_t> DeclVariable(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes);
+    virtual std::vector<uint32_t> DecorateVariable() { return {}; };
+};
+
+struct SpirvUniform : public SpirvVariable {
+    int binding;
+    int descSet = 0;
+
+    std::vector<uint32_t> DecorateVariable();
 };
 
 struct SpirvConstant {

@@ -67,6 +67,7 @@ Node::Node(uint32_t id) : m_id(id) {
 
     m_isConst = false;
     m_isShaderIn = false;
+    m_holdTexture = false;
 }
 
 void Node::RenderNode() {

@@ -147,9 +147,21 @@ ShaderNode::StoreVec4ToVec4(std::shared_ptr<SpirvCompiler> compiler, int layouti
     auto var_wrap = std::make_shared<SpirvDataWrapperVar>();
     var_wrap->var = var;
 
-    auto opstorectant = std::make_shared<SpOpStoreCtant>(var_wrap, toStore);
+    if(toStore->isVarStored()) {
+        auto load = std::make_shared<SpOpLoad>(toStore, compiler->GetAvailableID());
 
-    return {opstorectant};
+        auto wrap = std::make_shared<SpirvDataWrapperLoad>();
+        wrap->ptr = load;
+
+        auto store = std::make_shared<SpOpStoreCtant>(var_wrap, wrap);
+
+        return {load, store};
+    } else {
+        auto opstorectant = std::make_shared<SpOpStoreCtant>(var_wrap, toStore);
+
+        return {opstorectant};
+    }
+
 }
 
 std::shared_ptr<SpirvDataWrapperBase> ShaderNode::GetDefault(std::shared_ptr<SpirvCompiler> compiler, int idx) {

@@ -20,7 +20,6 @@ namespace OmbrageUI {
         ImNodes::BeginNodeEditor();
 
         ManageContextMenu();
-
         if(ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImNodes::IsEditorHovered()) {
             ImGui::OpenPopup("addNode");
         }
@@ -30,6 +29,7 @@ namespace OmbrageUI {
             node->RenderLinks();
         }
 
+        bool editorHovered = ImNodes::IsEditorHovered();
         ImNodes::EndNodeEditor();
 
         int linkID_start, linkID_end;
@@ -52,6 +52,11 @@ namespace OmbrageUI {
             for(auto& n : m_nodes) {
                 n->ValidateLinks();
             }
+        }
+
+        if(ImGui::IsKeyPressed(ImGuiKey_Delete, false) && editorHovered) {
+            DeleteSelectedNodes();
+            DeleteSelectedLinks();
         }
     }
 

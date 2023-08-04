@@ -46,6 +46,9 @@ public:
 
     int GetAvailableID();
     void RequireType(HLTypes t) { m_prog->GetType(t); }
+
+    void RegisterTexture(std::string texName);
+    std::shared_ptr<SpirvDataWrapperBase> GetTextureW(std::string texName);
 private:
     std::unordered_map<std::string, std::shared_ptr<SpirvFunction>> m_funcTable;
     std::unique_ptr<SpirvFunction> m_entry;
@@ -54,6 +57,9 @@ private:
     std::vector<std::shared_ptr<SpirvConstant>> m_ctant_table;
     std::vector<std::shared_ptr<SpirvConstant>> m_ctant_overflow;
     std::unordered_map<std::shared_ptr<SpirvConstant>, std::shared_ptr<SpirvDataWrapperCtant>> m_ctant_wrap;
+
+    std::unordered_map<std::string, std::shared_ptr<SpirvUniform>> m_texTable;
+    int m_bindingCounter;
 };
 
 

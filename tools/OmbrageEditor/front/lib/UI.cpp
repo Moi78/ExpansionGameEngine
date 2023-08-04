@@ -24,6 +24,8 @@ OmbrageUI::UI::UI(EXP_Game *game) {
     m_node_editor->AddNodeToCatalog("Constants", "Const Vec3", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec3Node>(id); });
     m_node_editor->AddNodeToCatalog("Constants", "Const Vec4", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec4Node>(id); });
 
+    m_node_editor->AddNodeToCatalog("Texture", "Sample Texture", [this](int id) { return std::make_shared<OmbrageNodes::TextureNode>(id); });
+
     m_node_editor->AddNodeToCatalog("Variables", "Normal", [this](int id) { return std::make_shared<OmbrageNodes::NormalNode>(id); });
     m_node_editor->AddNodeToCatalog("Variables", "Position", [this](int id) { return std::make_shared<OmbrageNodes::PosNode>(id); });
     m_node_editor->AddNodeToCatalog("Variables", "UV Coordinates", [this](int id) { return std::make_shared<OmbrageNodes::UVNode>(id); });
@@ -75,11 +77,6 @@ void OmbrageUI::UI::RenderImGui() {
         } else {
             m_cstate = DONE;
         }
-    }
-
-    if(ImGui::IsKeyPressed(ImGuiKey_Delete, false)) {
-        m_node_editor->DeleteSelectedNodes();
-        m_node_editor->DeleteSelectedLinks();
     }
 
     if(ImGui::BeginPopupModal(
@@ -203,13 +200,18 @@ bool OmbrageUI::UI::CompileShader() {
     m_compiler->SetShaderLayout(rootNode->GetShaderLayout());
     m_compiler->SetShaderInputs({HLTypes::VECTOR2PTRI, HLTypes::VECTOR3PTRI, HLTypes::VECTOR3PTRI});
 
-    // Const analysis
+    // Const & Tex analysis
     for(auto& n : nodes) {
         if(n->isConst()) {
             auto ct = std::dynamic_pointer_cast<Constant>(n);
             ct->MakeCtant();
 
             m_compiler->RegisterConstant(ct->ctant);
+        } else if(n->doHoldTexture()) {
+            m_compiler->RequireType(HLTypes::SAMPLED_IMAGE_PTRUC);
+
+            std::cout << "Loading texture " << n->GetTexturePath() << std::endl;
+            m_compiler->RegisterTexture(n->GetTexturePath());
         }
     }
 
@@ -249,8 +251,15 @@ bool OmbrageUI::UI::CompileShader() {
     std::shared_ptr<EXP_Level> lvl = m_game->GetCurrentLevel();
     auto model = lvl->GetCastedActorByName<EXP_StaticMeshActor>("sphere");
 
+    auto tex = m_game->GetRenderer()->GetAPI()->CreateTexture();
+
+    int data = 255;
+    tex->CreateTextureFromData(IMGFORMAT_R, 1, 1, &data);
+
     std::shared_ptr<EXP_Material> mat = model->GetMeshComponent()->GetMeshMaterial();
+    mat->GetPipeline()->PurgeTextures();
     mat->GetPipeline()->SwapShader(shaderLoader);
+    mat->GetPipeline()->RegisterTexture(tex, 2);
     mat->GetPipeline()->RebuildPipeline();
 
     return true;

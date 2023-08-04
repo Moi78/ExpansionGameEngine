@@ -8,6 +8,8 @@
 #include <EXP_Level.h>
 #include <EXP_StaticMeshActor.h>
 
+#include <RD_Texture.h>
+
 #include <SpirvCompiler.h>
 
 #include "NodeGraph_UI.h"
@@ -17,6 +19,7 @@
 #include "SplitNode.h"
 #include "CombineNode.h"
 #include "ShaderInNode.h"
+#include "TextureNode.h"
 
 #include "FunctionGraph.h"
 

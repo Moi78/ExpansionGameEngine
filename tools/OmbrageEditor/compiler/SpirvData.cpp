@@ -31,3 +31,27 @@ uint32_t SpirvDataWrapperVar::GetReflectedID() {
 HLTypes SpirvDataWrapperVar::GetReflectedType() {
     return var->type;
 }
+
+std::vector<uint32_t> SpirvUniform::DecorateVariable() {
+    SpirvOperation opdec_bding{};
+    opdec_bding.LoadOp(71, 3 + 1);
+    opdec_bding.words = {
+            (uint32_t)id,
+            33,
+            (uint32_t)binding
+    };
+
+    SpirvOperation opdec_dset{};
+    opdec_dset.LoadOp(71, 3 + 1);
+    opdec_dset.words = {
+            (uint32_t)id,
+            34,
+            (uint32_t)descSet
+    };
+
+    auto bin_bding = opdec_bding.GetData();
+    auto bin_dset = opdec_dset.GetData();
+
+    bin_bding.insert(bin_bding.end(), bin_dset.begin(), bin_dset.end());
+    return bin_bding;
+}

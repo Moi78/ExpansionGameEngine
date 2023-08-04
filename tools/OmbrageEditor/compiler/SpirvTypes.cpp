@@ -41,5 +41,11 @@ std::vector<uint32_t> TInt::GetTypeDecl() {
 std::vector<uint32_t> TImage::GetTypeDecl() {
     uint32_t firstword = (9 << 16) | GetOpcode();
 
-    return {firstword, (uint32_t)m_id, 0x01, 0, 0, 0, 1};
+    return {firstword, (uint32_t)m_id, (uint32_t)m_4v->m_id, 0x01, 0, 0, 0, 1, 0};
+}
+
+std::vector<uint32_t> TSampledImage::GetTypeDecl() {
+    uint32_t firstword = (3 << 16) | GetOpcode();
+
+    return {firstword, (uint32_t)m_id, (uint32_t)m_img->m_id};
 }

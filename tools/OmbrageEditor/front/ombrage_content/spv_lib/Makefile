@@ -9,10 +9,11 @@ bin_glsl= $(sources_glsl:.glsl=.bin)
 mathfuncs= addf add2v add3v add4v addf2v addf3v addf4v mulf mul2v mul3v mul4v mulf2v mulf3v mulf4v
 splitfuncs= split4v split3v split2v
 combinefuncs= combine4v combine3v combine2v
+texturefuncs= sampleTex
 
 glsl: $(bin_glsl)
 
-all: glsl $(mathfuncs) $(splitfuncs) $(combinefuncs)
+all: glsl $(mathfuncs) $(splitfuncs) $(combinefuncs) $(texturefuncs)
 
 %.bin: %.glsl
 	$(GLSL) -fshader-stage=fragment -c $< -o $(PREFIX_BIN)/$(notdir $@)
@@ -28,3 +29,7 @@ $(splitfuncs):
 $(combinefuncs):
 	mkdir -p vector
 	$(EXTRACT) bin/combine.bin $@ vector/$@.func
+
+$(texturefuncs):
+	mkdir -p texture
+	$(EXTRACT) bin/texture.bin $@ texture/$@.func

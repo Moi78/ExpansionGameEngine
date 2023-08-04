@@ -17,6 +17,8 @@ add_library(RaindropRenderer SHARED
         ../third_party/imstb_textedit.h
         ../third_party/imstb_truetype.h
         ../third_party/imnodes.cpp
+        ../third_party/imgui_stdlib.cpp
+        ../third_party/imgui_stdlib.h
 
         RaindropRenderer.cpp
         RaindropRenderer.h
