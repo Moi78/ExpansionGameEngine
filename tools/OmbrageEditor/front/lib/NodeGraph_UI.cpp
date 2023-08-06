@@ -86,23 +86,25 @@ namespace OmbrageUI {
     }
 
     void NodeGraph_UI::ManageContextMenu() {
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15.f, 10.f));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 6.f));
 
         if(ImGui::BeginPopupContextItem("addNode")) {
             ImGui::Text("Add Node");
             ImGui::Separator();
 
             for(auto& c : m_catalog) {
-                if(ImGui::CollapsingHeader(c.catName.c_str())) {
+                if(ImGui::BeginMenu(c.catName.c_str())) {
                     for(auto& item : c.items) {
-                        if(ImGui::Selectable(item.name.c_str())) {
+                        if(ImGui::MenuItem(item.name.c_str())) {
                             int currentID = m_next_id;
                             AddNode(item.factory(m_next_id));
 
                             ImNodes::SetNodeScreenSpacePos(currentID, ImGui::GetMousePos());
                         }
                     }
+
+                    ImGui::EndMenu();
                 }
             }
 
