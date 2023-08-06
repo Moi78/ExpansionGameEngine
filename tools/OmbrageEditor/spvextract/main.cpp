@@ -269,11 +269,11 @@ int main(int argc, char* argv[]) {
                         count++;
                     } else if(o["kind"] == "IdRef") {
                         int nbIDs = 1;
-                        if(o.get("quantifier", "") == "*") {
+                        if (o.get("quantifier", "") == "*") {
                             nbIDs = GetOpSize(funcBody[i]) - count - 1;
                         }
 
-                        for(int a = 0; a < nbIDs; a++) {
+                        for (int a = 0; a < nbIDs; a++) {
                             if (local_id_map.find(funcBody[i + count + 1]) == local_id_map.end()) {
                                 local_id_map[funcBody[i + count + 1]] = idcounter;
                                 spvOp->id_repl.push_back(idcounter | FLAG_IS_NOT_TYPE);
@@ -289,6 +289,12 @@ int main(int argc, char* argv[]) {
 
                             spvOp->words.push_back(word);
                             count++;
+                        }
+                    } else if(o["kind"].asString().find("Literal") != std::string::npos) {
+                        int remainingWords = GetOpSize(funcBody[i]) - count - 1;
+                        for(int a = 0; a < remainingWords; a++) {
+                            word = funcBody[i + count + a + 1];
+                            spvOp->words.push_back(word);
                         }
                     } else {
                         word = funcBody[i + count + 1];

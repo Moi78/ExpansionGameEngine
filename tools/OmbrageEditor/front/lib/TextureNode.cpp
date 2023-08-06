@@ -9,6 +9,10 @@ namespace OmbrageNodes {
 
         m_nodeName = "Sample Texture";
 
+        m_color[0] = 180.0f;
+        m_color[1] = 82.0f;
+        m_color[2] = 255.0f;
+
         m_holdTexture = true;
     }
 
