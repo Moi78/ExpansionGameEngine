@@ -146,21 +146,16 @@ namespace OmbrageUI {
         int* selNodes = new int[selectedCount];
         ImNodes::GetSelectedNodes(selNodes);
 
-        std::vector<int> delIndicies;
-        for(int i = 0; i < m_nodes.size(); i++) {
-            for(int a = 0; a < selectedCount; a++) {
-                if(m_nodes[i]->GetNodeID() == selNodes[a] && selNodes[a] != 0) {
-                    m_nodes[i].reset();
-                    delIndicies.push_back(i);
-
-                    break;
+        std::erase_if(m_nodes, [selNodes, selectedCount](std::shared_ptr<Node>& n) {
+            for(int i = 0; i < selectedCount; i++) {
+                if(selNodes[i] == n->GetNodeID() && selNodes[i] != 0) {
+                    n.reset();
+                    return true;
                 }
             }
-        }
 
-        for(auto& ind : delIndicies) {
-            m_nodes.erase(m_nodes.begin() + ind);
-        }
+            return false;
+        });
 
         for(auto& n : m_nodes) {
             n->ValidateLinks();

@@ -32,6 +32,7 @@ OmbrageUI::UI::UI(EXP_Game *game) {
 
     m_node_editor->AddNodeToCatalog("Vector", "Combine", [this](int id) { return std::make_shared<OmbrageNodes::CombineNode>(id); });
     m_node_editor->AddNodeToCatalog("Vector", "Split", [this](int id) { return std::make_shared<OmbrageNodes::SplitNode>(id); });
+    m_node_editor->AddNodeToCatalog("Vector", "XYZ", [this](int id) { return std::make_shared<OmbrageNodes::XYZNode>(id); });
 }
 
 OmbrageUI::UI::~UI() {

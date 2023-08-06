@@ -25,6 +25,14 @@ namespace OmbrageNodes {
         std::string m_inputTypeUI;
     };
 
+    class XYZNode : public Node {
+    public:
+        XYZNode(uint32_t id);
+        ~XYZNode() = default;
+
+        std::string GetNodeFunctionName() override;
+    };
+
 } // OmbrageNodes
 
 #endif //EXPGE_SPLITNODE_H

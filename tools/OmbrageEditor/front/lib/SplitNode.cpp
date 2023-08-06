@@ -85,4 +85,21 @@ namespace OmbrageNodes {
 
         return funCall;
     }
+
+    XYZNode::XYZNode(uint32_t id) : Node(id) {
+        m_io = {
+                {NodePinMode::INPUT, NodePinTypes::VEC4, "Input", 0},
+                {NodePinMode::OUTPUT, NodePinTypes::VEC3, "Output", 1}
+        };
+
+        m_nodeName = "XYZ";
+
+        m_color[0] = 35.0f;
+        m_color[1] = 109.0f;
+        m_color[2] = 207.0f;
+    }
+
+    std::string XYZNode::GetNodeFunctionName() {
+        return "vector/xyz";
+    }
 } // OmbrageNodes

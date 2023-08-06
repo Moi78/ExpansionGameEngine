@@ -7,7 +7,7 @@ sources_glsl= $(wildcard $(PREFIX_SRC)/*.glsl)
 
 bin_glsl= $(sources_glsl:.glsl=.bin)
 mathfuncs= addf add2v add3v add4v addf2v addf3v addf4v mulf mul2v mul3v mul4v mulf2v mulf3v mulf4v
-splitfuncs= split4v split3v split2v
+splitfuncs= split4v split3v split2v xyz
 combinefuncs= combine4v combine3v combine2v
 texturefuncs= sampleTex
 
