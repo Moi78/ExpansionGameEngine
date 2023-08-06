@@ -42,16 +42,25 @@ void OmbrageNodes::MathNode::ValidateLinks() {
 
     std::vector<NodeConnection>::iterator it = m_connections.begin();
     for(auto& con : m_connections) {
-        auto othern = std::shared_ptr<Node>(con.OtherNode);
-        NodePinTypes tother = othern->GetPinType(con.src_pinID);
-        NodePinTypes tself = GetPinType(con.dst_pinID);
+        if(!con.OtherNode.expired()) {
+            auto othern = std::shared_ptr<Node>(con.OtherNode);
+            NodePinTypes tother = othern->GetPinType(con.src_pinID);
+            NodePinTypes tself = GetPinType(con.dst_pinID);
 
-        if(tother != tself) {
+            if (tother != tself) {
+                toDelete.push_back(it);
+
+                int locID = con.dst_pinID - m_id;
+                m_io[locID].type = NodePinTypes::OMNI;
+                m_io[2].type = locID == 1 ? m_io[0].type : m_io[1].type;
+            }
+        } else {
             toDelete.push_back(it);
 
             int locID = con.dst_pinID - m_id;
             m_io[locID].type = NodePinTypes::OMNI;
-            m_io[2].type = locID == 1 ? m_io[0].type : m_io[1].type;
+
+            m_io[2].type = m_io[locID == 1 ? 0 : 1].type;
         }
 
         it++;
@@ -67,12 +76,12 @@ OmbrageNodes::MathNode::EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compi
     std::shared_ptr<FuncGraphElem> evalBase;
 
     if(m_io.size() != 3) {
-        evalBase = Node::EvalFrom(locID, std::shared_ptr<SpirvCompiler>());
+        evalBase = Node::EvalFrom(locID, compiler);
     } else if((m_io[0].type != m_io[1].type) && (m_io[0].type != NodePinTypes::FLOAT)) {
         if(locID == 0) {
-            evalBase = Node::EvalFrom(locID + 1, std::shared_ptr<SpirvCompiler>());
+            evalBase = Node::EvalFrom(locID + 1, compiler);
         } else {
-            evalBase = Node::EvalFrom(locID - 1, std::shared_ptr<SpirvCompiler>());
+            evalBase = Node::EvalFrom(locID - 1, compiler);
         }
     } else {
         evalBase = Node::EvalFrom(locID, compiler);

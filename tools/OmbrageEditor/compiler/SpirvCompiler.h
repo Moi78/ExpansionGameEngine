@@ -49,6 +49,7 @@ public:
 
     void RegisterTexture(std::string texName);
     std::shared_ptr<SpirvDataWrapperBase> GetTextureW(std::string texName);
+    std::unordered_map<std::string, int> GetTextureNames();
 private:
     std::unordered_map<std::string, std::shared_ptr<SpirvFunction>> m_funcTable;
     std::unique_ptr<SpirvFunction> m_entry;

@@ -241,9 +241,9 @@ bool OmbrageUI::UI::CompileShader() {
 
     std::vector<uint32_t> progBin = m_compiler->CompileAll();
 
-    std::ofstream f("test.bin", std::ios::binary);
-    f.write((char*)progBin.data(), sizeof(uint32_t) * progBin.size());
-    f.close();
+    //std::ofstream f("test.bin", std::ios::binary);
+    //f.write((char*)progBin.data(), sizeof(uint32_t) * progBin.size());
+    //f.close();
 
     std::shared_ptr<RD_ShaderLoader> shaderLoader = m_game->GetRenderer()->GetAPI()->CreateShader();
     shaderLoader->LoadFragBinary(m_game->GetEngineContentPath() + "/shaders/bin/base.vspv", progBin);
@@ -251,15 +251,20 @@ bool OmbrageUI::UI::CompileShader() {
     std::shared_ptr<EXP_Level> lvl = m_game->GetCurrentLevel();
     auto model = lvl->GetCastedActorByName<EXP_StaticMeshActor>("sphere");
 
-    auto tex = m_game->GetRenderer()->GetAPI()->CreateTexture();
-
-    int data = 255;
-    tex->CreateTextureFromData(IMGFORMAT_R, 1, 1, &data);
-
     std::shared_ptr<EXP_Material> mat = model->GetMeshComponent()->GetMeshMaterial();
     mat->GetPipeline()->PurgeTextures();
     mat->GetPipeline()->SwapShader(shaderLoader);
-    mat->GetPipeline()->RegisterTexture(tex, 2);
+
+    std::unordered_map<std::string, int> texMap = m_compiler->GetTextureNames();
+
+    auto api = m_game->GetRenderer()->GetAPI();
+    for(auto& t : texMap) {
+        auto tex = api->CreateTexture();
+        tex->LoadTextureFromFile(t.first);
+
+        mat->GetPipeline()->RegisterTexture(tex, t.second);
+    }
+
     mat->GetPipeline()->RebuildPipeline();
 
     return true;

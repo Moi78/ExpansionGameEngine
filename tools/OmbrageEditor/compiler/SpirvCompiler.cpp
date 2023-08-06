@@ -160,3 +160,12 @@ std::shared_ptr<SpirvDataWrapperBase> SpirvCompiler::GetTextureW(std::string tex
 
     return wrapper;
 }
+
+std::unordered_map<std::string, int> SpirvCompiler::GetTextureNames() {
+    std::unordered_map<std::string, int> names;
+    for(auto& t : m_texTable) {
+        names[t.first] = t.second->binding;
+    }
+
+    return names;
+}
