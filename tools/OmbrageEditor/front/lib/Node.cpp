@@ -332,7 +332,6 @@ bool Node::ContainsLink(int linkID) {
 }
 
 void Node::DeleteLink(int linkID) {
-    std::vector<int> deleteInd;
     for(int i = 0; i < m_connections.size(); i++) {
         if(m_connections[i].linkID == linkID) {
             m_connections.erase(m_connections.begin() + i);
@@ -379,4 +378,20 @@ void Node::SetNodePos(ImVec2 pos) {
 void Node::LoadLinks(std::vector<NodeConnection> links) {
     m_connections.clear();
     m_connections = links;
+}
+
+void Node::TypePropagateLinks() {
+    for(auto& l : m_connections) {
+        LinkPostCheck(l.OtherNode.lock(), l.src_pinID, l.dst_pinID);
+    }
+}
+
+bool Node::IsPinDisconnected(int locID) {
+    for(auto& l : m_connections) {
+        if(l.dst_pinID == (locID + m_id)) {
+            return false;
+        }
+    }
+
+    return true;
 }

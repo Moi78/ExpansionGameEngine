@@ -55,7 +55,9 @@ namespace OmbrageUI {
 
         bool SaveGraphToFile(std::string filepath);
         bool LoadGraphFromFile(std::string filepath);
+
     private:
+        void ValidateAllLinks();
         void ManageContextMenu();
 
         std::vector<std::shared_ptr<Node>> m_nodes;

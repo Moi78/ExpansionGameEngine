@@ -38,36 +38,35 @@ bool OmbrageNodes::MathNode::ConnectPins(std::shared_ptr<Node> other, uint32_t s
 }
 
 void OmbrageNodes::MathNode::ValidateLinks() {
-    std::vector<std::vector<NodeConnection>::iterator> toDelete;
-
-    std::vector<NodeConnection>::iterator it = m_connections.begin();
-    for(auto& con : m_connections) {
-        if(!con.OtherNode.expired()) {
+    std::erase_if(m_connections, [this](NodeConnection& con) {
+        if (!con.OtherNode.expired()) {
             auto othern = std::shared_ptr<Node>(con.OtherNode);
             NodePinTypes tother = othern->GetPinType(con.src_pinID);
             NodePinTypes tself = GetPinType(con.dst_pinID);
 
             if (tother != tself) {
-                toDelete.push_back(it);
-
                 int locID = con.dst_pinID - m_id;
                 m_io[locID].type = NodePinTypes::OMNI;
                 m_io[2].type = locID == 1 ? m_io[0].type : m_io[1].type;
+
+                return true;
             }
         } else {
-            toDelete.push_back(it);
-
             int locID = con.dst_pinID - m_id;
             m_io[locID].type = NodePinTypes::OMNI;
 
             m_io[2].type = m_io[locID == 1 ? 0 : 1].type;
+
+            return true;
         }
 
-        it++;
-    }
+        return false;
+    });
 
-    for(auto del : toDelete) {
-        m_connections.erase(del);
+    for(auto& io : m_io) {
+        if(io.mode == NodePinMode::INPUT && IsPinDisconnected(io.pinID)) {
+            io.type = NodePinTypes::OMNI;
+        }
     }
 }
 
@@ -110,6 +109,20 @@ bool OmbrageNodes::ConstFloatNode::RenderProperties() {
     return false;
 }
 
+std::vector<char> OmbrageNodes::ConstFloatNode::SerializeProperties() {
+    std::vector<char> props(sizeof(float));
+    memcpy(props.data(), &m_float, sizeof(float));
+
+    return props;
+}
+
+void OmbrageNodes::ConstFloatNode::LoadProperties(std::vector<char> data) {
+    size_t dataSize = data.size();
+    memcpy(&m_float, data.data(), dataSize);
+
+    m_io[0].pinName = fmt::format("Const {:.2f}", m_float);
+}
+
 void OmbrageNodes::ConstFloatNode::MakeCtant() {
     auto fconst = std::make_shared<SPVFloatConstant>();
     fconst->data = m_float;
@@ -144,6 +157,20 @@ bool OmbrageNodes::ConstVec4Node::RenderProperties() {
     }
 
     return false;
+}
+
+std::vector<char> OmbrageNodes::ConstVec4Node::SerializeProperties() {
+    std::vector<char> props(4 * sizeof(float));
+    memcpy(props.data(), m_vec4, 4 * sizeof(float));
+
+    return props;
+}
+
+void OmbrageNodes::ConstVec4Node::LoadProperties(std::vector<char> data) {
+    size_t dataSize = data.size();
+    memcpy(&m_vec4, data.data(), dataSize);
+
+    m_io[0].pinName = fmt::format("Const {:0.2f} {:0.2f} {:0.2f} {:0.2f}", m_vec4[0], m_vec4[1], m_vec4[2], m_vec4[3]);
 }
 
 void OmbrageNodes::ConstVec4Node::MakeCtant() {
@@ -182,6 +209,20 @@ bool OmbrageNodes::ConstVec3Node::RenderProperties() {
     return false;
 }
 
+std::vector<char> OmbrageNodes::ConstVec3Node::SerializeProperties() {
+    std::vector<char> props(3 * sizeof(float));
+    memcpy(props.data(), m_vec3, 3 * sizeof(float));
+
+    return props;
+}
+
+void OmbrageNodes::ConstVec3Node::LoadProperties(std::vector<char> data) {
+    size_t dataSize = data.size();
+    memcpy(&m_vec3, data.data(), dataSize);
+
+    m_io[0].pinName = fmt::format("Const {:0.2f} {:0.2f} {:0.2f}", m_vec3[0], m_vec3[1], m_vec3[2]);
+}
+
 void OmbrageNodes::ConstVec3Node::MakeCtant() {
     auto fconst = std::make_shared<SPVVecConstant<3>>();
     std::copy(std::begin(m_vec3), std::end(m_vec3), fconst->data.begin());
@@ -209,6 +250,20 @@ bool OmbrageNodes::ConstVec2Node::RenderProperties() {
     }
 
     return false;
+}
+
+std::vector<char> OmbrageNodes::ConstVec2Node::SerializeProperties() {
+    std::vector<char> props(2 * sizeof(float));
+    memcpy(props.data(), m_vec2, 2 * sizeof(float));
+
+    return props;
+}
+
+void OmbrageNodes::ConstVec2Node::LoadProperties(std::vector<char> data) {
+    size_t dataSize = data.size();
+    memcpy(&m_vec2, data.data(), dataSize);
+
+    m_io[0].pinName = fmt::format("Const {:0.2f} {:0.2f}", m_vec2[0], m_vec2[1]);
 }
 
 void OmbrageNodes::ConstVec2Node::MakeCtant() {

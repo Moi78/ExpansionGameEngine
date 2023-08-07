@@ -58,6 +58,8 @@ namespace OmbrageUI {
         if(ImGui::IsKeyPressed(ImGuiKey_Delete, false) && editorHovered) {
             DeleteSelectedNodes();
             DeleteSelectedLinks();
+
+            ValidateAllLinks();
         }
     }
 
@@ -158,10 +160,6 @@ namespace OmbrageUI {
             return false;
         });
 
-        for(auto& n : m_nodes) {
-            n->ValidateLinks();
-        }
-
         delete[] selNodes;
     }
 
@@ -177,10 +175,6 @@ namespace OmbrageUI {
                     m_nodes[i]->DeleteLink(selLinks[a]);
                 }
             }
-        }
-
-        for(auto& n : m_nodes) {
-            n->ValidateLinks();
         }
     }
 
@@ -281,6 +275,7 @@ namespace OmbrageUI {
                     if (nt.name == prenode.nodeName) {
                         std::shared_ptr<Node> newNode = nt.factory(prenode.id);
                         newNode->SetNodePos(prenode.pos);
+                        newNode->LoadProperties(prenode.properties);
 
                         AddNode(newNode);
                     }
@@ -311,11 +306,23 @@ namespace OmbrageUI {
 
             std::shared_ptr<Node> realNode = GetNodeByID(prenode.id);
             realNode->LoadLinks(prenode.realLinks);
+
+            m_linkCount++;
+        }
+
+        for(auto& n : m_nodes) {
+            n->TypePropagateLinks();
         }
 
         m_next_id = m_nodes.back()->GetNodeID() + m_nodes.back()->GetNodeIDOffset();
 
         return true;
+    }
+
+    void NodeGraph_UI::ValidateAllLinks() {
+        for(auto& n : m_nodes) {
+            n->ValidateLinks();
+        }
     }
 
 } // OmbrageUI

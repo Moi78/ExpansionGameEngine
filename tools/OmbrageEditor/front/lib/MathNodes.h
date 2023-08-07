@@ -14,6 +14,8 @@ namespace OmbrageNodes {
         ConstFloatNode(uint32_t id);
 
         bool RenderProperties() override;
+        std::vector<char> SerializeProperties() override;
+        void LoadProperties(std::vector<char> data) override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
@@ -27,6 +29,8 @@ namespace OmbrageNodes {
         ConstVec4Node(uint32_t id);
 
         bool RenderProperties() override;
+        std::vector<char> SerializeProperties() override;
+        void LoadProperties(std::vector<char> data) override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
@@ -40,6 +44,8 @@ namespace OmbrageNodes {
         ConstVec3Node(uint32_t id);
 
         bool RenderProperties() override;
+        std::vector<char> SerializeProperties() override;
+        void LoadProperties(std::vector<char> data) override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
@@ -53,6 +59,8 @@ namespace OmbrageNodes {
         ConstVec2Node(uint32_t id);
 
         bool RenderProperties() override;
+        std::vector<char> SerializeProperties() override;
+        void LoadProperties(std::vector<char> data) override;
 
         std::string GetNodeFunctionName() override { return "ctant"; }
 
@@ -67,7 +75,7 @@ namespace OmbrageNodes {
             m_color[0] = 255.0;
         }
 
-        bool LinkPostCheck(std::shared_ptr<Node> other, uint32_t src, uint32_t dest);
+        bool LinkPostCheck(std::shared_ptr<Node> other, uint32_t src, uint32_t dest) override;
         bool ConnectPins(std::shared_ptr<Node> other, uint32_t srcID, uint32_t pID, uint32_t linkID) override;
 
         void ValidateLinks() override;

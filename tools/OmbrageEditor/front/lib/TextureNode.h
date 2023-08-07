@@ -23,6 +23,8 @@ namespace OmbrageNodes {
         std::string GetTexturePath() override;
 
         bool RenderProperties() override;
+        std::vector<char> SerializeProperties() override;
+        void LoadProperties(std::vector<char> data) override;
 
     private:
         std::string m_texPath;

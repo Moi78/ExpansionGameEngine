@@ -119,10 +119,15 @@ public:
 
     void Serialize(std::ofstream& bin_stream);
     virtual std::vector<char> SerializeProperties() { return {}; }
+    virtual void LoadProperties(std::vector<char> data) {}
 
     void SetNodePos(ImVec2 pos);
 
+    virtual bool LinkPostCheck(std::shared_ptr<Node> other, uint32_t src, uint32_t dest) { return true; }
     void LoadLinks(std::vector<NodeConnection> links);
+    void TypePropagateLinks();
+
+    bool IsPinDisconnected(int locID);
 
 protected:
     std::shared_ptr<SpirvDataWrapperBase> GetDefaultValue(std::shared_ptr<SpirvCompiler> compiler, NodePinTypes type);

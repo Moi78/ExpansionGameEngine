@@ -16,23 +16,23 @@ OmbrageUI::UI::UI(EXP_Game *game) {
     auto rootNode = std::make_shared<ShaderNode>(0);
     m_node_editor->AddNode(rootNode);
 
-    m_node_editor->AddNodeToCatalog("Basic Maths", "Add", [this](int id) { return std::make_shared<OmbrageNodes::AddNode>(id); });
-    m_node_editor->AddNodeToCatalog("Basic Maths", "Multiply", [this](int id) { return std::make_shared<OmbrageNodes::MultNode>(id); });
+    m_node_editor->AddNodeToCatalog("Basic Maths", "Add", [](int id) { return std::make_shared<OmbrageNodes::AddNode>(id); });
+    m_node_editor->AddNodeToCatalog("Basic Maths", "Multiply", [](int id) { return std::make_shared<OmbrageNodes::MultNode>(id); });
 
-    m_node_editor->AddNodeToCatalog("Constants", "Const Float", [this](int id) { return std::make_shared<OmbrageNodes::ConstFloatNode>(id); });
-    m_node_editor->AddNodeToCatalog("Constants", "Const Vec2", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec2Node>(id); });
-    m_node_editor->AddNodeToCatalog("Constants", "Const Vec3", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec3Node>(id); });
-    m_node_editor->AddNodeToCatalog("Constants", "Const Vec4", [this](int id) { return std::make_shared<OmbrageNodes::ConstVec4Node>(id); });
+    m_node_editor->AddNodeToCatalog("Constants", "Const Float", [](int id) { return std::make_shared<OmbrageNodes::ConstFloatNode>(id); });
+    m_node_editor->AddNodeToCatalog("Constants", "Const Vec2", [](int id) { return std::make_shared<OmbrageNodes::ConstVec2Node>(id); });
+    m_node_editor->AddNodeToCatalog("Constants", "Const Vec3", [](int id) { return std::make_shared<OmbrageNodes::ConstVec3Node>(id); });
+    m_node_editor->AddNodeToCatalog("Constants", "Const Vec4", [](int id) { return std::make_shared<OmbrageNodes::ConstVec4Node>(id); });
 
-    m_node_editor->AddNodeToCatalog("Texture", "Sample Texture", [this](int id) { return std::make_shared<OmbrageNodes::TextureNode>(id); });
+    m_node_editor->AddNodeToCatalog("Texture", "Sample Texture", [](int id) { return std::make_shared<OmbrageNodes::TextureNode>(id); });
 
-    m_node_editor->AddNodeToCatalog("Variables", "Normal", [this](int id) { return std::make_shared<OmbrageNodes::NormalNode>(id); });
-    m_node_editor->AddNodeToCatalog("Variables", "Position", [this](int id) { return std::make_shared<OmbrageNodes::PosNode>(id); });
-    m_node_editor->AddNodeToCatalog("Variables", "UV Coordinates", [this](int id) { return std::make_shared<OmbrageNodes::UVNode>(id); });
+    m_node_editor->AddNodeToCatalog("Variables", "Normal", [](int id) { return std::make_shared<OmbrageNodes::NormalNode>(id); });
+    m_node_editor->AddNodeToCatalog("Variables", "Position", [](int id) { return std::make_shared<OmbrageNodes::PosNode>(id); });
+    m_node_editor->AddNodeToCatalog("Variables", "UV Coordinates", [](int id) { return std::make_shared<OmbrageNodes::UVNode>(id); });
 
-    m_node_editor->AddNodeToCatalog("Vector", "Combine", [this](int id) { return std::make_shared<OmbrageNodes::CombineNode>(id); });
-    m_node_editor->AddNodeToCatalog("Vector", "Split", [this](int id) { return std::make_shared<OmbrageNodes::SplitNode>(id); });
-    m_node_editor->AddNodeToCatalog("Vector", "XYZ", [this](int id) { return std::make_shared<OmbrageNodes::XYZNode>(id); });
+    m_node_editor->AddNodeToCatalog("Vector", "Combine", [](int id) { return std::make_shared<OmbrageNodes::CombineNode>(id); });
+    m_node_editor->AddNodeToCatalog("Vector", "Split", [](int id) { return std::make_shared<OmbrageNodes::SplitNode>(id); });
+    m_node_editor->AddNodeToCatalog("Vector", "XYZ", [](int id) { return std::make_shared<OmbrageNodes::XYZNode>(id); });
 }
 
 OmbrageUI::UI::~UI() {

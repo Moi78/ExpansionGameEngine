@@ -46,4 +46,13 @@ namespace OmbrageNodes {
         return fcall;
     }
 
+    std::vector<char> TextureNode::SerializeProperties() {
+        std::vector<char> path(m_texPath.begin(), m_texPath.end());
+        return path;
+    }
+
+    void TextureNode::LoadProperties(std::vector<char> data) {
+        m_texPath = std::string(data.begin(), data.end());
+    }
+
 } // OmbrageNodes
