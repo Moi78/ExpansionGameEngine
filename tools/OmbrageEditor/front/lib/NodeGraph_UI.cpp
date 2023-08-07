@@ -1,4 +1,5 @@
 #include "NodeGraph_UI.h"
+#include "ShaderNode.h"
 
 namespace OmbrageUI {
     NodeGraph_UI::NodeGraph_UI() {
@@ -191,6 +192,130 @@ namespace OmbrageUI {
         }
 
         return {};
+    }
+
+    bool NodeGraph_UI::SaveGraphToFile(std::string filepath) {
+        std::ofstream f(filepath, std::ios::binary);
+        if(!f.is_open()) {
+            return false;
+        }
+
+        uint32_t nodeCount = m_nodes.size();
+        f.write((char*)&nodeCount, sizeof(uint32_t));
+
+        for(auto& n : m_nodes) {
+            n->Serialize(f);
+        }
+
+        f.close();
+
+        return true;
+    }
+
+    bool NodeGraph_UI::LoadGraphFromFile(std::string filepath) {
+        std::ifstream f(filepath, std::ios::binary);
+        if(!f.is_open()) {
+            return false;
+        }
+
+        m_nodes.clear();
+
+        uint32_t nodeCount;
+        f.read((char*)&nodeCount, sizeof(uint32_t));
+
+        std::vector<PreLoadedNode> nodes;
+        for(int i = 0; i < nodeCount; i++) {
+            PreLoadedNode n;
+
+            // Node Name
+            uint32_t nameSize;
+            f.read((char*)&nameSize, sizeof(uint32_t));
+
+            char* nodeName = new char[nameSize + 1];
+            f.read(nodeName, nameSize);
+            nodeName[nameSize] = '\0';
+
+            n.nodeName = std::move(nodeName);
+
+            // Node ID
+            f.read((char*)&n.id, sizeof(uint32_t));
+
+            // Links
+            uint32_t linkSize;
+            f.read((char*)&linkSize, sizeof(uint32_t));
+            for(int a = 0; a < linkSize; a++) {
+                NodeConnection_Serializable l;
+                f.read((char*)&l, sizeof(NodeConnection_Serializable));
+
+                n.links.push_back(l);
+            }
+
+            // Node Pos
+            f.read((char*)&n.pos, sizeof(ImVec2));
+
+            // Properties
+            uint32_t propsize;
+            f.read((char*)&propsize, sizeof(uint32_t));
+
+            n.properties.resize(propsize);
+            f.read(n.properties.data(), propsize);
+
+            nodes.push_back(n);
+        }
+
+        f.close();
+
+        // Instanciating actual nodes
+        for(auto& prenode : nodes) {
+            if(prenode.id == 0) {
+                std::shared_ptr<Node> newNode = std::make_shared<ShaderNode>(0);
+                newNode->SetNodePos(prenode.pos);
+
+                AddNode(newNode);
+
+                continue;
+            }
+
+            for (auto &c: m_catalog) {
+                for (auto &nt: c.items) {
+                    if (nt.name == prenode.nodeName) {
+                        std::shared_ptr<Node> newNode = nt.factory(prenode.id);
+                        newNode->SetNodePos(prenode.pos);
+
+                        AddNode(newNode);
+                    }
+                }
+            }
+        }
+
+        for(auto& prenode : nodes) {
+            // Resolve Links
+            for (auto &l: prenode.links) {
+                uint32_t otherID = l.otherNodeID;
+                auto otherNodeIT = std::find_if(m_nodes.begin(), m_nodes.end(), [otherID](std::shared_ptr<Node>& n) {
+                    return n->GetNodeID() == otherID;
+                });
+
+                if(otherNodeIT == m_nodes.end()) {
+                    return false;
+                }
+
+                NodeConnection realLink{};
+                realLink.linkID = l.linkID;
+                realLink.src_pinID = l.src_pinID;
+                realLink.dst_pinID = l.dst_pinID;
+                realLink.OtherNode = std::weak_ptr<Node>(*otherNodeIT);
+
+                prenode.realLinks.push_back(realLink);
+            }
+
+            std::shared_ptr<Node> realNode = GetNodeByID(prenode.id);
+            realNode->LoadLinks(prenode.realLinks);
+        }
+
+        m_next_id = m_nodes.back()->GetNodeID() + m_nodes.back()->GetNodeIDOffset();
+
+        return true;
     }
 
 } // OmbrageUI

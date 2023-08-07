@@ -24,6 +24,17 @@ namespace OmbrageUI {
         std::vector<NodeCatalogItem> items;
     };
 
+    struct PreLoadedNode {
+        std::string nodeName;
+        uint32_t id;
+
+        std::vector<NodeConnection_Serializable> links;
+        std::vector<NodeConnection> realLinks;
+        ImVec2 pos;
+
+        std::vector<char> properties;
+    };
+
     class NodeGraph_UI {
     public:
         NodeGraph_UI();
@@ -41,6 +52,9 @@ namespace OmbrageUI {
 
         std::vector<std::shared_ptr<Node>>& GetNodes() { return m_nodes; }
         std::shared_ptr<Node> GetNodeByID(int id);
+
+        bool SaveGraphToFile(std::string filepath);
+        bool LoadGraphFromFile(std::string filepath);
     private:
         void ManageContextMenu();
 

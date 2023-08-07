@@ -52,6 +52,15 @@ void OmbrageUI::UI::RenderImGui() {
     DockSpaceHandling();
     MainMenuBar();
 
+    ImGuiIO& io = ImGui::GetIO();
+    if(io.KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_S, false)) {
+        Save();
+    }
+
+    if(io.KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_O, false)) {
+        Open();
+    }
+
     if(ImGui::IsKeyPressed(ImGuiKey_R, false)) {
         if(!ImGui::IsPopupOpen("Recompiling")) {
             ImGui::OpenPopup("Recompiling");
@@ -168,7 +177,14 @@ void OmbrageUI::UI::MainMenuBar() {
     ImGui::BeginMainMenuBar();
 
     if(ImGui::BeginMenu("File")) {
-        ImGui::MenuItem("Save", "CTRL+S");
+        if(ImGui::MenuItem("Save", "CTRL+S")) {
+            Save();
+        }
+
+        if(ImGui::MenuItem("Open", "CTRL+O")) {
+            Open();
+        }
+
         ImGui::EndMenu();
     }
 
@@ -269,4 +285,12 @@ bool OmbrageUI::UI::CompileShader() {
     mat->GetPipeline()->RebuildPipeline();
 
     return true;
+}
+
+void OmbrageUI::UI::Save() {
+    m_node_editor->SaveGraphToFile("testgraph.exmtl");
+}
+
+void OmbrageUI::UI::Open() {
+    m_node_editor->LoadGraphFromFile("testgraph.exmtl");
 }

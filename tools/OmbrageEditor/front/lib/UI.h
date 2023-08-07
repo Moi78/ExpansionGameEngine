@@ -47,6 +47,9 @@ namespace OmbrageUI {
         bool CompileLoadDeps();
         bool CompileShader();
 
+        void Save();
+        void Open();
+
         EXP_Game* m_game;
 
         std::unique_ptr<NodeGraph_UI> m_node_editor;

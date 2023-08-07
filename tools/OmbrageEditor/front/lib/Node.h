@@ -45,6 +45,15 @@ bool TypeCompatibility(NodePinTypes a, NodePinTypes b);
 
 std::string GetTypeSuffix(NodePinTypes t);
 
+struct NodeConnection_Serializable {
+    uint32_t otherNodeID;
+
+    uint32_t dst_pinID;
+    uint32_t src_pinID;
+
+    uint32_t linkID;
+};
+
 struct Node;
 struct NodeConnection {
     std::weak_ptr<Node> OtherNode;
@@ -53,6 +62,8 @@ struct NodeConnection {
     uint32_t src_pinID;
 
     uint32_t linkID;
+
+    NodeConnection_Serializable ToSerializable() const;
 };
 
 struct Constant {
@@ -105,6 +116,13 @@ public:
     virtual std::shared_ptr<FuncGraphElem> EvalFrom(int locID, std::shared_ptr<SpirvCompiler> compiler);
 
     virtual std::shared_ptr<SpOpFunCall> MakeFunctionCall(std::shared_ptr<SpirvCompiler> compiler, std::string funcName, std::vector<std::shared_ptr<SpirvDataWrapperBase>> args, int outID);
+
+    void Serialize(std::ofstream& bin_stream);
+    virtual std::vector<char> SerializeProperties() { return {}; }
+
+    void SetNodePos(ImVec2 pos);
+
+    void LoadLinks(std::vector<NodeConnection> links);
 
 protected:
     std::shared_ptr<SpirvDataWrapperBase> GetDefaultValue(std::shared_ptr<SpirvCompiler> compiler, NodePinTypes type);

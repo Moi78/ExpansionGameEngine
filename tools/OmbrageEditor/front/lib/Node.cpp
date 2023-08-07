@@ -58,6 +58,12 @@ std::string GetTypeSuffix(NodePinTypes t) {
     }
 }
 
+NodeConnection_Serializable NodeConnection::ToSerializable() const {
+    uint32_t otherID = OtherNode.lock()->GetNodeID();
+
+    return {otherID, dst_pinID, src_pinID, linkID};
+}
+
 // -----------------------------------------------------
 
 Node::Node(uint32_t id) : m_id(id) {
@@ -333,4 +339,44 @@ void Node::DeleteLink(int linkID) {
             break;
         }
     }
+}
+
+void Node::Serialize(std::ofstream &bin_stream) {
+    // Node name
+    uint32_t nameSize = m_nodeName.size();
+
+    bin_stream.write(reinterpret_cast<char*>(&nameSize), sizeof(uint32_t));
+    bin_stream.write(m_nodeName.c_str(), m_nodeName.size());
+
+    // Node ID
+    bin_stream.write(reinterpret_cast<char*>(&m_id), sizeof(uint32_t));
+
+    // Links
+    uint32_t conSize = m_connections.size();
+    bin_stream.write(reinterpret_cast<char*>(&conSize), sizeof(uint32_t));
+
+    for(auto& l : m_connections) {
+        NodeConnection_Serializable ser = l.ToSerializable();
+        bin_stream.write(reinterpret_cast<char*>(&ser), sizeof(NodeConnection_Serializable));
+    }
+
+    // Node Pos
+    ImVec2 pos = ImNodes::GetNodeEditorSpacePos(m_id);
+    bin_stream.write(reinterpret_cast<char*>(&pos), sizeof(ImVec2));
+
+    // Properties
+    std::vector<char> prop = SerializeProperties();
+    uint32_t propSize = prop.size();
+
+    bin_stream.write(reinterpret_cast<char*>(&propSize), sizeof(uint32_t));
+    bin_stream.write(prop.data(), prop.size());
+}
+
+void Node::SetNodePos(ImVec2 pos) {
+    ImNodes::SetNodeEditorSpacePos(m_id, pos);
+}
+
+void Node::LoadLinks(std::vector<NodeConnection> links) {
+    m_connections.clear();
+    m_connections = links;
 }
