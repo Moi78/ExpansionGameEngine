@@ -288,9 +288,15 @@ bool OmbrageUI::UI::CompileShader() {
 }
 
 void OmbrageUI::UI::Save() {
-    m_node_editor->SaveGraphToFile("testgraph.exmtl");
+    std::string filePath = pfd::save_file("Save File", "", {"Expansion Material Files", "*.exmtl"}).result();
+    if(!filePath.empty()) {
+        m_node_editor->SaveGraphToFile(filePath);
+    }
 }
 
 void OmbrageUI::UI::Open() {
-    m_node_editor->LoadGraphFromFile("testgraph.exmtl");
+    std::vector<std::string> filePath = pfd::open_file("Open File", "", {"Expansion Material Files", "*.exmtl"}).result();
+    if(!filePath.empty()) {
+        m_node_editor->LoadGraphFromFile(filePath[0]);
+    }
 }

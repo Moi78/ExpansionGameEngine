@@ -11,6 +11,7 @@
 #include <RD_Texture.h>
 
 #include <SpirvCompiler.h>
+#include <FunctionGraph.h>
 
 #include "NodeGraph_UI.h"
 
@@ -19,9 +20,10 @@
 #include "SplitNode.h"
 #include "CombineNode.h"
 #include "ShaderInNode.h"
+
 #include "TextureNode.h"
 
-#include "FunctionGraph.h"
+#include "third_party/portable-file-dialogs.h"
 
 #define IMVEC2_DIFF(a, b) ((a.x != b.x) || (a.y != b.y))
 
