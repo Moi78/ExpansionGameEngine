@@ -283,6 +283,7 @@ namespace OmbrageUI {
             }
         }
 
+        m_linkCount = 0;
         for(auto& prenode : nodes) {
             // Resolve Links
             for (auto &l: prenode.links) {
@@ -302,12 +303,14 @@ namespace OmbrageUI {
                 realLink.OtherNode = std::weak_ptr<Node>(*otherNodeIT);
 
                 prenode.realLinks.push_back(realLink);
+
+                if(realLink.linkID > m_linkCount) {
+                    m_linkCount = realLink.linkID + 1;
+                }
             }
 
             std::shared_ptr<Node> realNode = GetNodeByID(prenode.id);
             realNode->LoadLinks(prenode.realLinks);
-
-            m_linkCount++;
         }
 
         for(auto& n : m_nodes) {

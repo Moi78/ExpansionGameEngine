@@ -8,6 +8,11 @@
 
 namespace OmbrageNodes {
 
+    struct CombineProperties {
+        NodePinTypes outType;
+        int comboIDX;
+    };
+
     class CombineNode : public Node{
     public:
         CombineNode(uint32_t id);
@@ -17,14 +22,13 @@ namespace OmbrageNodes {
         uint32_t GetNodeIDOffset() override { return 5; }
 
         bool RenderProperties() override;
+        std::vector<char> SerializeProperties() override;
+        void LoadProperties(std::vector<char> data) override;
 
     private:
         void UpdateType();
 
-        NodePinTypes m_outType;
-
-        // Properties
-        int m_comboIDX;
+        CombineProperties m_properties;
     };
 
 } // OmbrageNodes

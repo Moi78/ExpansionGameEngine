@@ -13,8 +13,8 @@ namespace OmbrageNodes {
             m_io.push_back({NodePinMode::INPUT, NodePinTypes::FLOAT, letter_lut[i], (uint32_t)i + 1});
         }
 
-        m_outType = NodePinTypes::VEC3;
-        m_comboIDX = 1;
+        m_properties.outType = NodePinTypes::VEC3;
+        m_properties.comboIDX = 1;
 
         m_color[0] = 35.0f;
         m_color[1] = 109.0f;
@@ -22,14 +22,14 @@ namespace OmbrageNodes {
     }
 
     std::string CombineNode::GetNodeFunctionName() {
-        return fmt::format("vector/combine{}", GetTypeSuffix(m_outType));
+        return fmt::format("vector/combine{}", GetTypeSuffix(m_properties.outType));
     }
 
     bool CombineNode::RenderProperties() {
         if(ImGui::CollapsingHeader(fmt::format("Combine##{}", m_id).c_str())) {
-            if(ImGui::Combo(fmt::format("Output type##{}", m_id).c_str(), &m_comboIDX, "Vector 2\0Vector 3\0Vector 4\0\0")) {
+            if(ImGui::Combo(fmt::format("Output type##{}", m_id).c_str(), &m_properties.comboIDX, "Vector 2\0Vector 3\0Vector 4\0\0")) {
                 std::array<NodePinTypes, 3> typeChoice = {NodePinTypes::VEC2, NodePinTypes::VEC3, NodePinTypes::VEC4};
-                m_outType = typeChoice[m_comboIDX];
+                m_properties.outType = typeChoice[m_properties.comboIDX];
 
                 UpdateType();
                 return true;
@@ -41,10 +41,10 @@ namespace OmbrageNodes {
 
     void CombineNode::UpdateType() {
         m_io.clear();
-        m_io.push_back({NodePinMode::OUTPUT, m_outType, "Vector Output", 0});
+        m_io.push_back({NodePinMode::OUTPUT, m_properties.outType, "Vector Output", 0});
 
         int compCount = 0;
-        switch (m_outType) {
+        switch (m_properties.outType) {
             case NodePinTypes::VEC2:
                 compCount = 2;
                 break;
@@ -79,5 +79,18 @@ namespace OmbrageNodes {
         for(auto& link : linkGarbage) {
             m_connections.erase(m_connections.begin() + link);
         }
+    }
+
+    std::vector<char> CombineNode::SerializeProperties() {
+        std::vector<char> data(sizeof(CombineProperties));
+        memcpy(data.data(), &m_properties, sizeof(CombineProperties));
+
+        return data;
+    }
+
+    void CombineNode::LoadProperties(std::vector<char> data) {
+        memcpy(&m_properties, data.data(), data.size());
+
+        UpdateType();
     }
 } // OmbrageNodes
