@@ -180,3 +180,13 @@ void EXP_Game::AddImGuiClass(std::shared_ptr<EXP_ImGuiClass> gui_class) {
 
     m_imgui_classes.push_back(gui_class);
 }
+
+void EXP_Game::GameArguments(int argc, char **argv) {
+    for(int i = 0; i < argc; i++) {
+        m_gameArguments.push_back(std::string(argv[i]));
+    }
+}
+
+std::vector<std::string> EXP_Game::GetGameArguments() {
+    return m_gameArguments;
+}

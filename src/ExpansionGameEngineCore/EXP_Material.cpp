@@ -43,11 +43,24 @@ bool EXP_Material::LoadMaterial(std::string material_file, bool enginePath, bool
         vertPath = m_game->GetEngineContentPath() + "/shaders/bin/base.vspv";
     }
 
+    bool hasEmbeddedBin = root.get("embedded_bin", false).asBool();
+
     auto shaderLoader = m_game->GetRenderer()->GetAPI()->CreateShader();
-    bool result = shaderLoader->CompileShaderFromFile(
-            vertPath,
-            rootPath + root["spirv_file"].asString()
-    );
+    bool result = false;
+
+    if(hasEmbeddedBin) {
+        std::vector<uint32_t> progBin;
+        for(auto& val : root["spirv_bin"]) {
+            progBin.push_back(val.asInt());
+        }
+
+        result = shaderLoader->LoadFragBinary(vertPath, progBin);
+    } else {
+        result = shaderLoader->CompileShaderFromFile(
+                vertPath,
+                rootPath + root["spirv_file"].asString()
+        );
+    }
 
     if(!result) {
         std::cout << "Failed to load shader file " << root["spirv_file"].asString() << std::endl;

@@ -56,6 +56,9 @@ namespace OmbrageUI {
         bool SaveGraphToFile(std::string filepath);
         bool LoadGraphFromFile(std::string filepath);
 
+        void ResetEditor();
+
+        bool IsEditorHovered();
     private:
         void ValidateAllLinks();
         void ManageContextMenu();
@@ -65,6 +68,8 @@ namespace OmbrageUI {
 
         int m_linkCount;
         int m_next_id;
+
+        bool m_isEditorHovered;
     };
 
 } // OmbrageUI

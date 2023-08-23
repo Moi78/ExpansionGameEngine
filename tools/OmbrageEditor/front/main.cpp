@@ -13,7 +13,7 @@
 //Enabling Nvidia Optimus
 extern "C" { uint32_t NvOptimusEnablement = 0x00000001; }
 
-int main() {
+int main(int argc, char* argv[]) {
     std::cout << "OMBRAGE MATERIAL EDITOR" << std::endl;
 
     EXP_GameInfo gameinfo{};
@@ -33,6 +33,7 @@ int main() {
     std::shared_ptr<RaindropRenderer> rndr = std::make_shared<RaindropRenderer>(std::shared_ptr<RD_API>(api), std::shared_ptr<RD_RenderingPipeline>(rpline), gameinfo.WindowWidth, gameinfo.WindowHeight, "Ombrage Editor");
 
     std::unique_ptr<EXP_Game> game = std::make_unique<EXP_Game>(rndr, gameinfo);
+    game->GameArguments(argc, argv);
 
     if(!game->InitEngine()) {
         std::cerr << "ERROR: Failed to init engine" << std::endl;

@@ -49,8 +49,11 @@ namespace OmbrageUI {
         bool CompileLoadDeps();
         bool CompileShader();
 
+        void New();
         void Save();
+        void SaveAs();
         void Open();
+        void Export();
 
         EXP_Game* m_game;
 
@@ -60,7 +63,17 @@ namespace OmbrageUI {
         ImVec2 m_oldPos;
 
         std::shared_ptr<SpirvCompiler> m_compiler;
+
+        std::vector<uint32_t> m_lastCompiledData;
+        std::unordered_map<std::string, int> m_texmap;
+
         CompileState m_cstate;
+
+        std::string m_projContentRoot;
+
+        bool m_isFileLoaded;
+        bool m_isFileSaved;
+        std::string m_savepath;
     };
 }
 

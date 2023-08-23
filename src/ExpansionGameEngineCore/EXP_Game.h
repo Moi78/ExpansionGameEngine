@@ -33,6 +33,10 @@ public:
     std::string GetGameContentPath();
     std::string GetEngineContentPath();
 
+    // CLI Arguments
+    void GameArguments(int argc, char* argv[]);
+    std::vector<std::string> GetGameArguments();
+
     //Engine control
     bool InitEngine();
     void RunGame();
@@ -81,6 +85,8 @@ private:
     std::vector<std::shared_ptr<EXP_ImGuiClass>> m_imgui_classes;
 
     int m_last_skel_offset;
+
+    std::vector<std::string> m_gameArguments;
 };
 
 

@@ -5,6 +5,8 @@ namespace OmbrageUI {
     NodeGraph_UI::NodeGraph_UI() {
         m_linkCount = 0;
         m_next_id = 0;
+
+        m_isEditorHovered = false;
     }
 
     NodeGraph_UI::~NodeGraph_UI() {
@@ -30,7 +32,7 @@ namespace OmbrageUI {
             node->RenderLinks();
         }
 
-        bool editorHovered = ImNodes::IsEditorHovered();
+        m_isEditorHovered = ImNodes::IsEditorHovered();
         ImNodes::EndNodeEditor();
 
         int linkID_start, linkID_end;
@@ -55,7 +57,7 @@ namespace OmbrageUI {
             }
         }
 
-        if(ImGui::IsKeyPressed(ImGuiKey_Delete, false) && editorHovered) {
+        if(ImGui::IsKeyPressed(ImGuiKey_Delete, false) && m_isEditorHovered) {
             DeleteSelectedNodes();
             DeleteSelectedLinks();
 
@@ -326,6 +328,16 @@ namespace OmbrageUI {
         for(auto& n : m_nodes) {
             n->ValidateLinks();
         }
+    }
+
+    void NodeGraph_UI::ResetEditor() {
+        m_nodes.clear();
+        m_linkCount = 0;
+        m_next_id = 0;
+    }
+
+    bool NodeGraph_UI::IsEditorHovered() {
+        return m_isEditorHovered;
     }
 
 } // OmbrageUI

@@ -39,7 +39,7 @@
     {
       "type": "mesh",
       "mesh": "/mdl/plane.msh",
-      "material": "/mat/mat_test.json",
+      "material": "/mat/mat_weird.json",
       "tag": "ground",
 
       "pos": [0.0, 0.0, -1.0],

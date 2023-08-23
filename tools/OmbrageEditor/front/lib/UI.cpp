@@ -13,6 +13,26 @@ OmbrageUI::UI::UI(EXP_Game *game) {
 
     m_cstate = CompileState::DONE;
 
+    m_isFileLoaded = false;
+    m_isFileSaved = false;
+
+    m_projContentRoot = "/";
+    std::vector<std::string> args = game->GetGameArguments();
+    for(int i = 0; i < args.size(); i++) {
+        if(args[i] == "--project-content") {
+            if((i + 1) < args.size()) {
+                m_projContentRoot = args[i + 1];
+            }
+        }
+    }
+
+    if(!std::filesystem::exists(m_projContentRoot) || !std::filesystem::is_directory(m_projContentRoot)) {
+        std::cerr << "ERROR: Bad project content root. Please give an existing directory." << std::endl;
+        m_projContentRoot = "/";
+    }
+
+    std::cout << "Using " << m_projContentRoot << " as project content root" << std::endl;
+
     auto rootNode = std::make_shared<ShaderNode>(0);
     m_node_editor->AddNode(rootNode);
 
@@ -61,7 +81,15 @@ void OmbrageUI::UI::RenderImGui() {
         Open();
     }
 
-    if(ImGui::IsKeyPressed(ImGuiKey_R, false)) {
+    if(io.KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_E, false)) {
+        Export();
+    }
+
+    if(io.KeyCtrl && ImGui::IsKeyPressed(ImGuiKey_N, false)) {
+        New();
+    }
+
+    if(ImGui::IsKeyPressed(ImGuiKey_R, false) && m_node_editor->IsEditorHovered()) {
         if(!ImGui::IsPopupOpen("Recompiling")) {
             ImGui::OpenPopup("Recompiling");
 
@@ -177,12 +205,28 @@ void OmbrageUI::UI::MainMenuBar() {
     ImGui::BeginMainMenuBar();
 
     if(ImGui::BeginMenu("File")) {
-        if(ImGui::MenuItem("Save", "CTRL+S")) {
-            Save();
+        if(ImGui::MenuItem("New", "CTRL+N")) {
+            New();
         }
 
         if(ImGui::MenuItem("Open", "CTRL+O")) {
             Open();
+        }
+
+        ImGui::Separator();
+
+        if(ImGui::MenuItem("Save", "CTRL+S")) {
+            Save();
+        }
+
+        if(ImGui::MenuItem("Save As", "CTRL+MAJ+S")) {
+            SaveAs();
+        }
+
+        ImGui::Separator();
+
+        if(ImGui::MenuItem("Export", "CTRL+E")) {
+            Export();
         }
 
         ImGui::EndMenu();
@@ -257,10 +301,7 @@ bool OmbrageUI::UI::CompileShader() {
     }
 
     std::vector<uint32_t> progBin = m_compiler->CompileAll();
-
-    //std::ofstream f("test.bin", std::ios::binary);
-    //f.write((char*)progBin.data(), sizeof(uint32_t) * progBin.size());
-    //f.close();
+    m_lastCompiledData = progBin;
 
     std::shared_ptr<RD_ShaderLoader> shaderLoader = m_game->GetRenderer()->GetAPI()->CreateShader();
     shaderLoader->LoadFragBinary(m_game->GetEngineContentPath() + "/shaders/bin/base.vspv", progBin);
@@ -272,12 +313,13 @@ bool OmbrageUI::UI::CompileShader() {
     mat->GetPipeline()->PurgeTextures();
     mat->GetPipeline()->SwapShader(shaderLoader);
 
-    std::unordered_map<std::string, int> texMap = m_compiler->GetTextureNames();
+    m_texmap.clear();
+    m_texmap = m_compiler->GetTextureNames();
 
     auto api = m_game->GetRenderer()->GetAPI();
-    for(auto& t : texMap) {
+    for(auto& t : m_texmap) {
         auto tex = api->CreateTexture();
-        tex->LoadTextureFromFile(t.first);
+        tex->LoadTextureFromFile(m_projContentRoot + t.first);
 
         mat->GetPipeline()->RegisterTexture(tex, t.second);
     }
@@ -288,15 +330,88 @@ bool OmbrageUI::UI::CompileShader() {
 }
 
 void OmbrageUI::UI::Save() {
-    std::string filePath = pfd::save_file("Save File", "", {"Expansion Material Files", "*.exmtl"}).result();
+    std::string filePath;
+    if(!m_isFileLoaded) {
+        filePath = pfd::save_file(
+                "Save File", m_projContentRoot, {"Expansion Material Files", "*.exmtl"}
+        ).result();
+
+        m_savepath = filePath;
+        m_isFileLoaded = true;
+
+    } else {
+        filePath = m_savepath;
+    }
+
     if(!filePath.empty()) {
         m_node_editor->SaveGraphToFile(filePath);
     }
 }
 
 void OmbrageUI::UI::Open() {
-    std::vector<std::string> filePath = pfd::open_file("Open File", "", {"Expansion Material Files", "*.exmtl"}).result();
+    std::vector<std::string> filePath = pfd::open_file("Open File", m_projContentRoot, {"Expansion Material Files", "*.exmtl"}).result();
     if(!filePath.empty()) {
         m_node_editor->LoadGraphFromFile(filePath[0]);
+
+        m_isFileLoaded = true;
+        m_savepath = filePath[0];
     }
+}
+
+void OmbrageUI::UI::Export() {
+    if(CompileLoadDeps()) {
+        if(!CompileShader()) {
+            std::cerr << "ERROR: Failed to compile shader." << std::endl;
+            return;
+        }
+    } else {
+        return;
+    }
+
+    std::string filePath = pfd::save_file("Export Shader", m_projContentRoot, {"JSON Files", "*.json"}).result();
+    if(filePath.empty()) {
+        return;
+    }
+
+    Json::Value root;
+    root["embedded_bin"] = true;
+
+    for(int i = 0; i < m_lastCompiledData.size(); i++) {
+        root["spirv_bin"][i] = m_lastCompiledData[i];
+    }
+
+    int i = 0;
+    for(auto& t : m_texmap) {
+        Json::Value tex;
+        tex["path"] = t.first;
+        tex["binding"] = t.second;
+
+        root["texs"][i] = tex;
+
+        i++;
+    }
+
+    std::ofstream file(filePath, std::ios::binary);
+    if(!file.is_open()) {
+        std::cerr << "ERROR: Unable to create file." << std::endl;
+    }
+
+    file << root;
+    file.close();
+}
+
+void OmbrageUI::UI::New() {
+    auto ret = pfd::message("New Material", "Do you really want to create a new blank material ?", pfd::choice::yes_no, pfd::icon::question).result();
+    if(ret == pfd::button::yes) {
+        m_node_editor->ResetEditor();
+
+        auto shaderNode = std::make_shared<ShaderNode>(0);
+        m_node_editor->AddNode(shaderNode);
+
+        ImNodes::SetNodeEditorSpacePos(0, ImVec2(0, 0));
+    }
+}
+
+void OmbrageUI::UI::SaveAs() {
+
 }
