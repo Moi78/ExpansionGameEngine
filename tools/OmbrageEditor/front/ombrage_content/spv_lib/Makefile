@@ -10,10 +10,11 @@ mathfuncs= addf add2v add3v add4v addf2v addf3v addf4v mulf mul2v mul3v mul4v mu
 splitfuncs= split4v split3v split2v xyz
 combinefuncs= combine4v combine3v combine2v
 texturefuncs= sampleTex
+bump= bump
 
 glsl: $(bin_glsl)
 
-all: glsl $(mathfuncs) $(splitfuncs) $(combinefuncs) $(texturefuncs)
+all: glsl $(mathfuncs) $(splitfuncs) $(combinefuncs) $(texturefuncs) $(bump)
 
 %.bin: %.glsl
 	$(GLSL) -fshader-stage=fragment -c $< -o $(PREFIX_BIN)/$(notdir $@)
@@ -33,3 +34,7 @@ $(combinefuncs):
 $(texturefuncs):
 	mkdir -p texture
 	$(EXTRACT) bin/texture.bin $@ texture/$@.func
+
+$(bump):
+	mkdir -p texture
+	$(EXTRACT) bin/bump.bin $@ texture/$@.func

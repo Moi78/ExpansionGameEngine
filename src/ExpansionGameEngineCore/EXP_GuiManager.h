@@ -2,7 +2,7 @@
 #define EXPGE_EXP_GUIMANAGER_H
 
 #include <ft2build.h>
-#include FT_FREETYPE_H
+#include <freetype/freetype.h>
 
 #include <RD_API.h>
 #include <RD_Quad.h>

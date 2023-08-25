@@ -5,31 +5,10 @@ EXPGE_LEVEL_CODE(GameLevel);
 GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     std::cout << "INSTANCIATED" << std::endl;
 
-    //game->GetInputHandler()->SetCursorVisibility(false);
+    game->GetInputHandler()->SetCursorVisibility(false);
 
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
-
-    m_ft = game->GetGuiManager()->ConstructFont(game, "/fonts/simplysans.ttf", false, EXP_FontCacheFlags::OVER_TIME);
-    m_ft->LoadFont();
-
-
-    auto text = std::make_shared<EXP_GuiTextStatic>(game, RD_Rect{200, 100, 0, 0}, m_ft, vec4(0.2f, 0.0f, 1.0f, 1.0f));
-    text->ConstructText("Hellog World\nYYYYY\nNew freaking line of text\nMultiline is kewl", 25);
-
-    auto btn2 = std::make_shared<EXP_GuiButton>(game, RD_Rect{500, 300, 300, 100}, "/tex/test.jpg", "/tex/grad.png", "/tex/test.jpg");
-
-    auto win = std::make_shared<EXP_GuiWindow>(game, RD_Rect{500, 100, 500, 400}, "Hello world", EXP_WindowFlags::WIN_DRAGABLE);
-
-    auto btn = std::make_shared<EXP_GuiButton>(game, RD_Rect{10, 10, 150, 100}, "/tex/grad.png", "/tex/test.jpg", "/tex/grad.png", win);
-    auto btnText = std::make_shared<EXP_GuiTextStatic>(game, RD_Rect{0, 0, 0, 0}, m_ft, vec4(1.0f, 0.0f, 0.2f, 1.0f), btn);
-    btnText->ConstructText("This is a button", 30);
-
-    game->GetGuiManager()->AddWidget(text);
-    game->GetGuiManager()->AddWidget(btn);
-    game->GetGuiManager()->AddWidget(btn2);
-    game->GetGuiManager()->AddWidget(btnText);
-    game->GetGuiManager()->AddWidget(win);
 
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 

@@ -2,3 +2,4 @@
 /.idea/
 /src/GameDir/Engine/shaders/bin/
 *.so
+/cmake-build-release/

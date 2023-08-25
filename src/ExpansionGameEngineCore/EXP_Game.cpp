@@ -49,6 +49,8 @@ bool EXP_Game::InitEngine() {
         return false;
     }
 
+    m_physics_hdl = std::make_shared<EXP_PhysicsHandler>();
+    m_physics_hdl->InitPhysics();
 
     m_animator = std::make_shared<EXP_Animator>();
 

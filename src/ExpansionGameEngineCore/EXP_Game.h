@@ -16,6 +16,7 @@
 #include "EXP_InputHandler.h"
 #include "EXP_GuiManager.h"
 #include "EXP_ImGuiClass.h"
+#include "EXP_PhysicsHandler.h"
 
 //Forward decl.
 class EXP_HotLoad;
@@ -73,6 +74,7 @@ private:
     std::unique_ptr<EXP_MapLoader> m_maploader;
     std::shared_ptr<EXP_InputHandler> m_inhdl;
     std::shared_ptr<EXP_Animator> m_animator;
+    std::shared_ptr<EXP_PhysicsHandler> m_physics_hdl;
 
     std::shared_ptr<EXP_GuiManager> m_guiLayer;
     std::shared_ptr<EXP_Font> m_defaultFont;
