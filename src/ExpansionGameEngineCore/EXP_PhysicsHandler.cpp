@@ -66,9 +66,11 @@ void EXP_PhysicsHandler::InitPhysics() {
     RegisterDefaultAllocator();
 
     Factory::sInstance = new Factory();
-    TempAllocatorImpl tmpAlloc(10 * 1024 * 1024); // 10 MB
+    RegisterTypes();
 
-    JobSystemThreadPool jobSystem(cMaxPhysicsJobs, cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+    m_tmpAlloc = std::make_unique<TempAllocatorImpl>(10 * 1024 * 1024); // 10 MB
+
+    m_jobSystem = std::make_unique<JobSystemThreadPool>(cMaxPhysicsJobs, cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
 
     int maxBodies = 65536;
     int numBodyMutexes = 0;
@@ -77,4 +79,16 @@ void EXP_PhysicsHandler::InitPhysics() {
 
     m_world = std::make_unique<JPH::PhysicsSystem>();
     m_world->Init(maxBodies, numBodyMutexes, maxBodyPairs, maxContactConstraints, m_bp_layer, m_obj_bp_filter, m_obj_filter);
+    m_world->SetGravity(Vec3(0, 0, -9.81));
+
+    std::cout << "Physics engine initialized" << std::endl;
+}
+
+void EXP_PhysicsHandler::UpdatePhysics(float deltaTime) {
+    int collisionSteps = 1;
+    if(deltaTime > (1/60.0f)) {
+        collisionSteps = deltaTime / (1/60.0f);
+    }
+
+    m_world->Update(deltaTime, collisionSteps, m_tmpAlloc.get(), m_jobSystem.get());
 }

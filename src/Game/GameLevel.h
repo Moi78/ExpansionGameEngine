@@ -11,6 +11,7 @@
 #include <EXP_StaticMeshActor.h>
 #include <EXP_SkelAnim.h>
 #include <EXP_KeyboardCallback.h>
+#include <physics/EXP_BoxBodyActor.h>
 
 #include <EXP_WidgetBasic.h>
 #include <ui_kit/EXP_GuiButton.h>
@@ -23,6 +24,7 @@
 #include <RD_DirLight.h>
 
 #include "TestActor.h"
+#include "PhysicsCube.h"
 
 class GameLevel : public EXP_Level {
 public:
@@ -36,6 +38,8 @@ private:
     EXP_Game* m_game;
 
     std::shared_ptr<TestActor> m_tactor;
+    std::shared_ptr<EXP_BoxBodyActor> m_bbactor;
+    std::shared_ptr<PhysicsCube> m_cube;
 
     std::shared_ptr<EXP_SkelAnim> m_anim;
 

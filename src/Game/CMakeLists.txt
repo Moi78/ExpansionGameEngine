@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 
-add_library(Game SHARED GameLevel.cpp GameLevel.h TestActor.cpp TestActor.h)
+add_library(Game SHARED GameLevel.cpp GameLevel.h TestActor.cpp TestActor.h
+            PhysicsCube.cpp
+            PhysicsCube.h)
 
 target_include_directories(Game PUBLIC "../RaindropRenderer/")
 target_include_directories(Game PUBLIC "../ExpansionGameEngineCore/")

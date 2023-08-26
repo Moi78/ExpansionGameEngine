@@ -94,6 +94,26 @@ public:
         return Quat(m_quat[0] / sumSquared, -m_quat[1] / sumSquared, -m_quat[2] / sumSquared, -m_quat[3] / sumSquared);
     }
 
+    static Quat FromEuler(vec3& rot) {
+        // Taken from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+
+        float cr = cos(rot.GetZ() * 0.5f);
+        float sr = sin(rot.GetZ() * 0.5f);
+
+        float cp = cos(rot.GetY() * 0.5f);
+        float sp = sin(rot.GetY() * 0.5f);
+
+        float cy = cos(rot.GetX() * 0.5f);
+        float sy = sin(rot.GetX() * 0.5f);
+
+        return Quat(
+            cr * cp * cy + sr * sp * sy,
+            sr * cp * cy - cr * sp * sy,
+            cr * sp * cy + sr * cp * sy,
+            cr * cp * sy - sr * sp * cy
+        );
+    }
+
 private:
 	float m_quat[4];
 };

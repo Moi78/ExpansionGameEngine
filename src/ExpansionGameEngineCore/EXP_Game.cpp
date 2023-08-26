@@ -17,6 +17,8 @@ EXP_Game::EXP_Game(std::shared_ptr<RaindropRenderer> rndr, EXP_GameInfo gameinfo
     m_materials = EXP_GenericRessourceManager<std::shared_ptr<EXP_Material>>();
 
     m_last_skel_offset = 0;
+
+    m_deltaTime = 1 / 60.0f;
 }
 
 EXP_Game::~EXP_Game() {
@@ -60,7 +62,12 @@ bool EXP_Game::InitEngine() {
 }
 
 void EXP_Game::RunGame() {
+    using namespace std::chrono_literals;
+    using namespace std::chrono;
+
     while(!m_rndr->WantToClose()) {
+        auto startTP = steady_clock::now();
+
         m_inhdl->ResetCursor();
 
         m_rndr->UpdateWindow();
@@ -83,12 +90,18 @@ void EXP_Game::RunGame() {
             m_inhdl->UpdateAll();
             m_guiLayer->ProcessEvents();
 
+            m_physics_hdl->UpdatePhysics(m_deltaTime);
+
             m_currentLevel->TickActors();
             m_currentLevel->OnTick();
         });
 
         anim.join();
         logic.join();
+
+        auto endTP = steady_clock::now();
+        auto delta = endTP - startTP;
+        m_deltaTime = duration_cast<microseconds >(delta).count() / 1e6f;
     }
 }
 
@@ -191,4 +204,12 @@ void EXP_Game::GameArguments(int argc, char **argv) {
 
 std::vector<std::string> EXP_Game::GetGameArguments() {
     return m_gameArguments;
+}
+
+float& EXP_Game::GetDeltaTime() {
+    return m_deltaTime;
+}
+
+std::shared_ptr<EXP_PhysicsHandler> EXP_Game::GetPhysicsHandler() {
+    return m_physics_hdl;
 }

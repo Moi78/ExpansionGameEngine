@@ -2,12 +2,14 @@
 #define EXPGE_EXP_PHYSICSHANDLER_H
 
 #include <Jolt/Jolt.h>
+#include <Jolt/RegisterTypes.h>
 #include <Jolt/Core/Factory.h>
 #include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 
+#include <iostream>
 #include <thread>
 #include <memory>
 
@@ -53,7 +55,9 @@ public:
     ~EXP_PhysicsHandler();
 
     void InitPhysics();
+    void UpdatePhysics(float deltaTime);
 
+    JPH::BodyInterface& GetBodyInterface() { return m_world->GetBodyInterface(); }
 private:
     std::unique_ptr<JPH::PhysicsSystem> m_world;
 
@@ -61,6 +65,9 @@ private:
 
     ObjectVsBroadPhaseLayerFilterImpl m_obj_bp_filter;
     ObjectLayerPairFilterImpl m_obj_filter;
+
+    std::unique_ptr<JPH::TempAllocatorImpl> m_tmpAlloc;
+    std::unique_ptr<JPH::JobSystemThreadPool> m_jobSystem;
 };
 
 #endif //EXPGE_EXP_PHYSICSHANDLER_H

@@ -10,6 +10,12 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
 
+    m_bbactor = std::make_shared<EXP_BoxBodyActor>(game->GetPhysicsHandler(), vec3(0, 0, -1.5), vec3(0, 0, 0), vec3(10, 10, 0.5));
+    RegisterActor(m_bbactor);
+
+    m_cube = std::make_shared<PhysicsCube>(game, vec3(0.0f, 0.0f, 5.0f));
+    RegisterActor(m_cube);
+
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 
     m_game = game;

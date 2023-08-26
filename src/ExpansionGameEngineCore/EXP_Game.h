@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <chrono>
 
 #include <RaindropRenderer.h>
 #include <RD_Skeleton.h>
@@ -49,6 +50,7 @@ public:
     std::shared_ptr<EXP_Animator> GetAnimator();
     std::shared_ptr<EXP_GuiManager> GetGuiManager();
     std::shared_ptr<EXP_Level> GetCurrentLevel();
+    std::shared_ptr<EXP_PhysicsHandler> GetPhysicsHandler();
 
     std::shared_ptr<EXP_Material> QueryMaterial(
             std::string matPath,
@@ -67,8 +69,10 @@ public:
 
     void AddImGuiClass(std::shared_ptr<EXP_ImGuiClass> gui_class);
 
+    float& GetDeltaTime();
 private:
     std::shared_ptr<RaindropRenderer> m_rndr;
+    float m_deltaTime;
 
     std::shared_ptr<EXP_HotLoad> m_hotloader;
     std::unique_ptr<EXP_MapLoader> m_maploader;
