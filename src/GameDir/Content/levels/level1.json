@@ -7,9 +7,20 @@
       "material": "/mat/mat_yellow.json",
       "tag": "suzanne",
 
-      "pos": [-2.0, 0.0, 0.0],
+      "pos": [-8.0, -4.0, 0.0],
       "rot": [25.0, -45.0, 45.0],
       "scale": [2.0, 2.0, 2.0]
+    },
+
+    {
+      "type": "mesh",
+      "mesh": "/mdl/cube.msh",
+      "material": "/mat/mat_yellow.json",
+      "tag": "cube_bounce",
+
+      "pos": [0.5, 0.5, 5.0],
+      "rot": [0, 0, 0],
+      "scale": [0.5, 0.5, 0.5]
     },
 
     {

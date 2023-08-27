@@ -9,5 +9,5 @@ EXP_Component(pos, rot, scale), EXP_Body(handler, isStatic)
     JPH::ShapeSettings::ShapeResult shape = shapeSettings.Create();
     JPH::ShapeRefC createdShape = shape.Get();
 
-    CreateBodyFromShape(bodyInterface, createdShape, pos, rot);
+    CreateBodyFromShape(bodyInterface, createdShape, pos, rot, scale);
 }

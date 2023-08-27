@@ -8,7 +8,7 @@
 
 class PhysicsCube : public EXP_Actor {
 public:
-    PhysicsCube(EXP_Game* game, vec3 pos);
+    PhysicsCube(EXP_Game* game, vec3 pos, vec3 rot, vec3 scale);
 
     void OnStart() override;
     void OnTick() override;

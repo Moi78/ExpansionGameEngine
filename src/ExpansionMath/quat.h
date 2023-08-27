@@ -55,7 +55,7 @@ public:
 		mat4f mat_a(a);
 		mat4f mat_b(b);
 
-		return mat_b * mat_a;
+		return mat_a * mat_b;
 	}
 	
 	Quat operator*(const Quat& q) {
@@ -97,14 +97,18 @@ public:
     static Quat FromEuler(vec3& rot) {
         // Taken from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
-        float cr = cos(rot.GetZ() * 0.5f);
-        float sr = sin(rot.GetZ() * 0.5f);
+        float yaw = rot.GetZ() * 3.141592f / 180.0f;
+        float pitch = rot.GetY() * 3.141592f / 180.0f;
+        float roll = rot.GetX() * 3.141592f / 180.0f;
 
-        float cp = cos(rot.GetY() * 0.5f);
-        float sp = sin(rot.GetY() * 0.5f);
+        float cr = cos(roll * 0.5f);
+        float sr = sin(roll * 0.5f);
 
-        float cy = cos(rot.GetX() * 0.5f);
-        float sy = sin(rot.GetX() * 0.5f);
+        float cp = cos(pitch * 0.5f);
+        float sp = sin(pitch * 0.5f);
+
+        float cy = cos(yaw * 0.5f);
+        float sy = sin(yaw * 0.5f);
 
         return Quat(
             cr * cp * cy + sr * sp * sy,

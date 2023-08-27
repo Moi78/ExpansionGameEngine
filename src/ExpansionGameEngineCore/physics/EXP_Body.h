@@ -26,12 +26,14 @@ public:
     mat4f GetBodyTransform();
 
 protected:
-    void CreateBodyFromShape(JPH::BodyInterface& interface, JPH::ShapeRefC& shape, vec3 pos, vec3 rot);
+    void CreateBodyFromShape(JPH::BodyInterface& interface, JPH::ShapeRefC& shape, vec3 pos, vec3 rot, vec3 scale);
 
     std::shared_ptr<EXP_PhysicsHandler> m_handler;
 
     JPH::Body* m_body;
     JPH::BodyID m_id;
+
+    vec3 m_scale;
 
     bool m_isStatic;
 };

@@ -39,6 +39,7 @@ private:
 
     std::shared_ptr<TestActor> m_tactor;
     std::shared_ptr<EXP_BoxBodyActor> m_bbactor;
+    std::shared_ptr<EXP_BoxBodyActor> m_bounce;
     std::shared_ptr<PhysicsCube> m_cube;
 
     std::shared_ptr<EXP_SkelAnim> m_anim;

@@ -5,7 +5,7 @@ EXPGE_LEVEL_CODE(GameLevel);
 GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     std::cout << "INSTANCIATED" << std::endl;
 
-    game->GetInputHandler()->SetCursorVisibility(false);
+    //game->GetInputHandler()->SetCursorVisibility(false);
 
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
@@ -13,7 +13,10 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     m_bbactor = std::make_shared<EXP_BoxBodyActor>(game->GetPhysicsHandler(), vec3(0, 0, -1.5), vec3(0, 0, 0), vec3(10, 10, 0.5));
     RegisterActor(m_bbactor);
 
-    m_cube = std::make_shared<PhysicsCube>(game, vec3(0.0f, 0.0f, 5.0f));
+    m_bounce = std::make_shared<EXP_BoxBodyActor>(game->GetPhysicsHandler(), vec3(0.5f, 0.5f, 5.0f), vec3(), vec3(0.5f, 0.5f, 0.5f));
+    RegisterActor(m_bounce);
+
+    m_cube = std::make_shared<PhysicsCube>(game, vec3(1.0f, 1.0f, 10.0f), vec3(), vec3(1.5f, 2.5f, 0.5f));
     RegisterActor(m_cube);
 
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);

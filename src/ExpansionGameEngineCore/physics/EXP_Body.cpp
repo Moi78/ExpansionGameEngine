@@ -9,7 +9,9 @@ EXP_Body::~EXP_Body() {
 
 }
 
-void EXP_Body::CreateBodyFromShape(JPH::BodyInterface& interface, JPH::ShapeRefC &shape, vec3 pos, vec3 rot) {
+void EXP_Body::CreateBodyFromShape(JPH::BodyInterface& interface, JPH::ShapeRefC &shape, vec3 pos, vec3 rot, vec3 scale) {
+    m_scale = scale;
+
     JPH::EMotionType motionType = JPH::EMotionType::Dynamic;
     JPH::ObjectLayer layerType = Layers::MOVING;
 
@@ -44,15 +46,16 @@ Quat EXP_Body::GetBodyRot() {
     static JPH::BodyInterface& bodyInterface = m_handler->GetBodyInterface();
 
     JPH::Quat rot = bodyInterface.GetRotation(m_id);
+    //JPH::Vec3 euler = rot.GetEulerAngles() * (180.0f / 3.141592f);
+    //std::cout << euler.GetX() << " " << euler.GetY() << " " << euler.GetZ() << std::endl;
+
     return Quat(rot.GetW(), rot.GetX(), rot.GetY(), rot.GetZ());
 }
 
 mat4f EXP_Body::GetBodyTransform() {
-    mat4f trans = mat4f(1.0f);
+    mat4f scale = ScaleMatrix(mat4f(1.0f), m_scale);
+    mat4f rot = GetBodyRot().ToMat4();
+    mat4f pos = TranslateMatrix(mat4f(1.0f), GetBodyPos());
 
-    mat4f scale = ScaleMatrix(trans, vec3(1.0f, 1.0f, 1.0f));
-    mat4f pos = TranslateMatrix(trans, GetBodyPos());
-    mat4f rot = trans * GetBodyRot().ToMat4();
-
-    return trans;
+    return pos * rot * scale;
 }
