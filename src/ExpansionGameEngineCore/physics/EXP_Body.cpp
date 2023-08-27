@@ -46,10 +46,7 @@ Quat EXP_Body::GetBodyRot() {
     static JPH::BodyInterface& bodyInterface = m_handler->GetBodyInterface();
 
     JPH::Quat rot = bodyInterface.GetRotation(m_id);
-    //JPH::Vec3 euler = rot.GetEulerAngles() * (180.0f / 3.141592f);
-    //std::cout << euler.GetX() << " " << euler.GetY() << " " << euler.GetZ() << std::endl;
-
-    return Quat(rot.GetW(), rot.GetX(), rot.GetY(), rot.GetZ());
+    return Quat(-rot.GetW(), rot.GetX(), rot.GetY(), -rot.GetZ());
 }
 
 mat4f EXP_Body::GetBodyTransform() {
