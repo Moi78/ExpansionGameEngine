@@ -50,9 +50,9 @@ Quat EXP_Body::GetBodyRot() {
 }
 
 mat4f EXP_Body::GetBodyTransform() {
-    mat4f scale = ScaleMatrix(mat4f(1.0f), m_scale);
-    mat4f rot = GetBodyRot().ToMat4();
     mat4f pos = TranslateMatrix(mat4f(1.0f), GetBodyPos());
+    mat4f rot = GetBodyRot().ToMat4();
+    mat4f scale = ScaleMatrix(mat4f(1.0f), m_scale);
 
     return pos * rot * scale;
 }
