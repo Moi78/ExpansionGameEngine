@@ -44,6 +44,7 @@ OmbrageUI::UI::UI(EXP_Game *game) {
     m_node_editor->AddNodeToCatalog("Constants", "Const Vec3", [](int id) { return std::make_shared<OmbrageNodes::ConstVec3Node>(id); });
     m_node_editor->AddNodeToCatalog("Constants", "Const Vec4", [](int id) { return std::make_shared<OmbrageNodes::ConstVec4Node>(id); });
 
+    m_node_editor->AddNodeToCatalog("Texture", "Bump", [](int id) { return std::make_shared<OmbrageNodes::BumpNode>(id); });
     m_node_editor->AddNodeToCatalog("Texture", "Sample Texture", [](int id) { return std::make_shared<OmbrageNodes::TextureNode>(id); });
 
     m_node_editor->AddNodeToCatalog("Variables", "Normal", [](int id) { return std::make_shared<OmbrageNodes::NormalNode>(id); });
@@ -303,8 +304,17 @@ bool OmbrageUI::UI::CompileShader() {
     std::vector<uint32_t> progBin = m_compiler->CompileAll();
     m_lastCompiledData = progBin;
 
+#ifdef _DEBUG
+    // Debug SPIR-V file output, for shader purposes inspection
+    std::ofstream shader_bin("debug.bin", std::ios::binary);
+    shader_bin.write((char*)progBin.data(), progBin.size() * sizeof(uint32_t));
+    shader_bin.close();
+#endif //_DEBUG
+
     std::shared_ptr<RD_ShaderLoader> shaderLoader = m_game->GetRenderer()->GetAPI()->CreateShader();
-    shaderLoader->LoadFragBinary(m_game->GetEngineContentPath() + "/shaders/bin/base.vspv", progBin);
+    if(!shaderLoader->LoadFragBinary(m_game->GetEngineContentPath() + "/shaders/bin/base.vspv", progBin)) {
+        return false;
+    }
 
     std::shared_ptr<EXP_Level> lvl = m_game->GetCurrentLevel();
     auto model = lvl->GetCastedActorByName<EXP_StaticMeshActor>("sphere");

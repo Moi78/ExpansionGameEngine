@@ -56,6 +56,13 @@ HLTypes OpToType(std::vector<uint32_t> op, std::unordered_map<int, HLTypes> know
         case 27:
             t = HLTypes::SAMPLED_IMAGE;
             break;
+        case 24:
+            if(op[3] == 3) {
+                t = HLTypes::MAT3;
+            } else {
+                throw "UNKOWN TYPE";
+            }
+            break;
         case 32:
             if(known_types.find(op[3]) != known_types.end()) {
                 if(op[2] == (uint32_t)StorageClass::Function) {
@@ -70,6 +77,9 @@ HLTypes OpToType(std::vector<uint32_t> op, std::unordered_map<int, HLTypes> know
             } else {
                 throw "UNKNOWN TYPE";
             }
+            break;
+        default:
+            throw "UNKOWN TYPE";
             break;
     }
 
@@ -221,8 +231,12 @@ int main(int argc, char* argv[]) {
 
     Json::Value instrs = root["instructions"];
 
+    int dbgLoopCount = 0;
     for(int i = 0; i < funcBody.size(); i += GetOpSize(funcBody[i])) {
         auto dbg = GetOpCode(funcBody[i]);
+        if(dbgLoopCount == 28) {
+            std::cout << "bp" << std::endl;
+        }
         std::string dbg2 = FindOp(instrs, dbg)["opname"].asString();
 
         if(GetOpCode(funcBody[i]) == 54) {              // Func decl
@@ -309,6 +323,7 @@ int main(int argc, char* argv[]) {
                 }
 
                 func->funcBody.push_back(spvOp);
+                dbgLoopCount++;
             }
         }
     }

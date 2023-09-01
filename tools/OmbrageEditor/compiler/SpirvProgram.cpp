@@ -1,6 +1,13 @@
 #include "SpirvProgram.h"
 #include "SpirvOperation.h"
 
+std::vector<uint32_t> StringToUint32(std::string str) {
+    std::vector<uint32_t> res(str.size() / 4);
+    memcpy(res.data(), str.data(), str.size() / 4);
+
+    return res;
+}
+
 std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
     // Do type exists
     if(m_types.find(t) != m_types.end()) {
@@ -33,6 +40,9 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
             break;
         case HLTypes::SAMPLED_IMAGE:
             newType = std::make_shared<TSampledImage>(m_IDcounter, GetType(HLTypes::IMAGE));
+            break;
+        case HLTypes::MAT3:
+            newType = std::make_shared<TMat3>(m_IDcounter, GetType(HLTypes::FLOAT));
             break;
     }
 
@@ -141,6 +151,14 @@ void SpirvProgram::CompileHeader() {
     OpCap.LoadOp(17, 2);
     OpCap.words = { 0x01 }; // Capability : Shader
     allOp.emplace_back(OpCap);
+
+    SpirvOperation OpExtImp{};
+    OpExtImp.LoadOp(11, 3);
+    OpExtImp.words = {(uint32_t)m_glsl_ext};
+
+    auto str = StringToUint32("GLSL.std.450");
+    OpExtImp.words.insert(OpExtImp.words.end(), str.begin(), str.end());
+    allOp.emplace_back(OpExtImp);
 
     // Memory Model Logical Simple
     SpirvOperation OpMemModel{};
@@ -342,6 +360,9 @@ void SpirvProgram::FunctionTypeLinker(std::shared_ptr<SpirvFunction> &func) {
 }
 
 void SpirvProgram::AssignFuncIDs() {
+    m_glsl_ext = m_IDcounter;
+    m_IDcounter++;
+
     m_entryPoint->funcID = m_IDcounter;
     m_IDcounter += m_entryPoint->funcSize + 4;
 

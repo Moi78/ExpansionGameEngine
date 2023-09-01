@@ -20,8 +20,8 @@
 #include "SplitNode.h"
 #include "CombineNode.h"
 #include "ShaderInNode.h"
-
 #include "TextureNode.h"
+#include "BumpNode.h"
 
 #include "third_party/portable-file-dialogs.h"
 

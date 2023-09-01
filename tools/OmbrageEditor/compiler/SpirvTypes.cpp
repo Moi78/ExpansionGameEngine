@@ -49,3 +49,9 @@ std::vector<uint32_t> TSampledImage::GetTypeDecl() {
 
     return {firstword, (uint32_t)m_id, (uint32_t)m_img->m_id};
 }
+
+std::vector<uint32_t> TMat3::GetTypeDecl() {
+    uint32_t firstword = (4 << 16) | GetOpcode();
+
+    return {firstword, (uint32_t)m_id, (uint32_t)m_tfloat->m_id, 3};
+}

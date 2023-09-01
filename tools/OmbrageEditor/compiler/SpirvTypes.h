@@ -29,6 +29,7 @@ enum class HLTypes {
     VECTOR4 = 5 | FLAG_IS_VECTOR,
     IMAGE = 6,
     SAMPLED_IMAGE = 7,
+    MAT3 = 8,
 
     // Function type pointers
     FLOATPTR = 1 | FLAG_PTR_FUNCTION,
@@ -36,6 +37,7 @@ enum class HLTypes {
     VECTOR2PTR = 3 | FLAG_IS_VECTOR | FLAG_PTR_FUNCTION,
     VECTOR3PTR = 4 | FLAG_IS_VECTOR | FLAG_PTR_FUNCTION,
     VECTOR4PTR = 5 | FLAG_IS_VECTOR | FLAG_PTR_FUNCTION,
+    MAT3PTR = 8 | FLAG_PTR_FUNCTION,
 
     // Output type pointers
     FLOATPTRO = 1 | FLAG_PTR_OUTPUT,
@@ -43,6 +45,7 @@ enum class HLTypes {
     VECTOR2PTRO = 3 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
     VECTOR3PTRO = 4 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
     VECTOR4PTRO = 5 | FLAG_IS_VECTOR | FLAG_PTR_OUTPUT,
+    MAT3PTRO = 8 | FLAG_PTR_OUTPUT,
 
     // Input type pointers
     FLOATPTRI = 1 | FLAG_PTR_INPUT,
@@ -50,6 +53,7 @@ enum class HLTypes {
     VECTOR2PTRI = 3 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
     VECTOR3PTRI = 4 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
     VECTOR4PTRI = 5 | FLAG_IS_VECTOR | FLAG_PTR_INPUT,
+    MAT3PTRI = 8 | FLAG_PTR_INPUT,
 
     // Uniform Constant pointers
     SAMPLED_IMAGE_PTRUC = 7 | FLAG_PTR_UNIFORM_CTANT
@@ -83,25 +87,25 @@ class TVoid : public SPVType {
 public:
     TVoid(int id) { m_id = id; }
 
-    virtual unsigned GetOpcode() override { return 19; }
+    unsigned GetOpcode() override { return 19; }
 
-    virtual std::vector<uint32_t> GetTypeDecl() override;
+    std::vector<uint32_t> GetTypeDecl() override;
 };
 
 class TFloat : public SPVType {
 public:
     TFloat(int id) { m_id = id; }
 
-    virtual unsigned GetOpcode() override { return 22; }
-    virtual std::vector<uint32_t> GetTypeDecl() override;
+    unsigned GetOpcode() override { return 22; }
+    std::vector<uint32_t> GetTypeDecl() override;
 };
 
 class TInt : public SPVType {
 public:
     TInt(int id) { m_id = id; }
 
-    virtual unsigned GetOpcode() override { return 21; }
-    virtual std::vector<uint32_t> GetTypeDecl() override;
+    unsigned GetOpcode() override { return 21; }
+    std::vector<uint32_t> GetTypeDecl() override;
 };
 
 template<int _size>
@@ -109,9 +113,9 @@ class TVector : public SPVType {
 public:
     TVector(int id, std::shared_ptr<SPVType> primType) { m_id = id; m_primType = primType; }
 
-    virtual unsigned GetOpcode() override { return 23; }
+    unsigned GetOpcode() override { return 23; }
 
-    virtual std::vector<uint32_t> GetTypeDecl() override {
+    std::vector<uint32_t> GetTypeDecl() override {
         uint32_t firstWord = (4 << 16) | GetOpcode();
 
         return {firstWord, (uint32_t)m_id, (uint32_t)m_primType->m_id, _size};
@@ -125,9 +129,9 @@ class TImage : public SPVType {
 public:
     TImage(int id, std::shared_ptr<SPVType> tvector4) { m_id = id; m_4v = tvector4; }
 
-    virtual unsigned GetOpcode() override { return 25; }
+    unsigned GetOpcode() override { return 25; }
 
-    virtual std::vector<uint32_t> GetTypeDecl() override;
+    std::vector<uint32_t> GetTypeDecl() override;
 
 private:
     std::shared_ptr<SPVType> m_4v;
@@ -137,12 +141,24 @@ class TSampledImage : public SPVType {
 public:
     TSampledImage(int id, std::shared_ptr<SPVType> image) { m_id = id; m_img = image; }
 
-    virtual unsigned GetOpcode() override { return 27; }
+    unsigned GetOpcode() override { return 27; }
 
-    virtual std::vector<uint32_t> GetTypeDecl() override;
+    std::vector<uint32_t> GetTypeDecl() override;
 
 private:
     std::shared_ptr<SPVType> m_img;
+};
+
+class TMat3 : public SPVType {
+public:
+    TMat3(int id, std::shared_ptr<SPVType> tfloat) { m_id = id; m_tfloat = tfloat; }
+
+    unsigned GetOpcode() override { return 24; }
+
+    std::vector<uint32_t> GetTypeDecl() override;
+
+private:
+    std::shared_ptr<SPVType> m_tfloat;
 };
 
 #endif //EXPGE_SPIRVTYPES_H

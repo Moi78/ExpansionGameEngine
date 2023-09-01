@@ -66,9 +66,9 @@ std::shared_ptr<SpirvOperation> FunctionDeserializer::DeserializeOp(std::ifstrea
      }
 
     uint32_t hasResID = false;
-     file.read((char*)&hasResID, sizeof(uint32_t));
+    file.read((char*)&hasResID, sizeof(uint32_t));
 
-      if(hasResID) {
+    if(hasResID) {
         uint32_t resID = 0;
         file.read((char*)&resID, sizeof(uint32_t));
         loaded_op->result_id = resID;

@@ -11,6 +11,8 @@
 #include "SpirvTypes.h"
 #include "SpirvData.h"
 
+std::vector<uint32_t> StringToUint32(std::string str);
+
 class SpirvProgram {
 public:
     SpirvProgram() : m_IDcounter(1) {};
@@ -33,6 +35,8 @@ public:
 
     std::vector<uint32_t>& GetProgramListing();
     void AssignFuncIDs();
+
+    int GetGLSLExtID();
 
     void CompileHeader();
     void CompileTypesFunctions();
@@ -58,6 +62,7 @@ private:
     std::unordered_map<HLTypes, std::shared_ptr<SPVType>> m_types;
 
     int m_IDcounter;
+    int m_glsl_ext;
 };
 
 #endif //EXPGE_SPIRVPROGRAM_H

@@ -26,6 +26,8 @@ add_library(OmbrageLib SHARED
         lib/TextureNode.cpp
         lib/TextureNode.h
         lib/third_party/portable-file-dialogs.h
+        lib/BumpNode.cpp
+        lib/BumpNode.h
 )
 
 find_package(fmt REQUIRED)
