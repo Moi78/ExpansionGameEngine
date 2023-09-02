@@ -18,6 +18,10 @@ struct SpirvFunction {
     HLTypes returnType;
     std::vector<HLTypes> argsType;
 
+    std::vector<HLTypes> typeDeps;
+    std::vector<std::pair<int, SimpleCtant>> ctantDeps;
+    std::unordered_map<int, std::shared_ptr<SpirvDataWrapperBase>> ctantDepsCompiled;
+
     std::vector<std::shared_ptr<SpirvOperation>> funcBody;
     //std::vector<std::shared_ptr<SpirvVariable>> funcVars;
 
@@ -26,7 +30,10 @@ struct SpirvFunction {
 
     int funcSize;
 
-    std::vector<uint32_t> CompileFunction(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID);
+    std::vector<uint32_t>
+    CompileFunction(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int glslExtID,
+                    int &nextID
+    );
     std::vector<uint32_t> GetTypeDecl(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID);
 };
 

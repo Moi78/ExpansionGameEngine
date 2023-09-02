@@ -17,10 +17,6 @@ void showUsage() {
     std::cout << "function: Name of the function to extract." << std::endl;
 }
 
-std::vector<uint32_t> GetFunction(std::string funcName, std::vector<uint32_t> programData) {
-    return {};
-}
-
 constexpr int GetOpCode(const uint32_t& in) {
     return (in & 0xFFFF);
 }
@@ -137,6 +133,8 @@ int main(int argc, char* argv[]) {
     int idx = 5;
     int fid = 0;
 
+    int glslExtID = 0;
+
     // Find OpNames
     while(idx < ((spvData.size() / 4) - 1)) {
         if(GetOpCode(spvData[idx]) == 5) {
@@ -145,18 +143,24 @@ int main(int argc, char* argv[]) {
             size_t wordCount = GetOpSize(spvData[idx]) - 2;
             idx += 2;
 
-            char* dbgData = new char[wordCount * 4];
+            char *dbgData = new char[wordCount * 4];
             memcpy(dbgData, &spvData[idx], wordCount * 4);
 
             std::string name(dbgData);
 
-            if(name.find(funcName) != std::string::npos) {
-                std::cout << "Found " << funcName << " (ID : " << (int)funcID << ")" << std::endl;
+            if (name.find(funcName) != std::string::npos) {
+                std::cout << "Found " << funcName << " (ID : " << (int) funcID << ")" << std::endl;
                 fid = funcID;
                 break;
             }
 
             idx += wordCount;
+        } else if(GetOpCode(spvData[idx]) == 11) {
+            glslExtID = spvData[idx + 1];
+
+            std::cout << "GLSL EXT IS " << glslExtID << std::endl;
+
+            idx += GetOpSize(spvData[idx]);
         } else {
             idx += GetOpSize(spvData[idx]);
         }
@@ -169,8 +173,10 @@ int main(int argc, char* argv[]) {
 
     idx = 5;
     std::unordered_map<int, HLTypes> types_map;
+    std::unordered_map<int, SimpleCtant> constant_map;
+    std::unordered_map<int, SimpleCtant> used_constant_map;
 
-    // Mapping types
+    // Mapping types and constants
     while(idx < ((spvData.size() / 4) - 1)) {
         if((GetOpCode(spvData[idx]) >= 19) && (GetOpCode(spvData[idx]) <= 32)) {
             size_t size = GetOpSize(spvData[idx]);
@@ -179,6 +185,16 @@ int main(int argc, char* argv[]) {
             types_map[op[1]] = OpToType(op, types_map);
 
             idx += size;
+        } else if(GetOpCode(spvData[idx]) == 43) {
+            uint32_t data = spvData[idx + 3];
+            uint32_t id = spvData[idx + 2];
+
+            uint32_t tID = spvData[idx + 1];
+            HLTypes t = types_map[tID];
+
+            constant_map[id] = {t, data};
+
+            idx += GetOpSize(spvData[idx]);
         } else {
             idx += GetOpSize(spvData[idx]);
         }
@@ -234,9 +250,6 @@ int main(int argc, char* argv[]) {
     int dbgLoopCount = 0;
     for(int i = 0; i < funcBody.size(); i += GetOpSize(funcBody[i])) {
         auto dbg = GetOpCode(funcBody[i]);
-        if(dbgLoopCount == 28) {
-            std::cout << "bp" << std::endl;
-        }
         std::string dbg2 = FindOp(instrs, dbg)["opname"].asString();
 
         if(GetOpCode(funcBody[i]) == 54) {              // Func decl
@@ -264,6 +277,7 @@ int main(int argc, char* argv[]) {
                 Json::Value operands = op["operands"];
                 int count = 0;
 
+                int opIDX = 0;
                 for(auto& o : operands) {
                     uint32_t word = ID_PLACEHOLDER;
 
@@ -288,13 +302,21 @@ int main(int argc, char* argv[]) {
                         }
 
                         for (int a = 0; a < nbIDs; a++) {
-                            if (local_id_map.find(funcBody[i + count + 1]) == local_id_map.end()) {
+                            if (local_id_map.find(funcBody[i + count + 1]) == local_id_map.end() && (funcBody[i + count + 1] != glslExtID) && (constant_map.find(funcBody[i + count + 1]) == constant_map.end())) {
                                 local_id_map[funcBody[i + count + 1]] = idcounter;
                                 spvOp->id_repl.push_back(idcounter | FLAG_IS_NOT_TYPE);
 
                                 std::cout << funcBody[i + count + 1] << " -> " << idcounter << std::endl;
 
                                 idcounter++;
+                            } else if(constant_map.find(funcBody[i + count + 1]) != constant_map.end()) {
+                                spvOp->id_repl.push_back(funcBody[i + count + 1] | FLAG_IS_CTANT);
+                                used_constant_map[funcBody[i + count + 1]] = constant_map[funcBody[i + count + 1]];
+
+                                std::cout << "Ctant is " << funcBody[i + count + 1] << std::endl;
+                            } else if(funcBody[i + count + 1] == glslExtID) {
+                                spvOp->id_repl.push_back(FLAG_IS_EXT);
+                                std::cout << "GLSL EXT USED" << std::endl;
                             } else {
                                 std::cout << funcBody[i + count + 1] << " -> " << local_id_map[funcBody[i + count + 1]]
                                           << std::endl;
@@ -304,12 +326,14 @@ int main(int argc, char* argv[]) {
                             spvOp->words.push_back(word);
                             count++;
                         }
-                    } else if(o["kind"].asString().find("Literal") != std::string::npos) {
+                    } else if((o["kind"].asString().find("Literal")) != std::string::npos && (opIDX == (operands.size() - 1))) {
                         int remainingWords = GetOpSize(funcBody[i]) - count - 1;
-                        for(int a = 0; a < remainingWords; a++) {
+                        for (int a = 0; a < remainingWords; a++) {
                             word = funcBody[i + count + a + 1];
                             spvOp->words.push_back(word);
+
                         }
+                        count += remainingWords;
                     } else {
                         word = funcBody[i + count + 1];
                         spvOp->words.push_back(word);
@@ -320,6 +344,8 @@ int main(int argc, char* argv[]) {
                     if(count == (GetOpSize(funcBody[i]) - 1)) {
                         break;
                     }
+
+                    opIDX++;
                 }
 
                 func->funcBody.push_back(spvOp);
@@ -328,6 +354,14 @@ int main(int argc, char* argv[]) {
         }
     }
     func->funcSize = idcounter;
+
+    for(auto& t : types_map) {
+        func->typeDeps.push_back(t.second);
+    }
+
+    for(auto& c : used_constant_map) {
+        func->ctantDeps.push_back(c);
+    }
 
     f.close();
     spvJson.close();

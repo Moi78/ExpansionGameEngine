@@ -26,7 +26,11 @@ std::vector<uint32_t> SpirvFunction::GetTypeDecl(std::unordered_map<HLTypes, std
     return OpFunctionType.GetData();
 }
 
-std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& nextID) {
+std::vector<uint32_t> SpirvFunction::CompileFunction(
+        std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes,
+        int glslExtID,
+        int &nextID
+) {
     // Type check
     assert(realTypes.find(returnType) != realTypes.end() && "This type was not constructed");
     for(auto& t : argsType) { assert(realTypes.find(t) != realTypes.end() && "This type was not constructed"); }
@@ -87,25 +91,29 @@ std::vector<uint32_t> SpirvFunction::CompileFunction(std::unordered_map<HLTypes,
                 inst = op->result_id.value() + paramOffset;
 
                 std::cout << "Repl placeholder with " << op->result_id.value() + paramOffset << std::endl;
-
-                counter++;
-
             } else if((inst == ID_PLACEHOLDER) && (op->id_repl[counter] & FLAG_IS_NOT_TYPE)) {
-                inst = paramOffset + (op->id_repl[counter] & 0xFFFF);
+                inst = paramOffset + (op->id_repl[counter] & (~FLAG_IS_NOT_TYPE));
 
                 std::cout << "Repl placeholder with " << inst << std::endl;
+            } else if((inst == ID_PLACEHOLDER) && (op->id_repl[counter] & FLAG_IS_EXT)) {
+                inst = glslExtID;
 
-                counter++;
+                std::cout << "GLSL EXT USED" << std::endl;
+            } else if((inst == ID_PLACEHOLDER) && (op->id_repl[counter] & FLAG_IS_CTANT)) {
+                inst = ctantDepsCompiled[op->id_repl[counter] & (~FLAG_IS_CTANT)]->GetReflectedID();
 
+                std::cout << "CTANT USED" << std::endl;
             } else if(inst == ID_PLACEHOLDER) {
                 HLTypes t = (HLTypes)op->id_repl[counter];
                 auto realType = realTypes[t];
                 inst = realType->m_id;
 
                 std::cout << "Repl placeholder with " << inst << std::endl;
-
-                counter++;
+            } else {
+                counter--;
             }
+
+            counter++;
         }
 
         offsetedListing.push_back(op);

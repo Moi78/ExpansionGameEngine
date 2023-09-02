@@ -3,7 +3,9 @@
 
 std::vector<uint32_t> StringToUint32(std::string str) {
     std::vector<uint32_t> res(str.size() / 4);
-    memcpy(res.data(), str.data(), str.size() / 4);
+    memcpy(res.data(), str.data(), str.size());
+
+    res.push_back(0x00);
 
     return res;
 }
@@ -42,7 +44,7 @@ std::shared_ptr<SPVType> SpirvProgram::GetType(HLTypes t) {
             newType = std::make_shared<TSampledImage>(m_IDcounter, GetType(HLTypes::IMAGE));
             break;
         case HLTypes::MAT3:
-            newType = std::make_shared<TMat3>(m_IDcounter, GetType(HLTypes::FLOAT));
+            newType = std::make_shared<TMat3>(m_IDcounter, GetType(HLTypes::VECTOR3));
             break;
     }
 
@@ -152,11 +154,12 @@ void SpirvProgram::CompileHeader() {
     OpCap.words = { 0x01 }; // Capability : Shader
     allOp.emplace_back(OpCap);
 
+    std::vector<uint32_t> str = StringToUint32("GLSL.std.450");
+
     SpirvOperation OpExtImp{};
-    OpExtImp.LoadOp(11, 3);
+    OpExtImp.LoadOp(11, 2 + str.size());
     OpExtImp.words = {(uint32_t)m_glsl_ext};
 
-    auto str = StringToUint32("GLSL.std.450");
     OpExtImp.words.insert(OpExtImp.words.end(), str.begin(), str.end());
     allOp.emplace_back(OpExtImp);
 
@@ -262,7 +265,7 @@ void SpirvProgram::CompileTypesFunctions() {
         FunctionTypeLinker(f);
 
         auto ftypedecl = f->GetTypeDecl(m_types, m_IDcounter);
-        auto compiled = f->CompileFunction(m_types, m_IDcounter);
+        auto compiled = f->CompileFunction(m_types, m_glsl_ext, m_IDcounter);
 
         funcs.insert(funcs.end(), compiled.begin(), compiled.end());
         funcsTypeDecls.insert(funcsTypeDecls.end(), ftypedecl.begin(), ftypedecl.end());
@@ -273,7 +276,7 @@ void SpirvProgram::CompileTypesFunctions() {
     auto entryType = m_entryPoint->GetTypeDecl(m_types, m_IDcounter);
     funcsTypeDecls.insert(funcsTypeDecls.end(), entryType.begin(), entryType.end());
 
-    auto entryFunc = m_entryPoint->CompileFunction(m_types, m_IDcounter);
+    auto entryFunc = m_entryPoint->CompileFunction(m_types, m_glsl_ext, m_IDcounter);
 
     // Primary monotypes
     for(auto& t : m_types) {
@@ -300,7 +303,7 @@ void SpirvProgram::CompileTypesFunctions() {
 
     for(auto& t : m_types) {
         std::vector<uint32_t> tdecl;
-        if(t.first == HLTypes::IMAGE || t.first == HLTypes::SAMPLED_IMAGE) {
+        if(t.first == HLTypes::IMAGE || t.first == HLTypes::SAMPLED_IMAGE || (t.first == HLTypes::MAT3)) {
             tdecl = t.second->GetTypeDecl();
             m_shaderBody.insert(m_shaderBody.end(), tdecl.begin(), tdecl.end());
         }
@@ -353,9 +356,14 @@ void SpirvProgram::FunctionTypeLinker(std::shared_ptr<SpirvFunction> &func) {
     auto rtype = GetType(func->returnType);
     auto rtype_ptr = GetType(func->returnType | FLAG_PTR_FUNCTION);
     auto floatptr = GetType(HLTypes::FLOAT | FLAG_PTR_FUNCTION);
-    for(auto type : func->argsType) {
+
+    for(auto& type : func->argsType) {
         auto argType = GetType(type);
         auto argPtr_t = GetType(type | FLAG_PTR_FUNCTION);
+    }
+
+    for(auto& type : func->typeDeps) {
+        auto depType = GetType(type);
     }
 }
 

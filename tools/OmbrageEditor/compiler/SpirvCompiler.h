@@ -51,6 +51,8 @@ public:
     std::shared_ptr<SpirvDataWrapperBase> GetTextureW(std::string texName);
     std::unordered_map<std::string, int> GetTextureNames();
 private:
+    std::shared_ptr<SpirvConstant> SimpleConstantToSpirvConstant(const SimpleCtant& ctant);
+
     std::unordered_map<std::string, std::shared_ptr<SpirvFunction>> m_funcTable;
     std::unique_ptr<SpirvFunction> m_entry;
     std::unique_ptr<SpirvProgram> m_prog;

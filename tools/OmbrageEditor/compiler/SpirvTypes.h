@@ -18,6 +18,8 @@
 #define FLAG_IS_VECTOR 0x80
 
 #define FLAG_IS_NOT_TYPE 0x20000000
+#define FLAG_IS_EXT 0x40000000
+#define FLAG_IS_CTANT 0x80000000
 
 enum class HLTypes {
     // Primary types
@@ -151,14 +153,14 @@ private:
 
 class TMat3 : public SPVType {
 public:
-    TMat3(int id, std::shared_ptr<SPVType> tfloat) { m_id = id; m_tfloat = tfloat; }
+    TMat3(int id, std::shared_ptr<SPVType> tvector3) { m_id = id; m_tvector3 = tvector3; }
 
     unsigned GetOpcode() override { return 24; }
 
     std::vector<uint32_t> GetTypeDecl() override;
 
 private:
-    std::shared_ptr<SPVType> m_tfloat;
+    std::shared_ptr<SPVType> m_tvector3;
 };
 
 #endif //EXPGE_SPIRVTYPES_H

@@ -30,6 +30,11 @@ struct SpirvConstant {
     virtual std::vector<uint32_t> DeclConstant(std::unordered_map<HLTypes, std::shared_ptr<SPVType>> realTypes, int& idcounter) = 0;
 };
 
+struct SimpleCtant {
+    HLTypes t;
+    uint32_t data;
+};
+
 struct SpirvDataWrapperBase {
     virtual uint32_t GetReflectedID() = 0;
     virtual HLTypes GetReflectedType() = 0;

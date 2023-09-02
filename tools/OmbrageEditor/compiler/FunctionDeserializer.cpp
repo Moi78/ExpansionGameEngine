@@ -37,6 +37,23 @@ std::shared_ptr<SpirvFunction> FunctionDeserializer::Deserialize(std::string pat
     // Func Size
     f.read((char*)&func->funcSize, sizeof(int));
 
+    // Func type deps
+    size_t tCount = 0;
+    f.read((char*)&tCount, sizeof(size_t));
+
+    func->typeDeps.resize(tCount);
+    f.read((char*)func->typeDeps.data(), tCount * sizeof(HLTypes));
+
+    // Func ctant deps
+    size_t cCount = 0;
+    f.read((char*)&cCount, sizeof(size_t));
+    func->ctantDeps.resize(cCount);
+
+    for(int i = 0; i < cCount; i++) {
+        f.read((char*)&func->ctantDeps[i].first, sizeof(uint32_t));
+        f.read((char*)&func->ctantDeps[i].second, sizeof(SimpleCtant));
+    }
+
     // Func body
     size_t opCount = 0;
     f.read((char*)&opCount, sizeof(size_t));

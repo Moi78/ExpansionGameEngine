@@ -149,7 +149,7 @@ vec3 ComputeLight(vec3 l, vec3 radiance) {
     float geom = ShadowFac(max(dot(n, v), 0.0), r_trans) * ShadowFac(max(dot(n, l), 0.0), r_trans);
 
     vec3 num = spec * geom * fresnel;
-    float denom = 4.0 * max(dot(n, v), 0.0) * max(dot(n, l), 0.0) + 0.0001;
+    float denom = 4.0 * max(dot(n, v), 0.0) * max(dot(n, l), 0.0) + 0.001;
 
     vec3 specular = num / denom;
 

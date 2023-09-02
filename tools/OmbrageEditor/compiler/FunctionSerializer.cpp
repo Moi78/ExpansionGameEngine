@@ -26,6 +26,23 @@ bool FunctionSerializer::Serialize(std::shared_ptr<SpirvFunction> func, std::str
     // Func size
     f.write((char*)&func->funcSize, sizeof(int));
 
+    // Func type deps
+    size_t tCount = func->typeDeps.size();
+    f.write((char*)&tCount, sizeof(size_t));
+
+    for(auto& t : func->typeDeps) {
+        f.write((char*)&t, sizeof(HLTypes));
+    }
+
+    // Func ctant deps
+    size_t cCount = func->ctantDeps.size();
+    f.write((char*)&cCount, sizeof(size_t));
+
+    for(auto& c : func->ctantDeps) {
+        f.write((char*)&c.first, sizeof(uint32_t));
+        f.write((char*)&c.second, sizeof(SimpleCtant));
+    }
+
     // Func body
     size_t opCount = func->funcBody.size();
     f.write((char*)&opCount, sizeof(size_t));

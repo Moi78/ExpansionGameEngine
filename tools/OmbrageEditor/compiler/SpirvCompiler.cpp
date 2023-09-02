@@ -1,5 +1,23 @@
 #include "SpirvCompiler.h"
 
+std::shared_ptr<SpirvConstant> SpirvCompiler::SimpleConstantToSpirvConstant(const SimpleCtant& ctant) {
+    if(ctant.t == HLTypes::INT) {
+        auto ct = std::make_shared<SPVIntConstant>();
+        ct->data = ctant.data;
+        ct->type = ctant.t;
+        //ct->id = m_prog->GetAvailableID();
+
+        return ct;
+    } else if(ctant.t == HLTypes::FLOAT) {
+        auto ct = std::make_shared<SPVFloatConstant>();
+        memcpy(&ct->data, &ctant.data, sizeof(uint32_t));
+        ct->type = ctant.t;
+        //ct->id = m_prog->GetAvailableID();
+
+        return ct;
+    }
+}
+
 SpirvCompiler::SpirvCompiler() {
     m_bindingCounter = 2;
 }
@@ -19,6 +37,13 @@ bool SpirvCompiler::LoadDependency(std::string deps, std::string libRoot) {
 
         FunctionDeserializer des{};
         auto func = des.Deserialize(libRoot + deps + ".func");
+
+        for(auto& c : func->ctantDeps) {
+            std::shared_ptr<SpirvConstant> spvConstant = SimpleConstantToSpirvConstant(c.second);
+            RegisterConstant(spvConstant);
+
+            func->ctantDepsCompiled[c.first] = GetConstantW(spvConstant);
+        }
 
         m_funcTable[deps] = func;
         return true;
@@ -106,6 +131,11 @@ std::vector<uint32_t> SpirvCompiler::CompileAll() {
 
     for(auto& f : m_funcTable) {
         m_prog->RegisterFunction(f.second);
+
+        for(auto& c : f.second->ctantDepsCompiled) {
+            auto ct = std::reinterpret_pointer_cast<SpirvDataWrapperCtant>(c.second);
+            ct->ctant->id = GetAvailableID();
+        }
     }
 
     for(auto& c : m_ctant_table) {
