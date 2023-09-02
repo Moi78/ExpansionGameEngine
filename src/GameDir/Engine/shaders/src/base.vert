@@ -25,7 +25,7 @@ layout (push_constant) uniform MODELS {
 };
 
 void main() {
-    mat3 normalMatrix = transpose(inverse(mat3(model_)));
+    mat3 normalMatrix = mat3(transpose(inverse(model_)));
 
     vec3 totalPos = vec3(0.0);
     vec3 totalNorm = vec3(0.0);
@@ -49,7 +49,7 @@ void main() {
         norm = totalNorm;
     } else {
         fragPos = (vec4(aPos, 1.0) * model_).xyz;
-        norm = aNorm * normalMatrix;
+        norm = normalize(aNorm * normalMatrix);
     }
 
     gl_Position = vec4(fragPos, 1.0) * view * proj;

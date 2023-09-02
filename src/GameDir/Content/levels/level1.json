@@ -50,7 +50,7 @@
     {
       "type": "mesh",
       "mesh": "/mdl/plane.msh",
-      "material": "/mat/mat_weird.json",
+      "material": "/mat/mat_norm.json",
       "tag": "ground",
 
       "pos": [0.0, 0.0, -1.0],
@@ -65,6 +65,16 @@
       "color": [1.0, 1.0, 1.0],
       "dir": [2.0, 1.0, -1],
       "brightness": 1.0
+    },
+
+    {
+      "type": "pointlight",
+      "tag": "light1",
+
+      "color": [1.0, 0.0, 1.0],
+      "pos": [0.0, 0.0, 1.0],
+      "brightness": 100.0,
+      "radius": 10.0
     }
   ]
 }

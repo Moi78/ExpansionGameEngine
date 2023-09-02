@@ -135,7 +135,6 @@ vec3 ComputeRadiancePoint(vec3 pos, vec3 color, float brightness) {
 }
 
 vec3 ComputeLight(vec3 l, vec3 radiance) {
-    vec3 diffuse = vec3(0.0, 0.0, 0.0);
     vec3 h = normalize(l + v);
 
     float spec = GGXDistrib(h, roughness);
@@ -149,9 +148,9 @@ vec3 ComputeLight(vec3 l, vec3 radiance) {
     float geom = ShadowFac(max(dot(n, v), 0.0), r_trans) * ShadowFac(max(dot(n, l), 0.0), r_trans);
 
     vec3 num = spec * geom * fresnel;
-    float denom = 4.0 * max(dot(n, v), 0.0) * max(dot(n, l), 0.0) + 0.001;
+    float denom = 4.0 * max(dot(n, v), 0.0) * max(dot(n, l), 0.0);
 
-    vec3 specular = num / denom;
+    vec3 specular = num / (denom + 0.001);
 
     vec3 kS = fresnel;
 
