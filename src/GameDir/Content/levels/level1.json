@@ -3,8 +3,8 @@
   "nodes": [
     {
       "type": "mesh",
-      "mesh": "/mdl/suzanne.msh",
-      "material": "/mat/mat_yellow.json",
+      "mesh": "/mdl/complex_rig_test.msh",
+      "material": "/mat/mat_test.json",
       "tag": "suzanne",
 
       "pos": [-8.0, -4.0, 0.0],
@@ -50,7 +50,7 @@
     {
       "type": "mesh",
       "mesh": "/mdl/plane.msh",
-      "material": "/mat/mat_norm.json",
+      "material": "/mat/mat_test.json",
       "tag": "ground",
 
       "pos": [0.0, 0.0, -1.0],
@@ -74,7 +74,7 @@
       "color": [1.0, 0.0, 1.0],
       "pos": [0.0, 0.0, 1.0],
       "brightness": 100.0,
-      "radius": 10.0
+      "radius": 100.0
     }
   ]
 }

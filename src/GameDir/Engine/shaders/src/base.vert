@@ -25,7 +25,7 @@ layout (push_constant) uniform MODELS {
 };
 
 void main() {
-    mat3 normalMatrix = mat3(transpose(inverse(model_)));
+    mat3 normalMatrix = transpose(inverse(mat3(model_)));
 
     vec3 totalPos = vec3(0.0);
     vec3 totalNorm = vec3(0.0);
