@@ -7,6 +7,7 @@ BD_Reader::BD_Reader() {
     uvcount = 0;
     vwcount = 0;
     bidcount = 0;
+    tan_bitan_count = 0;
 }
 
 BD_Reader::~BD_Reader() {
@@ -18,6 +19,9 @@ void BD_Reader::ClearAll() {
 	mVertices.clear();
 	mNormal.clear();
 	mUVcoord.clear();
+    mBoneId.clear();
+    mVertWeight.clear();
+    mBoneId.clear();
 }
 
 void BD_Reader::ReadMSHFile(std::string file) {
@@ -101,6 +105,15 @@ void BD_Reader::ReadMSHFile(std::string file) {
         mBoneId.push_back(value);
     }
 
+    //Reading tan/bitan
+    bFile.read((char*)&tan_bitan_count, sizeof(size_t));
+
+    mTan.resize(tan_bitan_count);
+    bFile.read((char*)mTan.data(), sizeof(vec3) * tan_bitan_count);
+
+    mBitan.resize(tan_bitan_count);
+    bFile.read((char*)mBitan.data(), sizeof(vec3) * tan_bitan_count);
+
 	icount = iSize;
 	vcount = vSize;
 	ncount = nSize;
@@ -171,6 +184,26 @@ vec4 BD_Reader::GetBoneIDByIndex(int index) {
     return mBoneId[index];
 }
 
+vec3 BD_Reader::GetTanByIndex(int index) {
+    //Error check
+    if (index > mTan.size()) {
+        std::cerr << "(Tan/Bitan) Index is out of range." << std::endl;
+        return vec3(0.0f, 0.0f, 0.0f);
+    }
+
+    return mTan[index];
+}
+
+vec3 BD_Reader::GetBitanByIndex(int index) {
+    //Error check
+    if (index > mBitan.size()) {
+        std::cerr << "(Tan/Bitan) Index is out of range." << std::endl;
+        return vec3(0.0f, 0.0f, 0.0f);
+    }
+
+    return mBitan[index];
+}
+
 int BD_Reader::GetIndicesCount() {
 	return icount;
 }
@@ -193,4 +226,8 @@ int BD_Reader::GetVertexWeightCount() {
 
 int BD_Reader::GetBoneIDCount() {
     return bidcount;
+}
+
+int BD_Reader::GetTanBitanCount() {
+    return tan_bitan_count;
 }

@@ -26,6 +26,7 @@ void RD_Mesh::LoadMesh(const std::string& filepath) {
     std::vector<vec4> weights;
     std::vector<vec4> bonesID;
     std::vector<uint32_t> indicies;
+    std::vector<vec3> tan, bitan;
 
     for(int i = 0; i < r.GetVerticesCount(); i++) {
         pos.push_back(r.GetVertexByIndex(i));
@@ -42,8 +43,20 @@ void RD_Mesh::LoadMesh(const std::string& filepath) {
         bonesID.push_back(r.GetBoneIDByIndex(i));
     }
 
+    tan.resize(pos.size());
+    bitan.resize(pos.size());
+
     m_vbuff = m_api->CreateIndexedVertexBuffer();
-    auto data = MakeVertexData(pos, norm, uv, weights, bonesID);
+    auto data = MakeVertexData(
+            pos,
+            norm,
+            uv,
+            tan,
+            bitan,
+            weights,
+            bonesID
+    );
+
     m_vbuff->FillBufferData(data, indicies);
 }
 

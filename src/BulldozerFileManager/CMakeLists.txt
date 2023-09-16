@@ -6,3 +6,5 @@ add_library(BulldozerFileManager SHARED
 
 target_include_directories(BulldozerFileManager PUBLIC "../ExpansionMath")
 target_link_libraries(BulldozerFileManager ExpansionMath)
+
+install(TARGETS BulldozerFileManager RUNTIME DESTINATION bin)

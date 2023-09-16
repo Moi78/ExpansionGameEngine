@@ -136,7 +136,8 @@ int main(int argc, char* argv[]) {
     std::cout << "Opening " << filePath << std::endl;
     const aiScene* scene = importer.ReadFile(filePath.c_str(),
                                        aiProcess_Triangulate |
-                                       aiProcess_GenUVCoords);
+                                       aiProcess_GenUVCoords |
+                                       aiProcess_CalcTangentSpace);
 
     if(!scene) {
         std::cerr << "ERROR: Failed to import " << filePath << std::endl;
@@ -171,6 +172,18 @@ int main(int argc, char* argv[]) {
 
             w.AppendUVcoord(vec2(currentMesh->mTextureCoords[0][v].x,
                                  currentMesh->mTextureCoords[0][v].y));
+
+            w.AppendTanBitan(vec3(
+                        currentMesh->mTangents[v].x,
+                        currentMesh->mTangents[v].y,
+                        currentMesh->mTangents[v].z
+                    ),
+                    vec3(
+                        currentMesh->mBitangents[v].x,
+                        currentMesh->mBitangents[v].y,
+                        currentMesh->mBitangents[v].z
+                    )
+            );
         }
         std::cout << currentMesh->mNumVertices << " vertices" << std::endl;
 

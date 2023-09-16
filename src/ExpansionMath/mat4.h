@@ -70,6 +70,8 @@ public:
 
         T XYZW[4];
         for (int i = 0; i < 16; i += 4) {
+            //Float4 vec(a[i / 4], a[i / 4], a[i / 4], a[i / 4]);
+
             Float4 mat_row(m_mat[i] , m_mat[i + 1], m_mat[i + 2], m_mat[i + 3]);
 			Float4 vec_new = mat_row * vec;
 

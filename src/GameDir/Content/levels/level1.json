@@ -2,63 +2,6 @@
   "levelObjectName":"GameLevel",
   "nodes": [
     {
-      "type": "mesh",
-      "mesh": "/mdl/complex_rig_test.msh",
-      "material": "/mat/mat_test.json",
-      "tag": "suzanne",
-
-      "pos": [-8.0, -4.0, 0.0],
-      "rot": [25.0, -45.0, 45.0],
-      "scale": [2.0, 2.0, 2.0]
-    },
-
-    {
-      "type": "mesh",
-      "mesh": "/mdl/cube.msh",
-      "material": "/mat/mat_yellow.json",
-      "tag": "cube_bounce",
-
-      "pos": [0.5, 0.5, 5.0],
-      "rot": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-
-    {
-      "type": "skelmesh",
-      "mesh": "/mdl/robot_anim.msh",
-      "skeleton": "/mdl/robot_anim.skl",
-      "material": "/mat/mat_yellow.json",
-      "tag": "skel",
-
-      "pos": [4, 4, 2.5],
-      "rot": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-
-    {
-      "type": "skelmesh",
-      "mesh": "/mdl/robot_anim.msh",
-      "skeleton": "/mdl/robot_anim.skl",
-      "material": "/mat/mat_yellow.json",
-      "tag": "skel2",
-
-      "pos": [4, 7, 2.5],
-      "rot": [0, 0, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-
-    {
-      "type": "mesh",
-      "mesh": "/mdl/plane.msh",
-      "material": "/mat/mat_test.json",
-      "tag": "ground",
-
-      "pos": [0.0, 0.0, -1.0],
-      "rot": [0.0, 0.0, 0.0],
-      "scale": [15.0, 15.0, 15.0]
-    },
-
-    {
       "type": "dirlight",
       "tag": "sun",
 

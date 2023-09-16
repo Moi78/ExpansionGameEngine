@@ -29,6 +29,21 @@ namespace OmbrageNodes {
         std::string GetNodeFunctionName() override { return "ctant";}
     };
 
+    class TanNode : public Node, public ShaderInWrapper {
+    public:
+        TanNode(uint32_t id);
+        ~TanNode() = default;
+
+        std::string GetNodeFunctionName() override { return "ctant"; }
+    };
+
+    class BitanNode : public Node, public ShaderInWrapper {
+    public:
+        BitanNode(uint32_t id);
+        ~BitanNode() = default;
+
+        std::string GetNodeFunctionName() override { return "ctant"; }
+    };
 }
 
 #endif //EXPGE_SHADERINNODE_H

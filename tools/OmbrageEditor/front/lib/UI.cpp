@@ -47,8 +47,10 @@ OmbrageUI::UI::UI(EXP_Game *game) {
     m_node_editor->AddNodeToCatalog("Texture", "Bump", [](int id) { return std::make_shared<OmbrageNodes::BumpNode>(id); });
     m_node_editor->AddNodeToCatalog("Texture", "Sample Texture", [](int id) { return std::make_shared<OmbrageNodes::TextureNode>(id); });
 
+    m_node_editor->AddNodeToCatalog("Variables", "Bi-Tangent", [](int id) { return std::make_shared<OmbrageNodes::BitanNode>(id); });
     m_node_editor->AddNodeToCatalog("Variables", "Normal", [](int id) { return std::make_shared<OmbrageNodes::NormalNode>(id); });
     m_node_editor->AddNodeToCatalog("Variables", "Position", [](int id) { return std::make_shared<OmbrageNodes::PosNode>(id); });
+    m_node_editor->AddNodeToCatalog("Variables", "Tangent", [](int id) { return std::make_shared<OmbrageNodes::TanNode>(id); });
     m_node_editor->AddNodeToCatalog("Variables", "UV Coordinates", [](int id) { return std::make_shared<OmbrageNodes::UVNode>(id); });
 
     m_node_editor->AddNodeToCatalog("Vector", "Combine", [](int id) { return std::make_shared<OmbrageNodes::CombineNode>(id); });
@@ -260,7 +262,11 @@ bool OmbrageUI::UI::CompileShader() {
     auto rootNode = std::reinterpret_pointer_cast<ShaderNode>(nodes[0]);
 
     m_compiler->SetShaderLayout(rootNode->GetShaderLayout());
-    m_compiler->SetShaderInputs({HLTypes::VECTOR2PTRI, HLTypes::VECTOR3PTRI, HLTypes::VECTOR3PTRI});
+    m_compiler->SetShaderInputs(
+            {HLTypes::VECTOR2PTRI, HLTypes::VECTOR3PTRI,
+             HLTypes::VECTOR3PTRI, HLTypes::VECTOR3PTRI,
+             HLTypes::VECTOR3PTRI}
+    );
 
     // Const & Tex analysis
     for(auto& n : nodes) {

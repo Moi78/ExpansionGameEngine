@@ -96,7 +96,13 @@ public:
         }
     }
 
-    float operator[](const int idx) {
+    void operator+=(vec3& a) {
+        for(int i = 0; i < 3; i++) {
+            m_vec[i] += a[i];
+        }
+    }
+
+    float& operator[](const int idx) {
         return m_vec[idx];
     }
 };
@@ -156,7 +162,13 @@ public:
         }
     }
 
-    float operator[](const int idx) {
+    void operator+=(const vec2& a) {
+        for(int i = 0; i < 2; i++) {
+            m_vec[i] += a[i];
+        }
+    }
+
+    float operator[](const int idx) const {
         return m_vec[idx];
     }
 };
@@ -221,6 +233,12 @@ public:
     virtual void operator*=(const float& a) {
         for(auto& c : m_vec) {
             c *= a;
+        }
+    }
+
+    void operator+=(vec4& a) {
+        for(int i = 0; i < 4; i++) {
+            m_vec[i] += a[i];
         }
     }
 

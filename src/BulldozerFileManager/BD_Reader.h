@@ -23,6 +23,8 @@ public:
 	vec2 GetUVcoordByIndex(int);
 	vec4 GetVertexWeightByIndex(int);
     vec4 GetBoneIDByIndex(int);
+    vec3 GetTanByIndex(int);
+    vec3 GetBitanByIndex(int);
 
 	int GetIndicesCount();
 	int GetVerticesCount();
@@ -30,6 +32,7 @@ public:
 	int GetUVcoordCount();
 	int GetVertexWeightCount();
     int GetBoneIDCount();
+    int GetTanBitanCount();
 
 	void ClearAll();
 
@@ -40,6 +43,8 @@ private:
 	std::vector<vec2> mUVcoord;
 	std::vector<vec4> mVertWeight;
     std::vector<vec4> mBoneId;
+    std::vector<vec3> mTan;
+    std::vector<vec3> mBitan;
 
 	int icount;
 	int vcount;
@@ -47,6 +52,7 @@ private:
 	int uvcount;
 	int vwcount;
     int bidcount;
+    int tan_bitan_count;
 };
 
 #endif // _BD_READER_H__

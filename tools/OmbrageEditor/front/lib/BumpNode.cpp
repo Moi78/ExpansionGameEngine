@@ -3,11 +3,11 @@
 namespace OmbrageNodes {
     BumpNode::BumpNode(int id) : Node(id) {
         m_io = {
-                {NodePinMode::INPUT, NodePinTypes::VEC4, "Normal Map", 0},
-                {NodePinMode::INPUT, NodePinTypes::VEC3, "Normal Vector", 1},
-                {NodePinMode::INPUT, NodePinTypes::VEC3, "Position", 2},
-                {NodePinMode::INPUT, NodePinTypes::VEC2, "UV Coordinates", 3},
-                {NodePinMode::OUTPUT, NodePinTypes::VEC3, "Normal", 4}
+                {NodePinMode::OUTPUT, NodePinTypes::VEC3, "Normal", 0},
+                {NodePinMode::INPUT, NodePinTypes::VEC4, "Normal Map", 1},
+                {NodePinMode::INPUT, NodePinTypes::VEC3, "Normal Vector", 2},
+                {NodePinMode::INPUT, NodePinTypes::VEC3, "Tangent", 3},
+                {NodePinMode::INPUT, NodePinTypes::VEC3, "Bi-tangent", 4}
         };
 
         m_nodeName = "Bump";

@@ -8,9 +8,11 @@ layout (location = 4) out vec4 oSheen;
 layout (location = 0) in vec2 UVcoords;
 layout (location = 1) in vec3 norm;
 layout (location = 2) in vec3 FragPos;
+layout (location = 3) in vec3 Tan;
+layout (location = 4) in vec3 Bitan;
 
 void main() {
-    oColor = vec4(1.0, 1.0, 1.0, 1.0);
+    oColor = vec4(norm, 1.0);
     oNorm = vec4(norm, 1.0);
     oPos = vec4(FragPos, 1.0);
 

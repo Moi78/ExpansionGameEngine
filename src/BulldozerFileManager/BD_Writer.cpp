@@ -32,6 +32,11 @@ void BD_Writer::AppendBoneID(vec4 ids) {
     m_boneID.push_back(ids);
 }
 
+void BD_Writer::AppendTanBitan(vec3 tan, vec3 bitan) {
+    m_tan.push_back(tan);
+    m_tan.push_back(bitan);
+}
+
 void BD_Writer::ToBinary(std::string filepath) {
 	std::string ddir = filepath;
 
@@ -95,6 +100,12 @@ void BD_Writer::ToBinary(std::string filepath) {
     for(int i = 0; i < nbrBoneId; i++) {
         bFile.write(reinterpret_cast<const char*>(&m_boneID[i]), sizeof(vec4));
     }
+
+    // Tan Bitan
+    size_t nbrTanBitan = m_tan.size();
+    bFile.write((char*)&nbrTanBitan, sizeof(size_t));
+    bFile.write((char*)m_tan.data(), sizeof(vec3) * m_tan.size());
+    bFile.write((char*)m_bitan.data(), sizeof(vec3) * m_bitan.size());
 
 	bFile.close();
 }

@@ -22,6 +22,7 @@ public:
 	void AppendUVcoord(vec2 uv);
 	void AppendVertexWeight(vec4 weight);
     void AppendBoneID(vec4 ids);
+    void AppendTanBitan(vec3 tan, vec3 bitan);
 
 	void ToBinary(std::string filepath);
 
@@ -34,6 +35,8 @@ private:
 	std::vector<vec2> m_uv_coord;
 	std::vector<vec4> m_vertex_weight;
     std::vector<vec4> m_boneID;
+    std::vector<vec3> m_tan;
+    std::vector<vec3> m_bitan;
 };
 
 #endif

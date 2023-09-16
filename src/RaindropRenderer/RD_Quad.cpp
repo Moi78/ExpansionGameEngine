@@ -4,9 +4,13 @@ RD_Quad::RD_Quad(std::shared_ptr<RD_API> api) {
     m_vbuff = api->CreateIndexedVertexBuffer();
 
     auto vData = MakeVertexData(
-            { vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(1.0, 1.0, 0.0), vec3(1.0, -1.0, 0.0) },
-            { vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0) },
-            { vec2(0.0, 1.0), vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(1.0, 0.0)}
+            {vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(1.0, 1.0, 0.0), vec3(1.0, -1.0, 0.0)},
+            {vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0)},
+            {vec2(0.0, 1.0), vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(1.0, 0.0)},
+            {vec3(), vec3(), vec3(), vec3()},
+            {vec3(), vec3(), vec3(), vec3()},
+            {vec4(), vec4(), vec4(), vec4()},
+            {vec4(), vec4(), vec4(), vec4()}
     );
 
     std::vector<uint32_t> indices = {

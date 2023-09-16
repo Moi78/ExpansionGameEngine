@@ -54,10 +54,14 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
      *  - MetRoughAO (3)
      *  - Sheen (4)
      *  - Depth (5)
-     *
+     *  - Tan (6)
+     *  - Bitan (7)
      */
 
-    m_rpassGBuff = m_api->CreateRenderPass({color, colorf, colorf, colorf, colorf, depth}, static_cast<float>(w), static_cast<float>(h));
+    m_rpassGBuff = m_api->CreateRenderPass({color, colorf, colorf, colorf, colorf, depth},
+                                           static_cast<float>(w),
+                                           static_cast<float>(h)
+    );
     m_rpassGBuff->BuildRenderpass(m_api.get(), false);
 
     m_rpassLight = m_api->CreateRenderPass({colorf}, static_cast<float>(w), static_cast<float>(h));
@@ -108,9 +112,6 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
 
     RD_Rect vp = {0, 0, 1, 1};
     m_viewport_buffer->FillBufferData(&vp);
-
-    std::shared_ptr<RD_ShaderLoader> base_shader = m_api->CreateShader();
-    base_shader->CompileShaderFromFile(enginePath + "/shaders/bin/base.vspv", enginePath + "/shaders/bin/base.fspv");
 
     std::shared_ptr<RD_ShaderLoader> light_shader = m_api->CreateShader();
     light_shader->CompileShaderFromFile(enginePath + "/shaders/bin/sc_blit.vspv", enginePath + "/shaders/bin/lighting_pass.fspv");
