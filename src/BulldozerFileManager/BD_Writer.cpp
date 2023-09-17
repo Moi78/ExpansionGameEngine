@@ -34,7 +34,7 @@ void BD_Writer::AppendBoneID(vec4 ids) {
 
 void BD_Writer::AppendTanBitan(vec3 tan, vec3 bitan) {
     m_tan.push_back(tan);
-    m_tan.push_back(bitan);
+    m_bitan.push_back(bitan);
 }
 
 void BD_Writer::ToBinary(std::string filepath) {

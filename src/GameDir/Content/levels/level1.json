@@ -2,22 +2,34 @@
   "levelObjectName":"GameLevel",
   "nodes": [
     {
+      "type": "mesh",
+      "tag": "floor",
+      "mesh": "/mdl/plane.msh",
+      "material": "/mat/mat_test.json",
+
+      "pos": [0, 0, -1],
+      "rot": [0, 10, 0],
+      "scale": [10, 10, 10]
+    },
+
+    {
+      "type": "mesh",
+      "tag": "wallaby",
+      "mesh": "/mdl/wallaby.msh",
+      "material": "/mat/mat_test.json",
+
+      "pos": [0, 0, 0],
+      "rot": [0, 0, 0],
+      "scale": [1, 1, 1]
+    },
+
+    {
       "type": "dirlight",
       "tag": "sun",
 
       "color": [1.0, 1.0, 1.0],
-      "dir": [2.0, 1.0, -1],
+      "dir": [1.0, 1.0, -1],
       "brightness": 1.0
-    },
-
-    {
-      "type": "pointlight",
-      "tag": "light1",
-
-      "color": [1.0, 0.0, 1.0],
-      "pos": [0.0, 0.0, 1.0],
-      "brightness": 100.0,
-      "radius": 100.0
     }
   ]
 }

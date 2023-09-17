@@ -102,11 +102,31 @@ float CalcShadow(int idx, vec3 fPos) {
     return clamp(shadow, 0, 1);
 }
 
-float GGXDistrib(vec3 halfway, float alpha) {
+float GGXDistrib(vec3 norm, vec3 halfway, float alpha) {
     float a2 = alpha*alpha;
-    float nDh2 = pow(max(dot(n, halfway), 0.0), 2.0);
+    float nDh2 = pow(max(dot(norm, halfway), 0.0), 2.0);
 
-    return (a2) / (PI * pow(nDh2*(a2 - 1.0) + 1.0, 2.0));
+    return (a2) / (PI * pow(nDh2 * (a2 - 1.0) + 1.0, 2.0));
+}
+
+float GeomSchlickGGX(float NdotV, float roughness) {
+    float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float num = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return num / denom;
+}
+
+float GeomSmith(vec3 norm, vec3 view, vec3 light, float roughness) {
+    float NdotV = max(dot(norm, view), 0.0);
+    float NdotL = max(dot(norm, light), 0.0);
+
+    float ggx2 = GeomSchlickGGX(NdotV, roughness);
+    float ggx1 = GeomSchlickGGX(NdotL, roughness);
+
+    return ggx1 * ggx2;
 }
 
 float ShadowFac(float NdotV, float k) {
@@ -115,8 +135,8 @@ float ShadowFac(float NdotV, float k) {
     return NdotV / denom;
 }
 
-vec3 Fresnel(vec3 h, vec3 F0) {
-    return F0 + (1.0 - F0) * pow(clamp(1.0 - dot(h, v), 0.0, 1.0), 5.0);
+vec3 Fresnel(float cosTheta, vec3 F0) {
+    return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
 
 vec3 Sheen(vec3 h, vec3 F0) {
@@ -137,30 +157,23 @@ vec3 ComputeRadiancePoint(vec3 pos, vec3 color, float brightness) {
 vec3 ComputeLight(vec3 l, vec3 radiance) {
     vec3 h = normalize(l + v);
 
-    float spec = GGXDistrib(h, roughness);
+    float NDF = GGXDistrib(n, h, roughness);
+    float G = GeomSmith(n, v, l, roughness);
 
-    vec3 F0 = vec3(0.04);
-    F0 = mix(F0, c, metallic);
+    vec3 F0 = mix(vec3(0.04), c, metallic);
+    vec3 F = Fresnel(max(dot(h, v), 0.0), F0);
 
-    vec3 fresnel = Fresnel(h, F0);
-
-    float r_trans = (roughness + roughness) / 8.0;
-    float geom = ShadowFac(max(dot(n, v), 0.0), r_trans) * ShadowFac(max(dot(n, l), 0.0), r_trans);
-
-    vec3 num = spec * geom * fresnel;
-    float denom = 4.0 * max(dot(n, v), 0.0) * max(dot(n, l), 0.0);
-
-    vec3 specular = num / (denom + 0.001);
-
-    vec3 kS = fresnel;
-
+    vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
 
-    float NdL = max(dot(n, l), 0.0);
+    float NdotL = max(dot(n, l), 0.0);
 
-    vec3 Lo = (kD * c / PI + specular) * radiance * NdL;
-    return Lo;
+    vec3 num = NDF * G * F;
+    float denom = 4.0 * max(dot(n, v), 0.0) * NdotL + 0.001;
+    vec3 spec = num / denom;
+
+    return (kD * c / PI + spec) * radiance * NdotL;
 }
 
 void main() {

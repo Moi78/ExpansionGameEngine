@@ -43,8 +43,10 @@ void RD_Mesh::LoadMesh(const std::string& filepath) {
         bonesID.push_back(r.GetBoneIDByIndex(i));
     }
 
-    tan.resize(pos.size());
-    bitan.resize(pos.size());
+    for(int i = 0; i < r.GetTanBitanCount(); i++) {
+        tan.push_back(r.GetTanByIndex(i));
+        bitan.push_back(r.GetBitanByIndex(i));
+    }
 
     m_vbuff = m_api->CreateIndexedVertexBuffer();
     auto data = MakeVertexData(

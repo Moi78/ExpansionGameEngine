@@ -1,7 +1,7 @@
 GLSL= glslc
 PREFIX_SRC= ./source
 PREFIX_BIN= ./bin
-EXTRACT= /media/mathis/3CBAC3ADBAC3624E/Dev/ExpansionGameEngine/cmake-build-debug/tools/OmbrageEditor/spvextract/spvextract
+EXTRACT= /media/mathis/90508E7B508E6834/Dev/ExpansionGameEngineRW/ExpansionGameEngine/cmake-build-debug/tools/OmbrageEditor/spvextract/spvextract
 
 sources_glsl= $(wildcard $(PREFIX_SRC)/*.glsl)
 

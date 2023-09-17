@@ -10,14 +10,14 @@ GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
 
-    m_bbactor = std::make_shared<EXP_BoxBodyActor>(game->GetPhysicsHandler(), vec3(0, 0, -1.5), vec3(0, 0, 0), vec3(10, 10, 0.5));
-    RegisterActor(m_bbactor);
+    //m_bbactor = std::make_shared<EXP_BoxBodyActor>(game->GetPhysicsHandler(), vec3(0, 0, -1.5), vec3(0, 0, 0), vec3(10, 10, 0.5));
+    //RegisterActor(m_bbactor);
 
-    m_bounce = std::make_shared<EXP_BoxBodyActor>(game->GetPhysicsHandler(), vec3(0.5f, 0.5f, 5.0f), vec3(), vec3(0.5f, 0.5f, 0.5f));
-    RegisterActor(m_bounce);
+    //m_bounce = std::make_shared<EXP_BoxBodyActor>(game->GetPhysicsHandler(), vec3(0.5f, 0.5f, 5.0f), vec3(), vec3(0.5f, 0.5f, 0.5f));
+    //RegisterActor(m_bounce);
 
-    m_cube = std::make_shared<PhysicsCube>(game, vec3(1.0f, 1.0f, 10.0f), vec3(), vec3(1.5f, 2.5f, 0.5f));
-    RegisterActor(m_cube);
+    //m_cube = std::make_shared<PhysicsCube>(game, vec3(1.0f, 1.0f, 10.0f), vec3(), vec3(1.5f, 2.5f, 0.5f));
+    //RegisterActor(m_cube);
 
     m_playpause = std::make_shared<EXP_KeyboardCallback>(GLFW_KEY_P, CL_VDFUNCPTR(GameLevel::PlayPause), false);
 
@@ -30,8 +30,9 @@ GameLevel::~GameLevel() {
 }
 
 void GameLevel::OnStart() {
-    m_game->GetInputHandler()->RegisterKeyboardCallback(m_playpause);
+    //m_game->GetInputHandler()->RegisterKeyboardCallback(m_playpause);
 
+    /*
     auto skelMeshActor = GetCastedActorByName<EXP_SkeletalMeshActor>("skel");
     auto skelMesh = skelMeshActor->GetMeshComponent();
 
@@ -43,6 +44,7 @@ void GameLevel::OnStart() {
         m_game->GetAnimator()->PlayAnimation(m_anim, skelMesh, "skelAnim1", true);
         m_game->GetAnimator()->PlayAnimation(m_anim, skelMesh2, "skelAnim2", true);
     }
+     */
 }
 
 void GameLevel::PlayPause() {

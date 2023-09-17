@@ -29,7 +29,7 @@ layout (push_constant) uniform MODELS {
 };
 
 void main() {
-    mat3 normalMatrix = transpose(inverse(mat3(model_)));
+    mat3 normalMatrix = mat3(transpose(inverse(model_)));
 
     vec3 totalPos = vec3(0.0);
     vec3 totalNorm = vec3(0.0);
@@ -37,7 +37,7 @@ void main() {
     vec3 totalBitan = vec3(0.0);
 
     vec3 fragPos = vec3(0.0);
-    if(bone_offset != -1) {
+    if(bone_offset != -1 && false) {
         for (int i = 0; i < 4; i++) {
             if(aBonesID[i] == -1) {
                 continue;
@@ -65,10 +65,7 @@ void main() {
         norm = N;
 
         tan = normalize(aTan * normalMatrix);
-        tan = normalize(tan - dot(tan, N) * N);
-
         bitan = normalize(aBitan * normalMatrix);
-        //bitan = cross(norm, tan);
     }
 
     gl_Position = vec4(fragPos, 1.0) * view * proj;

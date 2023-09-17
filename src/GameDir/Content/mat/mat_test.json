@@ -5,6 +5,9 @@
   ],
 
   "texs": [
-
+    {
+      "binding" : 2,
+      "path" : "/tex/bump.jpg"
+    }
   ]
 }
