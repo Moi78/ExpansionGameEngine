@@ -5,10 +5,10 @@
       "type": "mesh",
       "tag": "floor",
       "mesh": "/mdl/plane.msh",
-      "material": "/mat/mat_test.json",
+      "material": "/mat/wood_pbr.json",
 
       "pos": [0, 0, -1],
-      "rot": [0, 10, 0],
+      "rot": [0, 0, 0],
       "scale": [10, 10, 10]
     },
 

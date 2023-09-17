@@ -31,9 +31,7 @@ vec3 GetNormFromMap(vec3 NMap, vec3 n, vec3 FPos, vec2 UV) {
 
 void main() {
     oColor = vec4(1, 1, 1, 1.0);
-    oNorm = vec4(GetNormFromMap(texture(nmap, UVcoords).xyz, norm, FragPos, UVcoords), 0.0);
-    //oNorm = vec4(bump(vec4(0.5, 0.5, 1, 0), norm, Tan, Bitan), 1);
-    //oNorm = vec4(norm, 1.0);
+    oNorm = vec4(norm, 0.0);
     oPos = vec4(FragPos, 1.0);
 
     oMetRoughAO = vec4(0.0, 1.0, 0.3, 0.0);
