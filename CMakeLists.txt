@@ -17,4 +17,12 @@ add_subdirectory("./tools/OmbrageEditor/front")
 add_subdirectory("./tools/OmbrageEditor/compiler")
 add_subdirectory("./tools/OmbrageEditor/spvextract")
 
-install(TARGETS ExGame RUNTIME DESTINATION bin)
+install(TARGETS ExpansionMath BulldozerFileManager RaindropRenderer ExpansionGameEngineCore FBX2MSH
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin
+)
+
+install(TARGETS ExpansionMath BulldozerFileManager RaindropRenderer ExpansionGameEngineCore FBX2MSH
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin
+)

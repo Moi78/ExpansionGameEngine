@@ -51,5 +51,3 @@ target_include_directories(ExpansionGameEngineCore PUBLIC ${freetype2_SOURCE_DIR
 
 target_include_directories(ExpansionGameEngineCore PUBLIC ${JoltPhysics_SOURCE_DIR}/..)
 target_link_libraries(ExpansionGameEngineCore Jolt)
-
-install(TARGETS ExpansionGameEngineCore RUNTIME DESTINATION bin)

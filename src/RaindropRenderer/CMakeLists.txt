@@ -79,5 +79,3 @@ target_include_directories(RaindropRenderer PUBLIC "../third_party/")
 
 target_include_directories(RaindropRenderer PUBLIC "../BulldozerFileManager/")
 target_link_libraries(RaindropRenderer BulldozerFileManager)
-
-install(TARGETS RaindropRenderer RUNTIME DESTINATION bin)

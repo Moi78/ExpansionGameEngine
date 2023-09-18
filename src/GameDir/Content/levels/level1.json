@@ -30,6 +30,16 @@
       "color": [1.0, 1.0, 1.0],
       "dir": [1.0, 1.0, -1],
       "brightness": 1.0
+    },
+
+    {
+      "type": "pointlight",
+      "tag": "point",
+
+      "pos": [2, 2, 1],
+      "color": [0.0, 0.3, 0.6],
+      "brightness": 20.0,
+      "radius": 100.0
     }
   ]
 }
