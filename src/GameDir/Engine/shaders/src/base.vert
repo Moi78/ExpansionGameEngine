@@ -61,7 +61,7 @@ void main() {
         bitan = totalBitan;
     } else {
         fragPos = (vec4(aPos, 1.0) * model_).xyz;
-        vec3 N = normalize(aNorm * normalMatrix);
+        vec3 N = normalize(normalMatrix * aNorm);
         norm = N;
 
         tan = normalize(aTan * normalMatrix);

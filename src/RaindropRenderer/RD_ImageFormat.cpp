@@ -4,10 +4,10 @@
 
 VkFormat GetVKFormat(int format) {
     std::unordered_map<int, VkFormat> map_formats {
-            {IMGFORMAT_R, VK_FORMAT_R8_SRGB},
-            {IMGFORMAT_RG, VK_FORMAT_R8G8_SRGB},
-            {IMGFORMAT_RGB, VK_FORMAT_R8G8B8_SRGB},
-            {IMGFORMAT_RGBA, VK_FORMAT_R8G8B8A8_SRGB},
+            {IMGFORMAT_R, VK_FORMAT_R8_UNORM},
+            {IMGFORMAT_RG, VK_FORMAT_R8G8_UNORM},
+            {IMGFORMAT_RGB, VK_FORMAT_R8G8B8_UNORM},
+            {IMGFORMAT_RGBA, VK_FORMAT_R8G8B8A8_UNORM},
 
             {IMGFORMAT_R16F, VK_FORMAT_R16_SFLOAT},
             {IMGFORMAT_RG16F, VK_FORMAT_R16G16_SFLOAT},

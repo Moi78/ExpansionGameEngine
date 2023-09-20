@@ -62,7 +62,7 @@ bool RD_Texture_Vk::LoadTextureFromFile(std::string filePath) {
     TransitionImageLayout(cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     EndOneTimeCommand(m_dev, m_cmdPool, cmdBuffer, m_gfxQueue);
 
-    if(!CreateImageView(VK_FORMAT_R8G8B8A8_SRGB)) {
+    if(!CreateImageView(VK_FORMAT_R8G8B8A8_UNORM)) {
         return false;
     }
 
