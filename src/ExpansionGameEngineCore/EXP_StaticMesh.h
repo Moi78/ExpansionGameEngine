@@ -17,6 +17,7 @@ public:
     virtual void SetParentMatrix(mat4f& pmat) override;
 
     std::shared_ptr<EXP_Material> GetMeshMaterial();
+    void SetMeshMaterial(std::shared_ptr<EXP_Material> mat);
 
 private:
     std::shared_ptr<RD_Mesh> m_mesh;

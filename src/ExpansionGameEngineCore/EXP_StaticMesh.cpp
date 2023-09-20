@@ -20,3 +20,10 @@ void EXP_StaticMesh::SetParentMatrix(mat4f& pmat) {
 std::shared_ptr<EXP_Material> EXP_StaticMesh::GetMeshMaterial() {
     return m_matref;
 }
+
+void EXP_StaticMesh::SetMeshMaterial(std::shared_ptr<EXP_Material> mat) {
+    m_matref->UnregisterMesh(m_mesh);
+
+    mat->RegisterMesh(m_mesh);
+    m_matref = mat;
+}

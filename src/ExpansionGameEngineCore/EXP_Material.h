@@ -20,6 +20,7 @@ public:
 
     bool LoadMaterial(std::string material_file, bool enginePath = false, bool autobuild = true);
     void RegisterMesh(std::shared_ptr<RD_Mesh> smesh);
+    void UnregisterMesh(std::shared_ptr<RD_Mesh> smesh);
 
     std::shared_ptr<RD_Pipeline> GetPipeline();
 

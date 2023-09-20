@@ -15,6 +15,7 @@ public:
     ~RD_Material();
 
     void RegisterMesh(std::shared_ptr<RD_Mesh> mesh);
+    void UnregisterMesh(std::shared_ptr<RD_Mesh> mesh);
     void PurgeMeshes();
 
     void RenderMeshes(std::shared_ptr<RD_UniformBuffer> camModel, std::shared_ptr<RD_RenderSynchronizer> sync);

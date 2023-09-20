@@ -114,6 +114,10 @@ void EXP_Material::RegisterMesh(std::shared_ptr<RD_Mesh> smesh) {
     m_mat->RegisterMesh(smesh);
 }
 
+void EXP_Material::UnregisterMesh(std::shared_ptr<RD_Mesh> smesh) {
+    m_mat->UnregisterMesh(smesh);
+}
+
 std::shared_ptr<RD_Pipeline> EXP_Material::GetPipeline() {
     return m_mat->GetRawPipeline();
 }

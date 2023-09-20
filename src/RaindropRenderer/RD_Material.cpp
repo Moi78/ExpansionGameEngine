@@ -12,6 +12,10 @@ void RD_Material::RegisterMesh(std::shared_ptr<RD_Mesh> mesh) {
     m_meshes.push_back(mesh);
 }
 
+void RD_Material::UnregisterMesh(std::shared_ptr<RD_Mesh> mesh) {
+    std::erase_if(m_meshes, [mesh](std::shared_ptr<RD_Mesh> m){ return m.get() == mesh.get(); });
+}
+
 void RD_Material::PurgeMeshes() {
     m_meshes.clear();
 }

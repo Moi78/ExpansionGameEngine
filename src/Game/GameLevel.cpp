@@ -5,7 +5,7 @@ EXPGE_LEVEL_CODE(GameLevel);
 GameLevel::GameLevel(EXP_Game* game) : EXP_Level(game) {
     std::cout << "INSTANCIATED" << std::endl;
 
-    game->GetInputHandler()->SetCursorVisibility(false);
+    //game->GetInputHandler()->SetCursorVisibility(false);
 
     m_tactor = std::make_shared<TestActor>(game);
     RegisterActor(m_tactor);
@@ -45,6 +45,12 @@ void GameLevel::OnStart() {
         m_game->GetAnimator()->PlayAnimation(m_anim, skelMesh2, "skelAnim2", true);
     }
      */
+
+    auto wallaby = GetCastedActorByName<EXP_StaticMeshActor>("wallaby");
+    if(wallaby) {
+        auto m = m_game->QueryMaterial("/mat/mat_weird.json");
+        wallaby->GetMeshComponent()->SetMeshMaterial(m);
+    }
 }
 
 void GameLevel::PlayPause() {
