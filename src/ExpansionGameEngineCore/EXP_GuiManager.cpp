@@ -100,6 +100,7 @@ void EXP_GuiManager::RenderGui() {
 
         m_rpass->EndRenderpass(m_sync);
         m_sync->Stop();
+        m_sync->StartJobs();
 
         m_redraw_flag = false;
     }

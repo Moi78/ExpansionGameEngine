@@ -6,11 +6,20 @@
 
 class RD_RenderSynchronizer {
 public:
-    RD_RenderSynchronizer() {};
+    RD_RenderSynchronizer() { m_idx = 0; };
     virtual ~RD_RenderSynchronizer() {};
+
+    virtual void Init(int jobCount = 1) = 0;
 
     virtual void Start() = 0;
     virtual void Stop() = 0;
+
+    void SetJobIndex(int index) {m_idx = index;}
+
+    virtual void StartJobs() = 0;
+
+protected:
+    int m_idx;
 };
 
 #ifdef BUILD_VULKAN
@@ -22,19 +31,20 @@ public:
     RD_RenderSynchronizer_Vk(VkDevice dev, VkCommandPool pool, VkQueue gfxQueue);
     ~RD_RenderSynchronizer_Vk() override;
 
+    void Init(int jobCount) override;
+
     void Start() override;
     void Stop() override;
 
     VkCommandBuffer GetCommandBuffer();
 
+    void StartJobs() override;
 private:
-    void Init();
-
     VkCommandPool m_pool;
     VkQueue m_gfxQueue;
     VkDevice m_dev;
 
-    VkCommandBuffer m_cmdBuffer;
+    std::vector<VkCommandBuffer> m_cmdBuffers;
     VkFence m_fence;
 };
 

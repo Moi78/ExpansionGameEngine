@@ -31,18 +31,16 @@ public:
     void RotateActor(vec3 rotation);
 
     mat4f GetActorTransform();
-    void UpdateTransform();
     void UpdateActor();
 
     virtual void OnStart() = 0;
     virtual void OnTick() = 0;
 
     void LinkComponent(std::shared_ptr<EXP_Component> comp);
+    void SetRootComponent(std::shared_ptr<EXP_Component> comp);
 protected:
-    vec3 m_pos, m_rot, m_scale;
-    mat4f m_transform;
-
     std::vector<std::shared_ptr<EXP_Component>> m_comps;
+    std::shared_ptr<EXP_Component> m_root;
 
     uint64_t m_uid;
 };

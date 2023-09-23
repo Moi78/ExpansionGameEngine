@@ -65,7 +65,7 @@ public:
 		}
 	}
 
-	vec4 operator*(vec4 a) {
+	vec4 operator*(vec4& a) {
         Float4 vec(a.GetX(), a.GetY(), a.GetZ(), a.GetW());
 
         T XYZW[4];
@@ -81,7 +81,7 @@ public:
         return vec4(XYZW[0], XYZW[1], XYZW[2], XYZW[3]);
 	}
 
-	mat4<T> operator*(float a) {
+	mat4<T> operator*(const float& a) {
 		T nMat[16];
 		memset(nMat, 0, 16 * sizeof(T));
 
@@ -97,7 +97,7 @@ public:
 		return mat4<T>(nMat);
 	}
 
-	mat4<T> operator*(mat4<T> const& a) {
+	mat4<T> operator*(mat4<T> const& a) const {
         //SIMD Impl.
 
         //Allocating matrix in XMM registers
@@ -139,7 +139,7 @@ private:
 };
 
 template<class T>
-mat4<T> TranslateMatrix(mat4<T> srcMat, vec3 trans) {
+mat4<T> TranslateMatrix(const mat4<T>& srcMat, vec3 trans) {
 	T transMat[16] = {
 		1, 0, 0, trans.GetX(),
 		0, 1, 0, trans.GetY(),
@@ -152,7 +152,7 @@ mat4<T> TranslateMatrix(mat4<T> srcMat, vec3 trans) {
 }
 
 template<class T>
-mat4<T> ScaleMatrix(mat4<T> srcMat, vec3 scale) {
+mat4<T> ScaleMatrix(const mat4<T>& srcMat, vec3 scale) {
 	T scaleMat[16] = {
 		scale.GetX(), 0			  , 0			, 0			   ,
 		0			, scale.GetY(), 0			, 0			   ,
@@ -161,58 +161,10 @@ mat4<T> ScaleMatrix(mat4<T> srcMat, vec3 scale) {
 	};
 	mat4<T> smat(scaleMat);
 
-	return srcMat * scaleMat;
+	return srcMat * smat;
 }
 
-template<class T>
-mat4<T> RotateMatrix(mat4<T> srcMat, vec3 rot) {
-	mat4<T> srcCopy = srcMat;
-
-	float X = DEG_TO_RAD(rot.GetX());
-	float Y = DEG_TO_RAD(rot.GetY());
-	float Z = DEG_TO_RAD(rot.GetZ());
-
-	//X
-	float Stheta = sin(X);
-	float Ctheta = cos(X);
-
-	T rxMat[16] = {
-	1,		0,		 0, 0,
-	0, Ctheta, -Stheta, 0,
-	0, Stheta,  Ctheta, 0,
-	0,		0,		 0, 1
-	};
-
-	srcCopy = srcCopy * mat4<T>(rxMat);
-
-	//Y
-	Stheta = sin(Y);
-	Ctheta = cos(Y);
-
-	T ryMat[16] = {
-		 Ctheta,	 0, Stheta,		0,
-			  0,	 1,		 0,		0,
-		-Stheta,	 0, Ctheta,		0,
-			  0,	 0,		 0,		1
-	};
-
-	srcCopy = srcCopy * mat4<T>(ryMat);
-
-	//Z
-	Stheta = sin(Z);
-	Ctheta = cos(Z);
-
-	T rzMat[16] = {
-		Ctheta, -Stheta, 0, 0,
-		Stheta,  Ctheta, 0, 0,
-			 0,		  0, 1, 0,
-			 0,		  0, 0, 1
-	};
-
-	srcCopy = srcCopy * mat4<T>(rzMat);
-
-	return srcCopy;
-}
+mat4<float> RotateMatrix(const mat4<float>& srcMat, vec3 rot);
 
 mat4<float> LookAt(vec3 pos, vec3 target, vec3 up);
 mat4<float> ProjPersp(float FOV, float ImageRatio, float nearv = 0.1f, float farv = 1000.0f);

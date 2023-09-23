@@ -3,3 +3,4 @@
 /src/GameDir/Engine/shaders/bin/
 *.so
 /cmake-build-release/
+/cmake-build-debug-coverage/

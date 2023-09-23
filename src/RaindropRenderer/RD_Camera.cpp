@@ -26,7 +26,7 @@ void RD_Camera::UpdateCamera() {
 }
 
 void RD_Camera::UpdateProj() {
-    auto window = m_api->GetWindowingSystem();
+    static auto window = m_api->GetWindowingSystem();
     const float w = (float)window->GetWidth();
     const float h = (float)window->GetHeight();
 

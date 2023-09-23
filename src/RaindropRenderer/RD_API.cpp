@@ -337,6 +337,7 @@ void RD_VulkanWindow::Present() {
 
     m_overlayed_rpass.value()->EndRenderpass(sync);
     sync->Stop();
+    sync->StartJobs();
 
     plineVK->BindSC(m_scFbs[m_imgIdx]);
     plineVK->PushConstant(&isFS, sizeof(uint32_t), {});
@@ -897,6 +898,7 @@ void RD_Windowing_GLFW_Vk::ImguiEndFrame() {
 
     m_imgui_rpass->EndRenderpass(m_imgui_rsync);
     m_imgui_rsync->Stop();
+    m_imgui_rsync->StartJobs();
 }
 
 // ------------------------------------------------------------------------------------
@@ -1255,8 +1257,11 @@ std::shared_ptr<RD_Texture> RD_API_Vk::CreateTexture() {
     return std::make_shared<RD_Texture_Vk>(m_ldev, m_dev, m_gfx_queue, m_pool);
 }
 
-std::shared_ptr<RD_RenderSynchronizer> RD_API_Vk::CreateRenderSynchronizer() {
-    return std::make_shared<RD_RenderSynchronizer_Vk>(m_ldev, m_pool, m_gfx_queue);
+std::shared_ptr<RD_RenderSynchronizer> RD_API_Vk::CreateRenderSynchronizer(int jobCount) {
+    auto sync = std::make_shared<RD_RenderSynchronizer_Vk>(m_ldev, m_pool, m_gfx_queue);
+    sync->Init(jobCount);
+
+    return sync;
 }
 
 std::shared_ptr<RD_OrphanFramebuffer> RD_API_Vk::CreateOrphanFramebuffer(

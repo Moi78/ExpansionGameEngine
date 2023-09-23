@@ -1,6 +1,7 @@
 #include "EXP_Body.h"
 
-EXP_Body::EXP_Body(std::shared_ptr<EXP_PhysicsHandler> handler, bool isStatic) {
+EXP_Body::EXP_Body(std::shared_ptr<EXP_PhysicsHandler> handler, vec3 pos, vec3 rot, vec3 scale, bool isStatic) :
+EXP_Component(pos, rot, scale) {
     m_handler = handler;
     m_isStatic = isStatic;
 }
@@ -49,10 +50,16 @@ Quat EXP_Body::GetBodyRot() {
     return Quat(-rot.GetW(), rot.GetX(), rot.GetY(), -rot.GetZ());
 }
 
-mat4f EXP_Body::GetBodyTransform() {
-    mat4f pos = TranslateMatrix(mat4f(1.0f), GetBodyPos());
-    mat4f rot = GetBodyRot().ToMat4();
-    mat4f scale = ScaleMatrix(mat4f(1.0f), m_scale);
+mat4f& EXP_Body::GetBodyTransform() {
+    m_pos = GetBodyPos();
 
-    return pos * rot * scale;
+    m_transform = TranslateMatrix(mat4f(1.0f), GetBodyPos());
+    m_transform = m_transform * GetBodyRot().ToMat4();
+    m_transform = ScaleMatrix(m_transform, m_scale);
+
+    return m_transform;
+}
+
+mat4f& EXP_Body::GetComponentTransform() {
+    return GetBodyTransform();
 }

@@ -1,4 +1,5 @@
 #include "mat4.h"
+#include "quat.h"
 
 mat4<float> ProjPersp(float FOV, float ImageRatio, float nearv, float farv) {
     float mat[16] = {
@@ -49,4 +50,10 @@ mat4<float> ProjOrtho(float right, float left, float top, float bottom, float ne
     };
 
     return mat4<float>(mat);
+}
+
+mat4<float> RotateMatrix(const mat4<float>& srcMat, vec3 rot) {
+    mat4<float> rotMat = Quat::FromEuler(rot).ToMat4();
+
+    return srcMat * rotMat;
 }

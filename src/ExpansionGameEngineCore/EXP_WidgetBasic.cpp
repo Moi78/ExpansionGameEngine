@@ -327,6 +327,7 @@ void EXP_GuiTextStatic::ConstructText(std::string text, int size) {
         pline->Unbind(sync);
         m_text->EndRenderpass(sync);
         sync->Stop();
+        sync->StartJobs();
 
         currentX += met.advance;
     }

@@ -65,9 +65,9 @@ void RD_Mesh::LoadMesh(const std::string& filepath) {
 void RD_Mesh::Update() {
     m_transf = mat4f();
 
+    m_transf = TranslateMatrix(m_transf, m_pos);
     m_transf = RotateMatrix(m_transf, m_rot);
     m_transf = ScaleMatrix(m_transf, m_scale);
-    m_transf = TranslateMatrix(m_transf, m_pos);
 }
 
 mat4f RD_Mesh::GetTransform() {

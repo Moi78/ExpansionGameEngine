@@ -40,6 +40,8 @@ public:
     virtual void RenderScene(std::vector<std::shared_ptr<RD_Material>>& sceneData, std::shared_ptr<RD_Camera> cam) = 0;
     virtual void RenderShadows(std::vector<std::shared_ptr<RD_Material>>& sceneData, std::vector<std::shared_ptr<RD_DirLight>>& lightData) = 0;
 
+    virtual void ExecRender() = 0;
+
     virtual void PushDirLight(std::shared_ptr<RD_DirLight> dlight, int index) = 0;
     virtual void PushPointLight(std::shared_ptr<RD_PointLight> plight, int index) = 0;
     virtual void PushCasterCount(RD_CasterCount& ccount) = 0;
@@ -62,6 +64,8 @@ public:
 
     void RenderScene(std::vector<std::shared_ptr<RD_Material>>& sceneData, std::shared_ptr<RD_Camera> cam) override;
     void RenderShadows(std::vector<std::shared_ptr<RD_Material>>& sceneData, std::vector<std::shared_ptr<RD_DirLight>>& lightData) override;
+
+    void ExecRender() override;
 
     void PushDirLight(std::shared_ptr<RD_DirLight> dlight, int index) override;
     void PushPointLight(std::shared_ptr<RD_PointLight> plight, int index) override;

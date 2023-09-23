@@ -31,21 +31,31 @@ void EXP_Component::SetComponentScale(vec3 nscale) {
     UpdateTransform();
 }
 
-mat4f EXP_Component::GetComponentTransform() {
+mat4f& EXP_Component::GetComponentTransform() {
     return m_transform;
 }
 
 void EXP_Component::UpdateTransform() {
     m_transform = mat4f(1.0f);
 
-    mat4f trans = mat4f(1.0f);
-    mat4f scale = mat4f(1.0f);
-    mat4f rot = mat4f(1.0f);
+    m_transform = TranslateMatrix(m_transform, m_pos);
+    m_transform = RotateMatrix(m_transform, m_rot);
+    m_transform = ScaleMatrix(m_transform, m_scale);
 
-    trans = TranslateMatrix(trans, m_pos);
-    scale = ScaleMatrix(scale, m_scale);
-    rot = RotateMatrix(rot, m_rot);
-
-    m_transform = trans * rot * scale;
     m_transform = m_ptrans * m_transform;
+}
+
+void EXP_Component::TranslateComponent(vec3 trans) {
+    m_pos = m_pos + trans;
+    UpdateTransform();
+}
+
+void EXP_Component::RotateComponent(vec3 rot) {
+    m_rot = m_rot + rot;
+    UpdateTransform();
+}
+
+void EXP_Component::ScaleComponent(vec3 scale) {
+    m_scale = m_scale + scale;
+    UpdateTransform();
 }

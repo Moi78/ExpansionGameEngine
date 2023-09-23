@@ -14,7 +14,7 @@ bool RD_RenderingPipeline_PBR::InitRenderingPipeline(std::string enginePath) {
     h = m_api->GetWindowingSystem()->GetHeight();
 
     m_renderSurface = std::make_shared<RD_Quad>(m_api);
-    m_sync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(m_api->CreateRenderSynchronizer());
+    m_sync = std::reinterpret_pointer_cast<RD_RenderSynchronizer_Vk>(m_api->CreateRenderSynchronizer(2));
 
     //FRAMEBUFFER
     RD_Attachment color{};
@@ -178,6 +178,7 @@ void RD_RenderingPipeline_PBR::RenderScene(std::vector<std::shared_ptr<RD_Materi
     cam->PushToUniform(m_camModel);
     cam->PushCamDataToUniform(m_camData);
 
+    m_sync->SetJobIndex(0);
     m_sync->Start();
     m_rpassGBuff->BeginRenderpass(m_sync);
 
@@ -245,6 +246,8 @@ void RD_RenderingPipeline_PBR::RenderShadows(
         std::vector<std::shared_ptr<RD_Material>>& sceneData,
         std::vector<std::shared_ptr<RD_DirLight>>& lightData
 ) {
+    m_sync->SetJobIndex(1);
+
     int scaster_idx = 0;
     for(uint32_t i = 0; i < lightData.size(); i++) {
         if(!lightData[i]->IsShadowCaster()) {
@@ -341,4 +344,8 @@ void RD_RenderingPipeline_PBR::PushLightMat(mat4f mat, int idx) {
 
 void RD_RenderingPipeline_PBR::SetupSkeleton(std::shared_ptr<RD_Skeleton> skel) {
     skel->UploadSkeleton(m_bonesBuffer);
+}
+
+void RD_RenderingPipeline_PBR::ExecRender() {
+    m_sync->StartJobs();
 }

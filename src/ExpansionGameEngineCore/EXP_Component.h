@@ -29,7 +29,11 @@ public:
     void SetComponentRot(vec3 nrot);
     void SetComponentScale(vec3 nscale);
 
-    mat4f GetComponentTransform();
+    void TranslateComponent(vec3 trans);
+    void RotateComponent(vec3 rot);
+    void ScaleComponent(vec3 scale);
+
+    virtual mat4f& GetComponentTransform();
     void UpdateTransform();
 
 protected:

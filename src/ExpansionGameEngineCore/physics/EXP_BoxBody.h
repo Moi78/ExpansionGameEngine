@@ -8,7 +8,7 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 
-class EXP_BoxBody : public EXP_Body, public EXP_Component {
+class EXP_BoxBody : public EXP_Body {
 public:
     EXP_BoxBody(std::shared_ptr<EXP_PhysicsHandler> handler, vec3 pos, vec3 scale, vec3 rot, bool isStatic);
     ~EXP_BoxBody() = default;

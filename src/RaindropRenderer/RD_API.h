@@ -115,7 +115,7 @@ public:
     virtual std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() = 0;
     virtual std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) = 0;
     virtual std::shared_ptr<RD_Texture> CreateTexture() = 0;
-    virtual std::shared_ptr<RD_RenderSynchronizer> CreateRenderSynchronizer() = 0;
+    virtual std::shared_ptr<RD_RenderSynchronizer> CreateRenderSynchronizer(int jobCount = 1) = 0;
     virtual std::shared_ptr<RD_OrphanFramebuffer> CreateOrphanFramebuffer(
             std::shared_ptr<RD_RenderPass> rpass,
             std::vector<RD_Attachment> attachments,
@@ -331,7 +331,7 @@ public:
     std::shared_ptr<RD_IndexedVertexBuffer> CreateIndexedVertexBuffer() override;
     std::shared_ptr<RD_UniformBuffer> CreateUniformBuffer(uint32_t binding) override;
     std::shared_ptr<RD_Texture> CreateTexture() override;
-    std::shared_ptr<RD_RenderSynchronizer> CreateRenderSynchronizer() override;
+    std::shared_ptr<RD_RenderSynchronizer> CreateRenderSynchronizer(int jobCount) override;
     std::shared_ptr<RD_OrphanFramebuffer> CreateOrphanFramebuffer(
             std::shared_ptr<RD_RenderPass> rpass,
             std::vector<RD_Attachment> attachments,

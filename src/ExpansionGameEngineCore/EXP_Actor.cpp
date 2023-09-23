@@ -1,11 +1,7 @@
 #include "EXP_Actor.h"
 
 EXP_Actor::EXP_Actor(vec3 pos, vec3 rot, vec3 scale) {
-    m_pos = pos;
-    m_rot = rot;
-    m_scale = scale;
-
-    UpdateTransform();
+    m_root = std::make_shared<EXP_Component>(pos, rot, scale);
 
     using namespace std::chrono;
     m_uid = duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count();
@@ -13,60 +9,44 @@ EXP_Actor::EXP_Actor(vec3 pos, vec3 rot, vec3 scale) {
 }
 
 vec3 EXP_Actor::GetActorPos() {
-    return m_pos;
+    return m_root->GetComponentPos();
 }
 
 void EXP_Actor::SetActorPos(vec3 npos) {
-    m_pos = npos;
-    UpdateTransform();
-}
-
-vec3 EXP_Actor::GetActorRot() {
-    return m_rot;
-}
-
-void EXP_Actor::SetActorRot(vec3 nrot) {
-    m_rot = nrot;
-    UpdateTransform();
-}
-
-vec3 EXP_Actor::GetActorScale() {
-    return m_scale;
-}
-
-void EXP_Actor::SetActorScale(vec3 nscale) {
-    m_scale = nscale;
-    UpdateTransform();
-}
-
-mat4f EXP_Actor::GetActorTransform() {
-    return m_transform;
-}
-
-void EXP_Actor::UpdateTransform() {
-    m_transform = mat4f(1.0f);
-
-    mat4f trans = mat4f(1.0f);
-    mat4f scale = mat4f(1.0f);
-    mat4f rot = mat4f(1.0f);
-
-    trans = TranslateMatrix(trans, m_pos);
-    scale = ScaleMatrix(scale, m_scale);
-    rot = RotateMatrix(rot, m_rot);
-
-    m_transform = trans * rot * scale;
-
+    m_root->SetComponentPos(npos);
     UpdateActor();
 }
 
+vec3 EXP_Actor::GetActorRot() {
+    return m_root->GetComponentRot();
+}
+
+void EXP_Actor::SetActorRot(vec3 nrot) {
+    m_root->GetComponentRot();
+    UpdateActor();
+}
+
+vec3 EXP_Actor::GetActorScale() {
+    return m_root->GetComponentScale();
+}
+
+void EXP_Actor::SetActorScale(vec3 nscale) {
+    m_root->SetComponentScale(nscale);
+    UpdateActor();
+}
+
+mat4f EXP_Actor::GetActorTransform() {
+    return m_root->GetComponentTransform();
+}
+
 void EXP_Actor::LinkComponent(std::shared_ptr<EXP_Component> comp) {
-    comp->SetParentMatrix(m_transform);
+    comp->SetParentMatrix(m_root->GetComponentTransform());
     m_comps.push_back(comp);
 }
 
 void EXP_Actor::UpdateActor() {
     for(auto& c : m_comps) {
-        c->SetParentMatrix(m_transform);
+        c->SetParentMatrix(m_root->GetComponentTransform());
     }
 }
 
@@ -75,11 +55,15 @@ uint64_t EXP_Actor::GetActorUID() {
 }
 
 void EXP_Actor::TranslateActor(vec3 trans) {
-    m_pos = m_pos + trans;
-    UpdateTransform();
+    m_root->TranslateComponent(trans);
+    UpdateActor();
 }
 
 void EXP_Actor::RotateActor(vec3 rotation) {
-    m_rot = m_rot + rotation;
-    UpdateTransform();
+    m_root->RotateComponent(rotation);
+    UpdateActor();
+}
+
+void EXP_Actor::SetRootComponent(std::shared_ptr<EXP_Component> comp) {
+    m_root = comp;
 }

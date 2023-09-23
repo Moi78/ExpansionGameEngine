@@ -5,7 +5,7 @@
       "type": "mesh",
       "tag": "floor",
       "mesh": "/mdl/plane.msh",
-      "material": "/mat/wood_pbr.json",
+      "material": "/mat/pbr_metal.json",
 
       "pos": [0, 0, -1],
       "rot": [0, 0, 0],
@@ -19,7 +19,7 @@
       "material": "/mat/mat_test.json",
 
       "pos": [0, 0, 0],
-      "rot": [0, 0, 0],
+      "rot": [0, 45, 0],
       "scale": [1, 1, 1]
     },
 
